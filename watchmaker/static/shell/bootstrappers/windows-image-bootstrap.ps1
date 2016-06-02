@@ -2,11 +2,11 @@
 # Location to save files.
 $SaveDir = ${env:Temp}
 
-# Log file for debugging user-data.
+# Log files for debugging user-data and PowerShell commands.
 $LogFile = "${SaveDir}\UserData_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log"
 Start-Transcript -Path "${SaveDir}\Transcript_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log" -Append
 
-# Urls for obtaining Python and associated tools.
+# Url for obtaining Python MSI.
 $Version = "2.7.11"
 $PythonMSI = 'python-' + ${Version} + '.msi';
 $PythonUrl = 'https://www.python.org/ftp/python/' + ${Version} + '/' + ${PythonMSI}
