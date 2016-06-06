@@ -4,8 +4,11 @@ import sys
 import json
 import shutil
 import logging
+import subprocess
 
 from watchmaker.managers.base import LinuxManager
+from watchmaker.exceptions import SystemFatal as exceptionhandler
+
 
 class Yum(LinuxManager):
     """
@@ -126,8 +129,90 @@ class Salt(LinuxManager):
 
     def __init__(self):
         super(Salt, self).__init__()
+        self.config = None
+        self.workingdir = None
+        self.formulastoinclude = list()
+        self.formulaterminationstrings = list()
+        self.sourceiss3bucket = None
+        self.entenv = None
+        self.saltbootstrapfilename = None
+        self.yum_pkgs = [
+            'policycoreutils-python',
+            'selinux-policy-targeted',
+            'salt-minion',
+        ]
 
-    def install(self, configuration):
+        self.minionconf = '/etc/salt/minion'
+        self.saltcall = '/usr/bin/salt-call'
+        self.saltsrv = '/srv/salt'
+        self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
+        self.saltformularoot = os.sep.join((self.saltsrv, 'formulas'))
+        self.saltpillarroot = os.sep.join((self.saltsrv, 'pillar'))
+        self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
+
+    def _configuration_validation(self):
+        if 'git' == self.config['saltinstallmethod'].lower():
+            if not self.config['saltbootstrapsource']:
+                logging.error('Detected `git` as the install method, but the required parameter `saltbootstrapsource`',
+                              'was not provided.')
+            else:
+                self.saltbootstrapfilename = self.config['saltbootstrapsource'].split('/')[-1]
+
+            if not self.config['saltgitrepo']:
+                logging.error('Detected `git` as the install method, but the required parameter `saltgitrepo` was not ',
+                              'provided.')
+
+    def _prepare_for_install(self):
+
+        if self.config['formulastoinclude']:
+            self.formulastoinclude = self.config['formulastoinclude']
+
+        if self.config['formulaterminationstrings']:
+            self.formulaterminationstrings = self.config['formulaterminationstrings']
+
+        self.sourceiss3bucket =  self.config['sourceiss3bucket']
+
+        self.entenv = self.config['entenv']
+
+        self.create_working_dir('/usr/tmp/', 'saltinstall')
+
+        self.salt_results_logfile = self.config['salt_results_log'] or os.sep.join((self.workingdir,
+                                                                                    'saltcall.results.log'))
+
+        self.salt_debug_logfile = self.config['salt_debug_log'] or os.sep.join((self.workingdir,
+                                                                                'saltcall.debug.log'))
+
+
+        self.saltcall_arguments = ['--out', 'yaml', '--out-file', self.salt_results_logfile, '--return local',
+                                   '--log-file', self.salt_debug_logfile, '--log-file-level', 'debug']
+
+        for saltdir in [self.saltfileroot, self.saltbaseenv, self.saltformularoot]:
+            try:
+                os.makedirs(saltdir)
+            except OSError:
+                if not os.path.isdir(saltdir):
+                    raise
+
+    def _install_package(self):
+        if 'yum' == self.config['saltinstallmethod'].lower():
+            self._install_from_yum(self.yum_pkgs)
+
+        elif 'git' == self.config['saltinstallmethod'].lower():
+
+            self.download_file(self.config['saltbootstrapsource'], self.saltbootstrapfile)
+
+            bootstrapcmd = ['sh', self.saltbootstrapfile, '-g', self.config['saltgitrepo']]
+
+            if self.config['saltversion']:
+                bootstrapcmd.append('git')
+                bootstrapcmd.append(self.config['saltversion'])
+            else:
+                logging.debug('No salt version defined in config.')
+
+            subprocess.call([bootstrapcmd])
+
+
+def install(self, configuration):
         """
 
         :param configuration:
@@ -135,106 +220,32 @@ class Salt(LinuxManager):
         """
 
         try:
-            config = json.loads(configuration)
+            self.config = json.loads(configuration)
         except ValueError:
-            logging.fatal('The configuration passed was not properly formed JSON.  Execution Halted.')
-            sys.exit(1)
+            exceptionhandler('The configuration passed was not properly formed JSON.  Execution Halted.')
 
-        # Convert from None to list, to support iteration
-        formulastoinclude = [] if config['formulastoinclude'] is None else config['formulastoinclude']
-        formulaterminationstrings = [] if config['formulaterminationstrings'] is None else \
-            config['formulaterminationstrings']
+        try:
+            self._configuration_validation()
+        except:
+            exceptionhandler('Configuration for Salt did not validate.')
 
-        # Convert from string to bool
-        sourceiss3bucket =  config['sourceiss3bucket']
-        # Handle entenv tri-state
-        entenv = config['entenv']
+        try:
+            self._prepare_for_install()
+        except:
+            exceptionhandler('Preparation for Salt install failed.')
 
-        print('+' * 80)
-        print('Printing parameters...')
-        # print('    saltinstallmethod = {0}'.format(config['saltinstallmethod']))
-        # print('    saltbootstrapsource = {0}'.format(saltbootstrapsource))
-        # print('    saltgitrepo = {0}'.format(saltgitrepo))
-        # print('    saltversion = {0}'.format(saltversion))
-        # print('    saltcontentsource = {0}'.format(saltcontentsource))
-        # print('    formulastoinclude = {0}'.format(formulastoinclude))
-        # print('    formulaterminationstrings = {0}'.format(formulaterminationstrings))
-        # print('    saltstates = {0}'.format(saltstates))
-        # print('    salt_results_log = {0}'.format(salt_results_log))
-        # print('    salt_debug_log = {0}'.format(salt_debug_log))
-        # print('    sourceiss3bucket = {0}'.format(sourceiss3bucket))
-        # print('    entenv = {0}'.format(entenv))
-        # print('    oupath = {0}'.format(oupath))
-        # for key, value in kwargs.items():
-        #     print('    {0} = {1}'.format(key, value))
+        try:
+            self._install_package()
+        except:
+            exceptionhandler('Installation of Salt package failed.')
 
-        yum_pkgs = [
-            'policycoreutils-python',
-            'selinux-policy-targeted',
-            'salt-minion',
-        ]
-        minionconf = '/etc/salt/minion'
-        saltcall = '/usr/bin/salt-call'
-        saltsrv = '/srv/salt'
-        saltfileroot = os.sep.join((saltsrv, 'states'))
-        saltformularoot = os.sep.join((saltsrv, 'formulas'))
-        saltpillarroot = os.sep.join((saltsrv, 'pillar'))
-        saltbaseenv = os.sep.join((saltfileroot, 'base'))
-        self.create_working_dir('/usr/tmp/', 'saltinstall-')
-        salt_results_logfile = config['salt_results_log'] or os.sep.join((self.workingdir,
-                                    'saltcall.results.log'))
-        salt_debug_logfile = config['salt_debug_log'] or os.sep.join((self.workingdir,
-                                    'saltcall.debug.log'))
-        saltcall_arguments = '--out yaml --out-file {0} --return local --log-file ' \
-                             '{1} --log-file-level debug' \
-                             .format(salt_results_logfile, salt_debug_logfile)
 
-        #Install salt via yum or git
-        if 'yum' == config['saltinstallmethod'].lower():
-            # Install salt-minion and dependencies for selinux python modules
-            # TODO: Install salt version specified by `saltversion`
-            install_result = os.system('yum -y install {0}'.format(' '.join(yum_pkgs)))
-            print('Return code of yum install: {0}'.format(install_result))
-        elif 'git' == config['saltinstallmethod'].lower():
-            # Check required params for the `git` install method
-            if not config['saltbootstrapsource']:
-                error_message = 'Detected `git` as the install method, but the ' \
-                                'required parameter `saltbootstrapsource` was not ' \
-                                'provided.'
-                raise SystemError(error_message)
-            if not config['saltgitrepo']:
-                error_message = 'Detected `git` as the install method, but the ' \
-                                'required parameter `saltgitrepo` was not ' \
-                                'provided.'
-                raise SystemError(error_message)
-            #Download the salt bootstrap installer and install salt
-            saltbootstrapfilename = config['saltbootstrapsource'].split('/')[-1]
-            saltbootstrapfile = '/'.join((self.workingdir, saltbootstrapfilename))
-            self.download_file(config['saltbootstrapsource'], saltbootstrapfile)
-            if config['saltversion']:
-                os.system('sh {0} -g {1} git {2}'.format(saltbootstrapfile,
-                                                         config['saltgitrepo'], config['saltversion']))
-            else:
-                os.system('sh {0} -g {1}'.format(saltbootstrapfile, config['saltgitrepo']))
-        else:
-            raise SystemError('Unrecognized `saltinstallmethod`! Must set '
-                              '`saltinstallmethod` to either "git" or "yum".')
-
-        #Create directories for salt content and formulas
-        for saltdir in [saltfileroot, saltbaseenv, saltformularoot]:
-            try:
-                os.makedirs(saltdir)
-            except OSError:
-                if not os.path.isdir(saltdir):
-                    raise
-
-        #Download and extract the salt content specified by saltcontentsource
-        if config['saltcontentsource']:
-            saltcontentfilename = config['saltcontentsource'].split('/')[-1]
-            saltcontentfile = os.sep.join((self.workingdir, saltcontentfilename))
-            self.download_file(config['saltcontentsource'], saltcontentfile, sourceiss3bucket)
-            self.extract_contents(filepath=saltcontentfile,
-                             to_directory=saltsrv)
+        if self.config['saltcontentsource']:
+            self.saltcontentfilename = self.config['saltcontentsource'].split('/')[-1]
+            self.saltcontentfile = os.sep.join((self.workingdir, self.saltcontentfilename))
+            self.download_file(self.config['saltcontentsource'], self.saltcontentfile, self.sourceiss3bucket)
+            self.extract_contents(filepath=self.saltcontentfile,
+                             to_directory=self.saltsrv)
 
         #Download and extract any salt formulas specified in formulastoinclude
         saltformulaconf = []
