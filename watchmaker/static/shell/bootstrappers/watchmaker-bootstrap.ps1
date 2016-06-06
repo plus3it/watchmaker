@@ -14,8 +14,8 @@
 #-----------------------------------------------------------------------------#
 
 # Urls for obtaining Python MSI and WatchMaker.
-[CmdLetBinding()] 
-Param( 
+[CmdLetBinding()]
+Param(
   [String]$Version = "2.7.11"
   ,
   [String]$PythonUrl = ""
@@ -69,7 +69,7 @@ function Reset_Env_Variable {
   foreach( $Level in "Machine", "User" ) {
     [Environment]::GetEnvironmentVariables($Level).GetEnumerator() | % {
       # For Path variables, append the new values, if they're not already in there.
-      if($_.Name -match 'Path$') { 
+      if($_.Name -match 'Path$') {
         $_.Value = ($((Get-Content "Env:$($_.Name)") + ";$($_.Value)") -split ';' | Select -unique) -join ';'
       }
       $_
@@ -96,7 +96,7 @@ function Get-Python {
   # pip install --upgrade pip : Do not use this as it throws an access denied error.
   easy_install -U pip
   Log "Upgraded pip using easy_intall."
-  
+
   # Install Python dependencies for WatchMaker -- actually, WatcMaker will take care of these.
   #pip install boto3
   #pip install pyyaml
