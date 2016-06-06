@@ -1,6 +1,6 @@
 Linux:
     Yum:
-        ScriptSource: https://systemprep.s3.amazonaws.com/ContentScripts/systemprep-linuxyumrepoinstall.py
+        ScriptSource: https://s3.amazonaws.com/systemprep/ContentScripts/systemprep-linuxyumrepoinstall.py
         Parameters:
             yumrepomap:
                 #Amazon:
@@ -28,20 +28,21 @@ Linux:
 
 
     Salt:
-        ScriptSource: https://systemprep.s3.amazonaws.com/ContentScripts/SystemPrep-LinuxSaltInstall.py
+        ScriptSource: https://s3.amazonaws.com/systemprep/ContentScripts/SystemPrep-LinuxSaltInstall.py
         Parameters:
             entenv: False
             formulastoinclude:
-                - https://salt-formulas.s3.amazonaws.com/systemprep-formula-master.zip
-                - https://salt-formulas.s3.amazonaws.com/ash-linux-formula-master.zip
-                - https://salt-formulas.s3.amazonaws.com/join-domain-formula-master.zip
-                - https://salt-formulas.s3.amazonaws.com/scc-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
             formulaterminationstrings:
                 - -master
                 - -latest
             salt_debug_log: /var/log/saltcall.debug.log
             salt_results_log: /var/log/saltcall.results.log
-            saltcontentsource: https://systemprep-content.s3.amazonaws.com/linux/salt/salt-content.zip
+            saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
             saltinstallmethod: yum
             saltstates: Highstate
             sourceiss3bucket: False
@@ -49,18 +50,22 @@ Linux:
             saltgitrepo: None
             saltversion: None
             oupath: None
+            computername: None
 
 Windows:
     Salt:
-        ScriptSource: https://systemprep.s3.amazonaws.com/SystemContent/Windows/Salt/SystemPrep-WindowsSaltInstall.ps1
+        ScriptSource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/SystemPrep-WindowsSaltInstall.ps1
         Parameters:
             saltworkingdir: "'{0}\\SystemContent\\Windows\\Salt'.format(workingdir)"
-            saltcontentsource: https://systemprep.s3.amazonaws.com/SystemContent/Windows/Salt/salt-content.zip
+            saltcontentsource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/salt-content.zip
             formulastoinclude:
-                - https://salt-formulas.s3.amazonaws.com/systemprep-formula-master.zip
-                - https://salt-formulas.s3.amazonaws.com/ash-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/ash-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
             formulaterminationstrings:
                 - -latest
             ashrole: MemberServer
+            computername: None
             entenv: False
+            oupath: None
             saltstates: Highstate
