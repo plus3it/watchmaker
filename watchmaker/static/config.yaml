@@ -1,6 +1,5 @@
 Linux:
     Yum:
-        ScriptSource: https://s3.amazonaws.com/systemprep/ContentScripts/systemprep-linuxyumrepoinstall.py
         Parameters:
             yumrepomap:
                 #Amazon:
@@ -28,7 +27,6 @@ Linux:
 
 
     Salt:
-        ScriptSource: https://s3.amazonaws.com/systemprep/ContentScripts/SystemPrep-LinuxSaltInstall.py
         Parameters:
             entenv: False
             formulastoinclude:
@@ -54,7 +52,6 @@ Linux:
 
 Windows:
     Salt:
-        ScriptSource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/SystemPrep-WindowsSaltInstall.ps1
         Parameters:
             saltworkingdir: "'{0}\\SystemContent\\Windows\\Salt'.format(workingdir)"
             saltcontentsource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/salt-content.zip

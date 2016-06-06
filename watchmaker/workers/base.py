@@ -98,11 +98,6 @@ class Yum(LinuxManager):
             logging.fatal('The configuration passed was not properly formed JSON.  Execution Halted.')
             sys.exit(1)
 
-        scriptname = __file__
-        logging.info('+' * 80)
-        logging.info('Entering script -- {0}'.format(scriptname))
-        logging.info('Printing parameters...')
-
         if 'yumrepomap' in config and config['yumrepomap']:
             self._repo(config)
         else:
@@ -125,9 +120,6 @@ class Yum(LinuxManager):
                     self.download_file(url, repofile)
             else:
                 logging.debug('{0} NOT in {1} or all'.format(repo['dist'], self.dist))
-
-        logging.info('{0} complete!'.format(scriptname))
-        logging.info('-' * 80)
 
 
 class Salt(LinuxManager):
