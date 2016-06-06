@@ -1,4 +1,25 @@
-<powershell>
+# To properly use this PowerShell script within userdata for a new EC2 image, 
+# be sure to embed it within powershell tags.
+#
+# Other tags that may be of use are persist, which determines whether the 
+# userdata will run after reboots, and script which is for shell scripts to 
+# be run.
+#
+# To obtain the right version of Python and the right version of WatchMaker, 
+# be sure to modify the variables $Version and $WatchMakerUrl.
+
+#-----------------------------------------------------------------------------#
+
+# Urls for obtaining Python MSI and WatchMaker.
+[CmdLetBinding()] 
+Param( 
+  [String]$Version = "2.7.11"
+  ,
+  [String]$PythonUrl = ""
+  ,
+  [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/test-watchmaker-0.1-py2.6.egg"
+)
+
 # Location to save files.
 $SaveDir = ${env:Temp}
 
@@ -6,16 +27,18 @@ $SaveDir = ${env:Temp}
 $LogFile = "${SaveDir}\UserData_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log"
 Start-Transcript -Path "${SaveDir}\Transcript_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log" -Append
 
-# Urls for obtaining Python MSI and WatchMaker.
-$Version = "2.7.11"
-$PythonMSI = 'python-' + ${Version} + '.msi';
-$PythonUrl = 'https://www.python.org/ftp/python/' + ${Version} + '/' + ${PythonMSI}
-$WatchMakerUrl = 'https://s3.amazonaws.com/dicelab-eggs/test-watchmaker-0.1-py2.6.egg'
+$PythonMSI = "python-" + ${Version} + ".msi";
+if( $PythonUrl -eq "" ) {
+  $PythonUrl = 'https://www.python.org/ftp/python/' + ${Version} + '/' + ${PythonMSI}
+}
 
 function Log {
   Param( [string]$Message )
   $Message | Out-File -Filepath $LogFile -Append
 }
+
+Log "Python MSI will be onbtained from ${PythonUrl}."
+Log "WatchMakaer will be installed from ${WatchMakerUrl}."
 
 function Install-Python-MSI {
   Param( [string]$PathToMSI )
@@ -79,5 +102,3 @@ function Get-Python {
 Get-Python
 Log "UserData PowerShell script finished."
 Stop-Transcript
-</powershell>
-<persist>false</persist>
