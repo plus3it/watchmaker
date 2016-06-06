@@ -145,6 +145,22 @@ class LinuxManager(ManagerBase):
         if rsp != 0:
             exceptionhandler('Installing Salt from Yum has failed!')
 
+    def _install_from_yum(self, packages):
+        """
+
+        :param packages:
+        :return:
+        """
+        rsp = subprocess.call(['sudo','yum', '-y', 'install', ' '.join(packages)])
+        logging.debug(packages)
+        logging.debug('Return code of yum install: {0}'.format(rsp))
+
+        if rsp != 0:
+            exceptionhandler('Installing Salt from Yum has failed!')
+
+    def _install_from_git(self, repos):
+        pass
+
     def download_file(self, url, filename, sourceiss3bucket=False):
         """
 
