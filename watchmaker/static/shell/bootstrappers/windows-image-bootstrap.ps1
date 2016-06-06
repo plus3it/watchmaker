@@ -6,10 +6,11 @@ $SaveDir = ${env:Temp}
 $LogFile = "${SaveDir}\UserData_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log"
 Start-Transcript -Path "${SaveDir}\Transcript_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log" -Append
 
-# Url for obtaining Python MSI.
+# Urls for obtaining Python MSI and WatchMaker.
 $Version = "2.7.11"
 $PythonMSI = 'python-' + ${Version} + '.msi';
 $PythonUrl = 'https://www.python.org/ftp/python/' + ${Version} + '/' + ${PythonMSI}
+$WatchMakerUrl = 'https://s3.amazonaws.com/dicelab-eggs/test-watchmaker-0.1-py2.6.egg'
 
 function Log {
   Param( [string]$Message )
@@ -71,6 +72,8 @@ function Get-Python {
   #pip install boto3
   #pip install pyyaml
   #Log "Added Python modules, boto3 and pyyaml, for WatchMaker."
+  easy_install ${WatchMakerUrl}
+  Log "Installed Plus3's WatchMaker and dependencies for Python."
 }
 
 Get-Python
