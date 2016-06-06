@@ -4,6 +4,7 @@ set -e
 # Set default option values
 ENTENV="${SYSTEMPREP_ENVIRONMENT:-False}"
 OUPATH="${SYSTEMPREP_OUPATH}"
+COMPUTERNAME="${SYSTEMPREP_COMPUTERNAME}"
 NOREBOOT="${SYSTEMPREP_NOREBOOT:-False}"
 SALTSTATES="${SYSTEMPREP_SALTSTATES:-Highstate}"
 AWSREGION="${SYSTEMPREP_AWSREGION:-us-east-1}"
@@ -54,6 +55,8 @@ print_usage()
       The OU in which to place the instance when joining the domain. If unset
       or an empty string, the framework will use the value from the enterprise
       environment pillar. Default is "".
+  -t|--computername|\SYSTEMPREP_COMPUTERNAME
+      The computername/hostname to apply to the system.
   -n|--noreboot|\$SYSTEMPREP_NOREBOOT
       Prevent the system from rebooting upon successful application of the
       framework.
@@ -77,7 +80,7 @@ print_usage()
   -m|--systemprep-master-url|\$SYSTEMPREP_MASTER_URL
       URL hosting the SystemPrep Master Script.
         <string>:   Default is "https://s3.amazonaws.com/systemprep/MasterScripts/systemprep-linuxmaster.py".
-  -c|--systemprep-config-url|\$SYSTEMPREP_CONFIG_URL
+  -f|--systemprep-config-url|\$SYSTEMPREP_CONFIG_URL
         <string>:   Default is "https://s3.amazonaws.com/systemprep/MasterScripts/config.yaml".
   -o|--salt-content-url|\$SYSTEMPREP_SALTCONTENT_URL
       URL hosting an archive zip file of the salt content to apply to the
@@ -185,11 +188,11 @@ update_trust() {
 }  # --- end of function update_trust  ---
 
 # Parse command-line parameters
-SHORTOPTS="e:p:ns:g:c:r:m:o:uh"
+SHORTOPTS="e:p:ns:g:c:f:r:m:o:t:uh"
 LONGOPTS=(
     "environment:,oupath:,noreboot,saltstates:,region:,awscli-url:,"
     "root-cert-url:,systemprep-master-url:,salt-content-url:,use-s3-utils,"
-    "help")
+    "systemprep-config-url:,computername:,help")
 LONGOPTS_STRING=$(IFS=$''; echo "${LONGOPTS[*]}")
 ARGS=$(getopt \
     --options "${SHORTOPTS}" \
@@ -224,7 +227,7 @@ while [ true ]; do
             shift; ROOT_CERT_URL="${1}" ;;
         -m|--systemprep-master-url)
             shift; SYSTEMPREPMASTERSCRIPTSOURCE="${1}" ;;
-        -c|--systemprep-config-url)
+        -f|--systemprep-config-url)
             shift; SYSTEMPREPCONFIG="${1}" ;;
         -o|--salt-content-url)
             shift; SALTCONTENTURL="${1}" ;;
@@ -242,16 +245,6 @@ while [ true ]; do
     esac
     shift
 done
-
-# Setup params to pass to the master script
-SYSTEMPREPPARAMS=(
-    "SaltStates=${SALTSTATES}"
-    "SaltContentSource=${SALTCONTENTURL}"
-    "NoReboot=${NOREBOOT}"
-    "EntEnv=${ENTENV}"
-    "OuPath=${OUPATH}"
-    "SourceIsS3Bucket=${SOURCEISS3BUCKET}"
-    "AwsRegion=${AWSREGION}")
 
 if [[ ! -d ${LOGDIR} ]]; then
     echo "Creating ${LOGDIR} directory." 2>&1 | ${LOGGER} -i -t "${LOGTAG}" -s 2> /dev/console
@@ -323,9 +316,6 @@ else
     curl -L -O -s -S ${SYSTEMPREPCONFIG}
 fi
 
-
-PARAMSTRING=$( IFS=$' '; echo "${SYSTEMPREPPARAMS[*]}" )
-
 # Temporarily suppress rsyslog rate limiting
 if [[ -e /etc/rsyslog.conf ]]; then
     echo "Temporarily disabling rsyslog rate limiting"
@@ -358,6 +348,7 @@ echo "   SaltContentSource=${SALTCONTENTURL}"
 echo "   NoReboot=${NOREBOOT}"
 echo "   EntEnv=${ENTENV}"
 echo "   OuPath=${OUPATH}"
+echo "   ComputerName=${COMPUTERNAME}"
 echo "   SourceIsS3Bucket=${SOURCEISS3BUCKET}"
 echo "   AwsRegion=${AWSREGION}"
 
@@ -368,6 +359,7 @@ python ${SCRIPTFULLPATH} \
     "NoReboot=${NOREBOOT}" \
     "EntEnv=${ENTENV}" \
     "OuPath=${OUPATH}" \
+    "ComputerName=${COMPUTERNAME}" \
     "SourceIsS3Bucket=${SOURCEISS3BUCKET}" \
     "AwsRegion=${AWSREGION}" || \
     error_result=$?  # If error, capture the exit code
