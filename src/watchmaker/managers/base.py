@@ -1,16 +1,15 @@
 import os
 import abc
+import boto
 import shutil
 import logging
 import tarfile
 import zipfile
+import urllib2
 import tempfile
 import subprocess
 
-import boto3
-import urllib2
-from botocore.client import ClientError
-from watchmaker import SystemFatal as exceptionhandler
+from watchmaker.exceptions import SystemFatal as exceptionhandler
 
 
 class ManagerBase(object):
@@ -20,9 +19,8 @@ class ManagerBase(object):
     """
     __metaclass__ = abc.ABCMeta
 
-    @staticmethod
     @abc.abstractmethod
-    def _get_s3_file(url, bucket_name, key_name, destination):
+    def _get_s3_file(self, url, bucket_name, key_name, destination):
         """
 
 
@@ -32,36 +30,7 @@ class ManagerBase(object):
         :param destination:
         :return:
         """
-        try:
-            s3 = boto3.resource("s3")
-            s3.meta.client.head_bucket(Bucket=bucket_name)
-            s3.Object(bucket_name, key_name).download_file(destination)
-        except ClientError as exc:
-            logging.error('Bucket does not exist.\n'
-                          'bucket = {0}\n'
-                          'Exception: {1}'
-                          .format(bucket_name, exc))
-            raise SystemError('Bucket does not exist.\n'
-                              'bucket = {0}\n'
-                              'Exception: {1}'
-                              .format(bucket_name, exc))
-        except Exception as exc:
-            logging.error('Unable to download file from S3 bucket.\n'
-                          'url = {0}\n'
-                          'bucket = {1}\n'
-                          'key = {2}\n'
-                          'file = {3}\n'
-                          'Exception: {4}'
-                          .format(url, bucket_name, key_name,
-                                  destination, exc))
-            raise SystemError('Unable to download file from S3 bucket.\n'
-                              'url = {0}\n'
-                              'bucket = {1}\n'
-                              'key = {2}\n'
-                              'file = {3}\n'
-                              'Exception: {4}'
-                              .format(url, bucket_name, key_name,
-                                      destination, exc))
+
         return
 
     @abc.abstractmethod
@@ -115,16 +84,37 @@ class ManagerBase(object):
 
 class LinuxManager(ManagerBase):
     """
-    This is the base import for Linux Managers.  It serves as a foundational class to keep OS consistency.
+    This is the base import for Linux Managers.  It serves as a foundational class to keep OS consitency.
 
     """
 
     def __init__(self):
         self.workingdir = None
 
-    @staticmethod
-    def _get_s3_file(url, bucket_name, key_name, destination):
-        super(LinuxManager, LinuxManager)._get_s3_file(url, bucket_name, key_name, destination)
+    def _get_s3_file(self, url, bucket_name, key_name, destination):
+
+        try:
+            conn = boto.connect_s3()
+            bucket = conn.get_bucket(bucket_name)
+            key = bucket.get_key(key_name)
+            key.get_contents_to_filename(filename=destination)
+        except Exception as exc:
+            logging.error('Unable to download file from S3 bucket.\n'
+                          'url = {0}\n'
+                          'bucket = {1}\n'
+                          'key = {2}\n'
+                          'file = {3}\n'
+                          'Exception: {4}'
+                          .format(url, bucket_name, key_name,
+                                  destination, exc))
+            raise SystemError('Unable to download file from S3 bucket.\n'
+                              'url = {0}\n'
+                              'bucket = {1}\n'
+                              'key = {2}\n'
+                              'file = {3}\n'
+                              'Exception: {4}'
+                              .format(url, bucket_name, key_name,
+                                      destination, exc))
 
     def _install_from_yum(self, packages):
         """
@@ -133,7 +123,7 @@ class LinuxManager(ManagerBase):
         :return:
         """
 
-        yum_cmd = ['sudo', 'yum', '-y', 'install']
+        yum_cmd = ['sudo','yum', '-y', 'install']
         if isinstance(packages, list):
             yum_cmd.extend(packages)
         else:
@@ -144,22 +134,6 @@ class LinuxManager(ManagerBase):
 
         if rsp != 0:
             exceptionhandler('Installing Salt from Yum has failed!')
-
-    def _install_from_yum(self, packages):
-        """
-
-        :param packages:
-        :return:
-        """
-        rsp = subprocess.call(['sudo','yum', '-y', 'install', ' '.join(packages)])
-        logging.debug(packages)
-        logging.debug('Return code of yum install: {0}'.format(rsp))
-
-        if rsp != 0:
-            exceptionhandler('Installing Salt from Yum has failed!')
-
-    def _install_from_git(self, repos):
-        pass
 
     def download_file(self, url, filename, sourceiss3bucket=False):
         """
@@ -184,50 +158,55 @@ class LinuxManager(ManagerBase):
             logging.debug('key_name: {0}'.format(key_name))
 
             try:
-                s3 = boto3.resource("s3")
-                s3.meta.client.head_bucket(Bucket=bucket_name)
-                s3.Object(bucket_name, key_name).download_file(filename)
-            except (NameError, ClientError):
-                logging.error('NameError: {0}'.format(ClientError))
+                conn = boto.connect_s3()
+                bucket = conn.get_bucket(bucket_name)
+                key = bucket.get_key(key_name)
+                key.get_contents_to_filename(filename=filename)
+            except (NameError, boto.exception.BotoClientError):
+                logging.error('NameError: {0}'.format(boto.exception.BotoClientError))
                 try:
                     bucket_name = url.split('/')[2].split('.')[0]
                     key_name = '/'.join(url.split('/')[3:])
-                    s3 = boto3.resource("s3")
-                    s3.meta.client.head_bucket(Bucket=bucket_name)
-                    s3.Object(bucket_name, key_name).download_file(filename)
+                    bucket = conn.get_bucket(bucket_name)
+                    key = bucket.get_key(key_name)
+                    key.get_contents_to_filename(filename=filename)
                 except Exception as exc:
                     logging.error('Unable to download file from S3 bucket.\n'
-                                  'url = {0}\n'
-                                  'bucket = {1}\n'
-                                  'key = {2}\n'
-                                  'file = {3}\n'
-                                  'Exception: {4}'
-                                  .format(url, bucket_name, key_name, filename, exc))
+                                      'url = {0}\n'
+                                      'bucket = {1}\n'
+                                      'key = {2}\n'
+                                      'file = {3}\n'
+                                      'Exception: {4}'
+                                      .format(url, bucket_name, key_name,
+                                              filename, exc))
                     raise SystemError('Unable to download file from S3 bucket.\n'
                                       'url = {0}\n'
                                       'bucket = {1}\n'
                                       'key = {2}\n'
                                       'file = {3}\n'
                                       'Exception: {4}'
-                                      .format(url, bucket_name, key_name, filename, exc))
+                                      .format(url, bucket_name, key_name,
+                                              filename, exc))
             except Exception as exc:
                 logging.error('Unable to download file from S3 bucket.\n'
-                              'url = {0}\n'
-                              'bucket = {1}\n'
-                              'key = {2}\n'
-                              'file = {3}\n'
-                              'Exception: {4}'
-                              .format(url, bucket_name, key_name, filename, exc))
+                                  'url = {0}\n'
+                                  'bucket = {1}\n'
+                                  'key = {2}\n'
+                                  'file = {3}\n'
+                                  'Exception: {4}'
+                                  .format(url, bucket_name, key_name,
+                                          filename, exc))
                 raise SystemError('Unable to download file from S3 bucket.\n'
                                   'url = {0}\n'
                                   'bucket = {1}\n'
                                   'key = {2}\n'
                                   'file = {3}\n'
                                   'Exception: {4}'
-                                  .format(url, bucket_name, key_name, filename, exc))
+                                  .format(url, bucket_name, key_name,
+                                          filename, exc))
             logging.debug('Downloaded file from S3 bucket -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
+                  '    url      = {0}\n'
+                  '    filename = {1}'.format(url, filename))
         else:
             try:
                 response = urllib2.urlopen(url)
@@ -236,18 +215,18 @@ class LinuxManager(ManagerBase):
             except Exception as exc:
                 # TODO: Update `except` logic
                 logging.error('Unable to download file from web server.\n'
-                              'url = {0}\n'
-                              'filename = {1}\n'
-                              'Exception: {2}'
-                              .format(url, filename, exc))
+                                  'url = {0}\n'
+                                  'filename = {1}\n'
+                                  'Exception: {2}'
+                                  .format(url, filename, exc))
                 raise SystemError('Unable to download file from web server.\n'
                                   'url = {0}\n'
                                   'filename = {1}\n'
                                   'Exception: {2}'
                                   .format(url, filename, exc))
             logging.debug('Downloaded file from web server -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
+                  '    url      = {0}\n'
+                  '    filename = {1}'.format(url, filename))
 
     def call_process(self, cmd):
         if not isinstance(cmd, list):
@@ -263,9 +242,9 @@ class LinuxManager(ManagerBase):
         The directory will have a random 5 character string appended to `dirprefix`.
         Returns the path to the working directory.
 
-        :param prefix:
         :rtype : str
         :param basedir: str, the directory in which to create the working directory
+        :param dirprefix: str, prefix to prepend to the working directory
         """
 
         logging.info('Creating a working directory.')
@@ -275,7 +254,7 @@ class LinuxManager(ManagerBase):
             workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception as exc:
             exceptionhandler('Could not create workingdir in {0}.\n'
-                             'Exception: {1}'.format(basedir, exc))
+                              'Exception: {1}'.format(basedir, exc))
         logging.debug('Working directory: {0}'.format(workingdir))
         self.workingdir = workingdir
         os.umask(original_umask)
@@ -303,14 +282,10 @@ class LinuxManager(ManagerBase):
         """
         Extracts a compressed file to the specified directory.
         Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
-        :param create_dir:
         :param filepath: str, path to the compressed file
         :param to_directory: str, path to the target directory
         :raise ValueError: error raised if file extension is not supported
         """
-        opener = None
-        mode = None
-
         if filepath.endswith('.zip'):
             logging.debug('File Type: zip')
             opener, mode = zipfile.ZipFile, 'r'
@@ -324,9 +299,10 @@ class LinuxManager(ManagerBase):
             exceptionhandler('{0}'.format('Could not extract `"{0}`" as no appropriate '
                              'extractor is found'.format(filepath)))
 
+
         if create_dir:
             to_directory = os.sep.join((to_directory,
-                                        '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])))
+                                               '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])))
 
         try:
             os.makedirs(to_directory)
@@ -353,16 +329,14 @@ class LinuxManager(ManagerBase):
 
 class WindowsManager(ManagerBase):
     """
-    This is the base import for Windows Managers.  It serves as a foundational class to keep OS consistency.
 
     """
 
     def __init__(self):
-        self.workingdir = None
+        pass
 
-    @staticmethod
-    def _get_s3_file(url, bucket_name, key_name, destination):
-        super(WindowsManager, WindowsManager)._get_s3_file(url, bucket_name, key_name, destination)
+    def _get_s3_file(self, url, bucket_name, key_name, destination):
+        pass
 
     def download_file(self, url, filename, sourceiss3bucket):
         pass
