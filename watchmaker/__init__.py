@@ -67,7 +67,8 @@ class Prepare(object):
         """
 
         if self.config_path and not os.path.exists(self.config_path):
-            self.logger.warning('User supplied config {0} does not exist.  Using the default config.'.format(self.config_path))
+            self.logger.warning('User supplied config {0} does not exist.  '
+                                'Using the default config.'.format(self.config_path))
             self.config_path = self.default_config
         elif not self.config_path:
             self.logger.warning('User did not supply a config.  Using the default config.')
@@ -80,6 +81,8 @@ class Prepare(object):
 
         if data:
             self.config = yaml.load(data)
+        else:
+            logging.debug('No data to load.')
 
     def _linux_paths(self):
         """
