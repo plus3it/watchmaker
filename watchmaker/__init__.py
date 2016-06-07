@@ -80,6 +80,8 @@ class Prepare(object):
 
         if data:
             self.config = yaml.load(data)
+        else:
+            logging.debug('No data to load.')
 
     def _linux_paths(self):
         """

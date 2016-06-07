@@ -57,6 +57,10 @@ class ManagerBase(object):
         return
 
     @abc.abstractmethod
+    def call_process(self, cmd):
+        return
+
+    @abc.abstractmethod
     def cleanup(self):
         """
 
@@ -118,15 +122,18 @@ class LinuxManager(ManagerBase):
         :param packages:
         :return:
         """
-        rsp = subprocess.call(['sudo','yum', '-y', 'install', ' '.join(packages)])
+
+        yum_cmd = ['sudo','yum', '-y', 'install']
+        if isinstance(packages, list):
+            yum_cmd.extend(packages)
+        else:
+            yum_cmd.append(packages)
+        rsp = subprocess.call(yum_cmd)
         logging.debug(packages)
         logging.debug('Return code of yum install: {0}'.format(rsp))
 
         if rsp != 0:
             exceptionhandler('Installing Salt from Yum has failed!')
-
-    def _install_from_git(self, repos):
-        pass
 
     def download_file(self, url, filename, sourceiss3bucket=False):
         """
@@ -221,6 +228,14 @@ class LinuxManager(ManagerBase):
                   '    url      = {0}\n'
                   '    filename = {1}'.format(url, filename))
 
+    def call_process(self, cmd):
+        if not isinstance(cmd, list):
+            exceptionhandler('Command is not a list.\n{0}'.format(str(cmd)))
+        rsp = subprocess.call(cmd)
+
+        if rsp != 0:
+            exceptionhandler('Command failed.\n{0}'.format(str(cmd)))
+
     def create_working_dir(self, basedir, prefix):
         """
         Creates a directory in `basedir` with a prefix of `dirprefix`.
@@ -234,14 +249,15 @@ class LinuxManager(ManagerBase):
 
         logging.info('Creating a working directory.')
         workingdir = None
+        original_umask = os.umask(0)
         try:
             workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception as exc:
-            # TODO: Update `except` logic
-            raise SystemError('Could not create workingdir in {0}.\n'
+            exceptionhandler('Could not create workingdir in {0}.\n'
                               'Exception: {1}'.format(basedir, exc))
         logging.debug('Working directory: {0}'.format(workingdir))
         self.workingdir = workingdir
+        os.umask(original_umask)
 
     def cleanup(self):
         """
@@ -323,6 +339,9 @@ class WindowsManager(ManagerBase):
         pass
 
     def download_file(self, url, filename, sourceiss3bucket):
+        pass
+
+    def call_process(self, cmd):
         pass
 
     def create_working_dir(self, basedir, prefix):
