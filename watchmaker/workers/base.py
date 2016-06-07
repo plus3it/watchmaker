@@ -7,7 +7,6 @@ import shutil
 import logging
 import subprocess
 
-from yaml import Dumper
 from watchmaker.managers.base import LinuxManager
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
