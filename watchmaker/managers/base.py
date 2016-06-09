@@ -19,8 +19,9 @@ class ManagerBase(object):
     """
     __metaclass__ = abc.ABCMeta
 
+    @staticmethod
     @abc.abstractmethod
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
+    def _get_s3_file(url, bucket_name, key_name, destination):
         """
 
 
@@ -30,7 +31,28 @@ class ManagerBase(object):
         :param destination:
         :return:
         """
-
+        try:
+            conn = boto.connect_s3()
+            bucket = conn.get_bucket(bucket_name)
+            key = bucket.get_key(key_name)
+            key.get_contents_to_filename(filename=destination)
+        except Exception as exc:
+            logging.error('Unable to download file from S3 bucket.\n'
+                          'url = {0}\n'
+                          'bucket = {1}\n'
+                          'key = {2}\n'
+                          'file = {3}\n'
+                          'Exception: {4}'
+                          .format(url, bucket_name, key_name,
+                                  destination, exc))
+            raise SystemError('Unable to download file from S3 bucket.\n'
+                              'url = {0}\n'
+                              'bucket = {1}\n'
+                              'key = {2}\n'
+                              'file = {3}\n'
+                              'Exception: {4}'
+                              .format(url, bucket_name, key_name,
+                                      destination, exc))
         return
 
     @abc.abstractmethod
@@ -84,37 +106,16 @@ class ManagerBase(object):
 
 class LinuxManager(ManagerBase):
     """
-    This is the base import for Linux Managers.  It serves as a foundational class to keep OS consitency.
+    This is the base import for Linux Managers.  It serves as a foundational class to keep OS consistency.
 
     """
 
     def __init__(self):
         self.workingdir = None
 
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
-
-        try:
-            conn = boto.connect_s3()
-            bucket = conn.get_bucket(bucket_name)
-            key = bucket.get_key(key_name)
-            key.get_contents_to_filename(filename=destination)
-        except Exception as exc:
-            logging.error('Unable to download file from S3 bucket.\n'
-                          'url = {0}\n'
-                          'bucket = {1}\n'
-                          'key = {2}\n'
-                          'file = {3}\n'
-                          'Exception: {4}'
-                          .format(url, bucket_name, key_name,
-                                  destination, exc))
-            raise SystemError('Unable to download file from S3 bucket.\n'
-                              'url = {0}\n'
-                              'bucket = {1}\n'
-                              'key = {2}\n'
-                              'file = {3}\n'
-                              'Exception: {4}'
-                              .format(url, bucket_name, key_name,
-                                      destination, exc))
+    @staticmethod
+    def _get_s3_file(url, bucket_name, key_name, destination):
+        super(LinuxManager, LinuxManager)._get_s3_file(url, bucket_name, key_name, destination)
 
     def _install_from_yum(self, packages):
         """
@@ -328,14 +329,16 @@ class LinuxManager(ManagerBase):
 
 class WindowsManager(ManagerBase):
     """
+    This is the base import for Windows Managers.  It serves as a foundational class to keep OS consistency.
 
     """
 
     def __init__(self):
-        pass
+        self.workingdir = None
 
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
-        pass
+    @staticmethod
+    def _get_s3_file(url, bucket_name, key_name, destination):
+        super(WindowsManager, WindowsManager)._get_s3_file(url, bucket_name, key_name, destination)
 
     def download_file(self, url, filename, sourceiss3bucket):
         pass
