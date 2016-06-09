@@ -7,6 +7,7 @@ import tarfile
 import zipfile
 import urllib2
 import tempfile
+import subprocess
 
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
@@ -53,6 +54,10 @@ class ManagerBase(object):
         :return:
         """
 
+        return
+
+    @abc.abstractmethod
+    def call_process(self, cmd):
         return
 
     @abc.abstractmethod
@@ -111,6 +116,25 @@ class LinuxManager(ManagerBase):
                               .format(url, bucket_name, key_name,
                                       destination, exc))
 
+    def _install_from_yum(self, packages):
+        """
+
+        :param packages:
+        :return:
+        """
+
+        yum_cmd = ['sudo', 'yum', '-y', 'install']
+        if isinstance(packages, list):
+            yum_cmd.extend(packages)
+        else:
+            yum_cmd.append(packages)
+        rsp = subprocess.call(yum_cmd)
+        logging.debug(packages)
+        logging.debug('Return code of yum install: {0}'.format(rsp))
+
+        if rsp != 0:
+            exceptionhandler('Installing Salt from Yum has failed!')
+
     def download_file(self, url, filename, sourceiss3bucket=False):
         """
 
@@ -148,41 +172,37 @@ class LinuxManager(ManagerBase):
                     key.get_contents_to_filename(filename=filename)
                 except Exception as exc:
                     logging.error('Unable to download file from S3 bucket.\n'
-                                      'url = {0}\n'
-                                      'bucket = {1}\n'
-                                      'key = {2}\n'
-                                      'file = {3}\n'
-                                      'Exception: {4}'
-                                      .format(url, bucket_name, key_name,
-                                              filename, exc))
+                                  'url = {0}\n'
+                                  'bucket = {1}\n'
+                                  'key = {2}\n'
+                                  'file = {3}\n'
+                                  'Exception: {4}'
+                                  .format(url, bucket_name, key_name, filename, exc))
                     raise SystemError('Unable to download file from S3 bucket.\n'
                                       'url = {0}\n'
                                       'bucket = {1}\n'
                                       'key = {2}\n'
                                       'file = {3}\n'
                                       'Exception: {4}'
-                                      .format(url, bucket_name, key_name,
-                                              filename, exc))
+                                      .format(url, bucket_name, key_name, filename, exc))
             except Exception as exc:
                 logging.error('Unable to download file from S3 bucket.\n'
-                                  'url = {0}\n'
-                                  'bucket = {1}\n'
-                                  'key = {2}\n'
-                                  'file = {3}\n'
-                                  'Exception: {4}'
-                                  .format(url, bucket_name, key_name,
-                                          filename, exc))
+                              'url = {0}\n'
+                              'bucket = {1}\n'
+                              'key = {2}\n'
+                              'file = {3}\n'
+                              'Exception: {4}'
+                              .format(url, bucket_name, key_name, filename, exc))
                 raise SystemError('Unable to download file from S3 bucket.\n'
                                   'url = {0}\n'
                                   'bucket = {1}\n'
                                   'key = {2}\n'
                                   'file = {3}\n'
                                   'Exception: {4}'
-                                  .format(url, bucket_name, key_name,
-                                          filename, exc))
+                                  .format(url, bucket_name, key_name, filename, exc))
             logging.debug('Downloaded file from S3 bucket -- \n'
-                  '    url      = {0}\n'
-                  '    filename = {1}'.format(url, filename))
+                          '    url      = {0}\n'
+                          '    filename = {1}'.format(url, filename))
         else:
             try:
                 response = urllib2.urlopen(url)
@@ -191,18 +211,26 @@ class LinuxManager(ManagerBase):
             except Exception as exc:
                 # TODO: Update `except` logic
                 logging.error('Unable to download file from web server.\n'
-                                  'url = {0}\n'
-                                  'filename = {1}\n'
-                                  'Exception: {2}'
-                                  .format(url, filename, exc))
+                              'url = {0}\n'
+                              'filename = {1}\n'
+                              'Exception: {2}'
+                              .format(url, filename, exc))
                 raise SystemError('Unable to download file from web server.\n'
                                   'url = {0}\n'
                                   'filename = {1}\n'
                                   'Exception: {2}'
                                   .format(url, filename, exc))
             logging.debug('Downloaded file from web server -- \n'
-                  '    url      = {0}\n'
-                  '    filename = {1}'.format(url, filename))
+                          '    url      = {0}\n'
+                          '    filename = {1}'.format(url, filename))
+
+    def call_process(self, cmd):
+        if not isinstance(cmd, list):
+            exceptionhandler('Command is not a list.\n{0}'.format(str(cmd)))
+        rsp = subprocess.call(cmd)
+
+        if rsp != 0:
+            exceptionhandler('Command failed.\n{0}'.format(str(cmd)))
 
     def create_working_dir(self, basedir, prefix):
         """
@@ -210,21 +238,22 @@ class LinuxManager(ManagerBase):
         The directory will have a random 5 character string appended to `dirprefix`.
         Returns the path to the working directory.
 
+        :param prefix:
         :rtype : str
         :param basedir: str, the directory in which to create the working directory
-        :param dirprefix: str, prefix to prepend to the working directory
         """
 
         logging.info('Creating a working directory.')
         workingdir = None
+        original_umask = os.umask(0)
         try:
             workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception as exc:
-            # TODO: Update `except` logic
-            raise SystemError('Could not create workingdir in {0}.\n'
-                              'Exception: {1}'.format(basedir, exc))
+            exceptionhandler('Could not create workingdir in {0}.\n'
+                             'Exception: {1}'.format(basedir, exc))
         logging.debug('Working directory: {0}'.format(workingdir))
         self.workingdir = workingdir
+        os.umask(original_umask)
 
     def cleanup(self):
         """
@@ -249,10 +278,14 @@ class LinuxManager(ManagerBase):
         """
         Extracts a compressed file to the specified directory.
         Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
+        :param create_dir:
         :param filepath: str, path to the compressed file
         :param to_directory: str, path to the target directory
         :raise ValueError: error raised if file extension is not supported
         """
+        opener = None
+        mode = None
+
         if filepath.endswith('.zip'):
             logging.debug('File Type: zip')
             opener, mode = zipfile.ZipFile, 'r'
@@ -266,10 +299,9 @@ class LinuxManager(ManagerBase):
             exceptionhandler('{0}'.format('Could not extract `"{0}`" as no appropriate '
                              'extractor is found'.format(filepath)))
 
-
         if create_dir:
             to_directory = os.sep.join((to_directory,
-                                               '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])))
+                                        '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])))
 
         try:
             os.makedirs(to_directory)
@@ -306,6 +338,9 @@ class WindowsManager(ManagerBase):
         pass
 
     def download_file(self, url, filename, sourceiss3bucket):
+        pass
+
+    def call_process(self, cmd):
         pass
 
     def create_working_dir(self, basedir, prefix):
