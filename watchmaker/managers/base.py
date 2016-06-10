@@ -1,6 +1,6 @@
 import os
 import abc
-import boto
+import boto3
 import shutil
 import logging
 import tarfile
@@ -9,6 +9,7 @@ import urllib2
 import tempfile
 import subprocess
 
+from botocore.client import ClientError
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
 
@@ -113,9 +114,38 @@ class LinuxManager(ManagerBase):
     def __init__(self):
         self.workingdir = None
 
-    @staticmethod
-    def _get_s3_file(url, bucket_name, key_name, destination):
-        super(LinuxManager, LinuxManager)._get_s3_file(url, bucket_name, key_name, destination)
+    def _get_s3_file(self, url, bucket_name, key_name, destination):
+
+        try:
+            s3 = boto3.resource("s3")
+            s3.meta.client.head_bucket(Bucket=bucket_name)
+            s3.Object(bucket_name, key_name).download_file(destination)
+        except ClientError as exc:
+            logging.error('Bucket does not exist.\n'
+                          'bucket = {0}\n'
+                          'Exception: {1}'
+                          .format(bucket_name, exc))
+            raise SystemError('Bucket does not exist.\n'
+                              'bucket = {0}\n'
+                              'Exception: {1}'
+                              .format(bucket_name, exc))
+        except Exception as exc:
+            logging.error('Unable to download file from S3 bucket.\n'
+                          'url = {0}\n'
+                          'bucket = {1}\n'
+                          'key = {2}\n'
+                          'file = {3}\n'
+                          'Exception: {4}'
+                          .format(url, bucket_name, key_name,
+                                  destination, exc))
+            raise SystemError('Unable to download file from S3 bucket.\n'
+                              'url = {0}\n'
+                              'bucket = {1}\n'
+                              'key = {2}\n'
+                              'file = {3}\n'
+                              'Exception: {4}'
+                              .format(url, bucket_name, key_name,
+                                      destination, exc))
 
     def _install_from_yum(self, packages):
         """
@@ -159,18 +189,17 @@ class LinuxManager(ManagerBase):
             logging.debug('key_name: {0}'.format(key_name))
 
             try:
-                conn = boto.connect_s3()
-                bucket = conn.get_bucket(bucket_name)
-                key = bucket.get_key(key_name)
-                key.get_contents_to_filename(filename=filename)
-            except (NameError, boto.exception.BotoClientError):
-                logging.error('NameError: {0}'.format(boto.exception.BotoClientError))
+                s3 = boto3.resource("s3")
+                s3.meta.client.head_bucket(Bucket=bucket_name)
+                s3.Object(bucket_name, key_name).download_file(filename)
+            except (NameError, ClientError):
+                logging.error('NameError: {0}'.format(ClientError))
                 try:
                     bucket_name = url.split('/')[2].split('.')[0]
                     key_name = '/'.join(url.split('/')[3:])
-                    bucket = conn.get_bucket(bucket_name)
-                    key = bucket.get_key(key_name)
-                    key.get_contents_to_filename(filename=filename)
+                    s3 = boto3.resource("s3")
+                    s3.meta.client.head_bucket(Bucket=bucket_name)
+                    s3.Object(bucket_name, key_name).download_file(filename)
                 except Exception as exc:
                     logging.error('Unable to download file from S3 bucket.\n'
                                   'url = {0}\n'
