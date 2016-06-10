@@ -23,6 +23,7 @@ Param(
   [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/test-watchmaker-0.1-py2.6.egg"
   ,
   [String]$RootCertUrl
+  [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/watchmaker-0.1-py2.7.egg"
 )
 
 # Location to save files.
@@ -102,6 +103,9 @@ function Get-Python {
   #Log "Added Python modules, boto3 and pyyaml, for WatchMaker."
   easy_install ${WatchMakerUrl}
   Log "Installed Plus3's WatchMaker and dependencies for Python."
+
+  python -c 'import watchmaker'
+  Log "Tested that watchmaker installed."
 }
 
 function Import-509Certificate {
