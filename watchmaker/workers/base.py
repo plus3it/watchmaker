@@ -163,12 +163,12 @@ class Salt(LinuxManager):
     def _configuration_validation(self):
         if 'git' == self.config['saltinstallmethod'].lower():
             if not self.config['saltbootstrapsource']:
-                logging.error('Detected `git` as the install method, but the required parameter `saltbootstrapsource`',
+                logging.error('Detected `git` as the install method, but the required parameter `saltbootstrapsource` '
                               'was not provided.')
             else:
                 self.saltbootstrapfilename = self.config['saltbootstrapsource'].split('/')[-1]
             if not self.config['saltgitrepo']:
-                logging.error('Detected `git` as the install method, but the required parameter `saltgitrepo` was not ',
+                logging.error('Detected `git` as the install method, but the required parameter `saltgitrepo` was not '
                               'provided.')
 
     def _install_package(self):
