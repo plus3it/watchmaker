@@ -48,3 +48,6 @@ Temporary Items
 
 #pycharm dirs
 .idea
+
+# mkdocs documentation
+site/
