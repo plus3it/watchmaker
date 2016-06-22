@@ -6,11 +6,9 @@ Watchmaker is a Python package with dependencies on PyYAML (to process a configu
 
 More complex configuration management (CM) environments may be layered in as part of the preparation framework. Salt is used to demonstrate how to layer in a CM tool and build a functioning system hardening capability, but feel free to use any CM tool of your choice.
 # Documentation
-For information on installing and using Watchmaker, go to:
- ```
- readthedocs web page on watchmaker
- ```
- Alternatively, you can install mkdocs with
+For information on installing and using Watchmaker, go to https://watchmaker.readthedocs.io.
+
+Alternatively, you can install mkdocs with
  ```
  pip install mkdocs
  ```
