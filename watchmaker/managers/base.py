@@ -12,7 +12,6 @@ import subprocess
 from botocore.client import ClientError
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
-
 class ManagerBase(object):
     """
     Base class for operating system managers.  This forces all child classes to require consistent methods
