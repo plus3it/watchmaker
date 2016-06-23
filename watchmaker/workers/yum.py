@@ -1,11 +1,7 @@
-import os
 import re
 import sys
 import json
-import yaml
-import shutil
 import logging
-import subprocess
 
 from watchmaker.managers.base import LinuxManager
 from watchmaker.exceptions import SystemFatal as exceptionhandler
