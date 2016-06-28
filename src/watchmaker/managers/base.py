@@ -1,16 +1,16 @@
 import os
 import abc
+import boto3
 import shutil
 import logging
 import tarfile
 import zipfile
+import urllib2
 import tempfile
 import subprocess
 
-import boto3
-import urllib2
 from botocore.client import ClientError
-from watchmaker import SystemFatal as exceptionhandler
+from watchmaker.exceptions import SystemFatal as exceptionhandler
 
 
 class ManagerBase(object):
@@ -19,6 +19,10 @@ class ManagerBase(object):
     for coherence.
     """
     __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def __init__(self):
+        return
 
     @staticmethod
     @abc.abstractmethod
@@ -32,6 +36,7 @@ class ManagerBase(object):
         :param destination:
         :return:
         """
+
         try:
             s3 = boto3.resource("s3")
             s3.meta.client.head_bucket(Bucket=bucket_name)
@@ -62,7 +67,6 @@ class ManagerBase(object):
                               'Exception: {4}'
                               .format(url, bucket_name, key_name,
                                       destination, exc))
-        return
 
     @abc.abstractmethod
     def download_file(self, url, filename, sourceiss3bucket):
@@ -120,11 +124,8 @@ class LinuxManager(ManagerBase):
     """
 
     def __init__(self):
+        super(LinuxManager, self).__init__()
         self.workingdir = None
-
-    @staticmethod
-    def _get_s3_file(url, bucket_name, key_name, destination):
-        super(LinuxManager, LinuxManager)._get_s3_file(url, bucket_name, key_name, destination)
 
     def _install_from_yum(self, packages):
         """
@@ -342,11 +343,9 @@ class WindowsManager(ManagerBase):
     """
 
     def __init__(self):
+        super(WindowsManager, self).__init__()
         self.workingdir = None
 
-    @staticmethod
-    def _get_s3_file(url, bucket_name, key_name, destination):
-        super(WindowsManager, WindowsManager)._get_s3_file(url, bucket_name, key_name, destination)
 
     def download_file(self, url, filename, sourceiss3bucket):
         pass
