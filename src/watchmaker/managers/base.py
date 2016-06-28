@@ -153,7 +153,6 @@ class LinuxManager(ManagerBase):
         :param sourceiss3bucket:
         :return:
         """
-        conn = None
 
         logging.debug('Downloading: {0}'.format(url))
         logging.debug('Destination: {0}'.format(filename))

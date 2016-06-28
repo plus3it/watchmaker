@@ -3,6 +3,7 @@ import json
 from watchmaker.workers import Salt, Yum
 from watchmaker.managers.base import WorkersManagerBase, LinuxManager, WindowsManager
 
+
 class LinuxWorkersManager(WorkersManagerBase):
     """
 

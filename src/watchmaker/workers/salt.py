@@ -117,9 +117,9 @@ class Salt(LinuxManager):
         file_roots += [str(x) for x in formulas_conf]
 
         self.salt_conf = {'file_roots':
-                              {'base': file_roots},
+                          {'base': file_roots},
                           'pillar_roots':
-                              {'base': [str(self.saltpillarroot)]}
+                          {'base': [str(self.saltpillarroot)]}
                           }
 
         with open(os.path.join(self.salt_confpath, 'minion.d', 'watchmaker.conf'), 'w') as f:

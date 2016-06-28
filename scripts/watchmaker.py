@@ -12,10 +12,10 @@ if __name__ == "__main__":
     parser.add_argument('--log-path', dest='log_path', default='.')
 
     systemprep = Prepare(parser.parse_args().noreboot,
-                            parser.parse_args().sourceiss3bucket,
-                            parser.parse_args().config,
-                            parser.parse_args().logger,
-                            parser.parse_args().log_path)
+                         parser.parse_args().sourceiss3bucket,
+                         parser.parse_args().config,
+                         parser.parse_args().logger,
+                         parser.parse_args().log_path)
     systemprep.install_system()
 
 
