@@ -50,6 +50,9 @@ Linux:
             oupath: None
             computername: None
 
+  Custom:
+
+
 Windows:
     Salt:
         Parameters:
@@ -66,3 +69,4 @@ Windows:
             entenv: False
             oupath: None
             saltstates: Highstate
+
