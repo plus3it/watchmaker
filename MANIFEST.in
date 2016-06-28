@@ -1,1 +1,1 @@
-include watchmaker/static/*
+include src/watchmaker/static/*
