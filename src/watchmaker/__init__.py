@@ -7,8 +7,7 @@ import subprocess
 import yaml
 from watchmaker.managers import LinuxWorkersManager, WindowsWorkersManager
 from watchmaker import SystemFatal as exceptionhandler
-from watchmaker as static
-
+from watchmaker import static
 
 class Prepare(object):
     """
