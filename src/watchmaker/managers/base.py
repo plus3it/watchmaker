@@ -25,8 +25,7 @@ class ManagerBase(object):
         return
 
     @staticmethod
-    @abc.abstractmethod
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
+    def _get_s3_file(url, bucket_name, key_name, destination):
         """
 
 
