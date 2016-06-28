@@ -7,6 +7,9 @@
 #
 # To obtain the right version of Python and the right version of WatchMaker, 
 # be sure to modify the variables $Version and $WatchMakerUrl.
+#
+# In addition, pass in a string to a root certificate host url to have
+# certificates downloaded and imported into this Windows instance.
 
 #-----------------------------------------------------------------------------#
 
@@ -17,6 +20,9 @@ Param(
   ,
   [String]$PythonUrl = ""
   ,
+  [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/test-watchmaker-0.1-py2.6.egg"
+  ,
+  [String]$RootCertUrl
   [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/watchmaker-0.1-py2.7.egg"
 )
 
@@ -38,10 +44,10 @@ function Log {
 }
 
 Log "Python MSI will be onbtained from ${PythonUrl}."
-Log "WatchMakaer will be installed from ${WatchMakerUrl}."
+Log "WatchMaker will be installed from ${WatchMakerUrl}."
 
 function Install-Python-MSI {
-  Param( [string]$PathToMSI )
+  Param( [String]$PathToMSI )
   $Arguments = @()
   $Arguments += "/i"
   $Arguments += "`"${PathToMSI}`""
@@ -51,7 +57,7 @@ function Install-Python-MSI {
 }
 
 function Download-File {
-  Param( [string]$Url, [string]$SavePath )
+  Param( [String]$Url, [String]$SavePath )
   # Download a file, if it doesn't already exist.
   if( !(Test-Path ${SavePath} -PathType Leaf) ) {
     (New-Object System.Net.WebClient).DownloadFile(${Url}, ${SavePath})
@@ -100,6 +106,55 @@ function Get-Python {
 
   python -c 'import watchmaker'
   Log "Tested that watchmaker installed."
+}
+
+function Import-509Certificate {
+  Param( [String]$CertFile, [String]$CertRootStore, [String]$CertStore )
+  Log "Importing certificate: ${CertFile} ..."
+  $Pfx = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+  $Pfx.import($CertFile)
+  $Store = New-Object System.Security.Cryptography.X509Certificates.x509Store(${CertStore},${CertRootStore})
+  $Store.open("MaxAllowed")
+  $Store.add($Pfx)
+  $Store.close()
+}
+
+function Install-RootCerts {
+  Param( [string]$RootCertHost )
+  $CertDir = "${SaveDir}\certs-$(${RootCertHost}.Replace(`"http://`",`"`"))"
+  Log "Creating directory for certificates at ${CertDir}."
+  New-Item -Path ${CertDir} -ItemType "directory" -Force -WarningAction SilentlyContinue | Out-Null
+
+  Log "... Checking for certificates hosted by: ${RootCertHost} ..."
+  $CertUrls = @((Invoke-WebRequest -Uri ${RootCertHost}).Links | Where { $_.href -Match ".*\.cer$" } | ForEach-Object { ${RootCertHost} + $_.href })
+
+  Log "... Found $(${CertUrls}.count) certificate(s) ..."
+  Log "... Downloading and importing certificate(s) ..."
+  foreach( $UrlItem in ${CertUrls} ) {
+    $CertFile = "${CertDir}\$((${UrlItem}.split('/'))[-1])"
+    Download-File ${UrlItem} ${CertFile}
+    if( ${CertFile} -Match ".*root.*" ) {
+      Import-509Certificate ${CertFile} "LocalMachine" "Root"
+      Log "Imported trusted root CA certificate: ${CertFile}"
+    } else {
+      Import-509Certificate ${CertFile} "LocalMachine" "CA"
+      Log "Imported intermediate CA certificate: ${CertFile}"
+    }
+  }
+  Log "... Completed import of certificate(s) from: ${RootCertHost}"
+}
+
+Log "Root certificates host url is ${RootCertUrl}."
+if( ${RootCertUrl} ) {
+  # Download and install the root certificates.
+  try {
+    Install-RootCerts ${RootCertUrl}
+  } catch {
+    # Unhandled exception, log an error and exit.
+    Log "ERROR: Encountered a problem installing root certificates."
+    Stop-Transcript
+    Throw
+  }
 }
 
 Get-Python
