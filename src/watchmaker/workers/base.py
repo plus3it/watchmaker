@@ -9,4 +9,3 @@ class Generic(LinuxManager):
 
     def __init__(self):
         super(Generic, self).__init__()
-

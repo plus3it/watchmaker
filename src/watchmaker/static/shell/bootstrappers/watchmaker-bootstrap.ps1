@@ -23,7 +23,6 @@ Param(
   [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/test-watchmaker-0.1-py2.6.egg"
   ,
   [String]$RootCertUrl
-  [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/watchmaker-0.1-py2.7.egg"
 )
 
 # Location to save files.
@@ -44,17 +43,10 @@ function Log {
 }
 
 Log "Python MSI will be onbtained from ${PythonUrl}."
-<<<<<<< .merge_file_a08172
-Log "WatchMakaer will be installed from ${WatchMakerUrl}."
-
-function Install-Python-MSI {
-  Param( [string]$PathToMSI )
-=======
 Log "WatchMaker will be installed from ${WatchMakerUrl}."
 
 function Install-Python-MSI {
   Param( [String]$PathToMSI )
->>>>>>> .merge_file_a05284
   $Arguments = @()
   $Arguments += "/i"
   $Arguments += "`"${PathToMSI}`""
@@ -64,11 +56,7 @@ function Install-Python-MSI {
 }
 
 function Download-File {
-<<<<<<< .merge_file_a08172
   Param( [string]$Url, [string]$SavePath )
-=======
-  Param( [String]$Url, [String]$SavePath )
->>>>>>> .merge_file_a05284
   # Download a file, if it doesn't already exist.
   if( !(Test-Path ${SavePath} -PathType Leaf) ) {
     (New-Object System.Net.WebClient).DownloadFile(${Url}, ${SavePath})
@@ -107,7 +95,7 @@ function Get-Python {
   # pip install --upgrade pip : Do not use this as it throws an access denied error.
   easy_install -U pip
   Log "Upgraded pip using easy_intall."
-  
+
   # Install Python dependencies for WatchMaker -- actually, WatcMaker will take care of these.
   #pip install boto3
   #pip install pyyaml
