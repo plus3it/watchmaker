@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from src.watchmaker import Prepare
+from watchmaker import Prepare
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
