@@ -5,11 +5,9 @@ import platform
 import subprocess
 
 import yaml
-
-from watchmaker.managers.workers import LinuxWorkersManager, WindowsWorkersManager
+from watchmaker.managers import LinuxWorkersManager, WindowsWorkersManager
 from watchmaker.exceptions import SystemFatal as exceptionhandler
-import watchmaker.static as static
-
+from watchmaker import static
 
 class Prepare(object):
     """
@@ -141,7 +139,7 @@ class Prepare(object):
                 os.makedirs(self.system_params['workingdir'])
         except Exception as exc:
             self.logger.fatal('Could not create a directory in {0}.\n'
-                              'Exception: {0}'.format(self.system_params['prepdir'], exc))
+                              'Exception: {1}'.format(self.system_params['prepdir'], exc))
             exceptionhandler(exc)
 
     def _get_scripts_to_execute(self):

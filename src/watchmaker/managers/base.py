@@ -12,6 +12,7 @@ import subprocess
 from botocore.client import ClientError
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
+
 class ManagerBase(object):
     """
     Base class for operating system managers.  This forces all child classes to require consistent methods
@@ -20,7 +21,11 @@ class ManagerBase(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
+    def __init__(self):
+        return
+
+    @staticmethod
+    def _get_s3_file(url, bucket_name, key_name, destination):
         """
 
 
@@ -31,7 +36,36 @@ class ManagerBase(object):
         :return:
         """
 
-        return
+        try:
+            s3 = boto3.resource("s3")
+            s3.meta.client.head_bucket(Bucket=bucket_name)
+            s3.Object(bucket_name, key_name).download_file(destination)
+        except ClientError as exc:
+            logging.error('Bucket does not exist.\n'
+                          'bucket = {0}\n'
+                          'Exception: {1}'
+                          .format(bucket_name, exc))
+            raise SystemError('Bucket does not exist.\n'
+                              'bucket = {0}\n'
+                              'Exception: {1}'
+                              .format(bucket_name, exc))
+        except Exception as exc:
+            logging.error('Unable to download file from S3 bucket.\n'
+                          'url = {0}\n'
+                          'bucket = {1}\n'
+                          'key = {2}\n'
+                          'file = {3}\n'
+                          'Exception: {4}'
+                          .format(url, bucket_name, key_name,
+                                  destination, exc))
+            raise SystemError('Unable to download file from S3 bucket.\n'
+                              'url = {0}\n'
+                              'bucket = {1}\n'
+                              'key = {2}\n'
+                              'file = {3}\n'
+                              'Exception: {4}'
+                              .format(url, bucket_name, key_name,
+                                      destination, exc))
 
     @abc.abstractmethod
     def download_file(self, url, filename, sourceiss3bucket):
@@ -89,40 +123,8 @@ class LinuxManager(ManagerBase):
     """
 
     def __init__(self):
+        super(LinuxManager, self).__init__()
         self.workingdir = None
-
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
-
-        try:
-            s3 = boto3.resource("s3")
-            s3.meta.client.head_bucket(Bucket=bucket_name)
-            s3.Object(bucket_name, key_name).download_file(destination)
-        except ClientError as exc:
-            logging.error('Bucket does not exist.\n'
-                          'bucket = {0}\n'
-                          'Exception: {1}'
-                          .format(bucket_name, exc))
-            raise SystemError('Bucket does not exist.\n'
-                              'bucket = {0}\n'
-                              'Exception: {1}'
-                              .format(bucket_name, exc))
-        except Exception as exc:
-            logging.error('Unable to download file from S3 bucket.\n'
-                          'url = {0}\n'
-                          'bucket = {1}\n'
-                          'key = {2}\n'
-                          'file = {3}\n'
-                          'Exception: {4}'
-                          .format(url, bucket_name, key_name,
-                                  destination, exc))
-            raise SystemError('Unable to download file from S3 bucket.\n'
-                              'url = {0}\n'
-                              'bucket = {1}\n'
-                              'key = {2}\n'
-                              'file = {3}\n'
-                              'Exception: {4}'
-                              .format(url, bucket_name, key_name,
-                                      destination, exc))
 
     def _install_from_yum(self, packages):
         """
@@ -151,7 +153,6 @@ class LinuxManager(ManagerBase):
         :param sourceiss3bucket:
         :return:
         """
-        conn = None
 
         logging.debug('Downloading: {0}'.format(url))
         logging.debug('Destination: {0}'.format(filename))
@@ -339,10 +340,8 @@ class WindowsManager(ManagerBase):
     """
 
     def __init__(self):
-        pass
-
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
-        pass
+        super(WindowsManager, self).__init__()
+        self.workingdir = None
 
     def download_file(self, url, filename, sourceiss3bucket):
         pass
