@@ -6,10 +6,12 @@
 # be run.
 #
 # To obtain the right version of Python and the right version of WatchMaker, 
-# be sure to modify the variables $Version and $WatchMakerUrl.
+# be sure to modify the variables $Version and $WatchmakerUrl. You want
+# $WatchmakerUrl to be pointing to a Python egg file.
 #
 # In addition, pass in a string to a root certificate host url to have
-# certificates downloaded and imported into this Windows instance.
+# certificates downloaded and imported into this Windows instance. It is
+# not required, however.
 
 #-----------------------------------------------------------------------------#
 
@@ -20,7 +22,7 @@ Param(
   ,
   [String]$PythonUrl = ""
   ,
-  [String]$WatchMakerUrl = "https://s3.amazonaws.com/dicelab-eggs/test-watchmaker-0.1-py2.6.egg"
+  [String]$WatchmakerUrl = ""
   ,
   [String]$RootCertUrl
 )
@@ -96,15 +98,15 @@ function Get-Python {
   easy_install -U pip
   Log "Upgraded pip using easy_intall."
 
-  # Install Python dependencies for WatchMaker -- actually, WatcMaker will take care of these.
-  #pip install boto3
-  #pip install pyyaml
-  #Log "Added Python modules, boto3 and pyyaml, for WatchMaker."
-  easy_install ${WatchMakerUrl}
-  Log "Installed Plus3's WatchMaker and dependencies for Python."
-
-  python -c 'import watchmaker'
-  Log "Tested that watchmaker installed."
+  # Install Watchmaker and Python dependencies for WatchMaker.
+  if( ${WatchmakerUrl} -eq "" ) {
+    Log "The url to a Watchmaker Python egg is empty, unable to install Watchmaker."
+  } else {
+    easy_install ${WatchmakerUrl}
+    Log "Installed Plus3's Watchmaker and dependencies for Python."
+    python -c 'import watchmaker'
+    Log "Tested that Watchmaker installed."
+  }
 }
 
 function Import-509Certificate {
