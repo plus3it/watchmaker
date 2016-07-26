@@ -69,4 +69,3 @@ Windows:
             entenv: False
             oupath: None
             saltstates: Highstate
-

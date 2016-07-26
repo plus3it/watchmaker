@@ -1,11 +1,11 @@
 # To properly use this PowerShell script within userdata for a new EC2 image, 
 # be sure to embed it within powershell tags.
 #
-# Other tags that may be of use are persist, which determines whether the 
-# userdata will run after reboots, and script which is for shell scripts to 
+# Other tags that may be of use are persist, which determines whether the
+# userdata will run after reboots, and script which is for shell scripts to
 # be run.
 #
-# To obtain the right version of Python and the right version of WatchMaker, 
+# To obtain the right version of Python and the right version of WatchMaker,
 # be sure to modify the variables $Version and $WatchmakerUrl. You want
 # $WatchmakerUrl to be pointing to a Python egg file.
 #
@@ -16,8 +16,8 @@
 #-----------------------------------------------------------------------------#
 
 # Urls for obtaining Python MSI and WatchMaker.
-[CmdLetBinding()] 
-Param( 
+[CmdLetBinding()]
+Param(
   [String]$Version = "2.7.11"
   ,
   [String]$PythonUrl = ""
@@ -70,7 +70,7 @@ function Reset_Env_Variable {
   foreach( $Level in "Machine", "User" ) {
     [Environment]::GetEnvironmentVariables($Level).GetEnumerator() | % {
       # For Path variables, append the new values, if they're not already in there.
-      if($_.Name -match 'Path$') { 
+      if($_.Name -match 'Path$') {
         $_.Value = ($((Get-Content "Env:$($_.Name)") + ";$($_.Value)") -split ';' | Select -unique) -join ';'
       }
       $_

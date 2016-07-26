@@ -5,9 +5,13 @@ import platform
 import subprocess
 
 import yaml
-from watchmaker.managers import LinuxWorkersManager, WindowsWorkersManager
-from watchmaker.exceptions import SystemFatal as exceptionhandler
+
 from watchmaker import static
+from watchmaker.exceptions import SystemFatal as exceptionhandler
+from watchmaker.managers.workers import LinuxWorkersManager
+from watchmaker.managers.workers import WindowsWorkersManager
+
+__version__ = '0.0.1'
 
 class Prepare(object):
     """

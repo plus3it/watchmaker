@@ -1,12 +1,12 @@
-import os
 import json
-import shutil
 import logging
+import os
+import shutil
 import subprocess
-
 import yaml
-from watchmaker.managers.base import LinuxManager
+
 from watchmaker.exceptions import SystemFatal as exceptionhandler
+from watchmaker.managers.base import LinuxManager
 
 
 class Salt(LinuxManager):

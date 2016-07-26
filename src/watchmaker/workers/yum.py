@@ -1,7 +1,7 @@
-import re
-import sys
 import json
 import logging
+import re
+import sys
 
 from watchmaker.managers.base import LinuxManager
 

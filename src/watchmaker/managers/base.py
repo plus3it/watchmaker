@@ -1,15 +1,16 @@
-import os
 import abc
-import boto3
-import shutil
 import logging
-import tarfile
-import zipfile
-import urllib2
-import tempfile
+import os
+import shutil
 import subprocess
+import tarfile
+import tempfile
+import zipfile
 
+import boto3
 from botocore.client import ClientError
+
+from six.moves import urllib
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
 
@@ -213,7 +214,7 @@ class LinuxManager(ManagerBase):
                           '    filename = {1}'.format(url, filename))
         else:
             try:
-                response = urllib2.urlopen(url)
+                response = urllib.request.urlopen(url)
                 with open(filename, 'wb') as outfile:
                     shutil.copyfileobj(response, outfile)
             except Exception as exc:

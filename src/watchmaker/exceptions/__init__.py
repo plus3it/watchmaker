@@ -1,5 +1,5 @@
-import sys
 import logging
+import sys
 
 def SystemFatal(msg):
     """
@@ -13,4 +13,3 @@ def SystemFatal(msg):
     print(msg)
     logging.error(msg)
     sys.exit(1)
-
