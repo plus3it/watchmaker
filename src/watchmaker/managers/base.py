@@ -16,8 +16,9 @@ from watchmaker.exceptions import SystemFatal as exceptionhandler
 
 class ManagerBase(object):
     """
-    Base class for operating system managers.  This forces all child classes to require consistent methods
-    for coherence.
+    Base class for operating system managers.
+
+    Forces all child classes to require consistent methods for coherence.
     """
     __metaclass__ = abc.ABCMeta
 
@@ -119,8 +120,9 @@ class ManagerBase(object):
 
 class LinuxManager(ManagerBase):
     """
-    This is the base import for Linux Managers.  It serves as a foundational class to keep OS consitency.
+    Base class for Linux Managers.
 
+    Serves as a foundational class to keep OS consitency.
     """
 
     def __init__(self):
@@ -180,35 +182,42 @@ class LinuxManager(ManagerBase):
                     s3.meta.client.head_bucket(Bucket=bucket_name)
                     s3.Object(bucket_name, key_name).download_file(filename)
                 except Exception as exc:
-                    logging.error('Unable to download file from S3 bucket.\n'
-                                  'url = {0}\n'
-                                  'bucket = {1}\n'
-                                  'key = {2}\n'
-                                  'file = {3}\n'
-                                  'Exception: {4}'
-                                  .format(url, bucket_name, key_name, filename, exc))
-                    raise SystemError('Unable to download file from S3 bucket.\n'
-                                      'url = {0}\n'
-                                      'bucket = {1}\n'
-                                      'key = {2}\n'
-                                      'file = {3}\n'
-                                      'Exception: {4}'
-                                      .format(url, bucket_name, key_name, filename, exc))
+                    logging.error(
+                        'Unable to download file from S3 bucket.\n'
+                        'url = {0}\n'
+                        'bucket = {1}\n'
+                        'key = {2}\n'
+                        'file = {3}\n'
+                        'Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc)
+                    )
+                    raise SystemError(
+                        'Unable to download file from S3 bucket.\n'
+                        'url = {0}\n'
+                        'bucket = {1}\n'
+                        'key = {2}\n'
+                        'file = {3}\n'
+                        'Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc)
+                    )
             except Exception as exc:
-                logging.error('Unable to download file from S3 bucket.\n'
-                              'url = {0}\n'
-                              'bucket = {1}\n'
-                              'key = {2}\n'
-                              'file = {3}\n'
-                              'Exception: {4}'
-                              .format(url, bucket_name, key_name, filename, exc))
-                raise SystemError('Unable to download file from S3 bucket.\n'
-                                  'url = {0}\n'
-                                  'bucket = {1}\n'
-                                  'key = {2}\n'
-                                  'file = {3}\n'
-                                  'Exception: {4}'
-                                  .format(url, bucket_name, key_name, filename, exc))
+                logging.error(
+                    'Unable to download file from S3 bucket.\n'
+                    'url = {0}\n'
+                    'bucket = {1}\n'
+                    'key = {2}\n'
+                    'file = {3}\n'
+                    'Exception: {4}'
+                    .format(url, bucket_name, key_name, filename, exc)
+                )
+                raise SystemError(
+                    'Unable to download file from S3 bucket.\n'
+                    'url = {0}\n'
+                    'bucket = {1}\n'
+                    'key = {2}\n'
+                    'file = {3}\n'
+                    'Exception: {4}'
+                    .format(url, bucket_name, key_name, filename, exc))
             logging.debug('Downloaded file from S3 bucket -- \n'
                           '    url      = {0}\n'
                           '    filename = {1}'.format(url, filename))
@@ -243,15 +252,14 @@ class LinuxManager(ManagerBase):
 
     def create_working_dir(self, basedir, prefix):
         """
-        Creates a directory in `basedir` with a prefix of `dirprefix`.
-        The directory will have a random 5 character string appended to `dirprefix`.
-        Returns the path to the working directory.
+        Create a directory in `basedir` with a prefix of `prefix`.
 
-        :param prefix:
-        :rtype : str
-        :param basedir: str, the directory in which to create the working directory
+        Args:
+            prefix (str):
+                Prefix to prepend to the working directory
+            basedir (str):
+                The directory in which to create the working directory
         """
-
         logging.info('Creating a working directory.')
         workingdir = None
         original_umask = os.umask(0)
@@ -279,7 +287,8 @@ class LinuxManager(ManagerBase):
             logging.fatal('Cleanup Failed!\nException: {0}'.format(exc))
             exceptionhandler('Cleanup Failed.\nAborting.')
 
-        logging.info('Removed temporary data in working directory -- {0}'.format(self.workingdir))
+        logging.info('Removed temporary data in working directory -- {0}'
+                     .format(self.workingdir))
         logging.info('Exiting cleanup routine...')
         logging.info('-+' * 40)
 
@@ -305,12 +314,14 @@ class LinuxManager(ManagerBase):
             logging.debug('File Type: Bzip Tar')
             opener, mode = tarfile.open, 'r:bz2'
         else:
-            exceptionhandler('{0}'.format('Could not extract `"{0}`" as no appropriate '
-                             'extractor is found'.format(filepath)))
+            exceptionhandler('Could not extract "{0}" as no appropriate '
+                             'extractor is found'.format(filepath))
 
         if create_dir:
-            to_directory = os.sep.join((to_directory,
-                                        '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])))
+            to_directory = os.sep.join((
+                to_directory,
+                '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])
+            ))
 
         try:
             os.makedirs(to_directory)

@@ -28,7 +28,9 @@ class LinuxWorkersManager(WorkersManagerBase):
     def worker_cadence(self):
 
         for script in self.execution_scripts:
-            configuration = json.dumps(self.execution_scripts[script]['Parameters'])
+            configuration = json.dumps(
+                self.execution_scripts[script]['Parameters']
+            )
 
             if 'Yum' in script:
                 yum = Yum()
