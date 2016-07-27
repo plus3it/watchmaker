@@ -1,13 +1,52 @@
 language: python
-
-python:
-  - "2.6"
-  - "2.7"
-  - "3.3"
-  - "3.4"
-
+python: '3.5'
 sudo: false
-
-install: true
-
-script: true
+env:
+  global:
+    - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+    - SEGFAULT_SIGNALS=all
+  matrix:
+    - TOXENV=check
+    - TOXENV=docs
+    - TOXENV=py26,codecov
+    - TOXENV=py27,codecov
+    - TOXENV=py33,codecov
+    - TOXENV=py34,codecov
+    - TOXENV=py35,codecov
+    - TOXENV=pypy,codecov
+before_install:
+  - python --version
+  - uname -a
+  - lsb_release -a
+install:
+  - pip install tox
+  - virtualenv --version
+  - easy_install --version
+  - pip --version
+  - tox --version
+script:
+  - tox -v
+after_failure:
+  - more .tox/log/* | cat
+  - more .tox/*/log/* | cat
+before_cache:
+  - rm -rf $HOME/.cache/pip/log
+cache:
+  directories:
+    - $HOME/.cache/pip
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+# After you create the Github repo and add it to Travis, run the
+# ci/travis_pypi_setup.py script to finish PyPI deployment setup
+deploy:
+  provider: pypi
+  distributions: sdist bdist_wheel
+  user: plus3it
+  password:
+    secure: PLEASE_REPLACE_ME
+  on:
+    tags: true
+    repo: plus3it/watchmaker
+    condition: $TOXENV == py27

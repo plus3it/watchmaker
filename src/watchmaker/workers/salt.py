@@ -1,12 +1,12 @@
-import os
 import json
-import shutil
 import logging
+import os
+import shutil
 import subprocess
-
 import yaml
-from watchmaker.managers.base import LinuxManager
+
 from watchmaker.exceptions import SystemFatal as exceptionhandler
+from watchmaker.managers.base import LinuxManager
 
 
 class Salt(LinuxManager):
@@ -38,20 +38,33 @@ class Salt(LinuxManager):
     def _configuration_validation(self):
         if 'git' == self.config['saltinstallmethod'].lower():
             if not self.config['saltbootstrapsource']:
-                logging.error('Detected `git` as the install method, but the required parameter `saltbootstrapsource` '
-                              'was not provided.')
+                logging.error(
+                    'Detected `git` as the install method, but the required '
+                    'parameter `saltbootstrapsource` was not provided.'
+                )
             else:
-                self.saltbootstrapfilename = self.config['saltbootstrapsource'].split('/')[-1]
+                self.saltbootstrapfilename = self.config[
+                    'saltbootstrapsource'].split('/')[-1]
             if not self.config['saltgitrepo']:
-                logging.error('Detected `git` as the install method, but the required parameter `saltgitrepo` was not '
-                              'provided.')
+                logging.error(
+                    'Detected `git` as the install method, but the required '
+                    'parameter `saltgitrepo` was not provided.'
+                )
 
     def _install_package(self):
         if 'yum' == self.config['saltinstallmethod'].lower():
             self._install_from_yum(self.yum_pkgs)
         elif 'git' == self.config['saltinstallmethod'].lower():
-            self.download_file(self.config['saltbootstrapsource'], self.saltbootstrapfilename)
-            bootstrapcmd = ['sh', self.saltbootstrapfilename, '-g', self.config['saltgitrepo']]
+            self.download_file(
+                self.config['saltbootstrapsource'],
+                self.saltbootstrapfilename
+            )
+            bootstrapcmd = [
+                'sh',
+                self.saltbootstrapfilename,
+                '-g',
+                self.config['saltgitrepo']
+            ]
             if self.config['saltversion']:
                 bootstrapcmd.append('git')
                 bootstrapcmd.append(self.config['saltversion'])
@@ -65,22 +78,34 @@ class Salt(LinuxManager):
             self.formulastoinclude = self.config['formulastoinclude']
 
         if self.config['formulaterminationstrings']:
-            self.formulaterminationstrings = self.config['formulaterminationstrings']
+            self.formulaterminationstrings = self.config[
+                'formulaterminationstrings']
 
         self.sourceiss3bucket = self.config['sourceiss3bucket']
         self.entenv = self.config['entenv']
         self.create_working_dir('/usr/tmp/', 'saltinstall')
 
-        self.salt_results_logfile = self.config['salt_results_log'] or os.sep.join((self.workingdir,
-                                                                                    'saltcall.results.log'))
+        self.salt_results_logfile = self.config['salt_results_log'] or \
+            os.sep.join((
+                self.workingdir,
+                'saltcall.results.log'
+            ))
 
-        self.salt_debug_logfile = self.config['salt_debug_log'] or os.sep.join((self.workingdir,
-                                                                                'saltcall.debug.log'))
+        self.salt_debug_logfile = self.config['salt_debug_log'] or \
+            os.sep.join((
+                self.workingdir,
+                'saltcall.debug.log'
+            ))
 
-        self.saltcall_arguments = ['--out', 'yaml', '--out-file', self.salt_results_logfile, '--return', 'local',
-                                   '--log-file', self.salt_debug_logfile, '--log-file-level', 'debug']
+        self.saltcall_arguments = [
+            '--out', 'yaml', '--out-file', self.salt_results_logfile,
+            '--return', 'local', '--log-file', self.salt_debug_logfile,
+            '--log-file-level', 'debug'
+        ]
 
-        for saltdir in [self.saltfileroot, self.saltbaseenv, self.saltformularoot]:
+        for saltdir in [self.saltfileroot,
+                        self.saltbaseenv,
+                        self.saltformularoot]:
             try:
                 os.makedirs(saltdir)
             except OSError:
@@ -89,10 +114,21 @@ class Salt(LinuxManager):
 
     def _build_salt_formula(self):
         if self.config['saltcontentsource']:
-            self.saltcontentfilename = self.config['saltcontentsource'].split('/')[-1]
-            self.saltcontentfile = os.sep.join((self.workingdir, self.saltcontentfilename))
-            self.download_file(self.config['saltcontentsource'], self.saltcontentfile, self.sourceiss3bucket)
-            self.extract_contents(filepath=self.saltcontentfile, to_directory=self.saltsrv)
+            self.saltcontentfilename = self.config[
+                'saltcontentsource'].split('/')[-1]
+            self.saltcontentfile = os.sep.join((
+                self.workingdir,
+                self.saltcontentfilename
+            ))
+            self.download_file(
+                self.config['saltcontentsource'],
+                self.saltcontentfile,
+                self.sourceiss3bucket
+            )
+            self.extract_contents(
+                filepath=self.saltcontentfile,
+                to_directory=self.saltsrv
+            )
 
         # Download and extract any salt formulas specified in formulastoinclude
         formulas_conf = []
@@ -100,7 +136,10 @@ class Salt(LinuxManager):
             filename = source_loc.split('/')[-1]
             file_loc = os.sep.join((self.workingdir, filename))
             self.download_file(source_loc, file_loc)
-            self.extract_contents(filepath=file_loc, to_directory=self.saltformularoot)
+            self.extract_contents(
+                filepath=file_loc,
+                to_directory=self.saltformularoot
+            )
             filebase = '.'.join(filename.split('.')[:-1])
             formulas_loc = os.sep.join((self.saltformularoot, filebase))
 
@@ -122,20 +161,24 @@ class Salt(LinuxManager):
                           {'base': [str(self.saltpillarroot)]}
                           }
 
-        with open(os.path.join(self.salt_confpath, 'minion.d', 'watchmaker.conf'), 'w') as f:
+        with open(os.path.join(
+                self.salt_confpath,
+                'minion.d',
+                'watchmaker.conf'), 'w') as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
     def install(self, configuration):
         """
-
         :param configuration:
         :return:
         """
-
         try:
             self.config = json.loads(configuration)
         except ValueError:
-            exceptionhandler('The configuration passed was not properly formed JSON.  Execution Halted.')
+            exceptionhandler(
+                'The configuration passed was not properly formed JSON. '
+                'Execution halted.'
+            )
 
         self._configuration_validation()
         self._prepare_for_install()
@@ -144,40 +187,59 @@ class Salt(LinuxManager):
 
         logging.info('Setting grain `systemprep`...')
         ent_env = {'enterprise_environment': str(self.entenv)}
-        cmd = [self.saltcall, '--local', '--retcode-passthrough', 'grains.setval', 'systemprep',
-               str(json.dumps(ent_env))]
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
+            'systemprep', str(json.dumps(ent_env))
+        ]
         self.call_process(cmd)
 
         if self.config['oupath']:
             print('Setting grain `join-domain`...')
             oupath = {'oupath': self.config['oupath']}
-            cmd = [self.saltcall, '--local', '--retcode-passthrough', 'grains.setval', '"join-domain"',
-                   json.dumps(oupath)]
+            cmd = [
+                self.saltcall, '--local', '--retcode-passthrough',
+                'grains.setval', '"join-domain"', json.dumps(oupath)
+            ]
             self.call_process(cmd)
 
         print('Syncing custom salt modules...')
-        cmd = [self.saltcall, '--local', '--retcode-passthrough', 'saltutil.sync_all']
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough',
+            'saltutil.sync_all'
+        ]
         self.call_process(cmd)
 
         if 'none' == self.config['saltstates'].lower():
             print('No States were specified. Will not apply any salt states.')
         else:
             if 'highstate' == self.config['saltstates'].lower():
-                logging.info('Detected the States parameter is set to `highstate`. Applying the salt `"highstate`" '
-                             'to the system.')
-                cmd = [self.saltcall, '--local', '--retcode-passthrough', 'state.highstate']
+                logging.info(
+                    'Detected the States parameter is set to `highstate`. '
+                    'Applying the salt `"highstate`" to the system.'
+                )
+                cmd = [
+                    self.saltcall, '--local', '--retcode-passthrough',
+                    'state.highstate'
+                ]
                 cmd.extend(self.saltcall_arguments)
                 self.call_process(cmd)
 
             else:
-                logging.info('Detected the States parameter is set to: {0}. Applying the user-defined list of states '
-                             'to the system.'.format(self.config['saltstates']))
-                cmd = [self.saltcall, '--local', '--retcode-passthrough', 'state.sls', self.config['saltstates']]
+                logging.info(
+                    'Detected the States parameter is set to: {0}. Applying '
+                    'the user-defined list of states to the system.'
+                    .format(self.config['saltstates']))
+                cmd = [
+                    self.saltcall, '--local', '--retcode-passthrough',
+                    'state.sls', self.config['saltstates']
+                ]
                 cmd.extend(self.saltcall_arguments)
                 self.call_process(cmd)
 
         logging.info(
-            'Salt states all applied successfully! Details are in the log {0}'.format(self.salt_results_logfile))
+            'Salt states all applied successfully! Details are in the log {0}'
+            .format(self.salt_results_logfile)
+        )
 
         if self.workingdir:
             self.cleanup()

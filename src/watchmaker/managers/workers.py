@@ -1,7 +1,10 @@
 import json
 
-from watchmaker.workers import Salt, Yum
-from watchmaker.managers.base import WorkersManagerBase, LinuxManager, WindowsManager
+from watchmaker.managers.base import LinuxManager
+from watchmaker.managers.base import WindowsManager
+from watchmaker.managers.base import WorkersManagerBase
+from watchmaker.workers.salt import Salt
+from watchmaker.workers.yum import Yum
 
 
 class LinuxWorkersManager(WorkersManagerBase):
@@ -25,7 +28,9 @@ class LinuxWorkersManager(WorkersManagerBase):
     def worker_cadence(self):
 
         for script in self.execution_scripts:
-            configuration = json.dumps(self.execution_scripts[script]['Parameters'])
+            configuration = json.dumps(
+                self.execution_scripts[script]['Parameters']
+            )
 
             if 'Yum' in script:
                 yum = Yum()

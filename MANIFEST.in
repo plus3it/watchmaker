@@ -1,1 +1,23 @@
-include src/watchmaker/static/*
+graft ci
+graft docs
+graft examples
+graft scripts
+graft src
+graft tests
+
+include entry_point.sh
+
+include .bumpversion.cfg
+include .coveragerc
+include .editorconfig
+include .isort.cfg
+
+include AUTHORS.md
+include CHANGELOG.md
+include CONTRIBUTING.md
+include LICENSE
+include README.md
+
+include tox.ini .landscape.yml .travis.yml appveyor.yml mkdocs.yml
+
+global-exclude *.py[cod] __pycache__ *.so *.dylib
