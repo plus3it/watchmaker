@@ -9,8 +9,8 @@ import zipfile
 
 import boto3
 from botocore.client import ClientError
-
 from six.moves import urllib
+
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
 

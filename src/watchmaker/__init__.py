@@ -8,8 +8,8 @@ import yaml
 
 from watchmaker import static
 from watchmaker.exceptions import SystemFatal as exceptionhandler
-from watchmaker.managers.workers import LinuxWorkersManager
-from watchmaker.managers.workers import WindowsWorkersManager
+from watchmaker.managers.workers import (LinuxWorkersManager,
+                                         WindowsWorkersManager)
 
 __version__ = '0.0.1'
 
