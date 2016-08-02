@@ -1,5 +1,6 @@
 [![License](https://img.shields.io/github/license/plus3it/watchmaker.svg)](./LICENSE)
-[![Build Status](https://travis-ci.org/plus3it/watchmaker.svg)](https://travis-ci.org/plus3it/watchmaker)
+[![Travis CI Build Status](https://travis-ci.org/plus3it/watchmaker.svg)](https://travis-ci.org/plus3it/watchmaker)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/plus3it/watchmaker?svg=true)](https://ci.appveyor.com/project/plus3it/watchmaker)
 
 # Watchmaker
 
