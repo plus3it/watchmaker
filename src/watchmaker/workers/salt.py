@@ -7,12 +7,12 @@ import subprocess
 import yaml
 
 from watchmaker.exceptions import SystemFatal as exceptionhandler
-from watchmaker.managers.base import LinuxManager
+from watchmaker.managers.base import LinuxManager, WindowsManager
 
 
-class Salt(LinuxManager):
+class SaltLinux(LinuxManager):
     def __init__(self):
-        super(Salt, self).__init__()
+        super(SaltLinux, self).__init__()
         self.salt_conf = None
         self.config = None
         self.workingdir = None
@@ -244,3 +244,29 @@ class Salt(LinuxManager):
 
         if self.workingdir:
             self.cleanup()
+
+
+class SaltWindows(WindowsManager):
+    def __init__(self):
+        super(SaltWindows, self).__init__()
+        self.salt_conf = None
+        self.config = None
+        self.workingdir = None
+        self.formulastoinclude = list()
+        self.formulaterminationstrings = list()
+        self.sourceiss3bucket = None
+
+    def _configuration_validation(self):
+        pass
+
+    def _install_package(self):
+        pass
+
+    def _prepare_for_install(self):
+        pass
+
+    def _build_salt_formula(self):
+        pass
+
+    def install(self, configuration):
+        pass
