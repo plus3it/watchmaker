@@ -2,7 +2,7 @@ import json
 
 from watchmaker.managers.base import (LinuxManager, WindowsManager,
                                       WorkersManagerBase)
-from watchmaker.workers.salt import Salt
+from watchmaker.workers.salt import SaltLinux, SaltWindows
 from watchmaker.workers.yum import Yum
 
 
@@ -35,7 +35,7 @@ class LinuxWorkersManager(WorkersManagerBase):
                 yum = Yum()
                 yum.repo_install(configuration)
             elif 'Salt' in script:
-                salt = Salt()
+                salt = SaltLinux()
                 salt.install(configuration)
 
     def cleanup(self):
@@ -61,7 +61,14 @@ class WindowsWorkersManager(WorkersManagerBase):
         pass
 
     def worker_cadence(self):
-        pass
+        for script in self.execution_scripts:
+            configuration = json.dumps(
+                self.execution_scripts[script]['Parameters']
+            )
+
+            if 'Salt' in script:
+                salt = SaltWindows()
+                salt.install(configuration)
 
     def cleanup(self):
         self.manager.cleanup()
