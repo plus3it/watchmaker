@@ -50,13 +50,13 @@ Linux:
             oupath: None
             computername: None
 
-  Custom:
+    Custom: None
 
 
 Windows:
     Salt:
         Parameters:
-            saltworkingdir: "'{0}\\SystemContent\\Windows\\Salt'.format(workingdir)"
+            saltworkingdir: \SystemContent\Windows\Salt
             saltcontentsource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/salt-content.zip
             formulastoinclude:
                 - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip

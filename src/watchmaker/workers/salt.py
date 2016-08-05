@@ -269,4 +269,14 @@ class SaltWindows(WindowsManager):
         pass
 
     def install(self, configuration):
-        pass
+        """
+        :param configuration:
+        :return:
+        """
+        try:
+            self.config = json.loads(configuration)
+        except ValueError:
+            exceptionhandler(
+                'The configuration passed was not properly formed JSON. '
+                'Execution halted.'
+            )

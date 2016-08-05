@@ -128,8 +128,9 @@ class Prepare(object):
             dict: Map of system_params for a Windows system.
         """
         params = {}
-        params['prepdir'] = os.path.join(
-            '{0}'.format(self.system_drive), 'watchmaker')
+        # os.path.join does not produce path as expected when first string
+        # ends in colon; so using a join on the sep character.
+        params['prepdir'] = os.path.sep.join([self.system_drive, 'Watchmaker'])
         params['readyfile'] = os.path.join(
             '{0}'.format(params['prepdir']), 'system-is-ready')
         params['logdir'] = os.path.join(
@@ -139,8 +140,8 @@ class Prepare(object):
         params['shutdown_path'] = os.path.join(
             '{0}'.format(os.environ['SYSTEMROOT']), 'system32', 'shutdown.exe')
         params['restart'] = params["shutdown_path"] + \
-            " /r /t 30 /d p:2:4 /c " + \
-            "\"watchmaker complete. Rebooting computer.\""
+            ' /r /t 30 /d p:2:4 /c ' + \
+            '"Watchmaker complete. Rebooting computer."'
         self.system_params = params
 
     def _get_system_params(self):
@@ -209,7 +210,10 @@ class Prepare(object):
         self.logger.info(self.system_params)
 
         self._get_scripts_to_execute()
-        self.logger.info('Got scripts to execute.')
+        self.logger.info(
+            'Got scripts to execute: {0}.'
+            .format(self.config[self.system].keys())
+        )
 
         if 'Linux' in self.system:
             workers_manager = LinuxWorkersManager(
