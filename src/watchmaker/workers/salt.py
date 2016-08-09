@@ -268,7 +268,17 @@ class SaltWindows(WindowsManager):
 
 
     def _install_package(self):
-        pass
+        installername = self.installerurl.split('/')[-1]
+        self.download_file(
+            self.config['saltinstallerurl'],
+            installername,
+            self.sourceiss3bucket
+        )
+        installcmd = [
+            installername,
+            '/S'
+        ]
+        subprocess.call(installcmd)
 
     def _prepare_for_install(self):
         if self.config['saltinstallerurl']:
@@ -328,3 +338,4 @@ class SaltWindows(WindowsManager):
             )
 
         self._prepare_for_install()
+        self._install_package()

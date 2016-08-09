@@ -356,7 +356,98 @@ class WindowsManager(ManagerBase):
         self.workingdir = None
 
     def download_file(self, url, filename, sourceiss3bucket):
-        pass
+        """
+
+        :param url:
+        :param filename:
+        :param sourceiss3bucket:
+        :return:
+        """
+
+        logging.debug('Downloading: {0}'.format(url))
+        logging.debug('Destination: {0}'.format(filename))
+        logging.debug('S3: {0}'.format(sourceiss3bucket))
+
+        # TODO Rework this to properly reflect logic flow cleanly.
+        if sourceiss3bucket:
+            bucket_name = url.split('/')[3]
+            key_name = '/'.join(url.split('/')[4:])
+
+            logging.debug('Bucket Name: {0}'.format(bucket_name))
+            logging.debug('key_name: {0}'.format(key_name))
+
+            try:
+                s3 = boto3.resource("s3")
+                s3.meta.client.head_bucket(Bucket=bucket_name)
+                s3.Object(bucket_name, key_name).download_file(filename)
+            except (NameError, ClientError):
+                logging.error('NameError: {0}'.format(ClientError))
+                try:
+                    bucket_name = url.split('/')[2].split('.')[0]
+                    key_name = '/'.join(url.split('/')[3:])
+                    s3 = boto3.resource("s3")
+                    s3.meta.client.head_bucket(Bucket=bucket_name)
+                    s3.Object(bucket_name, key_name).download_file(filename)
+                except Exception as exc:
+                    logging.error(
+                        'Unable to download file from S3 bucket.\n'
+                        'url = {0}\n'
+                        'bucket = {1}\n'
+                        'key = {2}\n'
+                        'file = {3}\n'
+                        'Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc)
+                    )
+                    raise SystemError(
+                        'Unable to download file from S3 bucket.\n'
+                        'url = {0}\n'
+                        'bucket = {1}\n'
+                        'key = {2}\n'
+                        'file = {3}\n'
+                        'Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc)
+                    )
+            except Exception as exc:
+                logging.error(
+                    'Unable to download file from S3 bucket.\n'
+                    'url = {0}\n'
+                    'bucket = {1}\n'
+                    'key = {2}\n'
+                    'file = {3}\n'
+                    'Exception: {4}'
+                    .format(url, bucket_name, key_name, filename, exc)
+                )
+                raise SystemError(
+                    'Unable to download file from S3 bucket.\n'
+                    'url = {0}\n'
+                    'bucket = {1}\n'
+                    'key = {2}\n'
+                    'file = {3}\n'
+                    'Exception: {4}'
+                    .format(url, bucket_name, key_name, filename, exc))
+            logging.debug('Downloaded file from S3 bucket -- \n'
+                          '    url      = {0}\n'
+                          '    filename = {1}'.format(url, filename))
+        else:
+            try:
+                response = urllib.request.urlopen(url)
+                with open(filename, 'wb') as outfile:
+                    shutil.copyfileobj(response, outfile)
+            except Exception as exc:
+                # TODO: Update `except` logic
+                logging.error('Unable to download file from web server.\n'
+                              'url = {0}\n'
+                              'filename = {1}\n'
+                              'Exception: {2}'
+                              .format(url, filename, exc))
+                raise SystemError('Unable to download file from web server.\n'
+                                  'url = {0}\n'
+                                  'filename = {1}\n'
+                                  'Exception: {2}'
+                                  .format(url, filename, exc))
+            logging.debug('Downloaded file from web server -- \n'
+                          '    url      = {0}\n'
+                          '    filename = {1}'.format(url, filename))
 
     def call_process(self, cmd):
         pass
