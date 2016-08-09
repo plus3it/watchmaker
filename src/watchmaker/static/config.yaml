@@ -79,5 +79,5 @@ Windows:
             computername: None
             entenv: False
             oupath: None
-            saltstates: None
+            saltstates: Highstate
             sourceiss3bucket: True

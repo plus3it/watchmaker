@@ -257,15 +257,16 @@ class SaltWindows(WindowsManager):
         self.formulaterminationstrings = list()
         self.sourceiss3bucket = None
 
+        self.saltroot = 'C:\\Salt'
         self.salt_confpath = 'C:\\Salt\\conf'
         self.minionconf = 'C:\\Salt\\conf\\minion'
         self.saltcall = 'C:\\Salt\\salt-call.bat'
         self.saltsrv = 'C:\\Salt\\srv'
         self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
+        self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
         self.saltformularoot = os.sep.join((self.saltsrv, 'formulas'))
         self.saltpillarroot = os.sep.join((self.saltsrv, 'pillar'))
-        self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
-
+        self.saltwinrepo = os.sep.join((self.saltsrv, 'winrepo'))
 
     def _install_package(self):
         installername = self.installerurl.split('/')[-1]
@@ -336,7 +337,7 @@ class SaltWindows(WindowsManager):
             )
             self.extract_contents(
                 filepath=self.saltcontentfile,
-                to_directory=self.saltsrv
+                to_directory=self.saltroot
             )
 
         # Download and extract any salt formulas specified in formulastoinclude
@@ -367,8 +368,11 @@ class SaltWindows(WindowsManager):
         self.salt_conf = {'file_roots':
                           {'base': file_roots},
                           'pillar_roots':
-                          {'base': [str(self.saltpillarroot)]}
-                          }
+                          {'base': [str(self.saltpillarroot)]},
+                          'file_client': 'local',
+                          'winrepo_source_dir': 'salt://winrepo',
+                          'winrepo_dir': os.sep.join([self.saltwinrepo, 'winrepo'])
+        }
 
         if not os.path.exists(os.path.join(self.salt_confpath, 'minion.d')):
             os.mkdir(os.path.join(self.salt_confpath, 'minion.d'))
@@ -417,6 +421,13 @@ class SaltWindows(WindowsManager):
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'saltutil.sync_all'
+        ]
+        self.call_process(cmd)
+
+        print('Generating winrepo cache file...')
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough',
+            'winrepo.genrepo'
         ]
         self.call_process(cmd)
 
