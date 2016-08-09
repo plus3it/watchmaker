@@ -87,16 +87,10 @@ class SaltLinux(LinuxManager):
         self.create_working_dir('/usr/tmp/', 'saltinstall')
 
         self.salt_results_logfile = self.config['salt_results_log'] or \
-            os.sep.join((
-                self.workingdir,
-                'saltcall.results.log'
-            ))
+            os.sep.join((self.workingdir, 'saltcall.results.log'))
 
         self.salt_debug_logfile = self.config['salt_debug_log'] or \
-            os.sep.join((
-                self.workingdir,
-                'saltcall.debug.log'
-            ))
+            os.sep.join((self.workingdir, 'saltcall.debug.log'))
 
         self.saltcall_arguments = [
             '--out', 'yaml', '--out-file', self.salt_results_logfile,
@@ -156,16 +150,15 @@ class SaltLinux(LinuxManager):
         file_roots = [str(self.saltbaseenv)]
         file_roots += [str(x) for x in formulas_conf]
 
-        self.salt_conf = {'file_roots':
-                          {'base': file_roots},
-                          'pillar_roots':
-                          {'base': [str(self.saltpillarroot)]}
-                          }
+        self.salt_conf = {
+            'file_roots': {'base': file_roots},
+            'pillar_roots': {'base': [str(self.saltpillarroot)]}
+        }
 
-        with open(os.path.join(
-                self.salt_confpath,
-                'minion.d',
-                'watchmaker.conf'), 'w') as f:
+        with open(
+            os.path.join(self.salt_confpath, 'minion.d', 'watchmaker.conf'),
+            'w'
+        ) as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
     def install(self, configuration):
@@ -228,8 +221,10 @@ class SaltLinux(LinuxManager):
             else:
                 logging.info(
                     'Detected the States parameter is set to: {0}. Applying '
-                    'the user-defined list of states to the system.'
-                    .format(self.config['saltstates']))
+                    'the user-defined list of states to the system.'.format(
+                        self.config['saltstates']
+                    )
+                )
                 cmd = [
                     self.saltcall, '--local', '--retcode-passthrough',
                     'state.sls', self.config['saltstates']
@@ -238,8 +233,10 @@ class SaltLinux(LinuxManager):
                 self.call_process(cmd)
 
         logging.info(
-            'Salt states all applied successfully! Details are in the log {0}'
-            .format(self.salt_results_logfile)
+            'Salt states all applied successfully! '
+            'Details are in the log {0}'.format(
+                self.salt_results_logfile
+            )
         )
 
         if self.workingdir:
@@ -300,12 +297,20 @@ class SaltWindows(WindowsManager):
         self.sourceiss3bucket = self.config['sourceiss3bucket']
         self.entenv = self.config['entenv']
         self.create_working_dir(
-            os.path.sep.join([os.environ['systemdrive'], 'Watchmaker', 'WorkingFiles']),
+            os.path.sep.join(
+                [os.environ['systemdrive'],
+                 'Watchmaker',
+                 'WorkingFiles']
+            ),
             'Salt-'
         )
 
-        self.salt_results_logfile = os.sep.join((self.workingdir, 'saltcall.results.log'))
-        self.salt_debug_logfile = os.sep.join((self.workingdir, 'saltcall.debug.log'))
+        self.salt_results_logfile = os.sep.join(
+            (self.workingdir, 'saltcall.results.log')
+        )
+        self.salt_debug_logfile = os.sep.join(
+            (self.workingdir, 'saltcall.debug.log')
+        )
 
         self.saltcall_arguments = [
             '--out', 'yaml', '--out-file', self.salt_results_logfile,
@@ -365,22 +370,21 @@ class SaltWindows(WindowsManager):
         file_roots = [str(self.saltbaseenv), str(self.saltwinrepo)]
         file_roots += [str(x) for x in formulas_conf]
 
-        self.salt_conf = {'file_roots':
-                          {'base': file_roots},
-                          'pillar_roots':
-                          {'base': [str(self.saltpillarroot)]},
-                          'file_client': 'local',
-                          'winrepo_source_dir': 'salt://winrepo',
-                          'winrepo_dir': os.sep.join([self.saltwinrepo, 'winrepo'])
+        self.salt_conf = {
+            'file_roots': {'base': file_roots},
+            'pillar_roots': {'base': [str(self.saltpillarroot)]},
+            'file_client': 'local',
+            'winrepo_source_dir': 'salt://winrepo',
+            'winrepo_dir': os.sep.join([self.saltwinrepo, 'winrepo'])
         }
 
         if not os.path.exists(os.path.join(self.salt_confpath, 'minion.d')):
             os.mkdir(os.path.join(self.salt_confpath, 'minion.d'))
 
-        with open(os.path.join(
-                self.salt_confpath,
-                'minion.d',
-                'watchmaker.conf'), 'w') as f:
+        with open(
+            os.path.join(self.salt_confpath, 'minion.d', 'watchmaker.conf'),
+            "w"
+        ) as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
     def install(self, configuration):
@@ -456,8 +460,10 @@ class SaltWindows(WindowsManager):
             else:
                 logging.info(
                     'Detected the States parameter is set to: {0}. Applying '
-                    'the user-defined list of states to the system.'
-                        .format(self.config['saltstates']))
+                    'the user-defined list of states to the system.'.format(
+                        self.config['saltstates']
+                    )
+                )
                 cmd = [
                     self.saltcall, '--local', '--retcode-passthrough',
                     'state.sls', self.config['saltstates']
@@ -466,8 +472,10 @@ class SaltWindows(WindowsManager):
                 self.call_process(cmd)
 
         logging.info(
-            'Salt states all applied successfully! Details are in the log {0}'
-                .format(self.salt_results_logfile)
+            'Salt states all applied successfully! '
+            'Details are in the log {0}'.format(
+                self.salt_results_logfile
+            )
         )
 
         if self.workingdir:

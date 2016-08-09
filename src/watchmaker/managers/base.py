@@ -301,7 +301,11 @@ class LinuxManager(ManagerBase):
         :param sourceiss3bucket:
         :return:
         """
-        super(LinuxManager, self).download_file(url, filename, sourceiss3bucket)
+        super(LinuxManager, self).download_file(
+            url,
+            filename,
+            sourceiss3bucket
+        )
 
     def call_process(self, cmd):
         super(LinuxManager, self).call_process(cmd)
@@ -334,7 +338,11 @@ class LinuxManager(ManagerBase):
         :param to_directory: str, path to the target directory
         :raise ValueError: error raised if file extension is not supported
         """
-        super(LinuxManager, self).extract_contents(filepath, to_directory, create_dir)
+        super(LinuxManager, self).extract_contents(
+            filepath,
+            to_directory,
+            create_dir
+        )
 
 
 class WindowsManager(ManagerBase):
@@ -354,7 +362,11 @@ class WindowsManager(ManagerBase):
         :param sourceiss3bucket:
         :return:
         """
-        super(WindowsManager, self).download_file(url, filename, sourceiss3bucket)
+        super(WindowsManager, self).download_file(
+            url,
+            filename,
+            sourceiss3bucket
+        )
 
     def call_process(self, cmd):
         super(WindowsManager, self).call_process(cmd)
@@ -387,7 +399,11 @@ class WindowsManager(ManagerBase):
         :param to_directory: str, path to the target directory
         :raise ValueError: error raised if file extension is not supported
         """
-        super(WindowsManager, self).extract_contents(filepath, to_directory, create_dir)
+        super(WindowsManager, self).extract_contents(
+            filepath,
+            to_directory,
+            create_dir
+        )
 
 
 class WorkersManagerBase(object):
