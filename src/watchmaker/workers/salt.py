@@ -362,7 +362,7 @@ class SaltWindows(WindowsManager):
                     formulas_loc = newformuladir
             formulas_conf.append(formulas_loc)
 
-        file_roots = [str(self.saltbaseenv)]
+        file_roots = [str(self.saltbaseenv), str(self.saltwinrepo)]
         file_roots += [str(x) for x in formulas_conf]
 
         self.salt_conf = {'file_roots':
