@@ -56,7 +56,8 @@ Linux:
 Windows:
     Salt:
         Parameters:
-            saltworkingdir: \SystemContent\Windows\Salt
+            saltworkingdir: SystemContent\Windows\Salt\
+            saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2015.8.5-AMD64-Setup.exe
             saltcontentsource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/salt-content.zip
             formulastoinclude:
                 - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
@@ -69,3 +70,4 @@ Windows:
             entenv: False
             oupath: None
             saltstates: Highstate
+            sourceiss3bucket: True

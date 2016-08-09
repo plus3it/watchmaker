@@ -249,6 +249,7 @@ class SaltLinux(LinuxManager):
 class SaltWindows(WindowsManager):
     def __init__(self):
         super(SaltWindows, self).__init__()
+        self.installurl = None
         self.salt_conf = None
         self.config = None
         self.workingdir = None
@@ -256,14 +257,59 @@ class SaltWindows(WindowsManager):
         self.formulaterminationstrings = list()
         self.sourceiss3bucket = None
 
-    def _configuration_validation(self):
-        pass
+        self.salt_confpath = '/etc/salt'
+        self.minionconf = '/etc/salt/minion'
+        self.saltcall = '/usr/bin/salt-call'
+        self.saltsrv = 'C:\\Salt'
+        self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
+        self.saltformularoot = os.sep.join((self.saltsrv, 'formulas'))
+        self.saltpillarroot = os.sep.join((self.saltsrv, 'pillar'))
+        self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
+
 
     def _install_package(self):
         pass
 
     def _prepare_for_install(self):
-        pass
+        if self.config['saltinstallerurl']:
+            self.installerurl = self.config['saltinstallerurl']
+        else:
+            logging.error(
+                'Parameter `saltinstallerurl` was not provided and is'
+                ' needed for installation of Salt in Windows.'
+            )
+
+        if self.config['formulastoinclude']:
+            self.formulastoinclude = self.config['formulastoinclude']
+
+        if self.config['formulaterminationstrings']:
+            self.formulaterminationstrings = self.config[
+                'formulaterminationstrings']
+
+        self.sourceiss3bucket = self.config['sourceiss3bucket']
+        self.entenv = self.config['entenv']
+        self.create_working_dir(
+            os.path.sep.join([os.environ['systemdrive'], 'Watchmaker', 'WorkingFiles']),
+            'Salt-'
+        )
+
+        self.salt_results_logfile = os.sep.join((self.workingdir, 'saltcall.results.log'))
+        self.salt_debug_logfile = os.sep.join((self.workingdir, 'saltcall.debug.log'))
+
+        self.saltcall_arguments = [
+            '--out', 'yaml', '--out-file', self.salt_results_logfile,
+            '--return', 'local', '--log-file', self.salt_debug_logfile,
+            '--log-file-level', 'debug'
+        ]
+
+        for saltdir in [self.saltfileroot,
+                        self.saltbaseenv,
+                        self.saltformularoot]:
+            try:
+                os.makedirs(saltdir)
+            except OSError:
+                if not os.path.isdir(saltdir):
+                    raise
 
     def _build_salt_formula(self):
         pass
@@ -280,3 +326,5 @@ class SaltWindows(WindowsManager):
                 'The configuration passed was not properly formed JSON. '
                 'Execution halted.'
             )
+
+        self._prepare_for_install()

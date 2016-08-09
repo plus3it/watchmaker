@@ -362,7 +362,26 @@ class WindowsManager(ManagerBase):
         pass
 
     def create_working_dir(self, basedir, prefix):
-        pass
+        """
+        Create a directory in `basedir` with a prefix of `prefix`.
+
+        Args:
+            prefix (str):
+                Prefix to prepend to the working directory
+            basedir (str):
+                The directory in which to create the working directory
+        """
+        logging.info('Creating a working directory.')
+        workingdir = None
+        original_umask = os.umask(0)
+        try:
+            workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
+        except Exception as exc:
+            exceptionhandler('Could not create workingdir in {0}.\n'
+                             'Exception: {1}'.format(basedir, exc))
+        logging.debug('Working directory: {0}'.format(workingdir))
+        self.workingdir = workingdir
+        os.umask(original_umask)
 
     def cleanup(self):
         pass

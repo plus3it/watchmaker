@@ -91,7 +91,6 @@ class Prepare(object):
             self.config_path = self.default_config
         else:
             self.logger.info('User supplied config being used.')
-
         with open(self.config_path) as f:
             data = f.read()
 
