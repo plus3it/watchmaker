@@ -29,15 +29,12 @@ class ManagerBase(object):
     @staticmethod
     def _get_s3_file(url, bucket_name, key_name, destination):
         """
-
-
         :param url:
         :param bucket_name:
         :param key_name:
         :param destination:
         :return:
         """
-
         try:
             s3 = boto3.resource("s3")
             s3.meta.client.head_bucket(Bucket=bucket_name)
@@ -72,14 +69,95 @@ class ManagerBase(object):
     @abc.abstractmethod
     def download_file(self, url, filename, sourceiss3bucket):
         """
-
         :param url:
         :param filename:
         :param sourceiss3bucket:
         :return:
         """
+        logging.debug('Downloading: {0}'.format(url))
+        logging.debug('Destination: {0}'.format(filename))
+        logging.debug('S3: {0}'.format(sourceiss3bucket))
 
-        return
+        # TODO Rework this to properly reflect logic flow cleanly.
+        if sourceiss3bucket:
+            bucket_name = url.split('/')[3]
+            key_name = '/'.join(url.split('/')[4:])
+
+            logging.debug('Bucket Name: {0}'.format(bucket_name))
+            logging.debug('key_name: {0}'.format(key_name))
+
+            try:
+                s3 = boto3.resource("s3")
+                s3.meta.client.head_bucket(Bucket=bucket_name)
+                s3.Object(bucket_name, key_name).download_file(filename)
+            except (NameError, ClientError):
+                logging.error('NameError: {0}'.format(ClientError))
+                try:
+                    bucket_name = url.split('/')[2].split('.')[0]
+                    key_name = '/'.join(url.split('/')[3:])
+                    s3 = boto3.resource("s3")
+                    s3.meta.client.head_bucket(Bucket=bucket_name)
+                    s3.Object(bucket_name, key_name).download_file(filename)
+                except Exception as exc:
+                    logging.error(
+                        'Unable to download file from S3 bucket.\n'
+                        'url = {0}\n'
+                        'bucket = {1}\n'
+                        'key = {2}\n'
+                        'file = {3}\n'
+                        'Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc)
+                    )
+                    raise SystemError(
+                        'Unable to download file from S3 bucket.\n'
+                        'url = {0}\n'
+                        'bucket = {1}\n'
+                        'key = {2}\n'
+                        'file = {3}\n'
+                        'Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc)
+                    )
+            except Exception as exc:
+                logging.error(
+                    'Unable to download file from S3 bucket.\n'
+                    'url = {0}\n'
+                    'bucket = {1}\n'
+                    'key = {2}\n'
+                    'file = {3}\n'
+                    'Exception: {4}'
+                    .format(url, bucket_name, key_name, filename, exc)
+                )
+                raise SystemError(
+                    'Unable to download file from S3 bucket.\n'
+                    'url = {0}\n'
+                    'bucket = {1}\n'
+                    'key = {2}\n'
+                    'file = {3}\n'
+                    'Exception: {4}'
+                    .format(url, bucket_name, key_name, filename, exc))
+            logging.debug('Downloaded file from S3 bucket -- \n'
+                          '    url      = {0}\n'
+                          '    filename = {1}'.format(url, filename))
+        else:
+            try:
+                response = urllib.request.urlopen(url)
+                with open(filename, 'wb') as outfile:
+                    shutil.copyfileobj(response, outfile)
+            except Exception as exc:
+                # TODO: Update `except` logic
+                logging.error('Unable to download file from web server.\n'
+                              'url = {0}\n'
+                              'filename = {1}\n'
+                              'Exception: {2}'
+                              .format(url, filename, exc))
+                raise SystemError('Unable to download file from web server.\n'
+                                  'url = {0}\n'
+                                  'filename = {1}\n'
+                                  'Exception: {2}'
+                                  .format(url, filename, exc))
+            logging.debug('Downloaded file from web server -- \n'
+                          '    url      = {0}\n'
+                          '    filename = {1}'.format(url, filename))
 
     @abc.abstractmethod
     def create_working_dir(self, basedir, prefix):
@@ -89,12 +167,26 @@ class ManagerBase(object):
         :param prefix:
         :return:
         """
-
-        return
+        logging.info('Creating a working directory.')
+        workingdir = None
+        original_umask = os.umask(0)
+        try:
+            workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
+        except Exception as exc:
+            exceptionhandler('Could not create workingdir in {0}.\n'
+                             'Exception: {1}'.format(basedir, exc))
+        logging.debug('Working directory: {0}'.format(workingdir))
+        self.workingdir = workingdir
+        os.umask(original_umask)
 
     @abc.abstractmethod
     def call_process(self, cmd):
-        return
+        if not isinstance(cmd, list):
+            exceptionhandler('Command is not a list.\n{0}'.format(str(cmd)))
+        rsp = subprocess.call(cmd)
+
+        if rsp != 0:
+            exceptionhandler('Command failed.\n{0}'.format(str(cmd)))
 
     @abc.abstractmethod
     def cleanup(self):
@@ -102,8 +194,20 @@ class ManagerBase(object):
 
         :return:
         """
+        logging.info('+-' * 40)
+        logging.info('Cleanup Time...')
+        try:
+            logging.debug('{0} being cleaned up.'.format(self.workingdir))
+            shutil.rmtree(self.workingdir)
+        except Exception as exc:
+            # TODO: Update `except` logic
+            logging.fatal('Cleanup Failed!\nException: {0}'.format(exc))
+            exceptionhandler('Cleanup Failed.\nAborting.')
 
-        return
+        logging.info('Removed temporary data in working directory -- {0}'
+                     .format(self.workingdir))
+        logging.info('Exiting cleanup routine...')
+        logging.info('-+' * 40)
 
     @abc.abstractmethod
     def extract_contents(self, filepath, to_directory, create_dir):
@@ -114,8 +218,49 @@ class ManagerBase(object):
         :param create_dir:
         :return:
         """
+        opener = None
+        mode = None
 
-        return
+        if filepath.endswith('.zip'):
+            logging.debug('File Type: zip')
+            opener, mode = zipfile.ZipFile, 'r'
+        elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
+            logging.debug('File Type: GZip Tar')
+            opener, mode = tarfile.open, 'r:gz'
+        elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
+            logging.debug('File Type: Bzip Tar')
+            opener, mode = tarfile.open, 'r:bz2'
+        else:
+            exceptionhandler('Could not extract "{0}" as no appropriate '
+                             'extractor is found'.format(filepath))
+
+        if create_dir:
+            to_directory = os.sep.join((
+                to_directory,
+                '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])
+            ))
+
+        try:
+            os.makedirs(to_directory)
+        except OSError:
+            if not os.path.isdir(to_directory):
+                raise
+
+        cwd = os.getcwd()
+        os.chdir(to_directory)
+
+        try:
+            openfile = opener(filepath, mode)
+            try:
+                openfile.extractall()
+            finally:
+                openfile.close()
+        finally:
+            os.chdir(cwd)
+
+        print('Extracted file -- \n'
+              '    source = {0}\n'
+              '    dest   = {1}'.format(filepath, to_directory))
 
 
 class LinuxManager(ManagerBase):
@@ -156,99 +301,10 @@ class LinuxManager(ManagerBase):
         :param sourceiss3bucket:
         :return:
         """
-
-        logging.debug('Downloading: {0}'.format(url))
-        logging.debug('Destination: {0}'.format(filename))
-        logging.debug('S3: {0}'.format(sourceiss3bucket))
-
-        # TODO Rework this to properly reflect logic flow cleanly.
-        if sourceiss3bucket:
-            bucket_name = url.split('/')[3]
-            key_name = '/'.join(url.split('/')[4:])
-
-            logging.debug('Bucket Name: {0}'.format(bucket_name))
-            logging.debug('key_name: {0}'.format(key_name))
-
-            try:
-                s3 = boto3.resource("s3")
-                s3.meta.client.head_bucket(Bucket=bucket_name)
-                s3.Object(bucket_name, key_name).download_file(filename)
-            except (NameError, ClientError):
-                logging.error('NameError: {0}'.format(ClientError))
-                try:
-                    bucket_name = url.split('/')[2].split('.')[0]
-                    key_name = '/'.join(url.split('/')[3:])
-                    s3 = boto3.resource("s3")
-                    s3.meta.client.head_bucket(Bucket=bucket_name)
-                    s3.Object(bucket_name, key_name).download_file(filename)
-                except Exception as exc:
-                    logging.error(
-                        'Unable to download file from S3 bucket.\n'
-                        'url = {0}\n'
-                        'bucket = {1}\n'
-                        'key = {2}\n'
-                        'file = {3}\n'
-                        'Exception: {4}'
-                        .format(url, bucket_name, key_name, filename, exc)
-                    )
-                    raise SystemError(
-                        'Unable to download file from S3 bucket.\n'
-                        'url = {0}\n'
-                        'bucket = {1}\n'
-                        'key = {2}\n'
-                        'file = {3}\n'
-                        'Exception: {4}'
-                        .format(url, bucket_name, key_name, filename, exc)
-                    )
-            except Exception as exc:
-                logging.error(
-                    'Unable to download file from S3 bucket.\n'
-                    'url = {0}\n'
-                    'bucket = {1}\n'
-                    'key = {2}\n'
-                    'file = {3}\n'
-                    'Exception: {4}'
-                    .format(url, bucket_name, key_name, filename, exc)
-                )
-                raise SystemError(
-                    'Unable to download file from S3 bucket.\n'
-                    'url = {0}\n'
-                    'bucket = {1}\n'
-                    'key = {2}\n'
-                    'file = {3}\n'
-                    'Exception: {4}'
-                    .format(url, bucket_name, key_name, filename, exc))
-            logging.debug('Downloaded file from S3 bucket -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
-        else:
-            try:
-                response = urllib.request.urlopen(url)
-                with open(filename, 'wb') as outfile:
-                    shutil.copyfileobj(response, outfile)
-            except Exception as exc:
-                # TODO: Update `except` logic
-                logging.error('Unable to download file from web server.\n'
-                              'url = {0}\n'
-                              'filename = {1}\n'
-                              'Exception: {2}'
-                              .format(url, filename, exc))
-                raise SystemError('Unable to download file from web server.\n'
-                                  'url = {0}\n'
-                                  'filename = {1}\n'
-                                  'Exception: {2}'
-                                  .format(url, filename, exc))
-            logging.debug('Downloaded file from web server -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
+        super(LinuxManager, self).download_file(url, filename, sourceiss3bucket)
 
     def call_process(self, cmd):
-        if not isinstance(cmd, list):
-            exceptionhandler('Command is not a list.\n{0}'.format(str(cmd)))
-        rsp = subprocess.call(cmd)
-
-        if rsp != 0:
-            exceptionhandler('Command failed.\n{0}'.format(str(cmd)))
+        super(LinuxManager, self).call_process(cmd)
 
     def create_working_dir(self, basedir, prefix):
         """
@@ -260,37 +316,14 @@ class LinuxManager(ManagerBase):
             basedir (str):
                 The directory in which to create the working directory
         """
-        logging.info('Creating a working directory.')
-        workingdir = None
-        original_umask = os.umask(0)
-        try:
-            workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
-        except Exception as exc:
-            exceptionhandler('Could not create workingdir in {0}.\n'
-                             'Exception: {1}'.format(basedir, exc))
-        logging.debug('Working directory: {0}'.format(workingdir))
-        self.workingdir = workingdir
-        os.umask(original_umask)
+        super(LinuxManager, self).create_working_dir(basedir, prefix)
 
     def cleanup(self):
         """
         Removes temporary files loaded to the system.
             :return: bool
         """
-        logging.info('+-' * 40)
-        logging.info('Cleanup Time...')
-        try:
-            logging.debug('{0} being cleaned up.'.format(self.workingdir))
-            shutil.rmtree(self.workingdir)
-        except Exception as exc:
-            # TODO: Update `except` logic
-            logging.fatal('Cleanup Failed!\nException: {0}'.format(exc))
-            exceptionhandler('Cleanup Failed.\nAborting.')
-
-        logging.info('Removed temporary data in working directory -- {0}'
-                     .format(self.workingdir))
-        logging.info('Exiting cleanup routine...')
-        logging.info('-+' * 40)
+        super(LinuxManager, self).cleanup()
 
     def extract_contents(self, filepath, to_directory='.', create_dir=None):
         """
@@ -301,49 +334,7 @@ class LinuxManager(ManagerBase):
         :param to_directory: str, path to the target directory
         :raise ValueError: error raised if file extension is not supported
         """
-        opener = None
-        mode = None
-
-        if filepath.endswith('.zip'):
-            logging.debug('File Type: zip')
-            opener, mode = zipfile.ZipFile, 'r'
-        elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
-            logging.debug('File Type: GZip Tar')
-            opener, mode = tarfile.open, 'r:gz'
-        elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
-            logging.debug('File Type: Bzip Tar')
-            opener, mode = tarfile.open, 'r:bz2'
-        else:
-            exceptionhandler('Could not extract "{0}" as no appropriate '
-                             'extractor is found'.format(filepath))
-
-        if create_dir:
-            to_directory = os.sep.join((
-                to_directory,
-                '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])
-            ))
-
-        try:
-            os.makedirs(to_directory)
-        except OSError:
-            if not os.path.isdir(to_directory):
-                raise
-
-        cwd = os.getcwd()
-        os.chdir(to_directory)
-
-        try:
-            openfile = opener(filepath, mode)
-            try:
-                openfile.extractall()
-            finally:
-                openfile.close()
-        finally:
-            os.chdir(cwd)
-
-        print('Extracted file -- \n'
-              '    source = {0}\n'
-              '    dest   = {1}'.format(filepath, to_directory))
+        super(LinuxManager, self).extract_contents(filepath, to_directory, create_dir)
 
 
 class WindowsManager(ManagerBase):
@@ -363,99 +354,10 @@ class WindowsManager(ManagerBase):
         :param sourceiss3bucket:
         :return:
         """
-
-        logging.debug('Downloading: {0}'.format(url))
-        logging.debug('Destination: {0}'.format(filename))
-        logging.debug('S3: {0}'.format(sourceiss3bucket))
-
-        # TODO Rework this to properly reflect logic flow cleanly.
-        if sourceiss3bucket:
-            bucket_name = url.split('/')[3]
-            key_name = '/'.join(url.split('/')[4:])
-
-            logging.debug('Bucket Name: {0}'.format(bucket_name))
-            logging.debug('key_name: {0}'.format(key_name))
-
-            try:
-                s3 = boto3.resource("s3")
-                s3.meta.client.head_bucket(Bucket=bucket_name)
-                s3.Object(bucket_name, key_name).download_file(filename)
-            except (NameError, ClientError):
-                logging.error('NameError: {0}'.format(ClientError))
-                try:
-                    bucket_name = url.split('/')[2].split('.')[0]
-                    key_name = '/'.join(url.split('/')[3:])
-                    s3 = boto3.resource("s3")
-                    s3.meta.client.head_bucket(Bucket=bucket_name)
-                    s3.Object(bucket_name, key_name).download_file(filename)
-                except Exception as exc:
-                    logging.error(
-                        'Unable to download file from S3 bucket.\n'
-                        'url = {0}\n'
-                        'bucket = {1}\n'
-                        'key = {2}\n'
-                        'file = {3}\n'
-                        'Exception: {4}'
-                        .format(url, bucket_name, key_name, filename, exc)
-                    )
-                    raise SystemError(
-                        'Unable to download file from S3 bucket.\n'
-                        'url = {0}\n'
-                        'bucket = {1}\n'
-                        'key = {2}\n'
-                        'file = {3}\n'
-                        'Exception: {4}'
-                        .format(url, bucket_name, key_name, filename, exc)
-                    )
-            except Exception as exc:
-                logging.error(
-                    'Unable to download file from S3 bucket.\n'
-                    'url = {0}\n'
-                    'bucket = {1}\n'
-                    'key = {2}\n'
-                    'file = {3}\n'
-                    'Exception: {4}'
-                    .format(url, bucket_name, key_name, filename, exc)
-                )
-                raise SystemError(
-                    'Unable to download file from S3 bucket.\n'
-                    'url = {0}\n'
-                    'bucket = {1}\n'
-                    'key = {2}\n'
-                    'file = {3}\n'
-                    'Exception: {4}'
-                    .format(url, bucket_name, key_name, filename, exc))
-            logging.debug('Downloaded file from S3 bucket -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
-        else:
-            try:
-                response = urllib.request.urlopen(url)
-                with open(filename, 'wb') as outfile:
-                    shutil.copyfileobj(response, outfile)
-            except Exception as exc:
-                # TODO: Update `except` logic
-                logging.error('Unable to download file from web server.\n'
-                              'url = {0}\n'
-                              'filename = {1}\n'
-                              'Exception: {2}'
-                              .format(url, filename, exc))
-                raise SystemError('Unable to download file from web server.\n'
-                                  'url = {0}\n'
-                                  'filename = {1}\n'
-                                  'Exception: {2}'
-                                  .format(url, filename, exc))
-            logging.debug('Downloaded file from web server -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
+        super(WindowsManager, self).download_file(url, filename, sourceiss3bucket)
 
     def call_process(self, cmd):
-        if not isinstance(cmd, list):
-            exceptionhandler('Command is not a list.\n{0}'.format(str(cmd)))
-        rsp = subprocess.call(cmd)
-
-        if rsp != 0:
-            exceptionhandler('Command failed.\n{0}'.format(str(cmd)))
+        super(WindowsManager, self).call_process(cmd)
 
     def create_working_dir(self, basedir, prefix):
         """
@@ -467,37 +369,14 @@ class WindowsManager(ManagerBase):
             basedir (str):
                 The directory in which to create the working directory
         """
-        logging.info('Creating a working directory.')
-        workingdir = None
-        original_umask = os.umask(0)
-        try:
-            workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
-        except Exception as exc:
-            exceptionhandler('Could not create workingdir in {0}.\n'
-                             'Exception: {1}'.format(basedir, exc))
-        logging.debug('Working directory: {0}'.format(workingdir))
-        self.workingdir = workingdir
-        os.umask(original_umask)
+        super(WindowsManager, self).create_working_dir(basedir, prefix)
 
     def cleanup(self):
         """
         Removes temporary files loaded to the system.
             :return: bool
         """
-        logging.info('+-' * 40)
-        logging.info('Cleanup Time...')
-        try:
-            logging.debug('{0} being cleaned up.'.format(self.workingdir))
-            shutil.rmtree(self.workingdir)
-        except Exception as exc:
-            # TODO: Update `except` logic
-            logging.fatal('Cleanup Failed!\nException: {0}'.format(exc))
-            exceptionhandler('Cleanup Failed.\nAborting.')
-
-        logging.info('Removed temporary data in working directory -- {0}'
-                     .format(self.workingdir))
-        logging.info('Exiting cleanup routine...')
-        logging.info('-+' * 40)
+        super(WindowsManager, self).cleanup()
 
     def extract_contents(self, filepath, to_directory='.', create_dir=None):
         """
@@ -508,49 +387,8 @@ class WindowsManager(ManagerBase):
         :param to_directory: str, path to the target directory
         :raise ValueError: error raised if file extension is not supported
         """
-        opener = None
-        mode = None
+        super(WindowsManager, self).extract_contents(filepath, to_directory, create_dir)
 
-        if filepath.endswith('.zip'):
-            logging.debug('File Type: zip')
-            opener, mode = zipfile.ZipFile, 'r'
-        elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
-            logging.debug('File Type: GZip Tar')
-            opener, mode = tarfile.open, 'r:gz'
-        elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
-            logging.debug('File Type: Bzip Tar')
-            opener, mode = tarfile.open, 'r:bz2'
-        else:
-            exceptionhandler('Could not extract "{0}" as no appropriate '
-                             'extractor is found'.format(filepath))
-
-        if create_dir:
-            to_directory = os.sep.join((
-                to_directory,
-                '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])
-            ))
-
-        try:
-            os.makedirs(to_directory)
-        except OSError:
-            if not os.path.isdir(to_directory):
-                raise
-
-        cwd = os.getcwd()
-        os.chdir(to_directory)
-
-        try:
-            openfile = opener(filepath, mode)
-            try:
-                openfile.extractall()
-            finally:
-                openfile.close()
-        finally:
-            os.chdir(cwd)
-
-        print('Extracted file -- \n'
-              '    source = {0}\n'
-              '    dest   = {1}'.format(filepath, to_directory))
 
 class WorkersManagerBase(object):
     __metaclass__ = abc.ABCMeta

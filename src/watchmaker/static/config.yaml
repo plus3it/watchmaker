@@ -62,12 +62,22 @@ Windows:
             formulastoinclude:
                 - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
                 - https://s3.amazonaws.com/salt-formulas/ash-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/dotnet4-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/emet-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/netbanner-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/mcafee-agent-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/ntp-client-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/splunkforwarder-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/windows-update-agent-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
                 - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
             formulaterminationstrings:
+                - -master
                 - -latest
             ashrole: MemberServer
             computername: None
             entenv: False
             oupath: None
-            saltstates: Highstate
+            saltstates: None
             sourceiss3bucket: True
