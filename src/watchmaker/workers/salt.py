@@ -260,7 +260,7 @@ class SaltWindows(WindowsManager):
         self.salt_confpath = 'C:\\Salt\\conf'
         self.minionconf = 'C:\\Salt\\conf\\minion'
         self.saltcall = 'C:\\Salt\\salt-call.bat'
-        self.saltsrv = 'C:\\Salt\\Srv'
+        self.saltsrv = 'C:\\Salt\\srv'
         self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
         self.saltformularoot = os.sep.join((self.saltsrv, 'formulas'))
         self.saltpillarroot = os.sep.join((self.saltsrv, 'pillar'))
@@ -417,6 +417,13 @@ class SaltWindows(WindowsManager):
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'saltutil.sync_all'
+        ]
+        self.call_process(cmd)
+
+        print('Refreshing package databse...')
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough',
+            'pkg.refresh_db'
         ]
         self.call_process(cmd)
 
