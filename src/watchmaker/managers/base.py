@@ -355,7 +355,7 @@ class WindowsManager(ManagerBase):
         super(WindowsManager, self).__init__()
         self.workingdir = None
 
-    def download_file(self, url, filename, sourceiss3bucket):
+    def download_file(self, url, filename, sourceiss3bucket=False):
         """
 
         :param url:
@@ -450,7 +450,12 @@ class WindowsManager(ManagerBase):
                           '    filename = {1}'.format(url, filename))
 
     def call_process(self, cmd):
-        pass
+        if not isinstance(cmd, list):
+            exceptionhandler('Command is not a list.\n{0}'.format(str(cmd)))
+        rsp = subprocess.call(cmd)
+
+        if rsp != 0:
+            exceptionhandler('Command failed.\n{0}'.format(str(cmd)))
 
     def create_working_dir(self, basedir, prefix):
         """
@@ -475,11 +480,77 @@ class WindowsManager(ManagerBase):
         os.umask(original_umask)
 
     def cleanup(self):
-        pass
+        """
+        Removes temporary files loaded to the system.
+            :return: bool
+        """
+        logging.info('+-' * 40)
+        logging.info('Cleanup Time...')
+        try:
+            logging.debug('{0} being cleaned up.'.format(self.workingdir))
+            shutil.rmtree(self.workingdir)
+        except Exception as exc:
+            # TODO: Update `except` logic
+            logging.fatal('Cleanup Failed!\nException: {0}'.format(exc))
+            exceptionhandler('Cleanup Failed.\nAborting.')
 
-    def extract_contents(self, filepath, to_directory, create_dir):
-        pass
+        logging.info('Removed temporary data in working directory -- {0}'
+                     .format(self.workingdir))
+        logging.info('Exiting cleanup routine...')
+        logging.info('-+' * 40)
 
+    def extract_contents(self, filepath, to_directory='.', create_dir=None):
+        """
+        Extracts a compressed file to the specified directory.
+        Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
+        :param create_dir:
+        :param filepath: str, path to the compressed file
+        :param to_directory: str, path to the target directory
+        :raise ValueError: error raised if file extension is not supported
+        """
+        opener = None
+        mode = None
+
+        if filepath.endswith('.zip'):
+            logging.debug('File Type: zip')
+            opener, mode = zipfile.ZipFile, 'r'
+        elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
+            logging.debug('File Type: GZip Tar')
+            opener, mode = tarfile.open, 'r:gz'
+        elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
+            logging.debug('File Type: Bzip Tar')
+            opener, mode = tarfile.open, 'r:bz2'
+        else:
+            exceptionhandler('Could not extract "{0}" as no appropriate '
+                             'extractor is found'.format(filepath))
+
+        if create_dir:
+            to_directory = os.sep.join((
+                to_directory,
+                '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])
+            ))
+
+        try:
+            os.makedirs(to_directory)
+        except OSError:
+            if not os.path.isdir(to_directory):
+                raise
+
+        cwd = os.getcwd()
+        os.chdir(to_directory)
+
+        try:
+            openfile = opener(filepath, mode)
+            try:
+                openfile.extractall()
+            finally:
+                openfile.close()
+        finally:
+            os.chdir(cwd)
+
+        print('Extracted file -- \n'
+              '    source = {0}\n'
+              '    dest   = {1}'.format(filepath, to_directory))
 
 class WorkersManagerBase(object):
     __metaclass__ = abc.ABCMeta

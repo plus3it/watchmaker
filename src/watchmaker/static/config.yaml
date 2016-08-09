@@ -58,7 +58,7 @@ Windows:
         Parameters:
             saltworkingdir: SystemContent\Windows\Salt\
             saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2015.8.5-AMD64-Setup.exe
-            saltcontentsource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/salt-content.zip
+            saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
             formulastoinclude:
                 - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
                 - https://s3.amazonaws.com/salt-formulas/ash-windows-formula-master.zip

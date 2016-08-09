@@ -257,9 +257,9 @@ class SaltWindows(WindowsManager):
         self.formulaterminationstrings = list()
         self.sourceiss3bucket = None
 
-        self.salt_confpath = '/etc/salt'
-        self.minionconf = '/etc/salt/minion'
-        self.saltcall = '/usr/bin/salt-call'
+        self.salt_confpath = 'C:\\Salt\\conf'
+        self.minionconf = 'C:\\Salt\\conf\\minion'
+        self.saltcall = 'C:\\Salt\\salt-call.bat'
         self.saltsrv = 'C:\\Salt'
         self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
         self.saltformularoot = os.sep.join((self.saltsrv, 'formulas'))
@@ -322,7 +322,62 @@ class SaltWindows(WindowsManager):
                     raise
 
     def _build_salt_formula(self):
-        pass
+        if self.config['saltcontentsource']:
+            self.saltcontentfilename = self.config[
+                'saltcontentsource'].split('/')[-1]
+            self.saltcontentfile = os.sep.join((
+                self.workingdir,
+                self.saltcontentfilename
+            ))
+            self.download_file(
+                self.config['saltcontentsource'],
+                self.saltcontentfile,
+                self.sourceiss3bucket
+            )
+            self.extract_contents(
+                filepath=self.saltcontentfile,
+                to_directory=self.saltsrv
+            )
+
+        # Download and extract any salt formulas specified in formulastoinclude
+        formulas_conf = []
+        for source_loc in self.formulastoinclude:
+            filename = source_loc.split('/')[-1]
+            file_loc = os.sep.join((self.workingdir, filename))
+            self.download_file(source_loc, file_loc, self.sourceiss3bucket)
+            self.extract_contents(
+                filepath=file_loc,
+                to_directory=self.saltformularoot
+            )
+            filebase = '.'.join(filename.split('.')[:-1])
+            formulas_loc = os.sep.join((self.saltformularoot, filebase))
+
+            for string in self.formulaterminationstrings:
+                if filebase.endswith(string):
+                    newformuladir = formulas_loc[:-len(string)]
+                    if os.path.exists(newformuladir):
+                        shutil.rmtree(newformuladir)
+                    shutil.move(formulas_loc, newformuladir)
+                    formulas_loc = newformuladir
+            formulas_conf.append(formulas_loc)
+
+        file_roots = [str(self.saltbaseenv)]
+        file_roots += [str(x) for x in formulas_conf]
+
+        self.salt_conf = {'file_roots':
+                          {'base': file_roots},
+                          'pillar_roots':
+                          {'base': [str(self.saltpillarroot)]}
+                          }
+
+        if not os.path.exists(os.path.join(self.salt_confpath, 'minion.d')):
+            os.mkdir(os.path.join(self.salt_confpath, 'minion.d'))
+
+        with open(os.path.join(
+                self.salt_confpath,
+                'minion.d',
+                'watchmaker.conf'), 'w') as f:
+            yaml.dump(self.salt_conf, f, default_flow_style=False)
 
     def install(self, configuration):
         """
@@ -339,3 +394,63 @@ class SaltWindows(WindowsManager):
 
         self._prepare_for_install()
         self._install_package()
+        self._build_salt_formula()
+
+        logging.info('Setting grain `systemprep`...')
+        ent_env = {'enterprise_environment': str(self.entenv)}
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
+            'systemprep', str(json.dumps(ent_env))
+        ]
+        self.call_process(cmd)
+
+        if self.config['oupath']:
+            print('Setting grain `join-domain`...')
+            oupath = {'oupath': self.config['oupath']}
+            cmd = [
+                self.saltcall, '--local', '--retcode-passthrough',
+                'grains.setval', '"join-domain"', json.dumps(oupath)
+            ]
+            self.call_process(cmd)
+
+        print('Syncing custom salt modules...')
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough',
+            'saltutil.sync_all'
+        ]
+        self.call_process(cmd)
+
+        if 'none' == self.config['saltstates'].lower():
+            print('No States were specified. Will not apply any salt states.')
+        else:
+            if 'highstate' == self.config['saltstates'].lower():
+                logging.info(
+                    'Detected the States parameter is set to `highstate`. '
+                    'Applying the salt `"highstate`" to the system.'
+                )
+                cmd = [
+                    self.saltcall, '--local', '--retcode-passthrough',
+                    'state.highstate'
+                ]
+                cmd.extend(self.saltcall_arguments)
+                self.call_process(cmd)
+
+            else:
+                logging.info(
+                    'Detected the States parameter is set to: {0}. Applying '
+                    'the user-defined list of states to the system.'
+                        .format(self.config['saltstates']))
+                cmd = [
+                    self.saltcall, '--local', '--retcode-passthrough',
+                    'state.sls', self.config['saltstates']
+                ]
+                cmd.extend(self.saltcall_arguments)
+                self.call_process(cmd)
+
+        logging.info(
+            'Salt states all applied successfully! Details are in the log {0}'
+                .format(self.salt_results_logfile)
+        )
+
+        if self.workingdir:
+            self.cleanup()
