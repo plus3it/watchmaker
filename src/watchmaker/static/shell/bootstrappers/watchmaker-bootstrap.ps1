@@ -57,6 +57,23 @@ function Install-Python-MSI {
   Start-Process "msiexec.exe" -ArgumentList ${Arguments} -Wait
 }
 
+function Install-Python-Packages {
+  # Upgrade pip.
+  # pip install --upgrade pip : Do not use this as it throws an access denied error.
+  easy_install -U pip
+  Log "Upgraded pip using easy_intall."
+
+  # Install Watchmaker and Python dependencies for WatchMaker.
+  if( ${WatchmakerUrl} -eq "" ) {
+    Log "The url to a Watchmaker Python egg is empty, unable to install Watchmaker."
+  } else {
+    easy_install ${WatchmakerUrl}
+    Log "Installed Plus3's Watchmaker and dependencies for Python."
+    python -c 'import watchmaker'
+    Log "Tested that Watchmaker installed."
+  }
+}
+
 function Download-File {
   Param( [string]$Url, [string]$SavePath )
   # Download a file, if it doesn't already exist.
@@ -93,20 +110,7 @@ function Get-Python {
   Log "Added Python directories to environment variable, PATH."
   Reset_Env_Variable
 
-  # Upgrade pip.
-  # pip install --upgrade pip : Do not use this as it throws an access denied error.
-  easy_install -U pip
-  Log "Upgraded pip using easy_intall."
-
-  # Install Watchmaker and Python dependencies for WatchMaker.
-  if( ${WatchmakerUrl} -eq "" ) {
-    Log "The url to a Watchmaker Python egg is empty, unable to install Watchmaker."
-  } else {
-    easy_install ${WatchmakerUrl}
-    Log "Installed Plus3's Watchmaker and dependencies for Python."
-    python -c 'import watchmaker'
-    Log "Tested that Watchmaker installed."
-  }
+  Install-Python-Packages
 }
 
 function Import-509Certificate {
