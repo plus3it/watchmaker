@@ -6,7 +6,7 @@
 # be run.
 #
 # To obtain the right version of Python and the right version of WatchMaker,
-# be sure to modify the variables $Version and $WatchmakerUrl. You want
+# be sure to modify the variables $PythonVersion and $WatchmakerUrl. You want
 # $WatchmakerUrl to be pointing to a Python egg file.
 #
 # In addition, pass in a string to a root certificate host url to have
@@ -18,7 +18,7 @@
 # Urls for obtaining Python MSI and WatchMaker.
 [CmdLetBinding()]
 Param(
-  [String]$Version = "2.7.11"
+  [String]$PythonVersion = "2.7.11"
   ,
   [String]$PythonUrl = ""
   ,
@@ -34,9 +34,9 @@ $SaveDir = ${env:Temp}
 $LogFile = "${SaveDir}\UserData_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log"
 Start-Transcript -Path "${SaveDir}\Transcript_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log" -Append
 
-$PythonMSI = "python-" + ${Version} + ".msi";
+$PythonMSI = "python-" + ${PythonVersion} + ".msi";
 if( $PythonUrl -eq "" ) {
-  $PythonUrl = 'https://www.python.org/ftp/python/' + ${Version} + '/' + ${PythonMSI}
+  $PythonUrl = 'https://www.python.org/ftp/python/' + ${PythonVersion} + '/' + ${PythonMSI}
 }
 
 function Log {
@@ -87,7 +87,7 @@ function Get-Python {
 
   Download-File $PythonUrl $SavePath
   Install-Python-MSI ${SavePath}
-  Log "Installed Python ${Version}."
+  Log "Installed Python ${PythonVersion}."
 
   [Environment]::SetEnvironmentVariable("Path", "${env:Path};C:\Python27\;C:\Python27\Scripts\", "Machine")
   Log "Added Python directories to environment variable, PATH."
