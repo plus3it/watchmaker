@@ -50,22 +50,34 @@ Linux:
             oupath: None
             computername: None
 
-  Custom:
+    Custom: None
 
 
 Windows:
     Salt:
         Parameters:
-            saltworkingdir: "'{0}\\SystemContent\\Windows\\Salt'.format(workingdir)"
-            saltcontentsource: https://s3.amazonaws.com/systemprep/SystemContent/Windows/Salt/salt-content.zip
+            saltworkingdir: SystemContent\Windows\Salt\
+            saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2015.8.5-AMD64-Setup.exe
+            saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
             formulastoinclude:
                 - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
                 - https://s3.amazonaws.com/salt-formulas/ash-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/dotnet4-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/emet-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/netbanner-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/mcafee-agent-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/ntp-client-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/splunkforwarder-windows-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/windows-update-agent-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
+                - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
                 - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
             formulaterminationstrings:
+                - -master
                 - -latest
             ashrole: MemberServer
             computername: None
             entenv: False
             oupath: None
             saltstates: Highstate
+            sourceiss3bucket: True
