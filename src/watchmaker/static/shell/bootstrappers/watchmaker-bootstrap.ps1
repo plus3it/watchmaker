@@ -103,7 +103,7 @@ function Get-Python {
 
 function Get-Python-Packages {
   Param( [String[]]$Packages )
-  Start-Process -FilePath easy_install -ArgumentList "-U ${Packages}" -NoNewWindow -PassThru -Wait
+  $Result = Start-Process -FilePath easy_install -ArgumentList "-U ${Packages}" -NoNewWindow -PassThru -Wait
 }
 
 function Import-509Certificate {
