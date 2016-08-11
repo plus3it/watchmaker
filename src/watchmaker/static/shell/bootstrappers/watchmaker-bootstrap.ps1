@@ -26,6 +26,8 @@ Param(
   ,
   [String]$RootCertUrl
 )
+# Python modules to install/upgrade with Python.
+[System.Collections.ArrayList]$Packages = @("pip")
 
 # Location to save files.
 $SaveDir = ${env:Temp}
@@ -95,25 +97,13 @@ function Get-Python {
   
   # Upgrade pip.
   # pip install --upgrade pip : Do not use this as it throws an access denied error.
-  easy_install -U pip
-  Log "Upgraded pip using easy_intall."
+  # easy_install -U pip
+  # Log "Upgraded pip using easy_intall."
 }
 
 function Get-Python-Packages {
   Param( [String[]]$Packages )
-  foreach( $Package in ${Packages} ) {
-    pip install ${Package}
-  }
-
-  # Install Watchmaker and Python dependencies for WatchMaker.
-  if( ${WatchmakerUrl} -eq "" ) {
-    Log "The url to a Watchmaker Python egg is empty, unable to install Watchmaker."
-  } else {
-    easy_install ${WatchmakerUrl}
-    Log "Installed Plus3's Watchmaker and dependencies for Python."
-    python -c 'import watchmaker'
-    Log "Tested that Watchmaker installed."
-  }
+  Start-Process -FilePath easy_install -ArgumentList "-U ${Packages}" -NoNewWindow -PassThru -Wait
 }
 
 function Import-509Certificate {
@@ -166,6 +156,16 @@ if( ${RootCertUrl} ) {
 }
 
 Get-Python
-Get-Python-Packages
+
+# Add url to Watchmaker's egg.
+if( ${WatchmakerUrl} -eq "" ) {
+  Log "The url to a Watchmaker Python egg is empty, unable to install Watchmaker."
+} else {
+  ${Packages}.Add(${WatchmakerUrl})
+}
+
+Get-Python-Packages ${Packages}
+Log "Installed modules for Python."
+
 Log "UserData PowerShell script finished."
 Stop-Transcript
