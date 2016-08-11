@@ -94,11 +94,6 @@ function Get-Python {
   [Environment]::SetEnvironmentVariable("Path", "${env:Path};C:\Python27\;C:\Python27\Scripts\", "Machine")
   Log "Added Python directories to environment variable, PATH."
   Reset_Env_Variable
-  
-  # Upgrade pip.
-  # pip install --upgrade pip : Do not use this as it throws an access denied error.
-  # easy_install -U pip
-  # Log "Upgraded pip using easy_intall."
 }
 
 function Get-Python-Packages {
