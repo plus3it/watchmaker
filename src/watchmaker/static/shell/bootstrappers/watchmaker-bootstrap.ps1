@@ -6,7 +6,7 @@
 # be run.
 #
 # To obtain the right version of Python and the right version of WatchMaker,
-# be sure to modify the variables $Version and $WatchmakerUrl. You want
+# be sure to modify the variables $PythonVersion and $WatchmakerUrl. You want
 # $WatchmakerUrl to be pointing to a Python egg file.
 #
 # In addition, pass in a string to a root certificate host url to have
@@ -18,7 +18,7 @@
 # Urls for obtaining Python MSI and WatchMaker.
 [CmdLetBinding()]
 Param(
-  [String]$Version = "2.7.11"
+  [String]$PythonVersion = "2.7.11"
   ,
   [String]$PythonUrl = ""
   ,
@@ -26,6 +26,8 @@ Param(
   ,
   [String]$RootCertUrl
 )
+# Python modules to install/upgrade with Python.
+[System.Collections.ArrayList]$Packages = @("pip")
 
 # Location to save files.
 $SaveDir = ${env:Temp}
@@ -34,9 +36,9 @@ $SaveDir = ${env:Temp}
 $LogFile = "${SaveDir}\UserData_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log"
 Start-Transcript -Path "${SaveDir}\Transcript_Output_$(Get-Date -Format `"yyyyMMdd_hhmmsstt`").log" -Append
 
-$PythonMSI = "python-" + ${Version} + ".msi";
+$PythonMSI = "python-" + ${PythonVersion} + ".msi";
 if( $PythonUrl -eq "" ) {
-  $PythonUrl = 'https://www.python.org/ftp/python/' + ${Version} + '/' + ${PythonMSI}
+  $PythonUrl = 'https://www.python.org/ftp/python/' + ${PythonVersion} + '/' + ${PythonMSI}
 }
 
 function Log {
@@ -87,26 +89,16 @@ function Get-Python {
 
   Download-File $PythonUrl $SavePath
   Install-Python-MSI ${SavePath}
-  Log "Installed Python ${Version}."
+  Log "Installed Python ${PythonVersion}."
 
   [Environment]::SetEnvironmentVariable("Path", "${env:Path};C:\Python27\;C:\Python27\Scripts\", "Machine")
   Log "Added Python directories to environment variable, PATH."
   Reset_Env_Variable
+}
 
-  # Upgrade pip.
-  # pip install --upgrade pip : Do not use this as it throws an access denied error.
-  easy_install -U pip
-  Log "Upgraded pip using easy_intall."
-
-  # Install Watchmaker and Python dependencies for WatchMaker.
-  if( ${WatchmakerUrl} -eq "" ) {
-    Log "The url to a Watchmaker Python egg is empty, unable to install Watchmaker."
-  } else {
-    easy_install ${WatchmakerUrl}
-    Log "Installed Plus3's Watchmaker and dependencies for Python."
-    python -c 'import watchmaker'
-    Log "Tested that Watchmaker installed."
-  }
+function Get-Python-Packages {
+  Param( [String[]]$Packages )
+  $Result = Start-Process -FilePath easy_install -ArgumentList "-U ${Packages}" -NoNewWindow -PassThru -Wait
 }
 
 function Import-509Certificate {
@@ -159,5 +151,16 @@ if( ${RootCertUrl} ) {
 }
 
 Get-Python
+
+# Add url to Watchmaker's egg.
+if( ${WatchmakerUrl} -eq "" ) {
+  Log "The url to a Watchmaker Python egg is empty, unable to install Watchmaker."
+} else {
+  ${Packages}.Add(${WatchmakerUrl})
+}
+
+Get-Python-Packages ${Packages}
+Log "Installed modules for Python."
+
 Log "UserData PowerShell script finished."
 Stop-Transcript
