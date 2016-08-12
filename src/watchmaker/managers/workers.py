@@ -11,12 +11,13 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     """
 
-    def __init__(self, s3, system_params, execution_scripts):
+    def __init__(self, s3, system_params, execution_scripts, saltstates):
         super(LinuxWorkersManager, self).__init__()
         self.execution_scripts = execution_scripts
         self.manager = LinuxManager()
         self.s3 = s3
         self.system_params = system_params
+        self.saltstates = saltstates
 
     def _worker_execution(self):
         pass
@@ -33,10 +34,10 @@ class LinuxWorkersManager(WorkersManagerBase):
 
             if 'Yum' in script:
                 yum = Yum()
-                yum.repo_install(configuration)
+                yum.install(configuration)
             elif 'Salt' in script:
                 salt = SaltLinux()
-                salt.install(configuration)
+                salt.install(configuration, self.saltstates)
 
     def cleanup(self):
         self.manager.cleanup()
@@ -47,12 +48,13 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     """
 
-    def __init__(self, s3, system_params, execution_scripts):
+    def __init__(self, s3, system_params, execution_scripts, saltstates):
         super(WindowsWorkersManager, self).__init__()
         self.execution_scripts = execution_scripts
         self.manager = WindowsManager()
         self.s3 = s3
         self.system_params = system_params
+        self.saltstates = saltstates
 
     def _worker_execution(self):
         pass
@@ -68,7 +70,7 @@ class WindowsWorkersManager(WorkersManagerBase):
 
             if 'Salt' in script:
                 salt = SaltWindows()
-                salt.install(configuration)
+                salt.install(configuration, self.saltstates)
 
     def cleanup(self):
         self.manager.cleanup()
