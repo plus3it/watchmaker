@@ -2,9 +2,12 @@ import datetime
 import logging
 import os
 import platform
+import re
 import subprocess
-
 import yaml
+import urllib
+import shutil
+import validators
 
 from watchmaker import static
 from watchmaker.exceptions import SystemFatal as exceptionhandler
@@ -84,6 +87,14 @@ class Prepare(object):
         self.logger.info('Parameters:  {0}'.format(self.kwargs))
         self.logger.info('System Type: {0}'.format(self.system))
 
+    def _validate_url(self, url):
+
+        if not validators.url(url):
+            return False
+        else:
+            return True
+
+
     def _get_config_data(self):
         """
         Private method for reading configuration data for installation.
@@ -92,6 +103,12 @@ class Prepare(object):
             Sets the self.config attribute with the data from the
             configuration YAML file after validation.
         """
+
+        if self._validate_url(self.config_path):
+            response = urllib.request.urlopen(self.config_path)
+            with open('config.yaml', 'wb') as outfile:
+                shutil.copyfileobj(response, outfile)
+            self.config_path = 'config.yaml'
 
         if self.config_path and not os.path.exists(self.config_path):
             self.logger.warning(
