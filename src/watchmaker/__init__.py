@@ -2,7 +2,6 @@ import datetime
 import logging
 import os
 import platform
-import re
 import subprocess
 import yaml
 import urllib
@@ -30,12 +29,13 @@ class PrepArguments(object):
     def __repr__(self):
         return '< noreboot="{0}", s3="{1}", config_path="{2}", stream="{3}", ' \
                'log_path="{4}", saltstates="{5}" >'.format(self.noreboot,
-                                                         self.s3,
-                                                         self.config_path,
-                                                         self.stream,
-                                                         self.log_path,
-                                                         self.saltstates
-                                                         )
+                                                           self.s3,
+                                                           self.config_path,
+                                                           self.stream,
+                                                           self.log_path,
+                                                           self.saltstates
+                                                           )
+
 
 class Prepare(object):
     """
@@ -93,7 +93,6 @@ class Prepare(object):
             return False
         else:
             return True
-
 
     def _get_config_data(self):
         """
