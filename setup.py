@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='watchmaker',
-    version='0.0.1',
+    version='0.1',
     author='Plus3IT Maintainers of Watchmaker',
     author_email='projects@plus3it.com',
     url='https://github.com/plus3it/watchmaker',
