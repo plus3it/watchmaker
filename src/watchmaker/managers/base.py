@@ -90,7 +90,6 @@ class ManagerBase(object):
             except ImportError as exc:
                 exceptionhandler(exc)
 
-
             bucket_name = url.split('/')[3]
             key_name = '/'.join(url.split('/')[4:])
 

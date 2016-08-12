@@ -27,14 +27,14 @@ class PrepArguments(object):
         self.saltstates = False
 
     def __repr__(self):
-        return '< noreboot="{0}", s3="{1}", config_path="{2}", logger="{3}", ' \
-               'log_path="{4}", saltstates="{5}" >'.format(self.noreboot,
-                                                           self.s3,
-                                                           self.config_path,
-                                                           self.logger,
-                                                           self.log_path,
-                                                           self.saltstates
-                                                           )
+        return '< noreboot="{0}", s3="{1}", config_path="{2}", logger="{3}"' \
+               ', log_path="{4}", saltstates="{5}" >'.format(self.noreboot,
+                                                             self.s3,
+                                                             self.config_path,
+                                                             self.logger,
+                                                             self.log_path,
+                                                             self.saltstates
+                                                             )
 
 
 class Prepare(object):
