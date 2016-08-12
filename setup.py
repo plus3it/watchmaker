@@ -14,7 +14,7 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    scripts=[os.path.join('scripts','Watchmaker.py')],
+    scripts=[os.path.join('scripts', 'Watchmaker.py')],
     install_requires=[
         "botocore",
         "boto3",
