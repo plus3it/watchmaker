@@ -2,11 +2,11 @@ import datetime
 import logging
 import os
 import platform
-import subprocess
-import yaml
-import urllib
 import shutil
+import subprocess
+import urllib
 import validators
+import yaml
 
 from watchmaker import static
 from watchmaker.exceptions import SystemFatal as exceptionhandler
