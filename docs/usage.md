@@ -20,9 +20,9 @@ systemprep.install_system()
 To use `watchmaker` from the CLI::
 
 ```
-watchmaker.py --help
+Watchmaker.py --help
 
-usage: watchmaker.py [-h] [--noreboot] [--sourceiss3bucket] [--config CONFIG]
+usage: Watchmaker.py [-h] [--noreboot] [--sourceiss3bucket] [--config CONFIG]
              [--logger] [--log-path LOG_PATH] [--saltstates SALTSTATES]
 
 optional arguments:
