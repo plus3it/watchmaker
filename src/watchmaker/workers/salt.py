@@ -207,7 +207,8 @@ class SaltLinux(LinuxManager):
         if saltstates:
             self.config['saltstates'] = saltstates
         else:
-            logging.info('No command line argument to override configuration file.')
+            logging.info('No command line argument to override '
+                         'configuration file.')
 
         if 'none' == self.config['saltstates'].lower():
             print('No States were specified. Will not apply any salt states.')
@@ -387,7 +388,9 @@ class SaltWindows(WindowsManager):
         if not os.path.exists(os.path.join(self.salt_confpath, 'minion.d')):
             os.mkdir(os.path.join(self.salt_confpath, 'minion.d'))
 
-        with open(os.path.join(self.salt_confpath, 'minion.d', 'watchmaker.conf'), "w") as f:
+        with open(os.path.join(self.salt_confpath,
+                               'minion.d',
+                               'watchmaker.conf'), "w") as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
     def install(self, configuration, saltstates):
