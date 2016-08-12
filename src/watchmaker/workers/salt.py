@@ -452,7 +452,8 @@ class SaltWindows(WindowsManager):
         if saltstates:
             self.config['saltstates'] = saltstates
         else:
-            logging.info('No command line argument to override configuration file.')
+            logging.info('No command line argument to override '
+                         'configuration file.')
 
         if 'none' == self.config['saltstates'].lower():
             print('No States were specified. Will not apply any salt states.')
