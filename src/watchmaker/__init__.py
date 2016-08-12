@@ -22,16 +22,16 @@ class PrepArguments(object):
         self.noreboot = False
         self.s3 = False
         self.config_path = None
-        self.stream = False
+        self.logger = False
         self.log_path = False
         self.saltstates = False
 
     def __repr__(self):
-        return '< noreboot="{0}", s3="{1}", config_path="{2}", stream="{3}", ' \
+        return '< noreboot="{0}", s3="{1}", config_path="{2}", logger="{3}", ' \
                'log_path="{4}", saltstates="{5}" >'.format(self.noreboot,
                                                            self.s3,
                                                            self.config_path,
-                                                           self.stream,
+                                                           self.logger,
                                                            self.log_path,
                                                            self.saltstates
                                                            )
@@ -51,7 +51,7 @@ class Prepare(object):
                 Should an s3 bucket be used for the installation files.
             config_path (str):
                 Path to YAML configuration file.
-            stream (bool):
+            logger (bool):
                 Enables self.logger to a file.
             log_path (str):
                 Path to logfile for stream self.logger.
@@ -70,7 +70,7 @@ class Prepare(object):
         self.execution_scripts = None
         self.logger = logging.getLogger()
 
-        if arguments.stream and os.path.exists(arguments.log_path):
+        if arguments.logger and os.path.exists(arguments.log_path):
             logging.basicConfig(
                 filename=os.path.join(
                     self.log_path,
@@ -79,7 +79,7 @@ class Prepare(object):
                 level=logging.DEBUG)
             self.logger = logging.getLogger()
             self.logger.info('\n\n\n{0}'.format(datetime.datetime.now()))
-        elif arguments.stream:
+        elif arguments.logger:
             self.logger.error('{0} does not exist'.format(arguments.log_path))
         else:
             self.logger.warning('Stream logger is not enabled!')
