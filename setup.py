@@ -16,6 +16,7 @@ setup(
     install_requires=[
         "botocore",
         "boto3",
+        "validators",
         "PyYAML"
     ]
 )
