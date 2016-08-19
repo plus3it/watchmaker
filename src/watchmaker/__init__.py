@@ -4,10 +4,9 @@ import os
 import platform
 import shutil
 import subprocess
-import urllib
-import validators
 import yaml
 
+from six.moves import urllib
 from watchmaker import static
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 from watchmaker.managers.workers import (LinuxWorkersManager,
@@ -89,10 +88,11 @@ class Prepare(object):
 
     def _validate_url(self, url):
 
-        if not validators.url(url):
-            return False
-        else:
+        parsed_url = urllib.parse.urlparse(url)
+        if parsed_url.scheme in ['http', 'https']:
             return True
+        else:
+            return False
 
     def _get_config_data(self):
         """
