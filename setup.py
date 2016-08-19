@@ -17,6 +17,7 @@ setup(
     include_package_data=True,
     scripts=[os.path.join('scripts', 'Watchmaker.py')],
     install_requires=[
+        "six",
         "PyYAML"
     ]
 )
