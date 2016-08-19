@@ -2,6 +2,8 @@
 # -*- encoding: utf-8 -*-
 from __future__ import absolute_import, print_function
 
+import os
+
 from setuptools import find_packages, setup
 
 setup(
@@ -13,9 +15,9 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
+    scripts=[os.path.join('scripts', 'Watchmaker.py')],
     install_requires=[
-        "botocore",
-        "boto3",
+        "six",
         "PyYAML"
     ]
 )

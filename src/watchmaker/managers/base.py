@@ -7,10 +7,7 @@ import tarfile
 import tempfile
 import zipfile
 
-import boto3
-from botocore.client import ClientError
 from six.moves import urllib
-
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 
 
@@ -35,6 +32,13 @@ class ManagerBase(object):
         :param destination:
         :return:
         """
+
+        try:
+            import boto3
+            from botocore.client import ClientError
+        except ImportError as exc:
+            exceptionhandler(exc)
+
         try:
             s3 = boto3.resource("s3")
             s3.meta.client.head_bucket(Bucket=bucket_name)
@@ -80,6 +84,12 @@ class ManagerBase(object):
 
         # TODO Rework this to properly reflect logic flow cleanly.
         if sourceiss3bucket:
+            try:
+                import boto3
+                from botocore.client import ClientError
+            except ImportError as exc:
+                exceptionhandler(exc)
+
             bucket_name = url.split('/')[3]
             key_name = '/'.join(url.split('/')[4:])
 

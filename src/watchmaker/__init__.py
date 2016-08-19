@@ -2,10 +2,12 @@ import datetime
 import logging
 import os
 import platform
+import shutil
 import subprocess
-
+import sys
 import yaml
 
+from six.moves import urllib
 from watchmaker import static
 from watchmaker.exceptions import SystemFatal as exceptionhandler
 from watchmaker.managers.workers import (LinuxWorkersManager,
@@ -14,17 +16,32 @@ from watchmaker.managers.workers import (LinuxWorkersManager,
 __version__ = '0.0.1'
 
 
+class PrepArguments(object):
+
+    def __init__(self):
+        self.noreboot = False
+        self.s3 = False
+        self.config_path = None
+        self.logger = False
+        self.log_path = False
+        self.saltstates = False
+
+    def __repr__(self):
+        return '< noreboot="{0}", s3="{1}", config_path="{2}", logger="{3}"' \
+               ', log_path="{4}", saltstates="{5}" >'.format(self.noreboot,
+                                                             self.s3,
+                                                             self.config_path,
+                                                             self.logger,
+                                                             self.log_path,
+                                                             self.saltstates
+                                                             )
+
+
 class Prepare(object):
     """
     Prepare a system for setup and installation.
     """
-    def __init__(
-            self,
-            noreboot=False,
-            s3=False,
-            config_path=None,
-            stream=False,
-            log_path=None):
+    def __init__(self, arguments):
         """
         Args:
             noreboot (bool):
@@ -34,25 +51,26 @@ class Prepare(object):
                 Should an s3 bucket be used for the installation files.
             config_path (str):
                 Path to YAML configuration file.
-            stream (bool):
+            logger (bool):
                 Enables self.logger to a file.
             log_path (str):
                 Path to logfile for stream self.logger.
         """
         self.kwargs = {}
-        self.noreboot = noreboot
-        self.s3 = s3
+        self.noreboot = arguments.noreboot
+        self.s3 = arguments.sourceiss3bucket
         self.system = platform.system()
-        self.config_path = config_path
+        self.config_path = arguments.config
         self.default_config = os.path.join(static.__path__[0], 'config.yaml')
-        self.log_path = log_path
+        self.log_path = arguments.log_path
+        self.saltstates = arguments.saltstates
         self.config = None
         self.system_params = None
         self.system_drive = None
         self.execution_scripts = None
         self.logger = logging.getLogger()
 
-        if stream and os.path.exists(log_path):
+        if arguments.logger and os.path.exists(arguments.log_path):
             logging.basicConfig(
                 filename=os.path.join(
                     self.log_path,
@@ -61,13 +79,17 @@ class Prepare(object):
                 level=logging.DEBUG)
             self.logger = logging.getLogger()
             self.logger.info('\n\n\n{0}'.format(datetime.datetime.now()))
-        elif stream:
-            self.logger.error('{0} does not exist'.format(log_path))
+        elif arguments.logger:
+            self.logger.error('{0} does not exist'.format(arguments.log_path))
         else:
             self.logger.warning('Stream logger is not enabled!')
 
         self.logger.info('Parameters:  {0}'.format(self.kwargs))
         self.logger.info('System Type: {0}'.format(self.system))
+
+    def _validate_url(self, url):
+
+        return urllib.parse.urlparse(url).scheme in ['http', 'https']
 
     def _get_config_data(self):
         """
@@ -77,6 +99,17 @@ class Prepare(object):
             Sets the self.config attribute with the data from the
             configuration YAML file after validation.
         """
+
+        if self._validate_url(self.config_path):
+            try:
+                response = urllib.request.urlopen(self.config_path)
+                with open('config.yaml', 'wb') as outfile:
+                    shutil.copyfileobj(response, outfile)
+                self.config_path = 'config.yaml'
+            except urllib.error.URLError:
+                print('The URL used to get the user config.yaml file did not '
+                      'work!\nPlease make sure your config is available.')
+                sys.exit(1)
 
         if self.config_path and not os.path.exists(self.config_path):
             self.logger.warning(
@@ -218,13 +251,15 @@ class Prepare(object):
             workers_manager = LinuxWorkersManager(
                 self.s3,
                 self.system_params,
-                self.execution_scripts
+                self.execution_scripts,
+                self.saltstates
             )
         elif 'Windows' in self.system:
             workers_manager = WindowsWorkersManager(
                 self.s3,
                 self.system_params,
-                self.execution_scripts
+                self.execution_scripts,
+                self.saltstates
             )
         else:
             exceptionhandler('There is no known System!')
