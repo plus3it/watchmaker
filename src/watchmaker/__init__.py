@@ -4,6 +4,7 @@ import os
 import platform
 import shutil
 import subprocess
+import sys
 import yaml
 
 from six.moves import urllib
@@ -104,10 +105,15 @@ class Prepare(object):
         """
 
         if self._validate_url(self.config_path):
-            response = urllib.request.urlopen(self.config_path)
-            with open('config.yaml', 'wb') as outfile:
-                shutil.copyfileobj(response, outfile)
-            self.config_path = 'config.yaml'
+            try:
+                response = urllib.request.urlopen(self.config_path)
+                with open('config.yaml', 'wb') as outfile:
+                    shutil.copyfileobj(response, outfile)
+                self.config_path = 'config.yaml'
+            except urllib.error.URLError:
+                print('The URL used to get the user config.yaml file did not '
+                      'work!\nPlease make sure your config is available.')
+                sys.exit(1)
 
         if self.config_path and not os.path.exists(self.config_path):
             self.logger.warning(
