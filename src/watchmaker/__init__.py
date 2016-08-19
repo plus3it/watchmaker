@@ -89,11 +89,7 @@ class Prepare(object):
 
     def _validate_url(self, url):
 
-        parsed_url = urllib.parse.urlparse(url)
-        if parsed_url.scheme in ['http', 'https']:
-            return True
-        else:
-            return False
+        return urllib.parse.urlparse(url).scheme in ['http', 'https']
 
     def _get_config_data(self):
         """
