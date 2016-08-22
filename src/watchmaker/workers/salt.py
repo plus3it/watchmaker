@@ -428,9 +428,19 @@ class SaltWindows(WindowsManager):
             role = {'role': str(self.ashrole)}
             self._set_grain('ash-windows', role)
 
+        grain = {}
         if self.config['oupath']:
-            oupath = {'oupath': self.config['oupath']}
-            self._set_grain('join-domain', oupath)
+            grain['oupath'] = self.config['oupath']
+        if self.config['admingroups']:
+            grain['admingroups'] = ','.join(
+                self.config['admingroups'].split(':')
+            )
+        if self.config['adminusers']:
+            grain['adminusers'] = ','.join(
+                self.config['adminusers'].split(':')
+            )
+        if grain:
+            self._set_grain('join-domain', grain)
 
         if self.computername and self.computername != 'None':
             name = {'computername': str(self.computername)}
