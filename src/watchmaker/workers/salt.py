@@ -303,6 +303,7 @@ class SaltWindows(WindowsManager):
 
         self.sourceiss3bucket = self.config['sourceiss3bucket']
         self.ashrole = self.config['ashrole']
+        self.computername = self.config['computername']
         self.entenv = self.config['entenv']
         self.create_working_dir(
             os.path.sep.join(
@@ -394,6 +395,14 @@ class SaltWindows(WindowsManager):
                                'watchmaker.conf'), "w") as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
+    def _set_grain(self, grainname, params):
+        logging.info('Setting grain `{0}` ...'.format(grainname))
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
+            grainname, str(json.dumps(params))
+        ]
+        self.call_process(cmd)
+
     def install(self, configuration, saltstates):
         """
         :param configuration:
@@ -412,31 +421,20 @@ class SaltWindows(WindowsManager):
         self._install_package()
         self._build_salt_formula()
 
-        logging.info('Setting grain `systemprep`...')
         ent_env = {'enterprise_environment': str(self.entenv)}
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
-            'systemprep', str(json.dumps(ent_env))
-        ]
-        self.call_process(cmd)
+        self._set_grain('systemprep', ent_env)
 
         if self.ashrole and self.ashrole != 'None':
-            logging.info('Setting grain `ash-windows`...')
             role = {'role': str(self.ashrole)}
-            cmd = [
-                self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
-                'ash-windows', str(json.dumps(role))
-            ]
-            self.call_process(cmd)
+            self._set_grain('ash-windows', role)
 
         if self.config['oupath']:
-            logging.info('Setting grain `join-domain`...')
             oupath = {'oupath': self.config['oupath']}
-            cmd = [
-                self.saltcall, '--local', '--retcode-passthrough',
-                'grains.setval', '"join-domain"', json.dumps(oupath)
-            ]
-            self.call_process(cmd)
+            self._set_grain('join-domain', oupath)
+
+        if self.computername and self.computername != 'None':
+            name = {'computername': str(self.computername)}
+            self._set_grain('name-computer', name)
 
         logging.info('Syncing custom salt modules...')
         cmd = [
