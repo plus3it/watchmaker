@@ -302,6 +302,7 @@ class SaltWindows(WindowsManager):
                 'formulaterminationstrings']
 
         self.sourceiss3bucket = self.config['sourceiss3bucket']
+        self.ashrole = self.config['ashrole']
         self.entenv = self.config['entenv']
         self.create_working_dir(
             os.path.sep.join(
@@ -419,8 +420,17 @@ class SaltWindows(WindowsManager):
         ]
         self.call_process(cmd)
 
+        if self.ashrole and self.ashrole != 'None':
+            logging.info('Setting grain `ash-windows`...')
+            role = {'role': str(self.ashrole)}
+            cmd = [
+                self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
+                'ash-windows', str(json.dumps(role))
+            ]
+            self.call_process(cmd)
+
         if self.config['oupath']:
-            print('Setting grain `join-domain`...')
+            logging.info('Setting grain `join-domain`...')
             oupath = {'oupath': self.config['oupath']}
             cmd = [
                 self.saltcall, '--local', '--retcode-passthrough',
@@ -428,21 +438,21 @@ class SaltWindows(WindowsManager):
             ]
             self.call_process(cmd)
 
-        print('Syncing custom salt modules...')
+        logging.info('Syncing custom salt modules...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'saltutil.sync_all'
         ]
         self.call_process(cmd)
 
-        print('Generating winrepo cache file...')
+        logging.info('Generating winrepo cache file...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'winrepo.genrepo'
         ]
         self.call_process(cmd)
 
-        print('Refreshing package databse...')
+        logging.info('Refreshing package database...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'pkg.refresh_db'
@@ -456,7 +466,9 @@ class SaltWindows(WindowsManager):
                          'configuration file.')
 
         if 'none' == self.config['saltstates'].lower():
-            print('No States were specified. Will not apply any salt states.')
+            logging.info(
+                'No States were specified. Will not apply any salt states.'
+            )
         else:
             if 'highstate' == self.config['saltstates'].lower():
                 logging.info(
