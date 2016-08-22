@@ -79,5 +79,7 @@ Windows:
             computername: None
             entenv: False
             oupath: None
+            admingroups: None
+            adminusers: None
             saltstates: Highstate
             sourceiss3bucket: True

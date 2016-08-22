@@ -302,6 +302,8 @@ class SaltWindows(WindowsManager):
                 'formulaterminationstrings']
 
         self.sourceiss3bucket = self.config['sourceiss3bucket']
+        self.ashrole = self.config['ashrole']
+        self.computername = self.config['computername']
         self.entenv = self.config['entenv']
         self.create_working_dir(
             os.path.sep.join(
@@ -393,6 +395,14 @@ class SaltWindows(WindowsManager):
                                'watchmaker.conf'), "w") as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
+    def _set_grain(self, grainname, params):
+        logging.info('Setting grain `{0}` ...'.format(grainname))
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
+            grainname, str(json.dumps(params))
+        ]
+        self.call_process(cmd)
+
     def install(self, configuration, saltstates):
         """
         :param configuration:
@@ -411,38 +421,46 @@ class SaltWindows(WindowsManager):
         self._install_package()
         self._build_salt_formula()
 
-        logging.info('Setting grain `systemprep`...')
         ent_env = {'enterprise_environment': str(self.entenv)}
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
-            'systemprep', str(json.dumps(ent_env))
-        ]
-        self.call_process(cmd)
+        self._set_grain('systemprep', ent_env)
 
+        if self.ashrole and self.ashrole != 'None':
+            role = {'role': str(self.ashrole)}
+            self._set_grain('ash-windows', role)
+
+        grain = {}
         if self.config['oupath']:
-            print('Setting grain `join-domain`...')
-            oupath = {'oupath': self.config['oupath']}
-            cmd = [
-                self.saltcall, '--local', '--retcode-passthrough',
-                'grains.setval', '"join-domain"', json.dumps(oupath)
-            ]
-            self.call_process(cmd)
+            grain['oupath'] = self.config['oupath']
+        if self.config['admingroups']:
+            grain['admingroups'] = ','.join(
+                self.config['admingroups'].split(':')
+            )
+        if self.config['adminusers']:
+            grain['adminusers'] = ','.join(
+                self.config['adminusers'].split(':')
+            )
+        if grain:
+            self._set_grain('join-domain', grain)
 
-        print('Syncing custom salt modules...')
+        if self.computername and self.computername != 'None':
+            name = {'computername': str(self.computername)}
+            self._set_grain('name-computer', name)
+
+        logging.info('Syncing custom salt modules...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'saltutil.sync_all'
         ]
         self.call_process(cmd)
 
-        print('Generating winrepo cache file...')
+        logging.info('Generating winrepo cache file...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'winrepo.genrepo'
         ]
         self.call_process(cmd)
 
-        print('Refreshing package databse...')
+        logging.info('Refreshing package database...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'pkg.refresh_db'
@@ -456,7 +474,9 @@ class SaltWindows(WindowsManager):
                          'configuration file.')
 
         if 'none' == self.config['saltstates'].lower():
-            print('No States were specified. Will not apply any salt states.')
+            logging.info(
+                'No States were specified. Will not apply any salt states.'
+            )
         else:
             if 'highstate' == self.config['saltstates'].lower():
                 logging.info(
