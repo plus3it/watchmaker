@@ -20,7 +20,7 @@ VERSION_FILE_PATHS = ('src', 'watchmaker', '__init__.py')
 
 
 def replace(file_path, pattern, repl, flags=0):
-    with io.open(file_path, mode="r+") as fh_:
+    with io.open(file_path, mode="r+", newline='') as fh_:
         file_contents = fh_.read()
         file_contents = re.sub(pattern, repl, file_contents, flags=flags)
         fh_.seek(0)
