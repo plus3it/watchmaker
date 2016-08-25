@@ -7,7 +7,6 @@
 from __future__ import print_function
 import base64
 import json
-import os
 from getpass import getpass
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 from cryptography.hazmat.backends import default_backend
@@ -21,13 +20,6 @@ except ImportError:
 
 
 GITHUB_REPO = 'plus3it/watchmaker'
-TRAVIS_CONFIG_FILE = os.path.join(
-    os.path.abspath(os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        os.pardir)
-    ),
-    '.travis.yml'
-)
 
 
 def load_key(pubkey):
