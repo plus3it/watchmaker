@@ -15,6 +15,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(
     os.pardir)
 )
 BUILD_NUMBER = os.environ.get('TRAVIS_BUILD_NUMBER', '')
+BUILD_TYPE = 'dev'  # See PEP 440
 VERSION_FILE_PATHS = ('src', 'watchmaker', '__init__.py')
 
 
@@ -31,7 +32,7 @@ def append_version(build, file_paths):
     # The version line must have the form
     # __version__ = 'ver'
     pattern = r"^(__version__ = ['\"])([^'\"]*)(['\"])"
-    repl = r"\g<1>\g<2>.dev{0}\g<3>".format(build)
+    repl = r"\g<1>\g<2>.{0}\g<3>".format(build)
     version_file = os.path.join(PROJECT_ROOT, *file_paths)
     print(
         'Updating version in version_file "{0}" with build "{1}"'
@@ -43,6 +44,7 @@ def append_version(build, file_paths):
 def main(args):
     skip = args.skip
     build = args.build
+    build_type = args.build_type
     file_paths = args.file_paths
 
     if skip:
@@ -51,7 +53,7 @@ def main(args):
             .format(skip)
         )
     else:
-        append_version(build, file_paths)
+        append_version('{0}{1}'.format(build_type, build), file_paths)
 
 
 if '__main__' == __name__:
@@ -69,8 +71,18 @@ if '__main__' == __name__:
         '--build',
         default=BUILD_NUMBER,
         help=(
-            'Build number to set. Will default to the env TRAVIS_BUILD_NUMBER '
-            'or an empty string. (default: {0})'.format(BUILD_NUMBER)
+            'Build number to append to the version. Will default to the env '
+            'TRAVIS_BUILD_NUMBER or an empty string. (default: {0})'
+            .format(BUILD_NUMBER)
+        )
+    )
+    parser.add_argument(
+        '--build-type',
+        default=BUILD_TYPE,
+        help=(
+            'Build type to append to the version. See PEP 440. PyPi will not '
+            'accept non-compliant version identifiers (default: {0})'
+            .format(BUILD_TYPE)
         )
     )
     parser.add_argument(
