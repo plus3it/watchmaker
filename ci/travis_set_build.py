@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Update the version string with a build number"""
+"""Update the version string with a build number."""
 
 from __future__ import absolute_import
 from __future__ import print_function
@@ -8,7 +8,6 @@ from __future__ import print_function
 import io
 import os
 import re
-import sys
 
 
 PROJECT_ROOT = os.path.abspath(os.path.join(
@@ -28,18 +27,7 @@ def replace(file_path, pattern, repl, flags=0):
         fh_.write(file_contents)
 
 
-def main(args):
-    skip = args.skip
-    build = args.build
-    file_paths = args.file_paths
-
-    if skip:
-        print(
-            'Not updating version for this build, `skip` set to "{0}"'
-            .format(skip)
-        )
-        sys.exit(0)
-
+def append_version(build, file_paths):
     # The version line must have the form
     # __version__ = 'ver'
     pattern = r"^(__version__ = ['\"])([^'\"]*)(['\"])"
@@ -50,6 +38,20 @@ def main(args):
         .format(version_file, build)
     )
     replace(version_file, pattern, repl, flags=re.M)
+
+
+def main(args):
+    skip = args.skip
+    build = args.build
+    file_paths = args.file_paths
+
+    if skip:
+        print(
+            'Not updating version for this build, `skip` set to "{0}"'
+            .format(skip)
+        )
+    else:
+        append_version(build, file_paths)
 
 
 if '__main__' == __name__:
