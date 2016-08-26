@@ -11,6 +11,7 @@ include .bumpversion.cfg
 include .coveragerc
 include .editorconfig
 include .isort.cfg
+include .gitmodules
 
 include AUTHORS.md
 include CHANGELOG.md
