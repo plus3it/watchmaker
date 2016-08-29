@@ -53,6 +53,7 @@ init:
   - ps: echo $env:TOXENV
   - ps: ls C:\Python*
 install:
+  - git submodule update --init --recursive
   - python -u ci\appveyor-bootstrap.py
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
   - '%PYTHON_HOME%\Scripts\easy_install --version'
