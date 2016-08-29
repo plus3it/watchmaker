@@ -68,6 +68,7 @@ class Prepare(object):
         self.system_params = None
         self.system_drive = None
         self.execution_scripts = None
+        logging.basicConfig()
         self.logger = logging.getLogger()
 
         if arguments.logger and os.path.exists(arguments.log_path):
