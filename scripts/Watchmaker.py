@@ -11,7 +11,7 @@ if __name__ == "__main__":
                         help='Use S3 buckets instead of internet locations for files.')
     parser.add_argument('--config', dest='config', default='config.yaml',
                         help='Path or URL to the config.yaml file.')
-    parser.add_argument('--logger', dest='logger', action='store_true', default=False,
+    parser.add_argument('--logger', dest='logger', action='store_true',
                         help='Use stream logger for debugging.')
     parser.add_argument('--log-path', dest='log_path', default=None,
                         help='Path to the logfile for stream logging.')
