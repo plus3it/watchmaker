@@ -75,6 +75,10 @@ pyvenv*/
 # Installer logs
 pip-log.txt
 
+# Log files created by running program
+src/*.log
+tests/*.log
+
 # Unit test / coverage reports
 .coverage
 .tox
