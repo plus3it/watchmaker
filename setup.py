@@ -39,7 +39,12 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
-    scripts=[os.path.join('scripts', 'Watchmaker.py')],
+    entry_points={
+        'console_scripts': [
+            'watchmaker = watchmaker.cli:main',
+            'wam = watchmaker.cli:main',
+        ]
+    },
     install_requires=[
         "six",
         "PyYAML"
