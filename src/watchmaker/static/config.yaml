@@ -77,4 +77,4 @@ Windows:
       saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2015.8.5-AMD64-Setup.exe
       saltstates: Highstate
       saltworkingdir: SystemContent\Windows\Salt\
-      sourceiss3bucket: True
+      sourceiss3bucket: False
