@@ -83,6 +83,7 @@ class SaltLinux(LinuxManager):
                 'formulaterminationstrings']
 
         self.sourceiss3bucket = self.config['sourceiss3bucket']
+        self.computername = self.config['computername']
         self.entenv = self.config['entenv']
         self.create_working_dir('/usr/tmp/', 'saltinstall')
 
@@ -161,6 +162,14 @@ class SaltLinux(LinuxManager):
         ) as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
+    def _set_grain(self, grain, value):
+        logging.info('Setting grain `{0}` ...'.format(grain))
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
+            grain, str(json.dumps(value))
+        ]
+        self.call_process(cmd)
+
     def install(self, configuration, saltstates):
         """
         :param configuration:
@@ -180,22 +189,22 @@ class SaltLinux(LinuxManager):
         self._install_package()
         self._build_salt_formula()
 
-        logging.info('Setting grain `systemprep`...')
         ent_env = {'enterprise_environment': str(self.entenv)}
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
-            'systemprep', str(json.dumps(ent_env))
-        ]
-        self.call_process(cmd)
+        self._set_grain('systemprep', ent_env)
 
-        if self.config['oupath']:
-            print('Setting grain `join-domain`...')
-            oupath = {'oupath': self.config['oupath']}
-            cmd = [
-                self.saltcall, '--local', '--retcode-passthrough',
-                'grains.setval', '"join-domain"', json.dumps(oupath)
-            ]
-            self.call_process(cmd)
+        grain = {}
+        if self.config['oupath'] and self.config['oupath'] != 'None':
+            grain['oupath'] = self.config['oupath']
+        if self.config['admingroups'] and self.config['admingroups'] != 'None':
+            grain['admingroups'] = self.config['admingroups'].split(':')
+        if self.config['adminusers'] and self.config['adminusers'] != 'None':
+            grain['adminusers'] = self.config['adminusers'].split(':')
+        if grain:
+            self._set_grain('join-domain', grain)
+
+        if self.computername and self.computername != 'None':
+            name = {'computername': str(self.computername)}
+            self._set_grain('name-computer', name)
 
         print('Syncing custom salt modules...')
         cmd = [
@@ -395,11 +404,11 @@ class SaltWindows(WindowsManager):
                                'watchmaker.conf'), "w") as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
-    def _set_grain(self, grainname, params):
-        logging.info('Setting grain `{0}` ...'.format(grainname))
+    def _set_grain(self, grain, value):
+        logging.info('Setting grain `{0}` ...'.format(grain))
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
-            grainname, str(json.dumps(params))
+            grain, str(json.dumps(value))
         ]
         self.call_process(cmd)
 
@@ -429,16 +438,12 @@ class SaltWindows(WindowsManager):
             self._set_grain('ash-windows', role)
 
         grain = {}
-        if self.config['oupath']:
+        if self.config['oupath'] and self.config['oupath'] != 'None':
             grain['oupath'] = self.config['oupath']
-        if self.config['admingroups']:
-            grain['admingroups'] = ','.join(
-                self.config['admingroups'].split(':')
-            )
-        if self.config['adminusers']:
-            grain['adminusers'] = ','.join(
-                self.config['adminusers'].split(':')
-            )
+        if self.config['admingroups'] and self.config['admingroups'] != 'None':
+            grain['admingroups'] = self.config['admingroups'].split(':')
+        if self.config['adminusers'] and self.config['adminusers'] != 'None':
+            grain['adminusers'] = self.config['adminusers'].split(':')
         if grain:
             self._set_grain('join-domain', grain)
 
