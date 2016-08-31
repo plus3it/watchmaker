@@ -13,18 +13,22 @@ def main():
                             'Use S3 buckets instead of internet locations for '
                             'files.'
                         ))
-    parser.add_argument('--config', dest='config', default='config.yaml',
+    parser.add_argument('--config', dest='config', default=None,
                         help='Path or URL to the config.yaml file.')
     parser.add_argument('--saltstates', dest='saltstates', default=None,
                         help=(
                             'Define the saltstates to use.  Must be None, '
                             'Highstate, or comma-seperated-string'
                         ))
-    group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument('--log-dir', dest='log_dir', default=None,
-                       help='Path to the log directory for stream logging.')
-    group.add_argument('--log-file', dest='log_file', default=None,
-                       help='Path to the log file for stream logging.')
+    log_path_group = parser.add_mutually_exclusive_group(required=False)
+    log_path_group.add_argument(
+        '--log-dir', dest='log_dir', default=None,
+        help='Path to the log directory for stream logging.'
+    )
+    log_path_group.add_argument(
+        '--log-file', dest='log_file', default=None,
+        help='Path to the log file for stream logging.'
+    )
 
     if parser.parse_args().saltstates:
         if parser.parse_args().saltstates.lower() not in [

@@ -98,7 +98,7 @@ class Prepare(object):
                 log_msg = 'Start time: {0}'.format(datetime.datetime.now())
                 log_type = 'info'
         elif not log_dir and not log_file:
-            log_msg = 'Stream logger is not enabled!'
+            log_msg = 'Watchmaker will not be logging to a file!'
             log_type = 'warning'
         else:
             log_msg = '{0} does not exist'.format(log_dir)
@@ -137,16 +137,17 @@ class Prepare(object):
             except urllib.error.URLError:
                 logging.critical(
                     'The URL used to get the user config.yaml file did not '
-                    'work!\nPlease make sure your config is available.'
+                    'work!  Please make sure your config is available.'
                 )
                 sys.exit(1)
 
         if self.config_path and not os.path.exists(self.config_path):
-            logging.warning(
-                'User supplied config {0} does not exist. '
-                'Using the default config.'.format(self.config_path)
+            logging.critical(
+                'User supplied config {0} does not exist.  Please '
+                'double-check your config path or use the default config '
+                'path.'.format(self.config_path)
             )
-            self.config_path = self.default_config
+            sys.exit(1)
         elif not self.config_path:
             logging.warning(
                 'User did not supply a config.  Using the default config.'
@@ -164,6 +165,7 @@ class Prepare(object):
                 'Unable to load the data of the default or'
                 ' the user supplied config.'
             )
+            sys.exit(1)
 
     def _linux_paths(self):
         """
@@ -237,7 +239,7 @@ class Prepare(object):
                 os.makedirs(self.system_params['workingdir'])
         except Exception as exc:
             logging.critical(
-                'Could not create a directory in {0}.\n'
+                'Could not create a directory in {0}.  '
                 'Exception: {1}'.format(self.system_params['prepdir'], exc)
             )
             exceptionhandler(exc)
