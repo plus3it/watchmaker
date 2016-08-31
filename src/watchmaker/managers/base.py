@@ -145,9 +145,11 @@ class ManagerBase(object):
                     'file = {3}\n'
                     'Exception: {4}'
                     .format(url, bucket_name, key_name, filename, exc))
-            logging.debug('Downloaded file from S3 bucket -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
+            logging.info(
+                'Downloaded file from S3 bucket -- \n'
+                '    url      = {0}\n'
+                '    filename = {1}'.format(url, filename)
+            )
         else:
             try:
                 response = urllib.request.urlopen(url)
@@ -165,9 +167,11 @@ class ManagerBase(object):
                                   'filename = {1}\n'
                                   'Exception: {2}'
                                   .format(url, filename, exc))
-            logging.debug('Downloaded file from web server -- \n'
-                          '    url      = {0}\n'
-                          '    filename = {1}'.format(url, filename))
+            logging.info(
+                'Downloaded file from web server -- \n'
+                '    url      = {0}\n'
+                '    filename = {1}'.format(url, filename)
+            )
 
     @abc.abstractmethod
     def create_working_dir(self, basedir, prefix):
@@ -204,20 +208,18 @@ class ManagerBase(object):
 
         :return:
         """
-        logging.info('+-' * 40)
         logging.info('Cleanup Time...')
         try:
             logging.debug('{0} being cleaned up.'.format(self.workingdir))
             shutil.rmtree(self.workingdir)
         except Exception as exc:
             # TODO: Update `except` logic
-            logging.fatal('Cleanup Failed!\nException: {0}'.format(exc))
+            logging.critical('Cleanup Failed!\nException: {0}'.format(exc))
             exceptionhandler('Cleanup Failed.\nAborting.')
 
         logging.info('Removed temporary data in working directory -- {0}'
                      .format(self.workingdir))
         logging.info('Exiting cleanup routine...')
-        logging.info('-+' * 40)
 
     @abc.abstractmethod
     def extract_contents(self, filepath, to_directory, create_dir):
