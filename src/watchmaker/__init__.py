@@ -47,8 +47,8 @@ class Prepare(object):
                 Should an s3 bucket be used for the installation files.
             config_path (str):
                 Path to YAML configuration file.
-            log_dir (str):
-                Path to log directory for stream logging.
+            log_dir (str) or log_file (str):
+                Path to log directory or file for stream logging.
         """
         self.kwargs = {}
         self.noreboot = arguments.noreboot
@@ -62,12 +62,11 @@ class Prepare(object):
         self.system_drive = None
         self.execution_scripts = None
 
-        self._prepare_logger(arguments.log_dir)
+        self._prepare_logger(arguments.log_dir, arguments.log_file)
         logging.info('Parameters:  {0}'.format(self.kwargs))
         logging.info('System Type: {0}'.format(self.system))
-        sys.exit()
 
-    def _prepare_logger(self, log_dir):
+    def _prepare_logger(self, log_dir, log_file):
         if log_dir and os.path.exists(log_dir):
             if os.path.isfile(log_dir):
                 logging.basicConfig()
@@ -75,17 +74,23 @@ class Prepare(object):
                     '{0} is a file and not a directory.'.format(log_dir)
                 )
                 return
-
             logging.basicConfig(
                 filename=os.path.join(
                     log_dir,
                     'watchmaker-{0}.log'.format(str(datetime.date.today()))),
                 format='%(levelname)s:\t%(message)s',
                 level=logging.DEBUG)
-            logging.info(
-                'Start time: {0}'.format(datetime.datetime.now())
-            )
-        elif not log_dir:
+            logging.info('Start time: {0}'.format(datetime.datetime.now()))
+        elif log_file:
+            if os.path.isdir(log_file):
+                logging.basicConfig()
+                logging.error(
+                    '{0} is a directory and not a file.'.format(log_file)
+                )
+                return
+            logging.basicConfig(filename=log_file, level=logging.DEBUG)
+            logging.info('Start time: {0}'.format(datetime.datetime.now()))
+        elif not log_dir and not log_file:
             logging.basicConfig()
             logging.warning('Stream logger is not enabled!')
         else:
