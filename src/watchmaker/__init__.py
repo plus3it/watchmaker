@@ -67,13 +67,23 @@ class Prepare(object):
         logging.info('System Type: {0}'.format(self.system))
 
     def _prepare_logger(self, log_dir, log_file):
+        """
+        Prepares the logger for handling messages to a file and/or to stdout.
+        Args:
+            log_dir (str):
+                Path of a directory. If this object is not None, then this
+                directory will be used to store a log file.
+            log_file (str):
+                Path to a file. If this object is not None, then this path
+                to a file will be used as the log file.
+        """
         log_filename = None
         if log_dir and os.path.exists(log_dir):
             if os.path.isfile(log_dir):
                 log_msg = '{0} is a file and not a directory.'.format(log_dir)
                 log_type = 'error'
             else:
-                log_filename=os.path.join(
+                log_filename = os.path.join(
                     log_dir,
                     'watchmaker-{0}.log'.format(str(datetime.date.today()))
                 )
