@@ -1,85 +1,80 @@
 Linux:
-    Yum:
-        Parameters:
-            yumrepomap:
-                #Amazon:
-                -
-                    dist: amazon
-                    url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-amzn.repo
-                #CentOS:
-                -
-                    dist: centos
-                    url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-centos.repo
-                #RedHat:
-                -
-                    dist: redhat
-                    url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-rhel.repo
-                #SaltEL6:
-                -
-                    epel_version: 6
-                    dist: all
-                    url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-salt-el6.repo
-                #SaltEL7:
-                -
-                    epel_version: 7
-                    dist: all
-                    url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-salt-el7.repo
+  Yum:
+    Parameters:
+      yumrepomap:
+        #Amazon:
+        - dist: amazon
+          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-amzn.repo
+        #CentOS:
+        - dist: centos
+          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-centos.repo
+        #RedHat:
+        - dist: redhat
+          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-rhel.repo
+        #SaltEL6:
+        - dist: all
+          epel_version: 6
+          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-salt-el6.repo
+        #SaltEL7:
+        - dist: all
+          epel_version: 7
+          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-salt-el7.repo
 
+  Salt:
+    Parameters:
+      admingroups: None
+      adminusers: None
+      computername: None
+      entenv: False
+      formulastoinclude:
+        - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
+      formulaterminationstrings:
+        - -master
+        - -latest
+      oupath: None
+      salt_debug_log: /var/log/saltcall.debug.log
+      salt_results_log: /var/log/saltcall.results.log
+      saltbootstrapsource: None
+      saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
+      saltinstallmethod: yum
+      saltgitrepo: None
+      saltstates: Highstate
+      saltversion: None
+      sourceiss3bucket: False
 
-    Salt:
-        Parameters:
-            entenv: False
-            formulastoinclude:
-                - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
-            formulaterminationstrings:
-                - -master
-                - -latest
-            salt_debug_log: /var/log/saltcall.debug.log
-            salt_results_log: /var/log/saltcall.results.log
-            saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
-            saltinstallmethod: yum
-            saltstates: Highstate
-            sourceiss3bucket: False
-            saltbootstrapsource: None
-            saltgitrepo: None
-            saltversion: None
-            oupath: None
-            computername: None
-
-    Custom: None
-
+  Custom: None
 
 Windows:
-    Salt:
-        Parameters:
-            saltworkingdir: SystemContent\Windows\Salt\
-            saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2015.8.5-AMD64-Setup.exe
-            saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
-            formulastoinclude:
-                - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/ash-windows-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/dotnet4-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/emet-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/netbanner-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/mcafee-agent-windows-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/ntp-client-windows-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/splunkforwarder-windows-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/windows-update-agent-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
-                - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
-            formulaterminationstrings:
-                - -master
-                - -latest
-            ashrole: MemberServer
-            computername: None
-            entenv: False
-            oupath: None
-            admingroups: None
-            adminusers: None
-            saltstates: Highstate
-            sourceiss3bucket: True
+  Salt:
+    Parameters:
+      admingroups: None
+      adminusers: None
+      ashrole: MemberServer
+      computername: None
+      entenv: False
+      formulastoinclude:
+        - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/ash-windows-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/dotnet4-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/emet-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/netbanner-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/mcafee-agent-windows-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/ntp-client-windows-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/splunkforwarder-windows-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/windows-update-agent-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
+        - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
+      formulaterminationstrings:
+        - -master
+        - -latest
+      oupath: None
+      saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
+      saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2015.8.5-AMD64-Setup.exe
+      saltstates: Highstate
+      saltworkingdir: SystemContent\Windows\Salt\
+      sourceiss3bucket: False
