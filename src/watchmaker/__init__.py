@@ -47,10 +47,8 @@ class Prepare(object):
                 Should an s3 bucket be used for the installation files.
             config_path (str):
                 Path to YAML configuration file.
-            logger (bool):
-                Enables self.logger to a file.
             log_dir (str):
-                Path to log directory for stream self.logger.
+                Path to log directory for stream logging.
         """
         self.kwargs = {}
         self.noreboot = arguments.noreboot
@@ -65,15 +63,15 @@ class Prepare(object):
         self.execution_scripts = None
 
         self._prepare_logger(arguments.log_dir)
-        self.logger.info('Parameters:  {0}'.format(self.kwargs))
-        self.logger.info('System Type: {0}'.format(self.system))
+        logging.info('Parameters:  {0}'.format(self.kwargs))
+        logging.info('System Type: {0}'.format(self.system))
+        sys.exit()
 
     def _prepare_logger(self, log_dir):
         if log_dir and os.path.exists(log_dir):
             if os.path.isfile(log_dir):
                 logging.basicConfig()
-                self.logger = logging.getLogger()
-                self.logger.error(
+                logging.error(
                     '{0} is a file and not a directory.'.format(log_dir)
                 )
                 return
@@ -84,18 +82,15 @@ class Prepare(object):
                     'watchmaker-{0}.log'.format(str(datetime.date.today()))),
                 format='%(levelname)s:\t%(message)s',
                 level=logging.DEBUG)
-            self.logger = logging.getLogger()
-            self.logger.info(
-                'Logging time: {0}'.format(datetime.datetime.now())
+            logging.info(
+                'Start time: {0}'.format(datetime.datetime.now())
             )
         elif not log_dir:
             logging.basicConfig()
-            self.logger = logging.getLogger()
-            self.logger.warning('Stream logger is not enabled!')
+            logging.warning('Stream logger is not enabled!')
         else:
             logging.basicConfig()
-            self.logger = logging.getLogger()
-            self.logger.error('{0} does not exist'.format(log_dir))
+            logging.error('{0} does not exist'.format(log_dir))
 
     def _validate_url(self, url):
 
@@ -117,30 +112,35 @@ class Prepare(object):
                     shutil.copyfileobj(response, outfile)
                 self.config_path = 'config.yaml'
             except urllib.error.URLError:
-                print('The URL used to get the user config.yaml file did not '
-                      'work!\nPlease make sure your config is available.')
+                logging.critical(
+                    'The URL used to get the user config.yaml file did not '
+                    'work!\nPlease make sure your config is available.'
+                )
                 sys.exit(1)
 
         if self.config_path and not os.path.exists(self.config_path):
-            self.logger.warning(
+            logging.warning(
                 'User supplied config {0} does not exist. '
                 'Using the default config.'.format(self.config_path)
             )
             self.config_path = self.default_config
         elif not self.config_path:
-            self.logger.warning(
+            logging.warning(
                 'User did not supply a config.  Using the default config.'
             )
             self.config_path = self.default_config
         else:
-            self.logger.info('User supplied config being used.')
+            logging.info('User supplied config being used.')
         with open(self.config_path) as f:
             data = f.read()
 
         if data:
             self.config = yaml.load(data)
         else:
-            logging.debug('No data to load.')
+            logging.critical(
+                'Unable to load the data of the default or'
+                ' the user supplied config.'
+            )
 
     def _linux_paths(self):
         """
@@ -200,8 +200,9 @@ class Prepare(object):
             self.system_drive = os.environ['SYSTEMDRIVE']
             self._windows_paths()
         else:
-            self.logger.fatal('System, {0}, is not recognized?'
-                              .format(self.system))
+            logging.critical(
+                'System, {0}, is not recognized?'.format(self.system)
+            )
             exceptionhandler('The scripts do not recognize this system type: '
                              '{0}'.format(self.system))
 
@@ -212,9 +213,10 @@ class Prepare(object):
             if not os.path.exists(self.system_params['workingdir']):
                 os.makedirs(self.system_params['workingdir'])
         except Exception as exc:
-            self.logger.fatal('Could not create a directory in {0}.\n'
-                              'Exception: {1}'
-                              .format(self.system_params['prepdir'], exc))
+            logging.critical(
+                'Could not create a directory in {0}.\n'
+                'Exception: {1}'.format(self.system_params['prepdir'], exc)
+            )
             exceptionhandler(exc)
 
     def _get_scripts_to_execute(self):
@@ -232,7 +234,7 @@ class Prepare(object):
                 self.config[self.system][item]['Parameters'].update(
                     self.kwargs)
             except Exception as exc:
-                self.logger.fatal(
+                logging.critical(
                     'For {0} in {1} the parameters could not be merged'
                     .format(item, self.config_path)
                 )
@@ -247,10 +249,10 @@ class Prepare(object):
         After execution the system should be properly provisioned.
         """
         self._get_system_params()
-        self.logger.info(self.system_params)
+        logging.debug(self.system_params)
 
         self._get_scripts_to_execute()
-        self.logger.info(
+        logging.info(
             'Got scripts to execute: {0}.'
             .format(self.config[self.system].keys())
         )
@@ -278,10 +280,13 @@ class Prepare(object):
             exceptionhandler('Execution of the workers cadence has failed. {0}'
                              .format(e))
 
+        logging.info('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
-            self.logger.info('Detected `noreboot` switch. System will not be '
-                             'rebooted.')
+            logging.info(
+                'Detected `noreboot` switch. System will not be rebooted.'
+            )
         else:
-            self.logger.info('Reboot scheduled. System will reboot after the '
-                             'script exits.')
+            logging.info(
+                'Reboot scheduled. System will reboot after the script exits.'
+            )
             subprocess.call(self.system_params['restart'], shell=True)

@@ -99,7 +99,7 @@ class Yum(LinuxManager):
         try:
             config = json.loads(configuration)
         except ValueError:
-            logging.fatal(
+            logging.critical(
                 'The configuration passed was not properly formed JSON.'
                 'Execution halted.'
             )
