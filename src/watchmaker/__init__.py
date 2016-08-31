@@ -50,7 +50,7 @@ class Prepare(object):
             logger (bool):
                 Enables self.logger to a file.
             log_path (str):
-                Path to logfile for stream self.logger.
+                Path to log directory for stream self.logger.
         """
         self.kwargs = {}
         self.noreboot = arguments.noreboot
@@ -67,6 +67,7 @@ class Prepare(object):
         self._prepare_logger(arguments.log_path)
         self.logger.info('Parameters:  {0}'.format(self.kwargs))
         self.logger.info('System Type: {0}'.format(self.system))
+        sys.exit()
 
     def _prepare_logger(self, log_path):
         if log_path and os.path.exists(log_path):
@@ -238,8 +239,6 @@ class Prepare(object):
 
         After execution the system should be properly provisioned.
         """
-        self.logger.info('+' * 80)
-
         self._get_system_params()
         self.logger.info(self.system_params)
 
@@ -279,5 +278,3 @@ class Prepare(object):
             self.logger.info('Reboot scheduled. System will reboot after the '
                              'script exits.')
             subprocess.call(self.system_params['restart'], shell=True)
-
-        self.logger.info('-' * 80)
