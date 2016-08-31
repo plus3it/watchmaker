@@ -67,35 +67,43 @@ class Prepare(object):
         logging.info('System Type: {0}'.format(self.system))
 
     def _prepare_logger(self, log_dir, log_file):
+        log_filename = None
         if log_dir and os.path.exists(log_dir):
             if os.path.isfile(log_dir):
-                logging.basicConfig()
-                logging.error(
-                    '{0} is a file and not a directory.'.format(log_dir)
-                )
-                return
-            logging.basicConfig(
-                filename=os.path.join(
+                log_msg = '{0} is a file and not a directory.'.format(log_dir)
+                log_type = 'error'
+            else:
+                log_filename=os.path.join(
                     log_dir,
-                    'watchmaker-{0}.log'.format(str(datetime.date.today()))),
-                format='%(levelname)s:\t%(message)s',
-                level=logging.DEBUG)
-            logging.info('Start time: {0}'.format(datetime.datetime.now()))
+                    'watchmaker-{0}.log'.format(str(datetime.date.today()))
+                )
+                log_msg = 'Start time: {0}'.format(datetime.datetime.now())
+                log_type = 'info'
         elif log_file:
             if os.path.isdir(log_file):
-                logging.basicConfig()
-                logging.error(
-                    '{0} is a directory and not a file.'.format(log_file)
-                )
-                return
-            logging.basicConfig(filename=log_file, level=logging.DEBUG)
-            logging.info('Start time: {0}'.format(datetime.datetime.now()))
+                log_msg = '{0} is a directory and not a file.'.format(log_file)
+                log_type = 'error'
+            else:
+                log_filename = log_file
+                log_msg = 'Start time: {0}'.format(datetime.datetime.now())
+                log_type = 'info'
         elif not log_dir and not log_file:
-            logging.basicConfig()
-            logging.warning('Stream logger is not enabled!')
+            log_msg = 'Stream logger is not enabled!'
+            log_type = 'warning'
+        else:
+            log_msg = '{0} does not exist'.format(log_dir)
+            log_type = 'error'
+
+        if log_filename:
+            logging.basicConfig(
+                filename=log_filename,
+                format='%(levelname)s:\t%(message)s',
+                level=logging.DEBUG
+            )
         else:
             logging.basicConfig()
-            logging.error('{0} does not exist'.format(log_dir))
+
+        getattr(logging, log_type)(log_msg)
 
     def _validate_url(self, url):
 
