@@ -49,7 +49,7 @@ class Prepare(object):
                 Path to YAML configuration file.
             logger (bool):
                 Enables self.logger to a file.
-            log_path (str):
+            log_dir (str):
                 Path to log directory for stream self.logger.
         """
         self.kwargs = {}
@@ -64,16 +64,23 @@ class Prepare(object):
         self.system_drive = None
         self.execution_scripts = None
 
-        self._prepare_logger(arguments.log_path)
+        self._prepare_logger(arguments.log_dir)
         self.logger.info('Parameters:  {0}'.format(self.kwargs))
         self.logger.info('System Type: {0}'.format(self.system))
-        sys.exit()
 
-    def _prepare_logger(self, log_path):
-        if log_path and os.path.exists(log_path):
+    def _prepare_logger(self, log_dir):
+        if log_dir and os.path.exists(log_dir):
+            if os.path.isfile(log_dir):
+                logging.basicConfig()
+                self.logger = logging.getLogger()
+                self.logger.error(
+                    '{0} is a file and not a directory.'.format(log_dir)
+                )
+                return
+
             logging.basicConfig(
                 filename=os.path.join(
-                    log_path,
+                    log_dir,
                     'watchmaker-{0}.log'.format(str(datetime.date.today()))),
                 format='%(levelname)s:\t%(message)s',
                 level=logging.DEBUG)
@@ -81,14 +88,14 @@ class Prepare(object):
             self.logger.info(
                 'Logging time: {0}'.format(datetime.datetime.now())
             )
-        elif not log_path:
+        elif not log_dir:
             logging.basicConfig()
             self.logger = logging.getLogger()
             self.logger.warning('Stream logger is not enabled!')
         else:
             logging.basicConfig()
             self.logger = logging.getLogger()
-            self.logger.error('{0} does not exist'.format(log_path))
+            self.logger.error('{0} does not exist'.format(log_dir))
 
     def _validate_url(self, url):
 
