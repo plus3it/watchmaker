@@ -9,6 +9,35 @@ class LogHandler:
         pass
 
     @staticmethod
+    def add_stdout(second_handler=False, log_level=logging.DEBUG):
+        logformat = '[%(asctime)s] %(levelname)s:\t%(message)s'
+        if second_handler:
+            hdlr = logging.StreamHandler()
+            hdlr.setLevel(log_level)
+            logging.getLogger().addHandler(hdlr)
+            formatter = logging.Formatter(logformat)
+            hdlr.setFormatter(formatter)
+            logging.getLogger().addHandler(hdlr)
+        else:
+            logging.basicConfig(
+                format=logformat, level=log_level
+            )
+
+    @staticmethod
+    def add_logfile(filename, second_handler=False, log_level=logging.DEBUG):
+        logformat = '[%(asctime)s] %(levelname)s:\t%(message)s'
+        if second_handler:
+            hdlr = logging.FileHandler(filename)
+            hdlr.setLevel(log_level)
+            formatter = logging.Formatter(logformat)
+            hdlr.setFormatter(formatter)
+            logging.getLogger().addHandler(hdlr)
+        else:
+            logging.basicConfig(
+                filename=filename, format=logformat, level=log_level
+            )
+
+    @staticmethod
     def prepare_logger(log_dir, log_file):
         """
         Prepares the logger for handling messages to a file and/or to stdout.
@@ -48,13 +77,9 @@ class LogHandler:
             log_type = 'error'
 
         if log_filename:
-            logging.basicConfig(
-                filename=log_filename,
-                format='%(levelname)s:\t%(message)s',
-                level=logging.DEBUG
-            )
+            LogHandler.add_logfile(filename=log_filename)
         else:
-            logging.basicConfig()
+            LogHandler.add_stdout()
 
         getattr(logging, log_type)(log_msg)
 

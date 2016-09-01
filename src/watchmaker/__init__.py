@@ -3,7 +3,6 @@ import os
 import platform
 import shutil
 import subprocess
-import sys
 import yaml
 
 from six.moves import urllib

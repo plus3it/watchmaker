@@ -36,7 +36,7 @@ class ManagerBase(object):
             import boto3
             from botocore.client import ClientError
         except ImportError as exc:
-            exceptionhandler(exc)
+            LogHandler.add(exc, log_type='critical')
 
         try:
             s3 = boto3.resource("s3")
@@ -101,7 +101,8 @@ class ManagerBase(object):
                 except Exception as exc:
                     LogHandler.add(
                         'Unable to download file from S3 bucket.  url = {0}.  '
-                        'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
+                        'bucket = {1}.  key = {2}.  file = {3}.  '
+                        'Exception: {4}'
                         .format(url, bucket_name, key_name, filename, exc),
                         log_type='error', exc=exc
                     )
@@ -109,7 +110,7 @@ class ManagerBase(object):
                 LogHandler.add(
                     'Unable to download file from S3 bucket.  url = {0}.  '
                     'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
-                        .format(url, bucket_name, key_name, filename, exc),
+                    .format(url, bucket_name, key_name, filename, exc),
                     log_type='error', exc=exc
                 )
             LogHandler.add(
