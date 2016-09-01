@@ -23,11 +23,11 @@ def main():
     log_path_group = parser.add_mutually_exclusive_group(required=False)
     log_path_group.add_argument(
         '--log-dir', dest='log_dir', default=None,
-        help='Path to the log directory for stream logging.'
+        help='Path to the log directory for logging.'
     )
     log_path_group.add_argument(
         '--log-file', dest='log_file', default=None,
-        help='Path to the log file for stream logging.'
+        help='Path to the log file for logging.'
     )
 
     if parser.parse_args().saltstates:
