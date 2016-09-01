@@ -7,7 +7,7 @@ import yaml
 
 from six.moves import urllib
 from watchmaker import static
-from watchmaker.exceptions import LogHandler
+from watchmaker.exceptions import LogHandler as log
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
@@ -60,9 +60,9 @@ class Prepare(object):
         self.system_drive = None
         self.execution_scripts = None
 
-        LogHandler.prepare_logger(arguments.log_dir, arguments.log_file)
-        LogHandler.add('Parameters:  {0}'.format(self.kwargs))
-        LogHandler.add('System Type: {0}'.format(self.system))
+        log.prepare_logger(arguments.log_dir, arguments.log_file)
+        log('Parameters:  {0}'.format(self.kwargs))
+        log('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
 
@@ -84,34 +84,34 @@ class Prepare(object):
                     shutil.copyfileobj(response, outfile)
                 self.config_path = 'config.yaml'
             except urllib.error.URLError:
-                LogHandler.add(
+                log(
                     'The URL used to get the user config.yaml file did not '
                     'work!  Please make sure your config is available.',
                     log_type='critical'
                 )
 
         if self.config_path and not os.path.exists(self.config_path):
-            LogHandler.add(
+            log(
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
                 'path.'.format(self.config_path),
                 log_type='critical'
             )
         elif not self.config_path:
-            LogHandler.add(
+            log(
                 'User did not supply a config.  Using the default config.',
                 log_type='warning'
             )
             self.config_path = self.default_config
         else:
-            LogHandler.add('User supplied config being used.')
+            log('User supplied config being used.')
         with open(self.config_path) as f:
             data = f.read()
 
         if data:
             self.config = yaml.load(data)
         else:
-            LogHandler.add(
+            log(
                 'Unable to load the data of the default or'
                 ' the user supplied config.',
                 log_type='critical'
@@ -175,7 +175,7 @@ class Prepare(object):
             self.system_drive = os.environ['SYSTEMDRIVE']
             self._windows_paths()
         else:
-            LogHandler.add(
+            log(
                 'System, {0}, is not recognized?'.format(self.system),
                 log_type='critical'
             )
@@ -187,7 +187,7 @@ class Prepare(object):
             if not os.path.exists(self.system_params['workingdir']):
                 os.makedirs(self.system_params['workingdir'])
         except Exception as exc:
-            LogHandler.add(
+            log(
                 'Could not create a directory in {0}.  '
                 'Exception: {1}'.format(self.system_params['prepdir'], exc),
                 log_type='critical'
@@ -209,7 +209,7 @@ class Prepare(object):
                     self.kwargs
                 )
             except Exception as exc:
-                LogHandler.add(
+                log(
                     'For {0} in {1}, the parameters could not be merged. {2}'
                     .format(item, self.config_path, exc),
                     log_type='critical'
@@ -224,10 +224,10 @@ class Prepare(object):
         After execution the system should be properly provisioned.
         """
         self._get_system_params()
-        LogHandler.add(self.system_params, log_type='debug')
+        log(self.system_params, log_type='debug')
 
         self._get_scripts_to_execute()
-        LogHandler.add(
+        log(
             'Got scripts to execute: {0}.'
             .format(self.config[self.system].keys())
         )
@@ -247,23 +247,21 @@ class Prepare(object):
                 self.saltstates
             )
         else:
-            LogHandler.add('There is no known System!', log_type='critical')
+            log('There is no known System!', log_type='critical')
 
         try:
             workers_manager.worker_cadence()
         except Exception as exc:
-            LogHandler.add(
+            log(
                 'Execution of the workers cadence has failed. {0}'.format(exc),
                 log_type='critical'
             )
 
-        LogHandler.add('Stop time: {0}'.format(datetime.datetime.now()))
+        log('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
-            LogHandler.add(
-                'Detected `noreboot` switch. System will not be rebooted.'
-            )
+            log('Detected `noreboot` switch. System will not be rebooted.')
         else:
-            LogHandler.add(
+            log(
                 'Reboot scheduled. System will reboot after the script exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)

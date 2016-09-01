@@ -5,8 +5,8 @@ import sys
 
 
 class LogHandler:
-    def __init__(self):
-        pass
+    def __init__(self, msg, log_type='info', exc=None):
+        LogHandler.add(msg, log_type=log_type, exc=exc)
 
     @staticmethod
     def add_stdout(second_handler=False, log_level=logging.DEBUG):
