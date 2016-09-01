@@ -7,7 +7,7 @@ import yaml
 
 from six.moves import urllib
 from watchmaker import static
-from watchmaker.exceptions import LogHandler as log
+from watchmaker.logger import LogHandler as log
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 

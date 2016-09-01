@@ -7,7 +7,7 @@ import tempfile
 import zipfile
 
 from six.moves import urllib
-from watchmaker.exceptions import LogHandler as log
+from watchmaker.logger import LogHandler as log
 
 
 class ManagerBase(object):
