@@ -5,7 +5,7 @@ import subprocess
 
 import yaml
 
-from watchmaker.exceptions import LogHandler as log
+from watchmaker.logger import LogHandler as log
 from watchmaker.managers.base import LinuxManager, WindowsManager
 
 

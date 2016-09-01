@@ -1,7 +1,7 @@
 import json
 import re
 
-from watchmaker.exceptions import LogHandler
+from watchmaker.logger import LogHandler
 from watchmaker.managers.base import LinuxManager
 
 
