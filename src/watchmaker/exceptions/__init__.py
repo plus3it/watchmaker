@@ -10,6 +10,16 @@ class LogHandler:
 
     @staticmethod
     def add_stdout(second_handler=False, log_level=logging.DEBUG):
+        """
+        Adds a logger that logs to console/stdout.
+        Args:
+            second_handler (bool):
+                If true, then we need to add a new handler to logging since
+                its basic configuration was set by another means. If false,
+                we set up basic configuration for stdout streaming of logs.
+            log_level (logging const):
+                The level at which to log outputs to this handler.
+        """
         logformat = '[%(asctime)s] %(levelname)s:\t%(message)s'
         if second_handler:
             hdlr = logging.StreamHandler()
@@ -25,6 +35,18 @@ class LogHandler:
 
     @staticmethod
     def add_logfile(filename, second_handler=False, log_level=logging.DEBUG):
+        """
+        Adds a logger that logs to a file.
+        Args:
+            filename (str):
+                The path to the file to write logs to.
+            second_handler (bool):
+                If true, then we need to add a new handler to logging since
+                its basic configuration was set by another means. If false,
+                we set up basic configuration for logging to a file.
+            log_level (logging const):
+                The level at which to log outputs to this handler.
+        """
         logformat = '[%(asctime)s] %(levelname)s:\t%(message)s'
         if second_handler:
             hdlr = logging.FileHandler(filename)
@@ -85,6 +107,19 @@ class LogHandler:
 
     @staticmethod
     def add(msg, log_type='info', exc=None):
+        """
+        Logs message to handlers.
+        Args:
+            msg (str):
+                The message to log.
+            log_type (str):
+                The log type of the message - this should match the log types
+                available in the logging object. If the log type is critical
+                application will be forcefully exited.
+            exc (Exception):
+                An exception that if log type is not critical, the a
+                SystemError exception is raised.
+        """
         getattr(logging, log_type)(msg)
         if log_type == 'critical':
             sys.exit(1)
