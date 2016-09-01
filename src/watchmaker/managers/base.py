@@ -1,5 +1,4 @@
 import abc
-import logging
 import os
 import shutil
 import subprocess
@@ -8,7 +7,7 @@ import tempfile
 import zipfile
 
 from six.moves import urllib
-from watchmaker.exceptions import SystemFatal as exceptionhandler
+from watchmaker.exceptions import LogHandler
 
 
 class ManagerBase(object):
@@ -44,31 +43,18 @@ class ManagerBase(object):
             s3.meta.client.head_bucket(Bucket=bucket_name)
             s3.Object(bucket_name, key_name).download_file(destination)
         except ClientError as exc:
-            logging.error('Bucket does not exist.\n'
-                          'bucket = {0}\n'
-                          'Exception: {1}'
-                          .format(bucket_name, exc))
-            raise SystemError('Bucket does not exist.\n'
-                              'bucket = {0}\n'
-                              'Exception: {1}'
-                              .format(bucket_name, exc))
+            LogHandler.add(
+                'Bucket does not exist.  bucket = {0}.  Exception: {1}'
+                .format(bucket_name, exc),
+                log_type='error', exc=exc
+            )
         except Exception as exc:
-            logging.error('Unable to download file from S3 bucket.\n'
-                          'url = {0}\n'
-                          'bucket = {1}\n'
-                          'key = {2}\n'
-                          'file = {3}\n'
-                          'Exception: {4}'
-                          .format(url, bucket_name, key_name,
-                                  destination, exc))
-            raise SystemError('Unable to download file from S3 bucket.\n'
-                              'url = {0}\n'
-                              'bucket = {1}\n'
-                              'key = {2}\n'
-                              'file = {3}\n'
-                              'Exception: {4}'
-                              .format(url, bucket_name, key_name,
-                                      destination, exc))
+            LogHandler.add(
+                'Unable to download file from S3 bucket.  url = {0}.  '
+                'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
+                .format(url, bucket_name, key_name, destination, exc),
+                log_type='error', exc=exc
+            )
 
     @abc.abstractmethod
     def download_file(self, url, filename, sourceiss3bucket):
@@ -78,9 +64,9 @@ class ManagerBase(object):
         :param sourceiss3bucket:
         :return:
         """
-        logging.debug('Downloading: {0}'.format(url))
-        logging.debug('Destination: {0}'.format(filename))
-        logging.debug('S3: {0}'.format(sourceiss3bucket))
+        LogHandler.add('Downloading: {0}'.format(url), log_type='debug')
+        LogHandler.add('Destination: {0}'.format(filename), log_type='debug')
+        LogHandler.add('S3: {0}'.format(sourceiss3bucket), log_type='debug')
 
         # TODO Rework this to properly reflect logic flow cleanly.
         if sourceiss3bucket:
@@ -88,20 +74,24 @@ class ManagerBase(object):
                 import boto3
                 from botocore.client import ClientError
             except ImportError as exc:
-                exceptionhandler(exc)
+                LogHandler.add(exc, log_type='critical')
 
             bucket_name = url.split('/')[3]
             key_name = '/'.join(url.split('/')[4:])
 
-            logging.debug('Bucket Name: {0}'.format(bucket_name))
-            logging.debug('key_name: {0}'.format(key_name))
+            LogHandler.add(
+                'Bucket Name: {0}'.format(bucket_name), log_type='debug'
+            )
+            LogHandler.add('key_name: {0}'.format(key_name), log_type='debug')
 
             try:
-                s3 = boto3.resource("s3")
+                s3 = boto3.resource('s3')
                 s3.meta.client.head_bucket(Bucket=bucket_name)
                 s3.Object(bucket_name, key_name).download_file(filename)
             except (NameError, ClientError):
-                logging.error('NameError: {0}'.format(ClientError))
+                LogHandler.add(
+                    'NameError: {0}'.format(ClientError), log_type='error'
+                )
                 try:
                     bucket_name = url.split('/')[2].split('.')[0]
                     key_name = '/'.join(url.split('/')[3:])
@@ -109,46 +99,22 @@ class ManagerBase(object):
                     s3.meta.client.head_bucket(Bucket=bucket_name)
                     s3.Object(bucket_name, key_name).download_file(filename)
                 except Exception as exc:
-                    logging.error(
-                        'Unable to download file from S3 bucket.\n'
-                        'url = {0}\n'
-                        'bucket = {1}\n'
-                        'key = {2}\n'
-                        'file = {3}\n'
-                        'Exception: {4}'
-                        .format(url, bucket_name, key_name, filename, exc)
-                    )
-                    raise SystemError(
-                        'Unable to download file from S3 bucket.\n'
-                        'url = {0}\n'
-                        'bucket = {1}\n'
-                        'key = {2}\n'
-                        'file = {3}\n'
-                        'Exception: {4}'
-                        .format(url, bucket_name, key_name, filename, exc)
+                    LogHandler.add(
+                        'Unable to download file from S3 bucket.  url = {0}.  '
+                        'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc),
+                        log_type='error', exc=exc
                     )
             except Exception as exc:
-                logging.error(
-                    'Unable to download file from S3 bucket.\n'
-                    'url = {0}\n'
-                    'bucket = {1}\n'
-                    'key = {2}\n'
-                    'file = {3}\n'
-                    'Exception: {4}'
-                    .format(url, bucket_name, key_name, filename, exc)
+                LogHandler.add(
+                    'Unable to download file from S3 bucket.  url = {0}.  '
+                    'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
+                        .format(url, bucket_name, key_name, filename, exc),
+                    log_type='error', exc=exc
                 )
-                raise SystemError(
-                    'Unable to download file from S3 bucket.\n'
-                    'url = {0}\n'
-                    'bucket = {1}\n'
-                    'key = {2}\n'
-                    'file = {3}\n'
-                    'Exception: {4}'
-                    .format(url, bucket_name, key_name, filename, exc))
-            logging.info(
-                'Downloaded file from S3 bucket -- \n'
-                '    url      = {0}\n'
-                '    filename = {1}'.format(url, filename)
+            LogHandler.add(
+                'Downloaded file from S3 bucket  --  url = {0}.  '
+                'filename = {1}'.format(url, filename)
             )
         else:
             try:
@@ -157,20 +123,15 @@ class ManagerBase(object):
                     shutil.copyfileobj(response, outfile)
             except Exception as exc:
                 # TODO: Update `except` logic
-                logging.error('Unable to download file from web server.\n'
-                              'url = {0}\n'
-                              'filename = {1}\n'
-                              'Exception: {2}'
-                              .format(url, filename, exc))
-                raise SystemError('Unable to download file from web server.\n'
-                                  'url = {0}\n'
-                                  'filename = {1}\n'
-                                  'Exception: {2}'
-                                  .format(url, filename, exc))
-            logging.info(
-                'Downloaded file from web server -- \n'
-                '    url      = {0}\n'
-                '    filename = {1}'.format(url, filename)
+                LogHandler.add(
+                    'Unable to download file from web server.  url = {0}.  '
+                    'filename = {1}.  Exception: {2}'
+                    .format(url, filename, exc),
+                    log_type='error', exc=exc
+                )
+            LogHandler.add(
+                'Downloaded file from web server  --  url = {0}.  '
+                'filename = {1}'.format(url, filename)
             )
 
     @abc.abstractmethod
@@ -181,26 +142,35 @@ class ManagerBase(object):
         :param prefix:
         :return:
         """
-        logging.info('Creating a working directory.')
+        LogHandler.add('Creating a working directory.')
         workingdir = None
         original_umask = os.umask(0)
         try:
             workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception as exc:
-            exceptionhandler('Could not create workingdir in {0}.\n'
-                             'Exception: {1}'.format(basedir, exc))
-        logging.debug('Working directory: {0}'.format(workingdir))
+            LogHandler.add(
+                'Could not create workingdir in {0}.  Exception: {1}'
+                .format(basedir, exc), log_type='critical'
+            )
+        LogHandler.add(
+            'Working directory: {0}'.format(workingdir), log_type='debug'
+        )
         self.workingdir = workingdir
         os.umask(original_umask)
 
     @abc.abstractmethod
     def call_process(self, cmd):
         if not isinstance(cmd, list):
-            exceptionhandler('Command is not a list.\n{0}'.format(str(cmd)))
+            LogHandler.add(
+                'Command is not a list: {0}'.format(str(cmd)),
+                log_type='critical'
+            )
         rsp = subprocess.call(cmd)
 
         if rsp != 0:
-            exceptionhandler('Command failed.\n{0}'.format(str(cmd)))
+            LogHandler.add(
+                'Command failed: {0}'.format(str(cmd)), log_type='critical'
+            )
 
     @abc.abstractmethod
     def cleanup(self):
@@ -208,18 +178,25 @@ class ManagerBase(object):
 
         :return:
         """
-        logging.info('Cleanup Time...')
+        LogHandler.add('Cleanup Time...')
         try:
-            logging.debug('{0} being cleaned up.'.format(self.workingdir))
+            LogHandler.add(
+                '{0} being cleaned up.'.format(self.workingdir),
+                log_type='debug'
+            )
             shutil.rmtree(self.workingdir)
         except Exception as exc:
             # TODO: Update `except` logic
-            logging.critical('Cleanup Failed!\nException: {0}'.format(exc))
-            exceptionhandler('Cleanup Failed.\nAborting.')
+            LogHandler.add(
+                'Cleanup Failed!  Exception: {0}'.format(exc),
+                log_type='critical'
+            )
 
-        logging.info('Removed temporary data in working directory -- {0}'
-                     .format(self.workingdir))
-        logging.info('Exiting cleanup routine...')
+        LogHandler.add(
+            'Removed temporary data in working directory -- {0}'
+            .format(self.workingdir)
+        )
+        LogHandler.add('Exiting cleanup routine...')
 
     @abc.abstractmethod
     def extract_contents(self, filepath, to_directory, create_dir):
@@ -234,17 +211,19 @@ class ManagerBase(object):
         mode = None
 
         if filepath.endswith('.zip'):
-            logging.debug('File Type: zip')
+            LogHandler.add('File Type: zip', log_type='debug')
             opener, mode = zipfile.ZipFile, 'r'
         elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
-            logging.debug('File Type: GZip Tar')
+            LogHandler.add('File Type: GZip Tar', log_type='debug')
             opener, mode = tarfile.open, 'r:gz'
         elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
-            logging.debug('File Type: Bzip Tar')
+            LogHandler.add('File Type: Bzip Tar', log_type='debug')
             opener, mode = tarfile.open, 'r:bz2'
         else:
-            exceptionhandler('Could not extract "{0}" as no appropriate '
-                             'extractor is found'.format(filepath))
+            LogHandler.add(
+                'Could not extract "{0}" as no appropriate extractor '
+                'is found.'.format(filepath), log_type='critical'
+            )
 
         if create_dir:
             to_directory = os.sep.join((
@@ -299,11 +278,15 @@ class LinuxManager(ManagerBase):
         else:
             yum_cmd.append(packages)
         rsp = subprocess.call(yum_cmd)
-        logging.debug(packages)
-        logging.debug('Return code of yum install: {0}'.format(rsp))
+        LogHandler.add(packages, log_type='debug')
+        LogHandler.add(
+            'Return code of yum install: {0}'.format(rsp), log_type='debug'
+        )
 
         if rsp != 0:
-            exceptionhandler('Installing Salt from Yum has failed!')
+            LogHandler.add(
+                'Installing Salt from Yum has failed!', log_type='critical'
+            )
 
     def download_file(self, url, filename, sourceiss3bucket=False):
         """

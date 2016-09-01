@@ -1,5 +1,4 @@
 import datetime
-import logging
 import os
 import platform
 import shutil
@@ -9,7 +8,7 @@ import yaml
 
 from six.moves import urllib
 from watchmaker import static
-from watchmaker.exceptions import SystemFatal as exceptionhandler
+from watchmaker.exceptions import LogHandler
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
@@ -48,7 +47,7 @@ class Prepare(object):
             config_path (str):
                 Path to YAML configuration file.
             log_dir (str) or log_file (str):
-                Path to log directory or file for stream logging.
+                Path to log directory or file for logging.
         """
         self.kwargs = {}
         self.noreboot = arguments.noreboot
@@ -62,58 +61,9 @@ class Prepare(object):
         self.system_drive = None
         self.execution_scripts = None
 
-        self._prepare_logger(arguments.log_dir, arguments.log_file)
-        logging.info('Parameters:  {0}'.format(self.kwargs))
-        logging.info('System Type: {0}'.format(self.system))
-
-    def _prepare_logger(self, log_dir, log_file):
-        """
-        Prepares the logger for handling messages to a file and/or to stdout.
-        Args:
-            log_dir (str):
-                Path of a directory. If this object is not None, then this
-                directory will be used to store a log file.
-            log_file (str):
-                Path to a file. If this object is not None, then this path
-                to a file will be used as the log file.
-        """
-        log_filename = None
-        if log_dir and os.path.exists(log_dir):
-            if os.path.isfile(log_dir):
-                log_msg = '{0} is a file and not a directory.'.format(log_dir)
-                log_type = 'error'
-            else:
-                log_filename = os.path.join(
-                    log_dir,
-                    'watchmaker-{0}.log'.format(str(datetime.date.today()))
-                )
-                log_msg = 'Start time: {0}'.format(datetime.datetime.now())
-                log_type = 'info'
-        elif log_file:
-            if os.path.isdir(log_file):
-                log_msg = '{0} is a directory and not a file.'.format(log_file)
-                log_type = 'error'
-            else:
-                log_filename = log_file
-                log_msg = 'Start time: {0}'.format(datetime.datetime.now())
-                log_type = 'info'
-        elif not log_dir and not log_file:
-            log_msg = 'Watchmaker will not be logging to a file!'
-            log_type = 'warning'
-        else:
-            log_msg = '{0} does not exist'.format(log_dir)
-            log_type = 'error'
-
-        if log_filename:
-            logging.basicConfig(
-                filename=log_filename,
-                format='%(levelname)s:\t%(message)s',
-                level=logging.DEBUG
-            )
-        else:
-            logging.basicConfig()
-
-        getattr(logging, log_type)(log_msg)
+        LogHandler.prepare_logger(arguments.log_dir, arguments.log_file)
+        LogHandler.add('Parameters:  {0}'.format(self.kwargs))
+        LogHandler.add('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
 
@@ -135,37 +85,38 @@ class Prepare(object):
                     shutil.copyfileobj(response, outfile)
                 self.config_path = 'config.yaml'
             except urllib.error.URLError:
-                logging.critical(
+                LogHandler.add(
                     'The URL used to get the user config.yaml file did not '
-                    'work!  Please make sure your config is available.'
+                    'work!  Please make sure your config is available.',
+                    log_type='critical'
                 )
-                sys.exit(1)
 
         if self.config_path and not os.path.exists(self.config_path):
-            logging.critical(
+            LogHandler.add(
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
-                'path.'.format(self.config_path)
+                'path.'.format(self.config_path),
+                log_type='critical'
             )
-            sys.exit(1)
         elif not self.config_path:
-            logging.warning(
-                'User did not supply a config.  Using the default config.'
+            LogHandler.add(
+                'User did not supply a config.  Using the default config.',
+                log_type='warning'
             )
             self.config_path = self.default_config
         else:
-            logging.info('User supplied config being used.')
+            LogHandler.add('User supplied config being used.')
         with open(self.config_path) as f:
             data = f.read()
 
         if data:
             self.config = yaml.load(data)
         else:
-            logging.critical(
+            LogHandler.add(
                 'Unable to load the data of the default or'
-                ' the user supplied config.'
+                ' the user supplied config.',
+                log_type='critical'
             )
-            sys.exit(1)
 
     def _linux_paths(self):
         """
@@ -225,11 +176,10 @@ class Prepare(object):
             self.system_drive = os.environ['SYSTEMDRIVE']
             self._windows_paths()
         else:
-            logging.critical(
-                'System, {0}, is not recognized?'.format(self.system)
+            LogHandler.add(
+                'System, {0}, is not recognized?'.format(self.system),
+                log_type='critical'
             )
-            exceptionhandler('The scripts do not recognize this system type: '
-                             '{0}'.format(self.system))
 
         # Create watchmaker directories
         try:
@@ -238,11 +188,11 @@ class Prepare(object):
             if not os.path.exists(self.system_params['workingdir']):
                 os.makedirs(self.system_params['workingdir'])
         except Exception as exc:
-            logging.critical(
+            LogHandler.add(
                 'Could not create a directory in {0}.  '
-                'Exception: {1}'.format(self.system_params['prepdir'], exc)
+                'Exception: {1}'.format(self.system_params['prepdir'], exc),
+                log_type='critical'
             )
-            exceptionhandler(exc)
 
     def _get_scripts_to_execute(self):
         """
@@ -257,13 +207,14 @@ class Prepare(object):
         for item in self.config[self.system]:
             try:
                 self.config[self.system][item]['Parameters'].update(
-                    self.kwargs)
-            except Exception as exc:
-                logging.critical(
-                    'For {0} in {1} the parameters could not be merged'
-                    .format(item, self.config_path)
+                    self.kwargs
                 )
-                exceptionhandler(exc)
+            except Exception as exc:
+                LogHandler.add(
+                    'For {0} in {1}, the parameters could not be merged. {2}'
+                    .format(item, self.config_path, exc),
+                    log_type='critical'
+                )
 
         self.execution_scripts = scriptstoexecute
 
@@ -274,10 +225,10 @@ class Prepare(object):
         After execution the system should be properly provisioned.
         """
         self._get_system_params()
-        logging.debug(self.system_params)
+        LogHandler.add(self.system_params, log_type='debug')
 
         self._get_scripts_to_execute()
-        logging.info(
+        LogHandler.add(
             'Got scripts to execute: {0}.'
             .format(self.config[self.system].keys())
         )
@@ -297,21 +248,23 @@ class Prepare(object):
                 self.saltstates
             )
         else:
-            exceptionhandler('There is no known System!')
+            LogHandler.add('There is no known System!', log_type='critical')
 
         try:
             workers_manager.worker_cadence()
-        except Exception as e:
-            exceptionhandler('Execution of the workers cadence has failed. {0}'
-                             .format(e))
+        except Exception as exc:
+            LogHandler.add(
+                'Execution of the workers cadence has failed. {0}'.format(exc),
+                log_type='critical'
+            )
 
-        logging.info('Stop time: {0}'.format(datetime.datetime.now()))
+        LogHandler.add('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
-            logging.info(
+            LogHandler.add(
                 'Detected `noreboot` switch. System will not be rebooted.'
             )
         else:
-            logging.info(
+            LogHandler.add(
                 'Reboot scheduled. System will reboot after the script exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)

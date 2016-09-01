@@ -1,8 +1,8 @@
 import json
-import logging
 import re
 import sys
 
+from watchmaker.exceptions import LogHandler
 from watchmaker.managers.base import LinuxManager
 
 
@@ -76,9 +76,11 @@ class Yum(LinuxManager):
                 .format(self.dist, self.version)
             )
 
-        logging.debug('Dist\t\t{0}'.format(self.dist))
-        logging.debug('Version\t\t{0}'.format(self.version))
-        logging.debug('EPEL Version\t{0}'.format(self.epel_version))
+        LogHandler.add('Dist\t\t{0}'.format(self.dist), log_type='debug')
+        LogHandler.add('Version\t\t{0}'.format(self.version), log_type='debug')
+        LogHandler.add(
+            'EPEL Version\t{0}'.format(self.epel_version), log_type='debug'
+        )
 
     def _repo(self, config):
         """
@@ -99,16 +101,15 @@ class Yum(LinuxManager):
         try:
             config = json.loads(configuration)
         except ValueError:
-            logging.critical(
+            LogHandler.add(
                 'The configuration passed was not properly formed JSON.'
-                'Execution halted.'
+                'Execution halted.', log_type='critical'
             )
-            sys.exit(1)
 
         if 'yumrepomap' in config and config['yumrepomap']:
             self._repo(config)
         else:
-            logging.info('yumrepomap did not exist or was empty.')
+            LogHandler.add('yumrepomap did not exist or was empty.')
 
         self._validate()
 
@@ -116,19 +117,20 @@ class Yum(LinuxManager):
         for repo in config['yumrepomap']:
 
             if repo['dist'] in [self.dist, 'all']:
-                logging.debug(
-                    '{0} in {1} or all'
-                    .format(repo['dist'], self.dist)
+                LogHandler.add(
+                    '{0} in {1} or all'.format(repo['dist'], self.dist),
+                    log_type='debug'
                 )
                 if 'epel_version' in repo and \
                         str(repo['epel_version']) != str(self.epel_version):
-                    logging.error(
+                    LogHandler.add(
                         'epel_version is not valid for this repo. {0}'
-                        .format(self.epel_version)
+                        .format(self.epel_version), log_type='error'
                     )
                 else:
-                    logging.debug(
-                        'All requirements have been validated for this repo.'
+                    LogHandler.add(
+                        'All requirements have been validated for this repo.',
+                        log_type='error'
                     )
                     # Download the yum repo definition to /etc/yum.repos.d/
                     url = repo['url']
@@ -136,6 +138,7 @@ class Yum(LinuxManager):
                         url.split('/')[-1])
                     self.download_file(url, repofile)
             else:
-                logging.debug(
-                    '{0} NOT in {1} or all'.format(repo['dist'], self.dist)
+                LogHandler.add(
+                    '{0} NOT in {1} or all'.format(repo['dist'], self.dist),
+                    log_type='debug'
                 )
