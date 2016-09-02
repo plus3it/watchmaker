@@ -1,17 +1,19 @@
 import datetime
+import logging
 import os
 import platform
 import shutil
 import subprocess
+import sys
 import yaml
 
 from six.moves import urllib
 from watchmaker import static
-from watchmaker.logger import LogHandler as log
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
 __version__ = '0.0.1'
+plog = logging.getLogger('Prepare')
 
 
 class PrepArguments(object):
@@ -60,9 +62,8 @@ class Prepare(object):
         self.system_drive = None
         self.execution_scripts = None
 
-        log.prepare_logger(arguments.log_dir, arguments.log_file)
-        log('Parameters:  {0}'.format(self.kwargs))
-        log('System Type: {0}'.format(self.system))
+        plog.info('Parameters:  {0}'.format(self.kwargs))
+        plog.info('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
 
@@ -76,6 +77,13 @@ class Prepare(object):
             Sets the self.config attribute with the data from the
             configuration YAML file after validation.
         """
+        if not self.config_path:
+            plog.warning(
+                'User did not supply a config.  Using the default config.'
+            )
+            self.config_path = self.default_config
+        else:
+            plog.info('User supplied config being used.')
 
         if self._validate_url(self.config_path):
             try:
@@ -84,38 +92,31 @@ class Prepare(object):
                     shutil.copyfileobj(response, outfile)
                 self.config_path = 'config.yaml'
             except urllib.error.URLError:
-                log(
+                plog.critical(
                     'The URL used to get the user config.yaml file did not '
-                    'work!  Please make sure your config is available.',
-                    log_type='critical'
+                    'work!  Please make sure your config is available.'
                 )
+                sys.exit(1)
 
         if self.config_path and not os.path.exists(self.config_path):
-            log(
+            plog.critical(
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
-                'path.'.format(self.config_path),
-                log_type='critical'
+                'path.'.format(self.config_path)
             )
-        elif not self.config_path:
-            log(
-                'User did not supply a config.  Using the default config.',
-                log_type='warning'
-            )
-            self.config_path = self.default_config
-        else:
-            log('User supplied config being used.')
+            sys.exit(1)
+
         with open(self.config_path) as f:
             data = f.read()
 
         if data:
             self.config = yaml.load(data)
         else:
-            log(
+            plog.critical(
                 'Unable to load the data of the default or'
-                ' the user supplied config.',
-                log_type='critical'
+                ' the user supplied config.'
             )
+            sys.exit(1)
 
     def _linux_paths(self):
         """
@@ -175,10 +176,10 @@ class Prepare(object):
             self.system_drive = os.environ['SYSTEMDRIVE']
             self._windows_paths()
         else:
-            log(
-                'System, {0}, is not recognized?'.format(self.system),
-                log_type='critical'
+            plog.critical(
+                'System, {0}, is not recognized?'.format(self.system)
             )
+            sys.exit(1)
 
         # Create watchmaker directories
         try:
@@ -187,11 +188,11 @@ class Prepare(object):
             if not os.path.exists(self.system_params['workingdir']):
                 os.makedirs(self.system_params['workingdir'])
         except Exception as exc:
-            log(
+            plog.critical(
                 'Could not create a directory in {0}.  '
-                'Exception: {1}'.format(self.system_params['prepdir'], exc),
-                log_type='critical'
+                'Exception: {1}'.format(self.system_params['prepdir'], exc)
             )
+            sys.exit(1)
 
     def _get_scripts_to_execute(self):
         """
@@ -209,11 +210,11 @@ class Prepare(object):
                     self.kwargs
                 )
             except Exception as exc:
-                log(
+                plog.critical(
                     'For {0} in {1}, the parameters could not be merged. {2}'
-                    .format(item, self.config_path, exc),
-                    log_type='critical'
+                    .format(item, self.config_path, exc)
                 )
+                sys.exit(1)
 
         self.execution_scripts = scriptstoexecute
 
@@ -224,10 +225,10 @@ class Prepare(object):
         After execution the system should be properly provisioned.
         """
         self._get_system_params()
-        log(self.system_params, log_type='debug')
+        plog.debug(self.system_params)
 
         self._get_scripts_to_execute()
-        log(
+        plog.info(
             'Got scripts to execute: {0}.'
             .format(self.config[self.system].keys())
         )
@@ -247,21 +248,24 @@ class Prepare(object):
                 self.saltstates
             )
         else:
-            log('There is no known System!', log_type='critical')
+            plog.critical('There is no known System!')
+            sys.exit(1)
 
         try:
             workers_manager.worker_cadence()
         except Exception as exc:
-            log(
-                'Execution of the workers cadence has failed. {0}'.format(exc),
-                log_type='critical'
+            plog.critical(
+                'Execution of the workers cadence has failed. {0}'.format(exc)
             )
+            sys.exit(1)
 
-        log('Stop time: {0}'.format(datetime.datetime.now()))
+        plog.info('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
-            log('Detected `noreboot` switch. System will not be rebooted.')
+            plog.info(
+                'Detected `noreboot` switch. System will not be rebooted.'
+            )
         else:
-            log(
+            plog.info(
                 'Reboot scheduled. System will reboot after the script exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)

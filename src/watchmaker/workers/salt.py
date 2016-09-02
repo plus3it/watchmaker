@@ -1,12 +1,16 @@
 import json
+import logging
 import os
 import shutil
 import subprocess
+import sys
 
 import yaml
 
-from watchmaker.logger import LogHandler as log
 from watchmaker.managers.base import LinuxManager, WindowsManager
+
+lslog = logging.getLogger('LinuxSalt')
+wslog = logging.getLogger('WindowsSalt')
 
 
 class SaltLinux(LinuxManager):
@@ -38,19 +42,17 @@ class SaltLinux(LinuxManager):
     def _configuration_validation(self):
         if 'git' == self.config['saltinstallmethod'].lower():
             if not self.config['saltbootstrapsource']:
-                log(
+                lslog.error(
                     'Detected `git` as the install method, but the required '
-                    'parameter `saltbootstrapsource` was not provided.',
-                    log_type='error'
+                    'parameter `saltbootstrapsource` was not provided.'
                 )
             else:
                 self.saltbootstrapfilename = self.config[
                     'saltbootstrapsource'].split('/')[-1]
             if not self.config['saltgitrepo']:
-                log(
+                lslog.error(
                     'Detected `git` as the install method, but the required '
-                    'parameter `saltgitrepo` was not provided.',
-                    log_type='error'
+                    'parameter `saltgitrepo` was not provided.'
                 )
 
     def _install_package(self):
@@ -71,7 +73,7 @@ class SaltLinux(LinuxManager):
                 bootstrapcmd.append('git')
                 bootstrapcmd.append(self.config['saltversion'])
             else:
-                log('No salt version defined in config.', log_type='debug')
+                lslog.debug('No salt version defined in config.')
             subprocess.call([bootstrapcmd])
 
     def _prepare_for_install(self):
@@ -164,7 +166,7 @@ class SaltLinux(LinuxManager):
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
     def _set_grain(self, grain, value):
-        log('Setting grain `{0}` ...'.format(grain))
+        lslog.info('Setting grain `{0}` ...'.format(grain))
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
             grain, str(json.dumps(value))
@@ -180,10 +182,11 @@ class SaltLinux(LinuxManager):
         try:
             self.config = json.loads(configuration)
         except ValueError:
-            log(
+            lslog.critical(
                 'The configuration passed was not properly formed JSON. '
-                'Execution halted.', log_type='critical'
+                'Execution halted.'
             )
+            sys.exit(1)
 
         self._configuration_validation()
         self._prepare_for_install()
@@ -217,13 +220,15 @@ class SaltLinux(LinuxManager):
         if saltstates:
             self.config['saltstates'] = saltstates
         else:
-            log('No command line argument to override configuration file.')
+            lslog.info(
+                'No command line argument to override configuration file.'
+            )
 
         if 'none' == self.config['saltstates'].lower():
             print('No States were specified. Will not apply any salt states.')
         else:
             if 'highstate' == self.config['saltstates'].lower():
-                log(
+                lslog.info(
                     'Detected the States parameter is set to `highstate`. '
                     'Applying the salt `"highstate`" to the system.'
                 )
@@ -235,7 +240,7 @@ class SaltLinux(LinuxManager):
                 self.call_process(cmd)
 
             else:
-                log(
+                lslog.info(
                     'Detected the States parameter is set to: {0}. Applying '
                     'the user-defined list of states to the system.'
                     .format(self.config['saltstates'])
@@ -247,7 +252,7 @@ class SaltLinux(LinuxManager):
                 cmd.extend(self.saltcall_arguments)
                 self.call_process(cmd)
 
-        log(
+        lslog.info(
             'Salt states all applied successfully! '
             'Details are in the log {0}'.format(self.salt_results_logfile)
         )
@@ -295,10 +300,9 @@ class SaltWindows(WindowsManager):
         if self.config['saltinstallerurl']:
             self.installerurl = self.config['saltinstallerurl']
         else:
-            log(
+            wslog.error(
                 'Parameter `saltinstallerurl` was not provided and is'
-                ' needed for installation of Salt in Windows.',
-                log_type='error'
+                ' needed for installation of Salt in Windows.'
             )
 
         if self.config['formulastoinclude']:
@@ -403,7 +407,7 @@ class SaltWindows(WindowsManager):
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
     def _set_grain(self, grain, value):
-        log('Setting grain `{0}` ...'.format(grain))
+        wslog.info('Setting grain `{0}` ...'.format(grain))
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
             grain, str(json.dumps(value))
@@ -419,10 +423,11 @@ class SaltWindows(WindowsManager):
         try:
             self.config = json.loads(configuration)
         except ValueError:
-            log(
+            wslog.critical(
                 'The configuration passed was not properly formed JSON. '
-                'Execution halted.', log_type='critical'
+                'Execution halted.'
             )
+            sys.exit(1)
 
         self._prepare_for_install()
         self._install_package()
@@ -449,21 +454,21 @@ class SaltWindows(WindowsManager):
             name = {'computername': str(self.computername)}
             self._set_grain('name-computer', name)
 
-        log('Syncing custom salt modules...')
+        wslog.info('Syncing custom salt modules...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'saltutil.sync_all'
         ]
         self.call_process(cmd)
 
-        log('Generating winrepo cache file...')
+        wslog.info('Generating winrepo cache file...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'winrepo.genrepo'
         ]
         self.call_process(cmd)
 
-        log('Refreshing package database...')
+        wslog.info('Refreshing package database...')
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough',
             'pkg.refresh_db'
@@ -473,13 +478,17 @@ class SaltWindows(WindowsManager):
         if saltstates:
             self.config['saltstates'] = saltstates
         else:
-            log('No command line argument to override configuration file.')
+            wslog.info(
+                'No command line argument to override configuration file.'
+            )
 
         if 'none' == self.config['saltstates'].lower():
-            log('No States were specified. Will not apply any salt states.')
+            wslog.info(
+                'No States were specified. Will not apply any salt states.'
+            )
         else:
             if 'highstate' == self.config['saltstates'].lower():
-                log(
+                wslog.info(
                     'Detected the States parameter is set to `highstate`. '
                     'Applying the salt `"highstate`" to the system.'
                 )
@@ -491,7 +500,7 @@ class SaltWindows(WindowsManager):
                 self.call_process(cmd)
 
             else:
-                log(
+                wslog.info(
                     'Detected the States parameter is set to: {0}. Applying '
                     'the user-defined list of states to the system.'
                     .format(self.config['saltstates'])
@@ -503,7 +512,7 @@ class SaltWindows(WindowsManager):
                 cmd.extend(self.saltcall_arguments)
                 self.call_process(cmd)
 
-        log(
+        wslog.info(
             'Salt states all applied successfully! '
             'Details are in the log {0}'.format(self.salt_results_logfile)
         )

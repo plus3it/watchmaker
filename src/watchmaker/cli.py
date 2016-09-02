@@ -1,6 +1,7 @@
 import argparse
 
 from watchmaker import Prepare
+from watchmaker.logger import LogHandler
 
 
 def main():
@@ -20,18 +21,16 @@ def main():
                             'Define the saltstates to use.  Must be None, '
                             'Highstate, or comma-seperated-string'
                         ))
-    log_path_group = parser.add_mutually_exclusive_group(required=False)
-    log_path_group.add_argument(
-        '--log-dir', dest='log_dir', default=None,
-        help='Path to the log directory for logging.'
-    )
-    log_path_group.add_argument(
-        '--log-file', dest='log_file', default=None,
-        help='Path to the log file for logging.'
-    )
+    parser.add_argument('--log-dir', dest='log_dir', default=None,
+                        help='Path to the log directory for logging.'
+                        )
+    parser.add_argument('-v', action='count', dest='verbosity', default=0)
 
-    if parser.parse_args().saltstates:
-        if parser.parse_args().saltstates.lower() not in [
+    arguments = parser.parse_args()
+    LogHandler(arguments.log_dir, arguments.verbosity)
+
+    if arguments.saltstates:
+        if arguments.saltstates.lower() not in [
             'none',
             'highstate',
             'comma-separated-string'
@@ -39,5 +38,5 @@ def main():
             # Invalid saltstates
             parser.print_help()
 
-    systemprep = Prepare(parser.parse_args())
+    systemprep = Prepare(arguments)
     systemprep.install_system()

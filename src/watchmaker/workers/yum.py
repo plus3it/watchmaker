@@ -1,8 +1,11 @@
 import json
+import logging
 import re
+import sys
 
-from watchmaker.logger import LogHandler as log
 from watchmaker.managers.base import LinuxManager
+
+ylog = logging.getLogger('Yum')
 
 
 class Yum(LinuxManager):
@@ -75,16 +78,17 @@ class Yum(LinuxManager):
                 .format(self.dist, self.version)
             )
 
-        log('Dist\t\t{0}'.format(self.dist), log_type='debug')
-        log('Version\t\t{0}'.format(self.version), log_type='debug')
-        log('EPEL Version\t{0}'.format(self.epel_version), log_type='debug')
+        ylog.debug('Dist\t\t{0}'.format(self.dist))
+        ylog.debug('Version\t\t{0}'.format(self.version))
+        ylog.debug('EPEL Version\t{0}'.format(self.epel_version))
 
     def _repo(self, config):
         """
         Private method that validates that the config is properly formed.
         """
         if not isinstance(config['yumrepomap'], list):
-            raise SystemError('`yumrepomap` must be a list!')
+            msg = '`yumrepomap` must be a list!'
+            ylog.error(msg, Exception(msg))
 
     def install(self, configuration):
         """
@@ -98,15 +102,16 @@ class Yum(LinuxManager):
         try:
             config = json.loads(configuration)
         except ValueError:
-            log(
+            ylog.critical(
                 'The configuration passed was not properly formed JSON.'
-                'Execution halted.', log_type='critical'
+                'Execution halted.'
             )
+            sys.exit(1)
 
         if 'yumrepomap' in config and config['yumrepomap']:
             self._repo(config)
         else:
-            log('yumrepomap did not exist or was empty.')
+            ylog.info('yumrepomap did not exist or was empty.')
 
         self._validate()
 
@@ -114,20 +119,18 @@ class Yum(LinuxManager):
         for repo in config['yumrepomap']:
 
             if repo['dist'] in [self.dist, 'all']:
-                log(
-                    '{0} in {1} or all'.format(repo['dist'], self.dist),
-                    log_type='debug'
+                ylog.debug(
+                    '{0} in {1} or all'.format(repo['dist'], self.dist)
                 )
                 if 'epel_version' in repo and \
                         str(repo['epel_version']) != str(self.epel_version):
-                    log(
+                    ylog.error(
                         'epel_version is not valid for this repo. {0}'
-                        .format(self.epel_version), log_type='error'
+                        .format(self.epel_version)
                     )
                 else:
-                    log(
-                        'All requirements have been validated for this repo.',
-                        log_type='error'
+                    ylog.error(
+                        'All requirements have been validated for this repo.'
                     )
                     # Download the yum repo definition to /etc/yum.repos.d/
                     url = repo['url']
@@ -135,7 +138,6 @@ class Yum(LinuxManager):
                         url.split('/')[-1])
                     self.download_file(url, repofile)
             else:
-                log(
-                    '{0} NOT in {1} or all'.format(repo['dist'], self.dist),
-                    log_type='debug'
+                ylog.debug(
+                    '{0} NOT in {1} or all'.format(repo['dist'], self.dist)
                 )
