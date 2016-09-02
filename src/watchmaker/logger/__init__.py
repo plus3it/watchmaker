@@ -14,9 +14,9 @@ class LogHandler:
                 directory will be used to store a log file.
         """
         logformat = '[%(asctime)s] %(levelname)s:\t%(message)s'
-        if log_level == 0 or log_level == 1:
+        if log_level == 0:
             level = logging.WARNING
-        elif log_level == 2:
+        elif log_level == 1:
             level = logging.INFO
         else:
             level = logging.DEBUG
