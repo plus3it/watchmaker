@@ -62,7 +62,9 @@ class Prepare(object):
         self.system_drive = None
         self.execution_scripts = None
 
-        plog.info(''.rjust(80, '#'))
+        header = ' WATCHMAKER RUN '
+        header = header.rjust((40 + len(header) / 2), '#').ljust(80, '#')
+        plog.info(header)
         plog.info('Parameters:  {0}'.format(self.kwargs))
         plog.info('System Type: {0}'.format(self.system))
 

@@ -1,4 +1,3 @@
-import datetime
 import logging
 import os
 import sys
@@ -34,7 +33,7 @@ def prepare_logging(log_dir, log_level):
     else:
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
-        log_filename = os.sep.join((log_dir,'watchmaker.log'))
+        log_filename = os.sep.join((log_dir, 'watchmaker.log'))
         hdlr = logging.FileHandler(log_filename)
         hdlr.setLevel(level)
         hdlr.setFormatter(logging.Formatter(logformat))
