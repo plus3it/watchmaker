@@ -1,7 +1,7 @@
 import argparse
 
 from watchmaker import Prepare
-from watchmaker.logger import LogHandler
+from watchmaker.logger import prepare_logging
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     parser.add_argument('-v', action='count', dest='verbosity', default=0)
 
     arguments = parser.parse_args()
-    LogHandler(arguments.log_dir, arguments.verbosity)
+    prepare_logging(arguments.log_dir, arguments.verbosity)
 
     if arguments.saltstates:
         if arguments.saltstates.lower() not in [
