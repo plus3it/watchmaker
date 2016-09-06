@@ -62,6 +62,7 @@ class Prepare(object):
         self.system_drive = None
         self.execution_scripts = None
 
+        plog.info(''.rjust(80, '#'))
         plog.info('Parameters:  {0}'.format(self.kwargs))
         plog.info('System Type: {0}'.format(self.system))
 

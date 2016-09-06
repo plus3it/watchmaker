@@ -34,10 +34,7 @@ def prepare_logging(log_dir, log_level):
     else:
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
-        log_filename = os.sep.join((
-            log_dir,
-            'watchmaker-{0}.log'.format(str(datetime.date.today()))
-        ))
+        log_filename = os.sep.join((log_dir,'watchmaker.log'))
         hdlr = logging.FileHandler(log_filename)
         hdlr.setLevel(level)
         hdlr.setFormatter(logging.Formatter(logformat))
