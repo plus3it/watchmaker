@@ -155,6 +155,8 @@ class SaltLinux(LinuxManager):
         file_roots += [str(x) for x in formulas_conf]
 
         self.salt_conf = {
+            'file_client': 'local',
+            'hash_type': 'sha512',
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.saltpillarroot)]}
         }
@@ -391,9 +393,10 @@ class SaltWindows(WindowsManager):
         file_roots += [str(x) for x in formulas_conf]
 
         self.salt_conf = {
+            'file_client': 'local',
+            'hash_type': 'sha512',
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.saltpillarroot)]},
-            'file_client': 'local',
             'winrepo_source_dir': 'salt://winrepo',
             'winrepo_dir': os.sep.join([self.saltwinrepo, 'winrepo'])
         }
