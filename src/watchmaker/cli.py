@@ -19,7 +19,7 @@ def main():
     parser.add_argument('--saltstates', dest='saltstates', default=None,
                         help=(
                             'Define the saltstates to use.  Must be None, '
-                            'Highstate, or comma-seperated-string'
+                            'Highstate, or a comma-separated-string'
                         ))
     parser.add_argument('--log-dir', dest='log_dir', default=None,
                         help='Path to the log directory for logging.'
@@ -28,15 +28,6 @@ def main():
 
     arguments = parser.parse_args()
     prepare_logging(arguments.log_dir, arguments.verbosity)
-
-    if arguments.saltstates:
-        if arguments.saltstates.lower() not in [
-            'none',
-            'highstate',
-            'comma-separated-string'
-        ]:
-            # Invalid saltstates
-            parser.print_help()
 
     systemprep = Prepare(arguments)
     systemprep.install_system()
