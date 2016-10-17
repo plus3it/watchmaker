@@ -4,24 +4,20 @@ import os
 import shutil
 import subprocess
 import sys
-
 import yaml
 
+from watchmaker.workers.saltbase import SaltBase
 from watchmaker.managers.base import LinuxManager, WindowsManager
 
 lslog = logging.getLogger('LinuxSalt')
 wslog = logging.getLogger('WindowsSalt')
 
 
-class SaltLinux(LinuxManager):
+class SaltLinux(SaltBase, LinuxManager):
     def __init__(self):
         super(SaltLinux, self).__init__()
-        self.salt_conf = None
-        self.config = None
-        self.workingdir = None
-        self.formulastoinclude = list()
-        self.formulaterminationstrings = list()
-        self.sourceiss3bucket = None
+
+        # Extra variables needed for Linux.
         self.entenv = None
         self.saltbootstrapfilename = None
         self.yum_pkgs = [
@@ -30,14 +26,16 @@ class SaltLinux(LinuxManager):
             'salt-minion',
         ]
 
-        self.salt_confpath = '/etc/salt'
-        self.minionconf = '/etc/salt/minion'
+        # Set up variables for paths to Salt directories and applications.
         self.saltcall = '/usr/bin/salt-call'
+        self.saltconfpath = '/etc/salt'
+        self.saltminionpath = '/etc/salt/minion'
         self.saltsrv = '/srv/salt'
+
+        self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
         self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
         self.saltformularoot = os.sep.join((self.saltsrv, 'formulas'))
         self.saltpillarroot = os.sep.join((self.saltsrv, 'pillar'))
-        self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
 
     def _configuration_validation(self):
         if 'git' == self.config['saltinstallmethod'].lower():
@@ -162,7 +160,7 @@ class SaltLinux(LinuxManager):
         }
 
         with open(
-            os.path.join(self.salt_confpath, 'minion.d', 'watchmaker.conf'),
+            os.path.join(self.saltconfpath, 'minion.d', 'watchmaker.conf'),
             'w'
         ) as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
@@ -263,24 +261,22 @@ class SaltLinux(LinuxManager):
             self.cleanup()
 
 
-class SaltWindows(WindowsManager):
+class SaltWindows(SaltBase, WindowsManager):
     def __init__(self):
         super(SaltWindows, self).__init__()
-        self.installurl = None
-        self.salt_conf = None
-        self.config = None
-        self.workingdir = None
-        self.formulastoinclude = list()
-        self.formulaterminationstrings = list()
-        self.sourceiss3bucket = None
 
-        self.saltroot = 'C:\\Salt'
-        self.salt_confpath = 'C:\\Salt\\conf'
-        self.minionconf = 'C:\\Salt\\conf\\minion'
+        # Extra variable needed for Windows.
+        self.installurl = None
+
+        # Set up variables for paths to Salt directories and applications.
         self.saltcall = 'C:\\Salt\\salt-call.bat'
+        self.saltconfpath = 'C:\\Salt\\conf'
+        self.saltroot = 'C:\\Salt'
+        self.saltminionpath = 'C:\\Salt\\conf\\minion'
         self.saltsrv = 'C:\\Salt\\srv'
-        self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
+
         self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
+        self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
         self.saltformularoot = os.sep.join((self.saltsrv, 'formulas'))
         self.saltpillarroot = os.sep.join((self.saltsrv, 'pillar'))
         self.saltwinrepo = os.sep.join((self.saltsrv, 'winrepo'))
@@ -401,10 +397,10 @@ class SaltWindows(WindowsManager):
             'winrepo_dir': os.sep.join([self.saltwinrepo, 'winrepo'])
         }
 
-        if not os.path.exists(os.path.join(self.salt_confpath, 'minion.d')):
-            os.mkdir(os.path.join(self.salt_confpath, 'minion.d'))
+        if not os.path.exists(os.path.join(self.saltconfpath, 'minion.d')):
+            os.mkdir(os.path.join(self.saltconfpath, 'minion.d'))
 
-        with open(os.path.join(self.salt_confpath,
+        with open(os.path.join(self.saltconfpath,
                                'minion.d',
                                'watchmaker.conf'), "w") as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
