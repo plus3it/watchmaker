@@ -8,7 +8,7 @@ import sys
 
 import yaml
 
-from watchmaker.managers.base import ManagerBase, LinuxManager, WindowsManager
+from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 lslog = logging.getLogger('LinuxSalt')
 wslog = logging.getLogger('WindowsSalt')
@@ -135,6 +135,11 @@ class SaltBase(ManagerBase):
         ]
         self.call_process(cmd)
 
+    @abc.abstractmethod
+    def _run_salt(self, cmd):
+        cmd = [self.saltcall, '--local', '--retcode-passthrough', cmd]
+        self.call_process(cmd)
+
 
 class SaltLinux(SaltBase, LinuxManager):
     def __init__(self):
@@ -220,6 +225,10 @@ class SaltLinux(SaltBase, LinuxManager):
         lslog.info('Setting grain `{0}` ...'.format(grain))
         super(SaltLinux, self)._set_grain(grain, value)
 
+    def _run_salt(self, msg, cmd):
+        lslog.info(msg)
+        super(SaltLinux, self)._run_salt(cmd)
+
     def install(self, configuration, saltstates):
         """
         :param configuration:
@@ -257,12 +266,7 @@ class SaltLinux(SaltBase, LinuxManager):
             name = {'computername': str(self.computername)}
             self._set_grain('name-computer', name)
 
-        print('Syncing custom salt modules...')
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough',
-            'saltutil.sync_all'
-        ]
-        self.call_process(cmd)
+        self._run_salt('Syncing custom salt modules...', 'saltutil.sync_all')
 
         if saltstates:
             self.config['saltstates'] = saltstates
@@ -380,6 +384,10 @@ class SaltWindows(SaltBase, WindowsManager):
         wslog.info('Setting grain `{0}` ...'.format(grain))
         super(SaltWindows, self)._set_grain(grain, value)
 
+    def _run_salt(self, msg, cmd):
+        wslog.info(msg)
+        super(SaltWindows, self)._run_salt(cmd)
+
     def install(self, configuration, saltstates):
         """
         :param configuration:
@@ -420,26 +428,9 @@ class SaltWindows(SaltBase, WindowsManager):
             name = {'computername': str(self.computername)}
             self._set_grain('name-computer', name)
 
-        wslog.info('Syncing custom salt modules...')
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough',
-            'saltutil.sync_all'
-        ]
-        self.call_process(cmd)
-
-        wslog.info('Generating winrepo cache file...')
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough',
-            'winrepo.genrepo'
-        ]
-        self.call_process(cmd)
-
-        wslog.info('Refreshing package database...')
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough',
-            'pkg.refresh_db'
-        ]
-        self.call_process(cmd)
+        self._run_salt('Syncing custom salt modules...', 'saltutil.sync_all')
+        self._run_salt('Generating winrepo cache file...', 'winrepo.genrepo')
+        self._run_salt('Refreshing package database...', 'pkg.refresh_db')
 
         if saltstates:
             self.config['saltstates'] = saltstates
