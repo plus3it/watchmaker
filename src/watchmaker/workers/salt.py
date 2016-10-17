@@ -136,8 +136,12 @@ class SaltBase(ManagerBase):
         self.call_process(cmd)
 
     @abc.abstractmethod
-    def _run_salt(self, cmd):
-        cmd = [self.saltcall, '--local', '--retcode-passthrough', cmd]
+    def _run_salt(self, command):
+        cmd = [self.saltcall, '--local', '--retcode-passthrough']
+        if isinstance(command, list):
+            cmd.extend(command)
+        else:
+            cmd.append(command)
         self.call_process(cmd)
 
 
@@ -279,29 +283,22 @@ class SaltLinux(SaltBase, LinuxManager):
             print('No States were specified. Will not apply any salt states.')
         else:
             if 'highstate' == self.config['saltstates'].lower():
-                lslog.info(
+                msg = (
                     'Detected the States parameter is set to `highstate`. '
                     'Applying the salt `"highstate`" to the system.'
                 )
-                cmd = [
-                    self.saltcall, '--local', '--retcode-passthrough',
-                    'state.highstate'
-                ]
+                cmd = ['state.highstate']
                 cmd.extend(self.saltcall_arguments)
-                self.call_process(cmd)
-
+                self._run_salt(msg, cmd)
             else:
-                lslog.info(
+                msg = (
                     'Detected the States parameter is set to: {0}. Applying '
                     'the user-defined list of states to the system.'
                     .format(self.config['saltstates'])
                 )
-                cmd = [
-                    self.saltcall, '--local', '--retcode-passthrough',
-                    'state.sls', self.config['saltstates']
-                ]
+                cmd = ['state.sls', self.config['saltstates']]
                 cmd.extend(self.saltcall_arguments)
-                self.call_process(cmd)
+                self._run_salt(msg, cmd)
 
         lslog.info(
             'Salt states all applied successfully! '
@@ -445,29 +442,23 @@ class SaltWindows(SaltBase, WindowsManager):
             )
         else:
             if 'highstate' == self.config['saltstates'].lower():
-                wslog.info(
+                msg = (
                     'Detected the States parameter is set to `highstate`. '
                     'Applying the salt `"highstate`" to the system.'
                 )
-                cmd = [
-                    self.saltcall, '--local', '--retcode-passthrough',
-                    'state.highstate'
-                ]
+                cmd = ['state.highstate']
                 cmd.extend(self.saltcall_arguments)
-                self.call_process(cmd)
+                self._run_salt(msg, cmd)
 
             else:
-                wslog.info(
+                msg = (
                     'Detected the States parameter is set to: {0}. Applying '
                     'the user-defined list of states to the system.'
                     .format(self.config['saltstates'])
                 )
-                cmd = [
-                    self.saltcall, '--local', '--retcode-passthrough',
-                    'state.sls', self.config['saltstates']
-                ]
+                cmd = ['state.sls', self.config['saltstates']]
                 cmd.extend(self.saltcall_arguments)
-                self.call_process(cmd)
+                self._run_salt(msg, cmd)
 
         wslog.info(
             'Salt states all applied successfully! '
