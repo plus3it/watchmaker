@@ -1,11 +1,8 @@
 import json
 import logging
 import os
-import shutil
 import subprocess
 import sys
-
-import yaml
 
 from watchmaker.managers.base import LinuxManager, WindowsManager
 from watchmaker.workers.saltbase import SaltBase
@@ -96,11 +93,7 @@ class SaltLinux(SaltBase, LinuxManager):
 
     def _set_grain(self, grain, value):
         lslog.info('Setting grain `{0}` ...'.format(grain))
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
-            grain, str(json.dumps(value))
-        ]
-        self.call_process(cmd)
+        super(SaltLinux, self)._set_grain(grain, value)
 
     def install(self, configuration, saltstates):
         """
@@ -260,11 +253,7 @@ class SaltWindows(SaltBase, WindowsManager):
 
     def _set_grain(self, grain, value):
         wslog.info('Setting grain `{0}` ...'.format(grain))
-        cmd = [
-            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
-            grain, str(json.dumps(value))
-        ]
-        self.call_process(cmd)
+        super(SaltWindows, self)._set_grain(grain, value)
 
     def install(self, configuration, saltstates):
         """

@@ -1,4 +1,5 @@
 import abc
+import json
 import os
 import shutil
 
@@ -107,3 +108,11 @@ class SaltBase(object):
             'w'
         ) as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
+
+    @abc.abstractmethod
+    def _set_grain(self, grain, value):
+        cmd = [
+            self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
+            grain, str(json.dumps(value))
+        ]
+        self.call_process(cmd)
