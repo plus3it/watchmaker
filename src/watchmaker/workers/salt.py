@@ -4,10 +4,11 @@ import os
 import shutil
 import subprocess
 import sys
+
 import yaml
 
-from watchmaker.workers.saltbase import SaltBase
 from watchmaker.managers.base import LinuxManager, WindowsManager
+from watchmaker.workers.saltbase import SaltBase
 
 lslog = logging.getLogger('LinuxSalt')
 wslog = logging.getLogger('WindowsSalt')
@@ -18,7 +19,6 @@ class SaltLinux(SaltBase, LinuxManager):
         super(SaltLinux, self).__init__()
 
         # Extra variables needed for Linux.
-        self.entenv = None
         self.saltbootstrapfilename = None
         self.yum_pkgs = [
             'policycoreutils-python',
@@ -31,6 +31,8 @@ class SaltLinux(SaltBase, LinuxManager):
         self.saltconfpath = '/etc/salt'
         self.saltminionpath = '/etc/salt/minion'
         self.saltsrv = '/srv/salt'
+        self.saltworkingdir = '/usr/tmp/'
+        self.saltworkingdirprefix = 'saltinstall'
 
         self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
         self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
@@ -75,39 +77,7 @@ class SaltLinux(SaltBase, LinuxManager):
             subprocess.call([bootstrapcmd])
 
     def _prepare_for_install(self):
-
-        if self.config['formulastoinclude']:
-            self.formulastoinclude = self.config['formulastoinclude']
-
-        if self.config['formulaterminationstrings']:
-            self.formulaterminationstrings = self.config[
-                'formulaterminationstrings']
-
-        self.sourceiss3bucket = self.config['sourceiss3bucket']
-        self.computername = self.config['computername']
-        self.entenv = self.config['entenv']
-        self.create_working_dir('/usr/tmp/', 'saltinstall')
-
-        self.salt_results_logfile = self.config['salt_results_log'] or \
-            os.sep.join((self.workingdir, 'saltcall.results.log'))
-
-        self.salt_debug_logfile = self.config['salt_debug_log'] or \
-            os.sep.join((self.workingdir, 'saltcall.debug.log'))
-
-        self.saltcall_arguments = [
-            '--out', 'yaml', '--out-file', self.salt_results_logfile,
-            '--return', 'local', '--log-file', self.salt_debug_logfile,
-            '--log-file-level', 'debug'
-        ]
-
-        for saltdir in [self.saltfileroot,
-                        self.saltbaseenv,
-                        self.saltformularoot]:
-            try:
-                os.makedirs(saltdir)
-            except OSError:
-                if not os.path.isdir(saltdir):
-                    raise
+        super(SaltLinux, self)._prepare_for_install()
 
     def _build_salt_formula(self):
         if self.config['saltcontentsource']:
@@ -274,6 +244,10 @@ class SaltWindows(SaltBase, WindowsManager):
         self.saltroot = 'C:\\Salt'
         self.saltminionpath = 'C:\\Salt\\conf\\minion'
         self.saltsrv = 'C:\\Salt\\srv'
+        self.saltworkingdir = os.sep.join(
+            [os.environ['systemdrive'], 'Watchmaker', 'WorkingFiles']
+        )
+        self.saltworkingdirprefix = 'Salt-'
 
         self.saltbaseenv = os.sep.join((self.saltfileroot, 'base'))
         self.saltfileroot = os.sep.join((self.saltsrv, 'states'))
@@ -303,47 +277,10 @@ class SaltWindows(SaltBase, WindowsManager):
                 ' needed for installation of Salt in Windows.'
             )
 
-        if self.config['formulastoinclude']:
-            self.formulastoinclude = self.config['formulastoinclude']
+        super(SaltWindows, self)._prepare_for_install()
 
-        if self.config['formulaterminationstrings']:
-            self.formulaterminationstrings = self.config[
-                'formulaterminationstrings']
-
-        self.sourceiss3bucket = self.config['sourceiss3bucket']
+        # Extra Salt variable for Windows.
         self.ashrole = self.config['ashrole']
-        self.computername = self.config['computername']
-        self.entenv = self.config['entenv']
-        self.create_working_dir(
-            os.path.sep.join(
-                [os.environ['systemdrive'],
-                 'Watchmaker',
-                 'WorkingFiles']
-            ),
-            'Salt-'
-        )
-
-        self.salt_results_logfile = os.sep.join(
-            (self.workingdir, 'saltcall.results.log')
-        )
-        self.salt_debug_logfile = os.sep.join(
-            (self.workingdir, 'saltcall.debug.log')
-        )
-
-        self.saltcall_arguments = [
-            '--out', 'yaml', '--out-file', self.salt_results_logfile,
-            '--return', 'local', '--log-file', self.salt_debug_logfile,
-            '--log-file-level', 'debug'
-        ]
-
-        for saltdir in [self.saltfileroot,
-                        self.saltbaseenv,
-                        self.saltformularoot]:
-            try:
-                os.makedirs(saltdir)
-            except OSError:
-                if not os.path.isdir(saltdir):
-                    raise
 
     def _build_salt_formula(self):
         if self.config['saltcontentsource']:
