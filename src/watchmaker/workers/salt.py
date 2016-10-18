@@ -1,4 +1,3 @@
-import abc
 import json
 import logging
 import os
@@ -24,7 +23,6 @@ class SaltBase(ManagerBase):
     saltworkingdir = None
     saltworkingdirprefix = None
 
-    @abc.abstractmethod
     def __init__(self):
         super(SaltBase, self).__init__()
         self.config = None
@@ -35,11 +33,6 @@ class SaltBase(ManagerBase):
         self.sourceiss3bucket = None
         self.workingdir = None
 
-    @abc.abstractmethod
-    def _install_package(self):
-        return
-
-    @abc.abstractmethod
     def _prepare_for_install(self):
         if self.config['formulastoinclude']:
             self.formulastoinclude = self.config['formulastoinclude']
@@ -99,7 +92,6 @@ class SaltBase(ManagerBase):
             formulas_conf.append(formulas_loc)
         return formulas_conf
 
-    @abc.abstractmethod
     def _build_salt_formula(self):
         if self.config['saltcontentsource']:
             self.saltcontentfilename = self.config[
@@ -127,7 +119,6 @@ class SaltBase(ManagerBase):
         ) as f:
             yaml.dump(self.salt_conf, f, default_flow_style=False)
 
-    @abc.abstractmethod
     def _set_grain(self, grain, value):
         cmd = [
             self.saltcall, '--local', '--retcode-passthrough', 'grains.setval',
@@ -135,7 +126,7 @@ class SaltBase(ManagerBase):
         ]
         self.call_process(cmd)
 
-    def _run_salt(self, command):
+    def run_salt(self, command):
         cmd = [self.saltcall, '--local', '--retcode-passthrough']
         if isinstance(command, list):
             cmd.extend(command)
@@ -172,7 +163,7 @@ class SaltBase(ManagerBase):
             self._set_grain('name-computer', name)
 
         thislog.info('Syncing custom salt modules...')
-        self._run_salt('saltutil.sync_all')
+        self.run_salt('saltutil.sync_all')
 
     def process_states(self, states, thislog):
         if states:
@@ -194,7 +185,7 @@ class SaltBase(ManagerBase):
                 )
                 cmd = ['state.highstate']
                 cmd.extend(self.saltcall_arguments)
-                self._run_salt(cmd)
+                self.run_salt(cmd)
 
             else:
                 thislog.info(
@@ -204,7 +195,7 @@ class SaltBase(ManagerBase):
                 )
                 cmd = ['state.sls', self.config['saltstates']]
                 cmd.extend(self.saltcall_arguments)
-                self._run_salt(cmd)
+                self.run_salt(cmd)
 
         thislog.info(
             'Salt states all applied successfully! '
@@ -274,11 +265,8 @@ class SaltLinux(SaltBase, LinuxManager):
                 lslog.debug('No salt version defined in config.')
             subprocess.call(bootstrapcmd)
 
-    def _prepare_for_install(self):
-        super(SaltLinux, self)._prepare_for_install()
-
     def _build_salt_formula(self):
-        formulas_conf = super(SaltLinux, self)._get_formulas_conf()
+        formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.saltbaseenv)]
         file_roots += [str(x) for x in formulas_conf]
@@ -302,15 +290,15 @@ class SaltLinux(SaltBase, LinuxManager):
         :param saltstates:
         :return:
         """
-        super(SaltLinux, self).load_config(configuration, lslog)
+        self.load_config(configuration, lslog)
 
         self._configuration_validation()
         self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
 
-        super(SaltLinux, self).process_grains(lslog)
-        super(SaltLinux, self).process_states(saltstates, lslog)
+        self.process_grains(lslog)
+        self.process_states(saltstates, lslog)
 
         if self.workingdir:
             self.cleanup()
@@ -368,7 +356,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.ashrole = self.config['ashrole']
 
     def _build_salt_formula(self):
-        formulas_conf = super(SaltWindows, self)._get_formulas_conf()
+        formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.saltbaseenv), str(self.saltwinrepo)]
         file_roots += [str(x) for x in formulas_conf]
@@ -388,16 +376,13 @@ class SaltWindows(SaltBase, WindowsManager):
         wslog.info('Setting grain `{0}` ...'.format(grain))
         super(SaltWindows, self)._set_grain(grain, value)
 
-    def _run_salt(self, cmd):
-        super(SaltWindows, self)._run_salt(cmd)
-
     def install(self, configuration, saltstates):
         """
         :param configuration:
         :param saltstates:
         :return:
         """
-        super(SaltWindows, self).load_config(configuration, wslog)
+        self.load_config(configuration, wslog)
 
         self._prepare_for_install()
         self._install_package()
@@ -407,14 +392,14 @@ class SaltWindows(SaltBase, WindowsManager):
             role = {'role': str(self.ashrole)}
             self._set_grain('ash-windows', role)
 
-        super(SaltWindows, self).process_grains(wslog)
+        self.process_grains(wslog)
 
         wslog.info('Generating winrepo cache file...')
-        self._run_salt('winrepo.genrepo')
+        self.run_salt('winrepo.genrepo')
         wslog.info('Refreshing package database...')
-        self._run_salt('pkg.refresh_db')
+        self.run_salt('pkg.refresh_db')
 
-        super(SaltWindows, self).process_states(saltstates, wslog)
+        self.process_states(saltstates, wslog)
 
         if self.workingdir:
             self.cleanup()
