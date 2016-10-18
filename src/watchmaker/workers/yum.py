@@ -124,13 +124,14 @@ class Yum(LinuxManager):
                 )
                 if 'epel_version' in repo and \
                         str(repo['epel_version']) != str(self.epel_version):
-                    ylog.error(
-                        'epel_version is not valid for this repo. {0}'
-                        .format(self.epel_version)
+                    ylog.warning(
+                        'epel_version ({0}) is not valid for this repo ({1}).'
+                        .format(self.epel_version, repo['url'])
                     )
                 else:
-                    ylog.error(
-                        'All requirements have been validated for this repo.'
+                    ylog.info(
+                        'All requirements have been validated for repo - {0}.'
+                        .format(self.epel_version, repo['url'])
                     )
                     # Download the yum repo definition to /etc/yum.repos.d/
                     url = repo['url']
