@@ -124,8 +124,9 @@ class Yum(LinuxManager):
                 )
                 if 'epel_version' in repo and \
                         str(repo['epel_version']) != str(self.epel_version):
-                    ylog.warning(
-                        'epel_version ({0}) is not valid for this repo ({1}).'
+                    ylog.debug(
+                        'Skipping repo - epel_version ({0}) is not valid for '
+                        'this repo ({1}).'
                         .format(self.epel_version, repo['url'])
                     )
                 else:
