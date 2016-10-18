@@ -135,7 +135,6 @@ class SaltBase(ManagerBase):
         ]
         self.call_process(cmd)
 
-    @abc.abstractmethod
     def _run_salt(self, command):
         cmd = [self.saltcall, '--local', '--retcode-passthrough']
         if isinstance(command, list):
@@ -143,6 +142,74 @@ class SaltBase(ManagerBase):
         else:
             cmd.append(command)
         self.call_process(cmd)
+
+    def load_config(self, configuration, thislog):
+        try:
+            self.config = json.loads(configuration)
+        except ValueError:
+            thislog.critical(
+                'The configuration passed was not properly formed JSON. '
+                'Execution halted.'
+            )
+            sys.exit(1)
+
+    def process_grains(self, thislog):
+        ent_env = {'enterprise_environment': str(self.entenv)}
+        self._set_grain('systemprep', ent_env)
+
+        grain = {}
+        if self.config['oupath'] and self.config['oupath'] != 'None':
+            grain['oupath'] = self.config['oupath']
+        if self.config['admingroups'] and self.config['admingroups'] != 'None':
+            grain['admingroups'] = self.config['admingroups'].split(':')
+        if self.config['adminusers'] and self.config['adminusers'] != 'None':
+            grain['adminusers'] = self.config['adminusers'].split(':')
+        if grain:
+            self._set_grain('join-domain', grain)
+
+        if self.computername and self.computername != 'None':
+            name = {'computername': str(self.computername)}
+            self._set_grain('name-computer', name)
+
+        thislog.info('Syncing custom salt modules...')
+        self._run_salt('saltutil.sync_all')
+
+    def process_states(self, states, thislog):
+        if states:
+            self.config['saltstates'] = states
+        else:
+            thislog.info(
+                'No command line argument to override configuration file.'
+            )
+
+        if 'none' == self.config['saltstates'].lower():
+            thislog.info(
+                'No States were specified. Will not apply any salt states.'
+            )
+        else:
+            if 'highstate' == self.config['saltstates'].lower():
+                thislog.info(
+                    'Detected the States parameter is set to `highstate`. '
+                    'Applying the salt `"highstate`" to the system.'
+                )
+                cmd = ['state.highstate']
+                cmd.extend(self.saltcall_arguments)
+                self._run_salt(cmd)
+
+            else:
+                thislog.info(
+                    'Detected the States parameter is set to: {0}. Applying '
+                    'the user-defined list of states to the system.'
+                    .format(self.config['saltstates'])
+                )
+                cmd = ['state.sls', self.config['saltstates']]
+                cmd.extend(self.saltcall_arguments)
+                self._run_salt(cmd)
+
+        thislog.info(
+            'Salt states all applied successfully! '
+            'Details are in the log {0}'.format(self.salt_results_logfile)
+        )
 
 
 class SaltLinux(SaltBase, LinuxManager):
@@ -229,81 +296,21 @@ class SaltLinux(SaltBase, LinuxManager):
         lslog.info('Setting grain `{0}` ...'.format(grain))
         super(SaltLinux, self)._set_grain(grain, value)
 
-    def _run_salt(self, msg, cmd):
-        lslog.info(msg)
-        super(SaltLinux, self)._run_salt(cmd)
-
     def install(self, configuration, saltstates):
         """
         :param configuration:
         :param saltstates:
         :return:
         """
-        try:
-            self.config = json.loads(configuration)
-        except ValueError:
-            lslog.critical(
-                'The configuration passed was not properly formed JSON. '
-                'Execution halted.'
-            )
-            sys.exit(1)
+        super(SaltLinux, self).load_config(configuration, lslog)
 
         self._configuration_validation()
         self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
 
-        ent_env = {'enterprise_environment': str(self.entenv)}
-        self._set_grain('systemprep', ent_env)
-
-        grain = {}
-        if self.config['oupath'] and self.config['oupath'] != 'None':
-            grain['oupath'] = self.config['oupath']
-        if self.config['admingroups'] and self.config['admingroups'] != 'None':
-            grain['admingroups'] = self.config['admingroups'].split(':')
-        if self.config['adminusers'] and self.config['adminusers'] != 'None':
-            grain['adminusers'] = self.config['adminusers'].split(':')
-        if grain:
-            self._set_grain('join-domain', grain)
-
-        if self.computername and self.computername != 'None':
-            name = {'computername': str(self.computername)}
-            self._set_grain('name-computer', name)
-
-        self._run_salt('Syncing custom salt modules...', 'saltutil.sync_all')
-
-        if saltstates:
-            self.config['saltstates'] = saltstates
-        else:
-            lslog.info(
-                'No command line argument to override configuration file.'
-            )
-
-        if 'none' == self.config['saltstates'].lower():
-            print('No States were specified. Will not apply any salt states.')
-        else:
-            if 'highstate' == self.config['saltstates'].lower():
-                msg = (
-                    'Detected the States parameter is set to `highstate`. '
-                    'Applying the salt `"highstate`" to the system.'
-                )
-                cmd = ['state.highstate']
-                cmd.extend(self.saltcall_arguments)
-                self._run_salt(msg, cmd)
-            else:
-                msg = (
-                    'Detected the States parameter is set to: {0}. Applying '
-                    'the user-defined list of states to the system.'
-                    .format(self.config['saltstates'])
-                )
-                cmd = ['state.sls', self.config['saltstates']]
-                cmd.extend(self.saltcall_arguments)
-                self._run_salt(msg, cmd)
-
-        lslog.info(
-            'Salt states all applied successfully! '
-            'Details are in the log {0}'.format(self.salt_results_logfile)
-        )
+        super(SaltLinux, self).process_grains(lslog)
+        super(SaltLinux, self).process_states(saltstates, lslog)
 
         if self.workingdir:
             self.cleanup()
@@ -381,8 +388,7 @@ class SaltWindows(SaltBase, WindowsManager):
         wslog.info('Setting grain `{0}` ...'.format(grain))
         super(SaltWindows, self)._set_grain(grain, value)
 
-    def _run_salt(self, msg, cmd):
-        wslog.info(msg)
+    def _run_salt(self, cmd):
         super(SaltWindows, self)._run_salt(cmd)
 
     def install(self, configuration, saltstates):
@@ -391,79 +397,24 @@ class SaltWindows(SaltBase, WindowsManager):
         :param saltstates:
         :return:
         """
-        try:
-            self.config = json.loads(configuration)
-        except ValueError:
-            wslog.critical(
-                'The configuration passed was not properly formed JSON. '
-                'Execution halted.'
-            )
-            sys.exit(1)
+        super(SaltWindows, self).load_config(configuration, wslog)
 
         self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
 
-        ent_env = {'enterprise_environment': str(self.entenv)}
-        self._set_grain('systemprep', ent_env)
-
         if self.ashrole and self.ashrole != 'None':
             role = {'role': str(self.ashrole)}
             self._set_grain('ash-windows', role)
 
-        grain = {}
-        if self.config['oupath'] and self.config['oupath'] != 'None':
-            grain['oupath'] = self.config['oupath']
-        if self.config['admingroups'] and self.config['admingroups'] != 'None':
-            grain['admingroups'] = self.config['admingroups'].split(':')
-        if self.config['adminusers'] and self.config['adminusers'] != 'None':
-            grain['adminusers'] = self.config['adminusers'].split(':')
-        if grain:
-            self._set_grain('join-domain', grain)
+        super(SaltWindows, self).process_grains(wslog)
 
-        if self.computername and self.computername != 'None':
-            name = {'computername': str(self.computername)}
-            self._set_grain('name-computer', name)
+        wslog.info('Generating winrepo cache file...')
+        self._run_salt('winrepo.genrepo')
+        wslog.info('Refreshing package database...')
+        self._run_salt('pkg.refresh_db')
 
-        self._run_salt('Syncing custom salt modules...', 'saltutil.sync_all')
-        self._run_salt('Generating winrepo cache file...', 'winrepo.genrepo')
-        self._run_salt('Refreshing package database...', 'pkg.refresh_db')
-
-        if saltstates:
-            self.config['saltstates'] = saltstates
-        else:
-            wslog.info(
-                'No command line argument to override configuration file.'
-            )
-
-        if 'none' == self.config['saltstates'].lower():
-            wslog.info(
-                'No States were specified. Will not apply any salt states.'
-            )
-        else:
-            if 'highstate' == self.config['saltstates'].lower():
-                msg = (
-                    'Detected the States parameter is set to `highstate`. '
-                    'Applying the salt `"highstate`" to the system.'
-                )
-                cmd = ['state.highstate']
-                cmd.extend(self.saltcall_arguments)
-                self._run_salt(msg, cmd)
-
-            else:
-                msg = (
-                    'Detected the States parameter is set to: {0}. Applying '
-                    'the user-defined list of states to the system.'
-                    .format(self.config['saltstates'])
-                )
-                cmd = ['state.sls', self.config['saltstates']]
-                cmd.extend(self.saltcall_arguments)
-                self._run_salt(msg, cmd)
-
-        wslog.info(
-            'Salt states all applied successfully! '
-            'Details are in the log {0}'.format(self.salt_results_logfile)
-        )
+        super(SaltWindows, self).process_states(saltstates, wslog)
 
         if self.workingdir:
             self.cleanup()
