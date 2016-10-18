@@ -46,8 +46,6 @@ Linux:
       saltversion: None
       sourceiss3bucket: False
 
-  Custom: None
-
 Windows:
   Salt:
     Parameters:
