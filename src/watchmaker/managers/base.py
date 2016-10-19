@@ -10,8 +10,8 @@ import zipfile
 
 from six.moves import urllib
 
-mlog = logging.getLogger('ManagerBase')
-lmlog = logging.getLogger('LinuxManager')
+m_log = logging.getLogger('ManagerBase')
+lm_log = logging.getLogger('LinuxManager')
 
 
 class ManagerBase(object):
@@ -24,9 +24,11 @@ class ManagerBase(object):
 
     @abc.abstractmethod
     def __init__(self):
+        self.working_dir = None
         return
 
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
+    @staticmethod
+    def _get_s3_file(url, bucket_name, key_name, destination):
         """
         :param url:
         :param bucket_name:
@@ -38,7 +40,7 @@ class ManagerBase(object):
             import boto3
             from botocore.client import ClientError
         except ImportError as exc:
-            mlog.critical(exc)
+            m_log.critical(exc)
             sys.exit(1)
 
         try:
@@ -48,13 +50,13 @@ class ManagerBase(object):
         except ClientError as exc:
             msg = ('Bucket does not exist.  bucket = {0}.  Exception: {1}'
                    .format(bucket_name, exc))
-            mlog.error(msg)
+            m_log.error(msg)
             raise SystemError(msg)
         except Exception as exc:
             msg = ('Unable to download file from S3 bucket.  url = {0}.  '
                    'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
                    .format(url, bucket_name, key_name, destination, exc))
-            mlog.error(msg)
+            m_log.error(msg)
             raise SystemError(msg)
 
     @abc.abstractmethod
@@ -65,9 +67,9 @@ class ManagerBase(object):
         :param sourceiss3bucket:
         :return:
         """
-        mlog.debug('Downloading: {0}'.format(url))
-        mlog.debug('Destination: {0}'.format(filename))
-        mlog.debug('S3: {0}'.format(sourceiss3bucket))
+        m_log.debug('Downloading: {0}'.format(url))
+        m_log.debug('Destination: {0}'.format(filename))
+        m_log.debug('S3: {0}'.format(sourceiss3bucket))
 
         # TODO Rework this to properly reflect logic flow cleanly.
         if sourceiss3bucket:
@@ -75,21 +77,21 @@ class ManagerBase(object):
                 import boto3
                 from botocore.client import ClientError
             except ImportError as exc:
-                mlog.critical(exc)
+                m_log.critical(exc)
                 sys.exit(1)
 
             bucket_name = url.split('/')[3]
             key_name = '/'.join(url.split('/')[4:])
 
-            mlog.debug('Bucket Name: {0}'.format(bucket_name))
-            mlog.debug('key_name: {0}'.format(key_name))
+            m_log.debug('Bucket Name: {0}'.format(bucket_name))
+            m_log.debug('key_name: {0}'.format(key_name))
 
             try:
                 s3 = boto3.resource('s3')
                 s3.meta.client.head_bucket(Bucket=bucket_name)
                 s3.Object(bucket_name, key_name).download_file(filename)
             except (NameError, ClientError):
-                mlog.error('NameError: {0}'.format(ClientError))
+                m_log.error('NameError: {0}'.format(ClientError))
                 try:
                     bucket_name = url.split('/')[2].split('.')[0]
                     key_name = '/'.join(url.split('/')[3:])
@@ -101,15 +103,15 @@ class ManagerBase(object):
                            'url = {0}.  bucket = {1}.  key = {2}.  '
                            'file = {3}.  Exception: {4}'
                            .format(url, bucket_name, key_name, filename, exc))
-                    mlog.error(msg)
+                    m_log.error(msg)
                     raise SystemError(msg)
             except Exception as exc:
                 msg = ('Unable to download file from S3 bucket.  url = {0}.  '
                        'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
                        .format(url, bucket_name, key_name, filename, exc))
-                mlog.error(msg)
+                m_log.error(msg)
                 raise SystemError(msg)
-            mlog.info(
+            m_log.info(
                 'Downloaded file from S3 bucket  --  url = {0}.  '
                 'filename = {1}'.format(url, filename)
             )
@@ -122,9 +124,9 @@ class ManagerBase(object):
                 msg = ('Unable to download file from web server.  url = {0}.  '
                        'filename = {1}.  Exception: {2}'
                        .format(url, filename, exc))
-                mlog.error(msg)
+                m_log.error(msg)
                 raise SystemError(msg)
-            mlog.info(
+            m_log.info(
                 'Downloaded file from web server  --  url = {0}.  '
                 'filename = {1}'.format(url, filename)
             )
@@ -137,30 +139,29 @@ class ManagerBase(object):
         :param prefix:
         :return:
         """
-        mlog.info('Creating a working directory.')
-        workingdir = None
+        m_log.info('Creating a working directory.')
         original_umask = os.umask(0)
         try:
-            workingdir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
+            working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception as exc:
-            mlog.critical(
-                'Could not create workingdir in {0}.  Exception: {1}'
+            m_log.critical(
+                'Could not create a working dir in {0}.  Exception: {1}'
                 .format(basedir, exc)
             )
             sys.exit(1)
-        mlog.debug('Working directory: {0}'.format(workingdir))
-        self.workingdir = workingdir
+        m_log.debug('Working directory: {0}'.format(working_dir))
+        self.working_dir = working_dir
         os.umask(original_umask)
 
     @abc.abstractmethod
     def call_process(self, cmd):
         if not isinstance(cmd, list):
-            mlog.critical('Command is not a list: {0}'.format(str(cmd)))
+            m_log.critical('Command is not a list: {0}'.format(str(cmd)))
             sys.exit(1)
         rsp = subprocess.call(cmd)
 
         if rsp != 0:
-            mlog.critical('Command failed: {0}'.format(str(cmd)))
+            m_log.critical('Command failed: {0}'.format(str(cmd)))
             sys.exit(1)
 
     @abc.abstractmethod
@@ -169,19 +170,19 @@ class ManagerBase(object):
 
         :return:
         """
-        mlog.info('Cleanup Time...')
+        m_log.info('Cleanup Time...')
         try:
-            mlog.debug('{0} being cleaned up.'.format(self.workingdir))
-            shutil.rmtree(self.workingdir)
+            m_log.debug('{0} being cleaned up.'.format(self.working_dir))
+            shutil.rmtree(self.working_dir)
         except Exception as exc:
-            mlog.critical('Cleanup Failed!  Exception: {0}'.format(exc))
+            m_log.critical('Cleanup Failed!  Exception: {0}'.format(exc))
             sys.exit(1)
 
-        mlog.info(
+        m_log.info(
             'Removed temporary data in working directory -- {0}'
-            .format(self.workingdir)
+            .format(self.working_dir)
         )
-        mlog.info('Exiting cleanup routine...')
+        m_log.info('Exiting cleanup routine...')
 
     @abc.abstractmethod
     def extract_contents(self, filepath, to_directory, create_dir):
@@ -192,20 +193,17 @@ class ManagerBase(object):
         :param create_dir:
         :return:
         """
-        opener = None
-        mode = None
-
         if filepath.endswith('.zip'):
-            mlog.debug('File Type: zip')
+            m_log.debug('File Type: zip')
             opener, mode = zipfile.ZipFile, 'r'
         elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
-            mlog.debug('File Type: GZip Tar')
+            m_log.debug('File Type: GZip Tar')
             opener, mode = tarfile.open, 'r:gz'
         elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
-            mlog.debug('File Type: Bzip Tar')
+            m_log.debug('File Type: Bzip Tar')
             opener, mode = tarfile.open, 'r:bz2'
         else:
-            mlog.critical(
+            m_log.critical(
                 'Could not extract "{0}" as no appropriate extractor '
                 'is found.'.format(filepath)
             )
@@ -235,7 +233,7 @@ class ManagerBase(object):
         finally:
             os.chdir(cwd)
 
-        mlog.info(
+        m_log.info(
             'Extracted file  --  source = {0}  dest   = {1}'
             .format(filepath, to_directory)
         )
@@ -250,9 +248,9 @@ class LinuxManager(ManagerBase):
 
     def __init__(self):
         super(LinuxManager, self).__init__()
-        self.workingdir = None
 
-    def _install_from_yum(self, packages):
+    @staticmethod
+    def _install_from_yum(packages):
         """
 
         :param packages:
@@ -264,11 +262,11 @@ class LinuxManager(ManagerBase):
         else:
             yum_cmd.append(packages)
         rsp = subprocess.call(yum_cmd)
-        lmlog.debug(packages)
-        lmlog.debug('Return code of yum install: {0}'.format(rsp))
+        lm_log.debug(packages)
+        lm_log.debug('Return code of yum install: {0}'.format(rsp))
 
         if rsp != 0:
-            lmlog.critical('Installing Salt from Yum has failed!')
+            lm_log.critical('Installing Salt from Yum has failed!')
             sys.exit(1)
 
     def download_file(self, url, filename, sourceiss3bucket=False):
@@ -330,7 +328,6 @@ class WindowsManager(ManagerBase):
 
     def __init__(self):
         super(WindowsManager, self).__init__()
-        self.workingdir = None
 
     def download_file(self, url, filename, sourceiss3bucket=False):
         """
