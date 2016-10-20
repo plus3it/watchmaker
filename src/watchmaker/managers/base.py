@@ -20,22 +20,12 @@ class ManagerBase(object):
 
     Forces all child classes to require consistent methods for coherence.
     """
-    __metaclass__ = abc.ABCMeta
-
-    @abc.abstractmethod
     def __init__(self):
         self.working_dir = None
         return
 
     @staticmethod
     def _get_s3_file(url, bucket_name, key_name, destination):
-        """
-        :param url:
-        :param bucket_name:
-        :param key_name:
-        :param destination:
-        :return:
-        """
         try:
             import boto3
             from botocore.client import ClientError
@@ -59,14 +49,7 @@ class ManagerBase(object):
             m_log.error(msg)
             raise SystemError(msg)
 
-    @abc.abstractmethod
-    def download_file(self, url, filename, sourceiss3bucket):
-        """
-        :param url:
-        :param filename:
-        :param sourceiss3bucket:
-        :return:
-        """
+    def download_file(self, url, filename, sourceiss3bucket=False):
         m_log.debug('Downloading: {0}'.format(url))
         m_log.debug('Destination: {0}'.format(filename))
         m_log.debug('S3: {0}'.format(sourceiss3bucket))
@@ -131,13 +114,15 @@ class ManagerBase(object):
                 'filename = {1}'.format(url, filename)
             )
 
-    @abc.abstractmethod
     def create_working_dir(self, basedir, prefix):
         """
+        Create a directory in `basedir` with a prefix of `prefix`.
 
-        :param basedir:
-        :param prefix:
-        :return:
+        Args:
+            prefix (str):
+                Prefix to prepend to the working directory
+            basedir (str):
+                The directory in which to create the working directory
         """
         m_log.info('Creating a working directory.')
         original_umask = os.umask(0)
@@ -153,7 +138,6 @@ class ManagerBase(object):
         self.working_dir = working_dir
         os.umask(original_umask)
 
-    @abc.abstractmethod
     def call_process(self, cmd):
         if not isinstance(cmd, list):
             m_log.critical('Command is not a list: {0}'.format(str(cmd)))
@@ -164,12 +148,7 @@ class ManagerBase(object):
             m_log.critical('Command failed: {0}'.format(str(cmd)))
             sys.exit(1)
 
-    @abc.abstractmethod
     def cleanup(self):
-        """
-
-        :return:
-        """
         m_log.info('Cleanup Time...')
         try:
             m_log.debug('{0} being cleaned up.'.format(self.working_dir))
@@ -184,14 +163,19 @@ class ManagerBase(object):
         )
         m_log.info('Exiting cleanup routine...')
 
-    @abc.abstractmethod
-    def extract_contents(self, filepath, to_directory, create_dir):
+    def extract_contents(self, filepath, to_directory, create_dir=False):
         """
+        Extracts a compressed file to the specified directory.
+        Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
 
-        :param filepath:
-        :param to_directory:
-        :param create_dir:
-        :return:
+        Args:
+            filepath (str):
+                Path to the compressed file
+            to_directory (str):
+                Path to the target directory
+            create_dir (bool):
+                If true, create subdirectory within to_directory
+                that represents original path of compressed file
         """
         if filepath.endswith('.zip'):
             m_log.debug('File Type: zip')
@@ -251,11 +235,6 @@ class LinuxManager(ManagerBase):
 
     @staticmethod
     def _install_from_yum(packages):
-        """
-
-        :param packages:
-        :return:
-        """
         yum_cmd = ['sudo', 'yum', '-y', 'install']
         if isinstance(packages, list):
             yum_cmd.extend(packages)
@@ -269,57 +248,6 @@ class LinuxManager(ManagerBase):
             lm_log.critical('Installing Salt from Yum has failed!')
             sys.exit(1)
 
-    def download_file(self, url, filename, sourceiss3bucket=False):
-        """
-
-        :param url:
-        :param filename:
-        :param sourceiss3bucket:
-        :return:
-        """
-        super(LinuxManager, self).download_file(
-            url,
-            filename,
-            sourceiss3bucket
-        )
-
-    def call_process(self, cmd):
-        super(LinuxManager, self).call_process(cmd)
-
-    def create_working_dir(self, basedir, prefix):
-        """
-        Create a directory in `basedir` with a prefix of `prefix`.
-
-        Args:
-            prefix (str):
-                Prefix to prepend to the working directory
-            basedir (str):
-                The directory in which to create the working directory
-        """
-        super(LinuxManager, self).create_working_dir(basedir, prefix)
-
-    def cleanup(self):
-        """
-        Removes temporary files loaded to the system.
-            :return: bool
-        """
-        super(LinuxManager, self).cleanup()
-
-    def extract_contents(self, filepath, to_directory='.', create_dir=None):
-        """
-        Extracts a compressed file to the specified directory.
-        Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
-        :param create_dir:
-        :param filepath: str, path to the compressed file
-        :param to_directory: str, path to the target directory
-        :raise ValueError: error raised if file extension is not supported
-        """
-        super(LinuxManager, self).extract_contents(
-            filepath,
-            to_directory,
-            create_dir
-        )
-
 
 class WindowsManager(ManagerBase):
     """
@@ -328,57 +256,6 @@ class WindowsManager(ManagerBase):
 
     def __init__(self):
         super(WindowsManager, self).__init__()
-
-    def download_file(self, url, filename, sourceiss3bucket=False):
-        """
-
-        :param url:
-        :param filename:
-        :param sourceiss3bucket:
-        :return:
-        """
-        super(WindowsManager, self).download_file(
-            url,
-            filename,
-            sourceiss3bucket
-        )
-
-    def call_process(self, cmd):
-        super(WindowsManager, self).call_process(cmd)
-
-    def create_working_dir(self, basedir, prefix):
-        """
-        Create a directory in `basedir` with a prefix of `prefix`.
-
-        Args:
-            prefix (str):
-                Prefix to prepend to the working directory
-            basedir (str):
-                The directory in which to create the working directory
-        """
-        super(WindowsManager, self).create_working_dir(basedir, prefix)
-
-    def cleanup(self):
-        """
-        Removes temporary files loaded to the system.
-            :return: bool
-        """
-        super(WindowsManager, self).cleanup()
-
-    def extract_contents(self, filepath, to_directory='.', create_dir=None):
-        """
-        Extracts a compressed file to the specified directory.
-        Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
-        :param create_dir:
-        :param filepath: str, path to the compressed file
-        :param to_directory: str, path to the target directory
-        :raise ValueError: error raised if file extension is not supported
-        """
-        super(WindowsManager, self).extract_contents(
-            filepath,
-            to_directory,
-            create_dir
-        )
 
 
 class WorkersManagerBase(object):
