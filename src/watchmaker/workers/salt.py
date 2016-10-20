@@ -29,8 +29,8 @@ class SaltBase(ManagerBase):
         self.ent_env = None
         self.formula_termination_strings = list()
         self.formulas_to_include = list()
-        self.salt_conf = None
         self.is_s3_bucket = None
+        self.salt_conf = None
         self.working_dir = None
 
     def _set_salt_dirs(self, srv):
@@ -49,7 +49,8 @@ class SaltBase(ManagerBase):
 
         self.computer_name = self.config['computername']
         self.ent_env = self.config['entenv']
-        self.is_s3_bucket = self.config['sourceiss3bucket']
+        if not self.is_s3_bucket:
+            self.is_s3_bucket = self.config['sourceiss3bucket']
 
         self.create_working_dir(
             self.salt_working_dir,
@@ -292,13 +293,9 @@ class SaltLinux(SaltBase, LinuxManager):
         ls_log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltLinux, self)._set_grain(grain, value)
 
-    def install(self, configuration, salt_states):
-        """
-        :param configuration:
-        :param salt_states:
-        :return:
-        """
+    def install(self, configuration, is_s3_bucket, salt_states):
         self.load_config(configuration, ls_log)
+        self.is_s3_bucket = is_s3_bucket
 
         self._configuration_validation()
         self._prepare_for_install()
@@ -384,13 +381,9 @@ class SaltWindows(SaltBase, WindowsManager):
         ws_log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltWindows, self)._set_grain(grain, value)
 
-    def install(self, configuration, salt_states):
-        """
-        :param configuration:
-        :param salt_states:
-        :return:
-        """
+    def install(self, configuration, is_s3_bucket, salt_states):
         self.load_config(configuration, ws_log)
+        self.is_s3_bucket = is_s3_bucket
 
         self._prepare_for_install()
         self._install_package()

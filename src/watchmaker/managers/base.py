@@ -18,26 +18,42 @@ class ManagerBase(object):
     """
     Base class for operating system managers.
 
-    Forces all child classes to require consistent methods for coherence.
+    All child classes will have access to methods unless overridden by
+    similarly-named method in the child class.
     """
+    boto3 = None
+    boto_client = None
+
     def __init__(self):
         self.working_dir = None
         return
 
-    @staticmethod
-    def _get_s3_file(url, bucket_name, key_name, destination):
+    def _import_boto3(self):
+        if self.boto3:
+            return
+
+        m_log.info("Dynamically importing boto3 ...")
         try:
-            import boto3
-            from botocore.client import ClientError
+            self.boto3 = __import__("boto3")
+            self.boto_client = __import__(
+                "botocore.client",
+                globals(),
+                locals(),
+                ["ClientError"],
+                -1
+            )
         except ImportError as exc:
             m_log.critical(exc)
             sys.exit(1)
 
+    def _get_s3_file(self, url, bucket_name, key_name, destination):
+        self._import_boto3()
+
         try:
-            s3 = boto3.resource("s3")
+            s3 = self.boto3.resource("s3")
             s3.meta.client.head_bucket(Bucket=bucket_name)
             s3.Object(bucket_name, key_name).download_file(destination)
-        except ClientError as exc:
+        except self.boto_client.ClientError as exc:
             msg = ('Bucket does not exist.  bucket = {0}.  Exception: {1}'
                    .format(bucket_name, exc))
             m_log.error(msg)
@@ -56,12 +72,7 @@ class ManagerBase(object):
 
         # TODO Rework this to properly reflect logic flow cleanly.
         if sourceiss3bucket:
-            try:
-                import boto3
-                from botocore.client import ClientError
-            except ImportError as exc:
-                m_log.critical(exc)
-                sys.exit(1)
+            self._import_boto3()
 
             bucket_name = url.split('/')[3]
             key_name = '/'.join(url.split('/')[4:])
@@ -70,15 +81,17 @@ class ManagerBase(object):
             m_log.debug('key_name: {0}'.format(key_name))
 
             try:
-                s3 = boto3.resource('s3')
+                s3 = self.boto3.resource('s3')
                 s3.meta.client.head_bucket(Bucket=bucket_name)
                 s3.Object(bucket_name, key_name).download_file(filename)
-            except (NameError, ClientError):
-                m_log.error('NameError: {0}'.format(ClientError))
+            except (NameError, self.boto_client.ClientError):
+                m_log.error(
+                    'NameError: {0}'.format(self.boto_client.ClientError)
+                )
                 try:
                     bucket_name = url.split('/')[2].split('.')[0]
                     key_name = '/'.join(url.split('/')[3:])
-                    s3 = boto3.resource("s3")
+                    s3 = self.boto3.resource("s3")
                     s3.meta.client.head_bucket(Bucket=bucket_name)
                     s3.Object(bucket_name, key_name).download_file(filename)
                 except Exception as exc:
@@ -138,7 +151,8 @@ class ManagerBase(object):
         self.working_dir = working_dir
         os.umask(original_umask)
 
-    def call_process(self, cmd):
+    @staticmethod
+    def call_process(cmd):
         if not isinstance(cmd, list):
             m_log.critical('Command is not a list: {0}'.format(str(cmd)))
             sys.exit(1)
@@ -163,7 +177,8 @@ class ManagerBase(object):
         )
         m_log.info('Exiting cleanup routine...')
 
-    def extract_contents(self, filepath, to_directory, create_dir=False):
+    @staticmethod
+    def extract_contents(filepath, to_directory, create_dir=False):
         """
         Extracts a compressed file to the specified directory.
         Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.

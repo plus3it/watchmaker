@@ -11,13 +11,13 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     """
 
-    def __init__(self, s3, system_params, execution_scripts, saltstates):
+    def __init__(self, s3, system_params, execution_scripts, salt_states):
         super(LinuxWorkersManager, self).__init__()
         self.execution_scripts = execution_scripts
         self.manager = LinuxManager()
-        self.s3 = s3
+        self.is_s3_bucket = s3
         self.system_params = system_params
-        self.saltstates = saltstates
+        self.salt_states = salt_states
 
     def _worker_execution(self):
         pass
@@ -37,7 +37,11 @@ class LinuxWorkersManager(WorkersManagerBase):
                 yum.install(configuration)
             elif 'Salt' in script:
                 salt = SaltLinux()
-                salt.install(configuration, self.saltstates)
+                salt.install(
+                    configuration,
+                    self.is_s3_bucket,
+                    self.salt_states
+                )
 
     def cleanup(self):
         self.manager.cleanup()
@@ -48,13 +52,13 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     """
 
-    def __init__(self, s3, system_params, execution_scripts, saltstates):
+    def __init__(self, s3, system_params, execution_scripts, salt_states):
         super(WindowsWorkersManager, self).__init__()
         self.execution_scripts = execution_scripts
         self.manager = WindowsManager()
-        self.s3 = s3
+        self.is_s3_bucket = s3
         self.system_params = system_params
-        self.saltstates = saltstates
+        self.salt_states = salt_states
 
     def _worker_execution(self):
         pass
@@ -70,7 +74,11 @@ class WindowsWorkersManager(WorkersManagerBase):
 
             if 'Salt' in script:
                 salt = SaltWindows()
-                salt.install(configuration, self.saltstates)
+                salt.install(
+                    configuration,
+                    self.is_s3_bucket,
+                    self.salt_states
+                )
 
     def cleanup(self):
         self.manager.cleanup()
