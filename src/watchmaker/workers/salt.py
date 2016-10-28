@@ -41,8 +41,8 @@ class SaltBase(ManagerBase):
         self.salt_pillar_root = os.sep.join((srv, 'pillar'))
 
     def _prepare_for_install(self, this_log):
-        if self.config['formulastoinclude']:
-            self.formulas_to_include = self.config['formulastoinclude']
+        if self.config['user_formulas']:
+            self.formulas_to_include = self.config['user_formulas']
 
         if self.config['formulaterminationstrings']:
             self.formula_termination_strings = self.config[
@@ -93,7 +93,7 @@ class SaltBase(ManagerBase):
             if os.path.isdir(static_path) and os.listdir(static_path):
                 formulas[formula] = static_path
 
-        # Obtain & extract any Salt formulas specified in formulastoinclude.
+        # Obtain & extract any Salt formulas specified in user_formulas.
         for source_loc in self.formulas_to_include:
             filename = source_loc.split('/')[-1]
             file_loc = os.sep.join((self.working_dir, filename))
