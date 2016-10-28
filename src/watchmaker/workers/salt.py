@@ -7,6 +7,7 @@ import sys
 
 import yaml
 
+from watchmaker import static
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 ls_log = logging.getLogger('LinuxSalt')
@@ -83,8 +84,15 @@ class SaltBase(ManagerBase):
                     raise SystemError(msg)
 
     def _get_formulas_conf(self):
+        # Append Salt formulas that came with Watchmaker package.
+        formulas_path = os.sep.join(static.__path__[0], 'salt', 'formulas')
+        formulas_conf = [
+            os.sep.join(formulas_path, formula)
+            for formula in os.listdir(formulas_path)
+            if os.path.isdir(os.sep.join(formulas_path, formula))
+        ]
+
         # Obtain & extract any Salt formulas specified in formulastoinclude.
-        formulas_conf = []
         for source_loc in self.formulas_to_include:
             filename = source_loc.split('/')[-1]
             file_loc = os.sep.join((self.working_dir, filename))
