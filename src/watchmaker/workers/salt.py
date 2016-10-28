@@ -332,15 +332,15 @@ class SaltWindows(SaltBase, WindowsManager):
         sys_drive = os.environ['systemdrive']
 
         # Set up variables for paths to Salt directories and applications.
-        self.salt_root = os.sep.join(sys_drive, 'Salt')
+        self.salt_root = os.sep.join((sys_drive, 'Salt'))
 
-        self.salt_call = os.sep.join(self.salt_root, 'salt-call.bat')
-        self.salt_conf_path = os.sep.join(self.salt_root, 'conf')
-        self.salt_min_path = os.sep.join(self.salt_root, 'minion')
-        self.salt_srv = os.sep.join(self.salt_root, 'srv')
+        self.salt_call = os.sep.join((self.salt_root, 'salt-call.bat'))
+        self.salt_conf_path = os.sep.join((self.salt_root, 'conf'))
+        self.salt_min_path = os.sep.join((self.salt_root, 'minion'))
+        self.salt_srv = os.sep.join((self.salt_root, 'srv'))
         self.salt_win_repo = os.sep.join((self.salt_srv, 'winrepo'))
         self.salt_working_dir = os.sep.join(
-            [sys_drive, 'Watchmaker', 'WorkingFiles']
+            (sys_drive, 'Watchmaker', 'WorkingFiles')
         )
         self.salt_working_dir_prefix = 'Salt-'
 
@@ -368,10 +368,10 @@ class SaltWindows(SaltBase, WindowsManager):
                 ' needed for installation of Salt in Windows.'
             )
 
-        super(SaltWindows, self)._prepare_for_install()
+        super(SaltWindows, self)._prepare_for_install(ws_log)
 
         # Extra Salt variable for Windows.
-        self.ash_role = self.config['ash_role']
+        self.ash_role = self.config['ashrole']
 
     def _build_salt_formula(self):
         formulas_conf = self._get_formulas_conf()
@@ -385,7 +385,7 @@ class SaltWindows(SaltBase, WindowsManager):
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
             'winrepo_source_dir': 'salt://winrepo',
-            'winrepo_dir': os.sep.join([self.salt_win_repo, 'winrepo'])
+            'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
 
         super(SaltWindows, self)._build_salt_formula()
@@ -398,7 +398,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.load_config(configuration, ws_log)
         self.is_s3_bucket = is_s3_bucket
 
-        self._prepare_for_install(ws_log)
+        self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
 
