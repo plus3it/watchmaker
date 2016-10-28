@@ -85,11 +85,11 @@ class SaltBase(ManagerBase):
 
     def _get_formulas_conf(self):
         # Append Salt formulas that came with Watchmaker package.
-        formulas_path = os.sep.join(static.__path__[0], 'salt', 'formulas')
+        formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
         formulas_conf = [
-            os.sep.join(formulas_path, formula)
+            os.sep.join((formulas_path, formula))
             for formula in os.listdir(formulas_path)
-            if os.path.isdir(os.sep.join(formulas_path, formula))
+            if os.path.isdir(os.sep.join((formulas_path, formula)))
         ]
 
         # Obtain & extract any Salt formulas specified in formulastoinclude.
