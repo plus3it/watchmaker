@@ -117,7 +117,7 @@ class SaltBase(ManagerBase):
 
         return formulas.values()
 
-    def _build_salt_formula(self):
+    def _build_salt_formula(self, extract_dir):
         if self.config['saltcontentsource']:
             self.salt_content_filename = self.config[
                 'saltcontentsource'].split('/')[-1]
@@ -132,7 +132,7 @@ class SaltBase(ManagerBase):
             )
             self.extract_contents(
                 filepath=self.salt_content_file,
-                to_directory=self.salt_srv
+                to_directory=extract_dir
             )
 
         if not os.path.exists(os.path.join(self.salt_conf_path, 'minion.d')):
@@ -300,7 +300,7 @@ class SaltLinux(SaltBase, LinuxManager):
             'pillar_roots': {'base': [str(self.salt_pillar_root)]}
         }
 
-        super(SaltLinux, self)._build_salt_formula()
+        super(SaltLinux, self)._build_salt_formula(self.salt_srv)
 
     def _set_grain(self, grain, value):
         ls_log.info('Setting grain `{0}` ...'.format(grain))
@@ -388,7 +388,7 @@ class SaltWindows(SaltBase, WindowsManager):
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
 
-        super(SaltWindows, self)._build_salt_formula()
+        super(SaltWindows, self)._build_salt_formula(self.salt_root)
 
     def _set_grain(self, grain, value):
         ws_log.info('Setting grain `{0}` ...'.format(grain))
