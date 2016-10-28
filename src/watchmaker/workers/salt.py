@@ -84,13 +84,14 @@ class SaltBase(ManagerBase):
                     raise SystemError(msg)
 
     def _get_formulas_conf(self):
+        formulas = {}
+
         # Append Salt formulas that came with Watchmaker package.
         formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
-        formulas_conf = [
-            os.sep.join((formulas_path, formula))
-            for formula in os.listdir(formulas_path)
-            if os.path.isdir(os.sep.join((formulas_path, formula)))
-        ]
+        for formula in os.listdir(formulas_path):
+            static_path = os.sep.join((formulas_path, formula))
+            if os.path.isdir(static_path) and os.listdir(static_path):
+                formulas[formula] = static_path
 
         # Obtain & extract any Salt formulas specified in formulastoinclude.
         for source_loc in self.formulas_to_include:
@@ -102,17 +103,19 @@ class SaltBase(ManagerBase):
                 to_directory=self.salt_formula_root
             )
             filebase = '.'.join(filename.split('.')[:-1])
-            formulas_loc = os.sep.join((self.salt_formula_root, filebase))
+            formula_loc = os.sep.join((self.salt_formula_root, filebase))
 
             for string in self.formula_termination_strings:
                 if filebase.endswith(string):
-                    new_formula_dir = formulas_loc[:-len(string)]
+                    new_formula_dir = formula_loc[:-len(string)]
                     if os.path.exists(new_formula_dir):
                         shutil.rmtree(new_formula_dir)
-                    shutil.move(formulas_loc, new_formula_dir)
-                    formulas_loc = new_formula_dir
-            formulas_conf.append(formulas_loc)
-        return formulas_conf
+                    shutil.move(formula_loc, new_formula_dir)
+                    formula_loc = new_formula_dir
+
+            formulas[filename] = formula_loc
+
+        return formulas.values()
 
     def _build_salt_formula(self):
         if self.config['saltcontentsource']:
