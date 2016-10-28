@@ -218,7 +218,9 @@ class ManagerBase(object):
             os.makedirs(to_directory)
         except OSError:
             if not os.path.isdir(to_directory):
-                raise
+                msg = ('Unable create directory - {0}'.format(to_directory))
+                m_log.error(msg)
+                raise SystemError(msg)
 
         cwd = os.getcwd()
         os.chdir(to_directory)

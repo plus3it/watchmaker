@@ -39,7 +39,7 @@ class SaltBase(ManagerBase):
         self.salt_formula_root = os.sep.join((srv, 'formulas'))
         self.salt_pillar_root = os.sep.join((srv, 'pillar'))
 
-    def _prepare_for_install(self):
+    def _prepare_for_install(self, this_log):
         if self.config['formulastoinclude']:
             self.formulas_to_include = self.config['formulastoinclude']
 
@@ -78,7 +78,9 @@ class SaltBase(ManagerBase):
                 os.makedirs(salt_dir)
             except OSError:
                 if not os.path.isdir(salt_dir):
-                    raise
+                    msg = ('Unable create directory - {0}'.format(salt_dir))
+                    this_log.error(msg)
+                    raise SystemError(msg)
 
     def _get_formulas_conf(self):
         # Obtain & extract any Salt formulas specified in formulastoinclude.
@@ -298,7 +300,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self.is_s3_bucket = is_s3_bucket
 
         self._configuration_validation()
-        self._prepare_for_install()
+        self._prepare_for_install(ls_log)
         self._install_package()
         self._build_salt_formula()
 
@@ -385,7 +387,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.load_config(configuration, ws_log)
         self.is_s3_bucket = is_s3_bucket
 
-        self._prepare_for_install()
+        self._prepare_for_install(ws_log)
         self._install_package()
         self._build_salt_formula()
 
