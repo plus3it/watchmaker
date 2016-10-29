@@ -21,6 +21,7 @@ class SaltBase(ManagerBase):
     salt_file_root = None
     salt_formula_root = None
     salt_srv = None
+    salt_log_dir = None
     salt_working_dir = None
     salt_working_dir_prefix = None
 
@@ -59,10 +60,10 @@ class SaltBase(ManagerBase):
         )
 
         self.salt_results_logfile = self.config['salt_results_log'] or \
-            os.sep.join((self.working_dir, 'salt_call.results.log'))
+            os.sep.join((self.salt_log_dir, 'salt_call.results.log'))
 
         self.salt_debug_logfile = self.config['salt_debug_log'] or \
-            os.sep.join((self.working_dir, 'salt_call.debug.log'))
+            os.sep.join((self.salt_log_dir, 'salt_call.debug.log'))
 
         self.salt_call_args = [
             '--out', 'yaml', '--out-file', self.salt_results_logfile,
@@ -245,6 +246,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_conf_path = '/etc/salt'
         self.salt_min_path = '/etc/salt/minion'
         self.salt_srv = '/srv/salt'
+        self.salt_log_dir = '/var/log/'
         self.salt_working_dir = '/usr/tmp/'
         self.salt_working_dir_prefix = 'saltinstall'
 
@@ -339,6 +341,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_min_path = os.sep.join((self.salt_root, 'minion'))
         self.salt_srv = os.sep.join((self.salt_root, 'srv'))
         self.salt_win_repo = os.sep.join((self.salt_srv, 'winrepo'))
+        self.salt_log_dir = os.sep.join((sys_drive, 'Watchmaker', 'Logs'))
         self.salt_working_dir = os.sep.join(
             (sys_drive, 'Watchmaker', 'WorkingFiles')
         )
