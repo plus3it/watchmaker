@@ -30,7 +30,14 @@ Or download the [`tarball`][3]:
 curl  -OL https://github.com/plus3it/watchmaker/tarball/master
 ```
 
-Once you have a copy of the source, you can install it with:
+This project uses submodules, so once you have a copy of the source, you need
+to pull them in as well.
+
+```bash
+git submodule update --init --recursive
+```
+
+Then you can install Watchmaker:
 
 ```bash
 python setup.py install

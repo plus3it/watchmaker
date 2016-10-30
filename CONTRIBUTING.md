@@ -42,37 +42,38 @@ To set up `watchmaker` for local development:
 1.  Fork [watchmaker](https://github.com/plus3it/watchmaker) (look for the
     "Fork" button).
 
-2.  Clone your fork locally::
+2.  Clone your fork locally and update the submodules:
 
-```shell
-git clone https://github.com/your_name_here/watchmaker.git
-```
+    ```shell
+    git clone https://github.com/your_name_here/watchmaker.git && cd watchmaker
+    git submodule update --init --recursive
+    ```
 
 3.  Create a branch for local development:
 
-```shell
-git checkout -b name-of-your-bugfix-or-feature
-```
+    ```shell
+    git checkout -b name-of-your-bugfix-or-feature
+    ```
 
-   Now you can make your changes locally.
+4. Now you can make your changes locally.
 
-4.  When you're done making changes, run all the checks, doc builder and spell
+5.  When you're done making changes, run all the checks, doc builder and spell
 checker with [tox](http://tox.readthedocs.org/en/latest/install.html) one
 command:
 
-```shell
-tox
-```
+    ```shell
+    tox
+    ```
 
-5.  Commit your changes and push your branch to GitHub:
+6.  Commit your changes and push your branch to GitHub:
 
-```shell
-git add .
-git commit -m "Your detailed description of your changes."
-git push origin name-of-your-bugfix-or-feature
-```
+    ```shell
+    git add .
+    git commit -m "Your detailed description of your changes."
+    git push origin name-of-your-bugfix-or-feature
+    ```
 
-6.  Submit a pull request through the GitHub website.
+7.  Submit a pull request through the GitHub website.
 
 ## Pull Request Guidelines
 
