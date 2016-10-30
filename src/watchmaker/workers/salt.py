@@ -7,6 +7,7 @@ import sys
 
 import yaml
 
+from watchmaker import static
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 ls_log = logging.getLogger('LinuxSalt')
@@ -20,6 +21,7 @@ class SaltBase(ManagerBase):
     salt_file_root = None
     salt_formula_root = None
     salt_srv = None
+    salt_log_dir = None
     salt_working_dir = None
     salt_working_dir_prefix = None
 
@@ -40,8 +42,8 @@ class SaltBase(ManagerBase):
         self.salt_pillar_root = os.sep.join((srv, 'pillar'))
 
     def _prepare_for_install(self, this_log):
-        if self.config['formulastoinclude']:
-            self.formulas_to_include = self.config['formulastoinclude']
+        if self.config['user_formulas']:
+            self.formulas_to_include = self.config['user_formulas']
 
         if self.config['formulaterminationstrings']:
             self.formula_termination_strings = self.config[
@@ -58,10 +60,10 @@ class SaltBase(ManagerBase):
         )
 
         self.salt_results_logfile = self.config['salt_results_log'] or \
-            os.sep.join((self.working_dir, 'salt_call.results.log'))
+            os.sep.join((self.salt_log_dir, 'salt_call.results.log'))
 
         self.salt_debug_logfile = self.config['salt_debug_log'] or \
-            os.sep.join((self.working_dir, 'salt_call.debug.log'))
+            os.sep.join((self.salt_log_dir, 'salt_call.debug.log'))
 
         self.salt_call_args = [
             '--out', 'yaml', '--out-file', self.salt_results_logfile,
@@ -83,8 +85,16 @@ class SaltBase(ManagerBase):
                     raise SystemError(msg)
 
     def _get_formulas_conf(self):
-        # Obtain & extract any Salt formulas specified in formulastoinclude.
-        formulas_conf = []
+        formulas = {}
+
+        # Append Salt formulas that came with Watchmaker package.
+        formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
+        for formula in os.listdir(formulas_path):
+            static_path = os.sep.join((formulas_path, formula))
+            if os.path.isdir(static_path) and os.listdir(static_path):
+                formulas[formula] = static_path
+
+        # Obtain & extract any Salt formulas specified in user_formulas.
         for source_loc in self.formulas_to_include:
             filename = source_loc.split('/')[-1]
             file_loc = os.sep.join((self.working_dir, filename))
@@ -94,19 +104,21 @@ class SaltBase(ManagerBase):
                 to_directory=self.salt_formula_root
             )
             filebase = '.'.join(filename.split('.')[:-1])
-            formulas_loc = os.sep.join((self.salt_formula_root, filebase))
+            formula_loc = os.sep.join((self.salt_formula_root, filebase))
 
             for string in self.formula_termination_strings:
                 if filebase.endswith(string):
-                    new_formula_dir = formulas_loc[:-len(string)]
+                    new_formula_dir = formula_loc[:-len(string)]
                     if os.path.exists(new_formula_dir):
                         shutil.rmtree(new_formula_dir)
-                    shutil.move(formulas_loc, new_formula_dir)
-                    formulas_loc = new_formula_dir
-            formulas_conf.append(formulas_loc)
-        return formulas_conf
+                    shutil.move(formula_loc, new_formula_dir)
+                    formula_loc = new_formula_dir
 
-    def _build_salt_formula(self):
+            formulas[filename] = formula_loc
+
+        return formulas.values()
+
+    def _build_salt_formula(self, extract_dir):
         if self.config['saltcontentsource']:
             self.salt_content_filename = self.config[
                 'saltcontentsource'].split('/')[-1]
@@ -121,7 +133,7 @@ class SaltBase(ManagerBase):
             )
             self.extract_contents(
                 filepath=self.salt_content_file,
-                to_directory=self.salt_srv
+                to_directory=extract_dir
             )
 
         if not os.path.exists(os.path.join(self.salt_conf_path, 'minion.d')):
@@ -234,6 +246,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_conf_path = '/etc/salt'
         self.salt_min_path = '/etc/salt/minion'
         self.salt_srv = '/srv/salt'
+        self.salt_log_dir = '/var/log/'
         self.salt_working_dir = '/usr/tmp/'
         self.salt_working_dir_prefix = 'saltinstall'
 
@@ -289,7 +302,7 @@ class SaltLinux(SaltBase, LinuxManager):
             'pillar_roots': {'base': [str(self.salt_pillar_root)]}
         }
 
-        super(SaltLinux, self)._build_salt_formula()
+        super(SaltLinux, self)._build_salt_formula(self.salt_srv)
 
     def _set_grain(self, grain, value):
         ls_log.info('Setting grain `{0}` ...'.format(grain))
@@ -321,15 +334,16 @@ class SaltWindows(SaltBase, WindowsManager):
         sys_drive = os.environ['systemdrive']
 
         # Set up variables for paths to Salt directories and applications.
-        self.salt_root = os.sep.join(sys_drive, 'Salt')
+        self.salt_root = os.sep.join((sys_drive, 'Salt'))
 
-        self.salt_call = os.sep.join(self.salt_root, 'salt-call.bat')
-        self.salt_conf_path = os.sep.join(self.salt_root, 'conf')
-        self.salt_min_path = os.sep.join(self.salt_root, 'minion')
-        self.salt_srv = os.sep.join(self.salt_root, 'srv')
+        self.salt_call = os.sep.join((self.salt_root, 'salt-call.bat'))
+        self.salt_conf_path = os.sep.join((self.salt_root, 'conf'))
+        self.salt_min_path = os.sep.join((self.salt_root, 'minion'))
+        self.salt_srv = os.sep.join((self.salt_root, 'srv'))
         self.salt_win_repo = os.sep.join((self.salt_srv, 'winrepo'))
+        self.salt_log_dir = os.sep.join((sys_drive, 'Watchmaker', 'Logs'))
         self.salt_working_dir = os.sep.join(
-            [sys_drive, 'Watchmaker', 'WorkingFiles']
+            (sys_drive, 'Watchmaker', 'WorkingFiles')
         )
         self.salt_working_dir_prefix = 'Salt-'
 
@@ -357,10 +371,10 @@ class SaltWindows(SaltBase, WindowsManager):
                 ' needed for installation of Salt in Windows.'
             )
 
-        super(SaltWindows, self)._prepare_for_install()
+        super(SaltWindows, self)._prepare_for_install(ws_log)
 
         # Extra Salt variable for Windows.
-        self.ash_role = self.config['ash_role']
+        self.ash_role = self.config['ashrole']
 
     def _build_salt_formula(self):
         formulas_conf = self._get_formulas_conf()
@@ -374,10 +388,10 @@ class SaltWindows(SaltBase, WindowsManager):
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
             'winrepo_source_dir': 'salt://winrepo',
-            'winrepo_dir': os.sep.join([self.salt_win_repo, 'winrepo'])
+            'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
 
-        super(SaltWindows, self)._build_salt_formula()
+        super(SaltWindows, self)._build_salt_formula(self.salt_root)
 
     def _set_grain(self, grain, value):
         ws_log.info('Setting grain `{0}` ...'.format(grain))
@@ -387,7 +401,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.load_config(configuration, ws_log)
         self.is_s3_bucket = is_s3_bucket
 
-        self._prepare_for_install(ws_log)
+        self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
 

@@ -26,18 +26,17 @@ Linux:
       adminusers: None
       computername: None
       entenv: False
-      formulastoinclude:
-        - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
+      user_formulas:
+        #To add other formulas, make sure it is a url to a zipped file as follows:
+        #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
+        #- https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+        #To "overwrite" submodule formulas, make sure name matches submodule names.
       formulaterminationstrings:
         - -master
         - -latest
       oupath: None
-      salt_debug_log: /var/log/saltcall.debug.log
-      salt_results_log: /var/log/saltcall.results.log
+      salt_debug_log: None
+      salt_results_log: None
       saltbootstrapsource: None
       saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
       saltinstallmethod: yum
@@ -54,19 +53,11 @@ Windows:
       ashrole: MemberServer
       computername: None
       entenv: False
-      formulastoinclude:
-        - https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/ash-windows-formula-master.zip
+      user_formulas:
+        #To add other formulas, make sure it is a url to a zipped file as follows:
+        #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
+        #To "overwrite" submodule formulas, make sure name matches submodule names.
         - https://s3.amazonaws.com/salt-formulas/dotnet4-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/emet-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/netbanner-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/mcafee-agent-windows-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/ntp-client-windows-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/splunkforwarder-windows-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/windows-update-agent-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/join-domain-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/scc-formula-master.zip
-        - https://s3.amazonaws.com/salt-formulas/name-computer-formula-master.zip
       formulaterminationstrings:
         - -master
         - -latest
