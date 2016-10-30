@@ -34,3 +34,6 @@
 [submodule "src/watchmaker/static/salt/formulas/ntp-client-windows-formula"]
 	path = src/watchmaker/static/salt/formulas/ntp-client-windows-formula
 	url = https://github.com/plus3it/ntp-client-windows-formula.git
+[submodule "src/watchmaker/static/salt/formulas/dotnet4-formula"]
+	path = src/watchmaker/static/salt/formulas/dotnet4-formula
+	url = https://github.com/plus3it/dotnet4-formula.git
