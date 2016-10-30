@@ -350,16 +350,15 @@ class SaltWindows(SaltBase, WindowsManager):
         self._set_salt_dirs(self.salt_srv)
 
     def _install_package(self):
-        installer_name = self.installerurl.split('/')[-1]
+        installer_name = os.sep.join(
+            (os.environ['tmp'], self.installerurl.split('/')[-1])
+        )
         self.download_file(
-            self.config['saltinstallerurl'],
+            self.installerurl,
             installer_name,
             self.is_s3_bucket
         )
-        install_cmd = [
-            installer_name,
-            '/S'
-        ]
+        install_cmd = [installer_name, '/S']
         subprocess.call(install_cmd)
 
     def _prepare_for_install(self):
