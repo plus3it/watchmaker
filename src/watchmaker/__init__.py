@@ -9,6 +9,8 @@ import yaml
 
 from six.moves import urllib
 from watchmaker import static
+from watchmaker.exceptions import ExcLevel
+from watchmaker.exceptions import wm_exit
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
@@ -95,19 +97,18 @@ class Prepare(object):
                     shutil.copyfileobj(response, outfile)
                 self.config_path = 'config.yaml'
             except urllib.error.URLError:
-                plog.critical(
+                wm_exit(
                     'The URL used to get the user config.yaml file did not '
-                    'work!  Please make sure your config is available.'
+                    'work!  Please make sure your config is available.',
+                    ExcLevel.Critical
                 )
-                sys.exit(1)
 
         if self.config_path and not os.path.exists(self.config_path):
-            plog.critical(
+            wm_exit(
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
-                'path.'.format(self.config_path)
+                'path.'.format(self.config_path), ExcLevel.Critical
             )
-            sys.exit(1)
 
         with open(self.config_path) as f:
             data = f.read()
@@ -115,11 +116,10 @@ class Prepare(object):
         if data:
             self.config = yaml.load(data)
         else:
-            plog.critical(
+            wm_exit(
                 'Unable to load the data of the default or'
-                ' the user supplied config.'
+                ' the user supplied config.', ExcLevel.Critical
             )
-            sys.exit(1)
 
     def _linux_paths(self):
         """
@@ -179,10 +179,10 @@ class Prepare(object):
             self.system_drive = os.environ['SYSTEMDRIVE']
             self._windows_paths()
         else:
-            plog.critical(
-                'System, {0}, is not recognized?'.format(self.system)
+            wm_exit(
+                'System, {0}, is not recognized?'.format(self.system),
+                ExcLevel.Critical
             )
-            sys.exit(1)
 
         # Create watchmaker directories
         try:
@@ -191,11 +191,11 @@ class Prepare(object):
             if not os.path.exists(self.system_params['workingdir']):
                 os.makedirs(self.system_params['workingdir'])
         except Exception as exc:
-            plog.critical(
+            wm_exit(
                 'Could not create a directory in {0}.  '
-                'Exception: {1}'.format(self.system_params['prepdir'], exc)
+                'Exception: {1}'.format(self.system_params['prepdir'], exc),
+                ExcLevel.Critical
             )
-            sys.exit(1)
 
     def _get_scripts_to_execute(self):
         """
@@ -213,11 +213,10 @@ class Prepare(object):
                     self.kwargs
                 )
             except Exception as exc:
-                plog.critical(
+                wm_exit(
                     'For {0} in {1}, the parameters could not be merged. {2}'
-                    .format(item, self.config_path, exc)
+                    .format(item, self.config_path, exc), ExcLevel.Critical
                 )
-                sys.exit(1)
 
         self.execution_scripts = scriptstoexecute
 
@@ -251,16 +250,15 @@ class Prepare(object):
                 self.saltstates
             )
         else:
-            plog.critical('There is no known System!')
-            sys.exit(1)
+            wm_exit('There is no known System!', ExcLevel.Critical)
 
         try:
             workers_manager.worker_cadence()
         except Exception as exc:
-            plog.critical(
-                'Execution of the workers cadence has failed. {0}'.format(exc)
+            wm_exit(
+                'Execution of the workers cadence has failed. {0}'.format(exc),
+                ExcLevel.Critical
             )
-            sys.exit(1)
 
         plog.info('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
