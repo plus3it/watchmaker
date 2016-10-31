@@ -59,11 +59,25 @@ class SaltBase(ManagerBase):
             self.salt_working_dir_prefix
         )
 
-        self.salt_results_logfile = self.config['salt_results_log'] or \
-            os.sep.join((self.salt_log_dir, 'salt_call.results.log'))
+        if (
+            self.config['salt_results_log'] and
+            self.config['salt_results_log'] != 'None'
+        ):
+            self.salt_results_logfile = self.config['salt_results_log']
+        else:
+            self.salt_results_logfile = os.sep.join(
+                (self.salt_log_dir, 'salt_call.results.log')
+            )
 
-        self.salt_debug_logfile = self.config['salt_debug_log'] or \
-            os.sep.join((self.salt_log_dir, 'salt_call.debug.log'))
+        if (
+            self.config['salt_debug_log'] and
+            self.config['salt_debug_log'] != 'None'
+        ):
+            self.salt_debug_logfile = self.config['salt_debug_log']
+        else:
+            self.salt_debug_logfile = os.sep.join(
+                (self.salt_log_dir, 'salt_call.debug.log')
+            )
 
         self.salt_call_args = [
             '--out', 'yaml', '--out-file', self.salt_results_logfile,
