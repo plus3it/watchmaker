@@ -1,8 +1,7 @@
 import logging
 import os
 
-from watchmaker.exceptions import ExcLevel
-from watchmaker.exceptions import wm_exit
+from watchmaker.exceptions import ExcLevel, wm_exit
 
 
 def prepare_logging(log_dir, log_level):

@@ -4,12 +4,13 @@ import os
 import platform
 import shutil
 import subprocess
+
 import yaml
 
 from six.moves import urllib
+
 from watchmaker import static
-from watchmaker.exceptions import ExcLevel
-from watchmaker.exceptions import wm_exit
+from watchmaker.exceptions import ExcLevel, wm_exit
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 

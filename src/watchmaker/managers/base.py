@@ -3,12 +3,13 @@ import logging
 import os
 import shutil
 import subprocess
-import sys
 import tarfile
 import tempfile
 import zipfile
 
 from six.moves import urllib
+
+from watchmaker.exceptions import ExcLevel, wm_exit
 
 m_log = logging.getLogger('ManagerBase')
 lm_log = logging.getLogger('LinuxManager')
@@ -43,8 +44,7 @@ class ManagerBase(object):
                 -1
             )
         except ImportError as exc:
-            m_log.critical(exc)
-            sys.exit(1)
+            wm_exit("Unable to import boto3 module.", ExcLevel.Critical, True)
 
     def _get_s3_file(self, url, bucket_name, key_name, destination):
         self._import_boto3()
@@ -142,11 +142,10 @@ class ManagerBase(object):
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception as exc:
-            m_log.critical(
+            wm_exit(
                 'Could not create a working dir in {0}.  Exception: {1}'
-                .format(basedir, exc)
+                .format(basedir, exc), ExcLevel.Critical, True
             )
-            sys.exit(1)
         m_log.debug('Working directory: {0}'.format(working_dir))
         self.working_dir = working_dir
         os.umask(original_umask)
@@ -154,13 +153,17 @@ class ManagerBase(object):
     @staticmethod
     def call_process(cmd):
         if not isinstance(cmd, list):
-            m_log.critical('Command is not a list: {0}'.format(str(cmd)))
-            sys.exit(1)
+            wm_exit(
+                'Command is not a list: {0}'.format(str(cmd)),
+                ExcLevel.Critical, True
+            )
         rsp = subprocess.call(cmd)
 
         if rsp != 0:
-            m_log.critical('Command failed: {0}'.format(str(cmd)))
-            sys.exit(1)
+            wm_exit(
+                'Command failed: {0}'.format(str(cmd)),
+                ExcLevel.Critical, True
+            )
 
     def cleanup(self):
         m_log.info('Cleanup Time...')
@@ -168,8 +171,10 @@ class ManagerBase(object):
             m_log.debug('{0} being cleaned up.'.format(self.working_dir))
             shutil.rmtree(self.working_dir)
         except Exception as exc:
-            m_log.critical('Cleanup Failed!  Exception: {0}'.format(exc))
-            sys.exit(1)
+            wm_exit(
+                'Cleanup Failed!  Exception: {0}'.format(exc),
+                ExcLevel.Critical, True
+            )
 
         m_log.info(
             'Removed temporary data in working directory -- {0}'
@@ -202,11 +207,10 @@ class ManagerBase(object):
             m_log.debug('File Type: Bzip Tar')
             opener, mode = tarfile.open, 'r:bz2'
         else:
-            m_log.critical(
+            wm_exit(
                 'Could not extract "{0}" as no appropriate extractor '
-                'is found.'.format(filepath)
+                'is found.'.format(filepath), ExcLevel.Critical, True
             )
-            sys.exit(1)
 
         if create_dir:
             to_directory = os.sep.join((
@@ -262,8 +266,10 @@ class LinuxManager(ManagerBase):
         lm_log.debug('Return code of yum install: {0}'.format(rsp))
 
         if rsp != 0:
-            lm_log.critical('Installing Salt from Yum has failed!')
-            sys.exit(1)
+            wm_exit(
+                'Installing Salt from Yum has failed!',
+                ExcLevel.Critical, True
+            )
 
 
 class WindowsManager(ManagerBase):
