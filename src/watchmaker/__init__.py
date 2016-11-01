@@ -4,7 +4,6 @@ import os
 import platform
 import shutil
 import subprocess
-import sys
 import yaml
 
 from six.moves import urllib
@@ -100,14 +99,14 @@ class Prepare(object):
                 wm_exit(
                     'The URL used to get the user config.yaml file did not '
                     'work!  Please make sure your config is available.',
-                    ExcLevel.Critical
+                    ExcLevel.Critical, True
                 )
 
         if self.config_path and not os.path.exists(self.config_path):
             wm_exit(
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
-                'path.'.format(self.config_path), ExcLevel.Critical
+                'path.'.format(self.config_path), ExcLevel.Critical, False
             )
 
         with open(self.config_path) as f:
@@ -118,7 +117,7 @@ class Prepare(object):
         else:
             wm_exit(
                 'Unable to load the data of the default or'
-                ' the user supplied config.', ExcLevel.Critical
+                ' the user supplied config.', ExcLevel.Critical, False
             )
 
     def _linux_paths(self):
@@ -181,7 +180,7 @@ class Prepare(object):
         else:
             wm_exit(
                 'System, {0}, is not recognized?'.format(self.system),
-                ExcLevel.Critical
+                ExcLevel.Critical, False
             )
 
         # Create watchmaker directories
@@ -194,7 +193,7 @@ class Prepare(object):
             wm_exit(
                 'Could not create a directory in {0}.  '
                 'Exception: {1}'.format(self.system_params['prepdir'], exc),
-                ExcLevel.Critical
+                ExcLevel.Critical, True
             )
 
     def _get_scripts_to_execute(self):
@@ -215,7 +214,8 @@ class Prepare(object):
             except Exception as exc:
                 wm_exit(
                     'For {0} in {1}, the parameters could not be merged. {2}'
-                    .format(item, self.config_path, exc), ExcLevel.Critical
+                    .format(item, self.config_path, exc), ExcLevel.Critical,
+                    True
                 )
 
         self.execution_scripts = scriptstoexecute
@@ -250,14 +250,14 @@ class Prepare(object):
                 self.saltstates
             )
         else:
-            wm_exit('There is no known System!', ExcLevel.Critical)
+            wm_exit('There is no known System!', ExcLevel.Critical, False)
 
         try:
             workers_manager.worker_cadence()
         except Exception as exc:
             wm_exit(
                 'Execution of the workers cadence has failed. {0}'.format(exc),
-                ExcLevel.Critical
+                ExcLevel.Critical, True
             )
 
         plog.info('Stop time: {0}'.format(datetime.datetime.now()))

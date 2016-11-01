@@ -1,6 +1,5 @@
 import logging
 import os
-import sys
 
 from watchmaker.exceptions import ExcLevel
 from watchmaker.exceptions import wm_exit
@@ -14,7 +13,7 @@ def prepare_logging(log_dir, log_level):
             Path of a directory. If this object is not None, then this
             directory will be used to store a log file.
     """
-    logformat = '[%(asctime)s] %(levelname)s:\t%(message)s'
+    logformat = '[%(asctime)s] %(levelname)s: %(message)s'
     if log_level == 0:
         level = logging.WARNING
     elif log_level == 1:
@@ -31,7 +30,7 @@ def prepare_logging(log_dir, log_level):
     elif os.path.isfile(log_dir):
         wm_exit(
             'Log directory passed in is a file. Pass in a directory.',
-            ExcLevel.Error
+            ExcLevel.Error, False
         )
     else:
         if not os.path.exists(log_dir):
