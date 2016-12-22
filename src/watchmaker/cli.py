@@ -30,6 +30,7 @@ def main():
                             'include DEBUG, if option is left out, only '
                             'WARNINGS and higher are logged.'
                         ))
+    parser.add_argument('args', nargs=argparse.REMAINDER)
 
     arguments = parser.parse_args()
     prepare_logging(arguments.log_dir, arguments.verbosity)

@@ -52,7 +52,9 @@ class Prepare(object):
             log_dir (str) or log_file (str):
                 Path to log directory or file for logging.
         """
-        self.kwargs = {}
+        self.kwargs = dict((k.strip(), v.strip()) for k, v in (
+            item.split(':') for item in arguments.args)
+        )
         self.noreboot = arguments.noreboot
         self.s3 = arguments.sourceiss3bucket
         self.system = platform.system()
@@ -67,7 +69,7 @@ class Prepare(object):
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) / 2), '#').ljust(80, '#')
         plog.info(header)
-        plog.info('Parameters:  {0}'.format(self.kwargs))
+        plog.info('Extra Parameters:  {0}'.format(self.kwargs))
         plog.info('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
