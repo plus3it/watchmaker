@@ -209,6 +209,10 @@ class Prepare(object):
         scriptstoexecute = self.config[self.system]
         for item in self.config[self.system]:
             try:
+                if item in self.config['All'].keys():
+                    self.config[self.system][item]['Parameters'].update(
+                        self.config['All'][item]['Parameters']
+                    )
                 self.config[self.system][item]['Parameters'].update(
                     self.kwargs
                 )
