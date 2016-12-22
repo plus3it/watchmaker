@@ -1,3 +1,16 @@
+All:
+  Salt:
+    Parameters:
+      admingroups: None
+      adminusers: None
+      computername: None
+      entenv: False
+      formulaterminationstrings:
+        - -master
+        - -latest
+      saltstates: Highstate
+      sourceiss3bucket: False
+
 Linux:
   Yum:
     Parameters:
@@ -22,18 +35,11 @@ Linux:
 
   Salt:
     Parameters:
-      admingroups: None
-      adminusers: None
-      computername: None
-      entenv: False
       user_formulas:
         #To add other formulas, make sure it is a url to a zipped file as follows:
         #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
         #- https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
         #To "overwrite" submodule formulas, make sure name matches submodule names.
-      formulaterminationstrings:
-        - -master
-        - -latest
       oupath: None
       salt_debug_log: None
       salt_results_log: None
@@ -41,31 +47,20 @@ Linux:
       saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
       saltinstallmethod: yum
       saltgitrepo: None
-      saltstates: Highstate
       saltversion: None
-      sourceiss3bucket: False
 
 Windows:
   Salt:
     Parameters:
-      admingroups: None
-      adminusers: None
       ashrole: MemberServer
-      computername: None
-      entenv: False
       user_formulas:
         #To add other formulas, make sure it is a url to a zipped file as follows:
         #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
         #To "overwrite" submodule formulas, make sure name matches submodule names.
         - https://s3.amazonaws.com/salt-formulas/dotnet4-formula-master.zip
-      formulaterminationstrings:
-        - -master
-        - -latest
       oupath: None
       salt_debug_log: None
       salt_results_log: None
       saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
       saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2015.8.5-AMD64-Setup.exe
-      saltstates: Highstate
       saltworkingdir: SystemContent\Windows\Salt\
-      sourceiss3bucket: False
