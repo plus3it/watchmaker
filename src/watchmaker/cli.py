@@ -24,7 +24,12 @@ def main():
     parser.add_argument('--log-dir', dest='log_dir', default=None,
                         help='Path to the log directory for logging.'
                         )
-    parser.add_argument('-v', action='count', dest='verbosity', default=0)
+    parser.add_argument('-vv', action='count', dest='verbosity', default=0,
+                        help=(
+                            'Level of debugging: -v for INFO, -vv to '
+                            'include DEBUG, if option is left out, only '
+                            'WARNINGS and higher are logged.'
+                        ))
 
     arguments = parser.parse_args()
     prepare_logging(arguments.log_dir, arguments.verbosity)
