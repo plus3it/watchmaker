@@ -2,15 +2,6 @@ Linux:
   Yum:
     Parameters:
       yumrepomap:
-        #Amazon:
-        - dist: amazon
-          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-amzn.repo
-        #CentOS:
-        - dist: centos
-          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-centos.repo
-        #RedHat:
-        - dist: redhat
-          url: https://s3.amazonaws.com/systemprep-repo/linux/yum.repos/systemprep-repo-rhel.repo
         #SaltEL6:
         - dist: all
           epel_version: 6
