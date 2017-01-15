@@ -1,10 +1,21 @@
+"""Watchmaker exception module."""
+
 import logging
-import sys
 
 
 class ExcLevel:
+    """Define exception levels."""
+
     Error = 1
     Critical = 2
+
+
+class WatchmakerException(Exception):
+    """An unknown error occurred."""
+
+
+class InvalidValue(WatchmakerException):
+    """Passed an invalid value."""
 
 
 def wm_exit(message, level, has_exc):
@@ -14,4 +25,4 @@ def wm_exit(message, level, has_exc):
     if level == ExcLevel.Critical:
         logging.critical(message, exc_info=has_exc)
 
-    sys.exit(1)
+    raise
