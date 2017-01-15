@@ -10,7 +10,7 @@ import yaml
 from six.moves import urllib
 
 from watchmaker import static
-from watchmaker.exceptions import ExcLevel, wm_exit
+from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
@@ -97,18 +97,21 @@ class Prepare(object):
                     shutil.copyfileobj(response, outfile)
                 self.config_path = 'config.yaml'
             except urllib.error.URLError:
-                wm_exit(
+                msg = (
                     'The URL used to get the user config.yaml file did not '
-                    'work!  Please make sure your config is available.',
-                    ExcLevel.Critical, True
+                    'work!  Please make sure your config is available.'
                 )
+                plog.critical(msg)
+                raise
 
         if self.config_path and not os.path.exists(self.config_path):
-            wm_exit(
+            msg = (
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
-                'path.'.format(self.config_path), ExcLevel.Critical, False
+                'path.'.format(self.config_path)
             )
+            plog.critical(msg)
+            raise WatchmakerException(msg)
 
         with open(self.config_path) as f:
             data = f.read()
@@ -116,10 +119,12 @@ class Prepare(object):
         if data:
             self.config = yaml.load(data)
         else:
-            wm_exit(
-                'Unable to load the data of the default or'
-                ' the user supplied config.', ExcLevel.Critical, False
+            msg = (
+                'Unable to load the data of the default or the user supplied '
+                'config.'
             )
+            plog.critical(msg)
+            raise WatchmakerException(msg)
 
     def _linux_paths(self):
         """
@@ -179,10 +184,9 @@ class Prepare(object):
             self.system_drive = os.environ['SYSTEMDRIVE']
             self._windows_paths()
         else:
-            wm_exit(
-                'System, {0}, is not recognized?'.format(self.system),
-                ExcLevel.Critical, False
-            )
+            msg = 'System, {0}, is not recognized?'.format(self.system)
+            plog.critical(msg)
+            raise WatchmakerException(msg)
 
         # Create watchmaker directories
         try:
@@ -190,12 +194,13 @@ class Prepare(object):
                 os.makedirs(self.system_params['logdir'])
             if not os.path.exists(self.system_params['workingdir']):
                 os.makedirs(self.system_params['workingdir'])
-        except Exception as exc:
-            wm_exit(
-                'Could not create a directory in {0}.  '
-                'Exception: {1}'.format(self.system_params['prepdir'], exc),
-                ExcLevel.Critical, True
+        except Exception:
+            msg = (
+                'Could not create a directory in {0}.'
+                .format(self.system_params['prepdir'])
             )
+            plog.critical(msg)
+            raise
 
     def _get_scripts_to_execute(self):
         """
@@ -212,12 +217,13 @@ class Prepare(object):
                 self.config[self.system][item]['Parameters'].update(
                     self.kwargs
                 )
-            except Exception as exc:
-                wm_exit(
-                    'For {0} in {1}, the parameters could not be merged. {2}'
-                    .format(item, self.config_path, exc), ExcLevel.Critical,
-                    True
+            except Exception:
+                msg = (
+                    'For {0} in {1}, the parameters could not be merged.'
+                    .format(item, self.config_path)
                 )
+                plog.critical(msg)
+                raise
 
         self.execution_scripts = scriptstoexecute
 
@@ -251,15 +257,16 @@ class Prepare(object):
                 self.saltstates
             )
         else:
-            wm_exit('There is no known System!', ExcLevel.Critical, False)
+            msg = 'There is no known System!'
+            plog.critical(msg)
+            raise WatchmakerException(msg)
 
         try:
             workers_manager.worker_cadence()
-        except Exception as exc:
-            wm_exit(
-                'Execution of the workers cadence has failed. {0}'.format(exc),
-                ExcLevel.Critical, True
-            )
+        except Exception:
+            msg = 'Execution of the workers cadence has failed.'
+            plog.critical(msg)
+            raise
 
         plog.info('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:

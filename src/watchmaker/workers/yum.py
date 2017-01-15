@@ -2,7 +2,6 @@ import json
 import logging
 import re
 
-from watchmaker.exceptions import ExcLevel, wm_exit
 from watchmaker.managers.base import LinuxManager
 
 ylog = logging.getLogger('Yum')
@@ -102,10 +101,12 @@ class Yum(LinuxManager):
         try:
             config = json.loads(configuration)
         except ValueError:
-            wm_exit(
+            msg = (
                 'The configuration passed was not properly formed JSON.'
-                'Execution halted.', ExcLevel.Critical, True
+                'Execution halted.'
             )
+            ylog.critical(msg)
+            raise
 
         if 'yumrepomap' in config and config['yumrepomap']:
             self._repo(config)

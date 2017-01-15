@@ -7,7 +7,7 @@ import subprocess
 import yaml
 
 from watchmaker import static
-from watchmaker.exceptions import ExcLevel, wm_exit
+from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 ls_log = logging.getLogger('LinuxSalt')
@@ -178,10 +178,12 @@ class SaltBase(ManagerBase):
         try:
             self.config = json.loads(configuration)
         except ValueError:
-            wm_exit(
+            msg = (
                 'The configuration passed was not properly formed JSON. '
-                'Execution halted.', ExcLevel.Critical, True
+                'Execution halted.'
             )
+            this_log.critical(msg)
+            raise WatchmakerException(msg)
 
     def process_grains(self, this_log):
         ent_env = {'enterprise_environment': str(self.ent_env)}
