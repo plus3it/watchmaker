@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from watchmaker import Prepare
 from watchmaker.logger import prepare_logging
@@ -35,4 +36,4 @@ def main():
     prepare_logging(arguments.log_dir, arguments.verbosity)
 
     systemprep = Prepare(arguments)
-    systemprep.install_system()
+    sys.exit(systemprep.install_system())
