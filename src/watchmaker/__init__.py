@@ -15,7 +15,6 @@ from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
 __version__ = '0.0.1'
-plog = logging.getLogger('Prepare')
 
 
 class PrepArguments(object):
@@ -52,6 +51,9 @@ class Prepare(object):
             log_dir (str) or log_file (str):
                 Path to log directory or file for logging.
         """
+        self.log = logging.getLogger(
+            '{0}.{1}'.format(__name__, self.__class__.__name__)
+        )
         self.kwargs = {}
         self.noreboot = arguments.noreboot
         self.s3 = arguments.sourceiss3bucket
@@ -66,9 +68,9 @@ class Prepare(object):
 
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
-        plog.info(header)
-        plog.info('Parameters:  {0}'.format(self.kwargs))
-        plog.info('System Type: {0}'.format(self.system))
+        self.log.info(header)
+        self.log.info('Parameters:  {0}'.format(self.kwargs))
+        self.log.info('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
 
@@ -83,12 +85,12 @@ class Prepare(object):
             configuration YAML file after validation.
         """
         if not self.config_path:
-            plog.warning(
+            self.log.warning(
                 'User did not supply a config.  Using the default config.'
             )
             self.config_path = self.default_config
         else:
-            plog.info('User supplied config being used.')
+            self.log.info('User supplied config being used.')
 
         if self._validate_url(self.config_path):
             try:
@@ -101,7 +103,7 @@ class Prepare(object):
                     'The URL used to get the user config.yaml file did not '
                     'work!  Please make sure your config is available.'
                 )
-                plog.critical(msg)
+                self.log.critical(msg)
                 raise
 
         if self.config_path and not os.path.exists(self.config_path):
@@ -110,7 +112,7 @@ class Prepare(object):
                 'double-check your config path or use the default config '
                 'path.'.format(self.config_path)
             )
-            plog.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
         with open(self.config_path) as f:
@@ -123,7 +125,7 @@ class Prepare(object):
                 'Unable to load the data of the default or the user supplied '
                 'config.'
             )
-            plog.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
     def _linux_paths(self):
@@ -185,7 +187,7 @@ class Prepare(object):
             self._windows_paths()
         else:
             msg = 'System, {0}, is not recognized?'.format(self.system)
-            plog.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
         # Create watchmaker directories
@@ -199,7 +201,7 @@ class Prepare(object):
                 'Could not create a directory in {0}.'
                 .format(self.system_params['prepdir'])
             )
-            plog.critical(msg)
+            self.log.critical(msg)
             raise
 
     def _get_scripts_to_execute(self):
@@ -222,7 +224,7 @@ class Prepare(object):
                     'For {0} in {1}, the parameters could not be merged.'
                     .format(item, self.config_path)
                 )
-                plog.critical(msg)
+                self.log.critical(msg)
                 raise
 
         self.execution_scripts = scriptstoexecute
@@ -234,10 +236,10 @@ class Prepare(object):
         After execution the system should be properly provisioned.
         """
         self._get_system_params()
-        plog.debug(self.system_params)
+        self.log.debug(self.system_params)
 
         self._get_scripts_to_execute()
-        plog.info(
+        self.log.info(
             'Got scripts to execute: {0}.'
             .format(self.config[self.system].keys())
         )
@@ -258,23 +260,23 @@ class Prepare(object):
             )
         else:
             msg = 'There is no known System!'
-            plog.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
         try:
             workers_manager.worker_cadence()
         except Exception:
             msg = 'Execution of the workers cadence has failed.'
-            plog.critical(msg)
+            self.log.critical(msg)
             raise
 
-        plog.info('Stop time: {0}'.format(datetime.datetime.now()))
+        self.log.info('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
-            plog.info(
+            self.log.info(
                 'Detected `noreboot` switch. System will not be rebooted.'
             )
         else:
-            plog.info(
+            self.log.info(
                 'Reboot scheduled. System will reboot after the script exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)
