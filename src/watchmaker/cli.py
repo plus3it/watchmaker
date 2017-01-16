@@ -35,9 +35,9 @@ def main():
                         type=_validate_log_dir,
                         help='Path to the log directory for logging.'
                         )
-    parser.add_argument('-vv', action='count', dest='verbosity', default=0,
+    parser.add_argument('-v', action='count', dest='verbosity', default=0,
                         help=(
-                            'Level of debugging: -v for INFO, -vv to '
+                            'Enable verbose logging: -v for INFO, -vv to '
                             'include DEBUG, if option is left out, only '
                             'WARNINGS and higher are logged.'
                         ))
