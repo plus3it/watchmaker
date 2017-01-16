@@ -11,9 +11,6 @@ from six.moves import urllib
 
 from watchmaker.exceptions import WatchmakerException
 
-m_log = logging.getLogger('ManagerBase')
-lm_log = logging.getLogger('LinuxManager')
-
 
 class ManagerBase(object):
     """
@@ -26,6 +23,9 @@ class ManagerBase(object):
     boto_client = None
 
     def __init__(self):
+        self.log = logging.getLogger(
+            '{0}.{1}'.format(__name__, self.__class__.__name__)
+        )
         self.working_dir = None
         return
 
@@ -33,7 +33,7 @@ class ManagerBase(object):
         if self.boto3:
             return
 
-        m_log.info("Dynamically importing boto3 ...")
+        self.log.info("Dynamically importing boto3 ...")
         try:
             self.boto3 = __import__("boto3")
             self.boto_client = __import__(
@@ -45,7 +45,7 @@ class ManagerBase(object):
             )
         except ImportError:
             msg = 'Unable to import boto3 module.'
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise
 
     def _get_s3_file(self, url, bucket_name, key_name, destination):
@@ -57,7 +57,7 @@ class ManagerBase(object):
             s3.Object(bucket_name, key_name).download_file(destination)
         except self.boto_client.ClientError:
             msg = 'Bucket does not exist.  bucket = {0}.'.format(bucket_name)
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise
         except Exception:
             msg = (
@@ -65,13 +65,13 @@ class ManagerBase(object):
                 'bucket = {1}. key = {2}. file = {3}.'
                 .format(url, bucket_name, key_name, destination)
             )
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise
 
     def download_file(self, url, filename, sourceiss3bucket=False):
-        m_log.debug('Downloading: {0}'.format(url))
-        m_log.debug('Destination: {0}'.format(filename))
-        m_log.debug('S3: {0}'.format(sourceiss3bucket))
+        self.log.debug('Downloading: {0}'.format(url))
+        self.log.debug('Destination: {0}'.format(filename))
+        self.log.debug('S3: {0}'.format(sourceiss3bucket))
 
         # TODO Rework this to properly reflect logic flow cleanly.
         if sourceiss3bucket:
@@ -80,15 +80,15 @@ class ManagerBase(object):
             bucket_name = url.split('/')[3]
             key_name = '/'.join(url.split('/')[4:])
 
-            m_log.debug('Bucket Name: {0}'.format(bucket_name))
-            m_log.debug('key_name: {0}'.format(key_name))
+            self.log.debug('Bucket Name: {0}'.format(bucket_name))
+            self.log.debug('key_name: {0}'.format(key_name))
 
             try:
                 s3 = self.boto3.resource('s3')
                 s3.meta.client.head_bucket(Bucket=bucket_name)
                 s3.Object(bucket_name, key_name).download_file(filename)
             except (NameError, self.boto_client.ClientError):
-                m_log.error(
+                self.log.error(
                     'NameError: {0}'.format(self.boto_client.ClientError)
                 )
                 try:
@@ -103,7 +103,7 @@ class ManagerBase(object):
                         'bucket = {1}. key = {2}. file = {3}.'
                         .format(url, bucket_name, key_name, filename)
                     )
-                    m_log.critical(msg)
+                    self.log.critical(msg)
                     raise
             except Exception:
                 msg = (
@@ -111,9 +111,9 @@ class ManagerBase(object):
                     'bucket = {1}. key = {2}. file = {3}.'
                     .format(url, bucket_name, key_name, filename)
                 )
-                m_log.critical(msg)
+                self.log.critical(msg)
                 raise
-            m_log.info(
+            self.log.info(
                 'Downloaded file from S3 bucket  --  url = {0}.  '
                 'filename = {1}'.format(url, filename)
             )
@@ -128,9 +128,9 @@ class ManagerBase(object):
                     'filename = {1}.'
                     .format(url, filename)
                 )
-                m_log.critical(msg)
+                self.log.critical(msg)
                 raise
-            m_log.info(
+            self.log.info(
                 'Downloaded file from web server  --  url = {0}.  '
                 'filename = {1}'.format(url, filename)
             )
@@ -145,7 +145,7 @@ class ManagerBase(object):
             basedir (str):
                 The directory in which to create the working directory
         """
-        m_log.info('Creating a working directory.')
+        self.log.info('Creating a working directory.')
         original_umask = os.umask(0)
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
@@ -154,43 +154,41 @@ class ManagerBase(object):
                 'Could not create a working dir in {0}.  Exception: {1}'
                 .format(basedir)
             )
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise
-        m_log.debug('Working directory: {0}'.format(working_dir))
+        self.log.debug('Working directory: {0}'.format(working_dir))
         self.working_dir = working_dir
         os.umask(original_umask)
 
-    @staticmethod
-    def call_process(cmd):
+    def call_process(self, cmd):
         if not isinstance(cmd, list):
             msg = 'Command is not a list: {0}'.format(str(cmd))
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
         rsp = subprocess.call(cmd)
 
         if rsp != 0:
             msg = 'Command failed: {0}'.format(str(cmd))
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
     def cleanup(self):
-        m_log.info('Cleanup Time...')
+        self.log.info('Cleanup Time...')
         try:
-            m_log.debug('{0} being cleaned up.'.format(self.working_dir))
+            self.log.debug('{0} being cleaned up.'.format(self.working_dir))
             shutil.rmtree(self.working_dir)
         except Exception as exc:
             msg = 'Cleanup Failed!'
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise
 
-        m_log.info(
+        self.log.info(
             'Removed temporary data in working directory -- {0}'
             .format(self.working_dir)
         )
-        m_log.info('Exiting cleanup routine...')
+        self.log.info('Exiting cleanup routine...')
 
-    @staticmethod
-    def extract_contents(filepath, to_directory, create_dir=False):
+    def extract_contents(self, filepath, to_directory, create_dir=False):
         """
         Extracts a compressed file to the specified directory.
         Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
@@ -205,20 +203,20 @@ class ManagerBase(object):
                 that represents original path of compressed file
         """
         if filepath.endswith('.zip'):
-            m_log.debug('File Type: zip')
+            self.log.debug('File Type: zip')
             opener, mode = zipfile.ZipFile, 'r'
         elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
-            m_log.debug('File Type: GZip Tar')
+            self.log.debug('File Type: GZip Tar')
             opener, mode = tarfile.open, 'r:gz'
         elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
-            m_log.debug('File Type: Bzip Tar')
+            self.log.debug('File Type: Bzip Tar')
             opener, mode = tarfile.open, 'r:bz2'
         else:
             msg = (
                 'Could not extract "{0}" as no appropriate extractor is found.'
                 .format(filepath)
             )
-            m_log.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
         if create_dir:
@@ -232,7 +230,7 @@ class ManagerBase(object):
         except OSError:
             if not os.path.isdir(to_directory):
                 msg = 'Unable create directory - {0}'.format(to_directory)
-                m_log.critical(msg)
+                self.log.critical(msg)
                 raise
 
         cwd = os.getcwd()
@@ -247,7 +245,7 @@ class ManagerBase(object):
         finally:
             os.chdir(cwd)
 
-        m_log.info(
+        self.log.info(
             'Extracted file  --  source = {0}  dest   = {1}'
             .format(filepath, to_directory)
         )
@@ -263,20 +261,19 @@ class LinuxManager(ManagerBase):
     def __init__(self):
         super(LinuxManager, self).__init__()
 
-    @staticmethod
-    def _install_from_yum(packages):
+    def _install_from_yum(self, packages):
         yum_cmd = ['sudo', 'yum', '-y', 'install']
         if isinstance(packages, list):
             yum_cmd.extend(packages)
         else:
             yum_cmd.append(packages)
         rsp = subprocess.call(yum_cmd)
-        lm_log.debug(packages)
-        lm_log.debug('Return code of yum install: {0}'.format(rsp))
+        self.log.debug(packages)
+        self.log.debug('Return code of yum install: {0}'.format(rsp))
 
         if rsp != 0:
             msg = 'Installing Salt from Yum has failed!'
-            lm_log.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
 
