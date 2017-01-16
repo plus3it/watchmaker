@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 import shutil
 import subprocess
@@ -9,9 +8,6 @@ import yaml
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
-
-ls_log = logging.getLogger('LinuxSalt')
-ws_log = logging.getLogger('WindowsSalt')
 
 
 class SaltBase(ManagerBase):
@@ -41,7 +37,7 @@ class SaltBase(ManagerBase):
         self.salt_formula_root = os.sep.join((srv, 'formulas'))
         self.salt_pillar_root = os.sep.join((srv, 'pillar'))
 
-    def _prepare_for_install(self, this_log):
+    def _prepare_for_install(self):
         if self.config['user_formulas']:
             self.formulas_to_include = self.config['user_formulas']
 
@@ -95,7 +91,7 @@ class SaltBase(ManagerBase):
             except OSError:
                 if not os.path.isdir(salt_dir):
                     msg = ('Unable create directory - {0}'.format(salt_dir))
-                    this_log.error(msg)
+                    self.log.error(msg)
                     raise SystemError(msg)
 
     def _get_formulas_conf(self):
@@ -174,7 +170,7 @@ class SaltBase(ManagerBase):
             cmd.append(command)
         self.call_process(cmd)
 
-    def load_config(self, configuration, this_log):
+    def load_config(self, configuration):
         try:
             self.config = json.loads(configuration)
         except ValueError:
@@ -182,10 +178,10 @@ class SaltBase(ManagerBase):
                 'The configuration passed was not properly formed JSON. '
                 'Execution halted.'
             )
-            this_log.critical(msg)
+            self.log.critical(msg)
             raise WatchmakerException(msg)
 
-    def process_grains(self, this_log):
+    def process_grains(self):
         ent_env = {'enterprise_environment': str(self.ent_env)}
         self._set_grain('systemprep', ent_env)
 
@@ -203,24 +199,24 @@ class SaltBase(ManagerBase):
             name = {'computer_name': str(self.computer_name)}
             self._set_grain('name-computer', name)
 
-        this_log.info('Syncing custom salt modules...')
+        self.log.info('Syncing custom salt modules...')
         self.run_salt('saltutil.sync_all')
 
-    def process_states(self, states, this_log):
+    def process_states(self, states):
         if states:
             self.config['saltstates'] = states
         else:
-            this_log.info(
+            self.log.info(
                 'No command line argument to override configuration file.'
             )
 
         if 'none' == self.config['saltstates'].lower():
-            this_log.info(
+            self.log.info(
                 'No States were specified. Will not apply any salt states.'
             )
         else:
             if 'highstate' == self.config['saltstates'].lower():
-                this_log.info(
+                self.log.info(
                     'Detected the States parameter is set to `highstate`. '
                     'Applying the salt `"highstate`" to the system.'
                 )
@@ -229,7 +225,7 @@ class SaltBase(ManagerBase):
                 self.run_salt(cmd)
 
             else:
-                this_log.info(
+                self.log.info(
                     'Detected the States parameter is set to: {0}. Applying '
                     'the user-defined list of states to the system.'
                     .format(self.config['salt_states'])
@@ -238,7 +234,7 @@ class SaltBase(ManagerBase):
                 cmd.extend(self.salt_call_args)
                 self.run_salt(cmd)
 
-        this_log.info(
+        self.log.info(
             'Salt states all applied successfully! '
             'Details are in the log {0}'.format(self.salt_results_logfile)
         )
@@ -270,7 +266,7 @@ class SaltLinux(SaltBase, LinuxManager):
     def _configuration_validation(self):
         if 'git' == self.config['saltinstallmethod'].lower():
             if not self.config['saltbootstrapsource']:
-                ls_log.error(
+                self.log.error(
                     'Detected `git` as the install method, but the required '
                     'parameter `saltbootstrapsource` was not provided.'
                 )
@@ -278,7 +274,7 @@ class SaltLinux(SaltBase, LinuxManager):
                 self.salt_bootstrap_filename = self.config[
                     'saltbootstrapsource'].split('/')[-1]
             if not self.config['saltgitrepo']:
-                ls_log.error(
+                self.log.error(
                     'Detected `git` as the install method, but the required '
                     'parameter `saltgitrepo` was not provided.'
                 )
@@ -301,7 +297,7 @@ class SaltLinux(SaltBase, LinuxManager):
                 bootstrap_cmd.append('git')
                 bootstrap_cmd.append(self.config['saltversion'])
             else:
-                ls_log.debug('No salt version defined in config.')
+                self.log.debug('No salt version defined in config.')
             subprocess.call(bootstrap_cmd)
 
     def _build_salt_formula(self):
@@ -320,20 +316,20 @@ class SaltLinux(SaltBase, LinuxManager):
         super(SaltLinux, self)._build_salt_formula(self.salt_srv)
 
     def _set_grain(self, grain, value):
-        ls_log.info('Setting grain `{0}` ...'.format(grain))
+        self.log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltLinux, self)._set_grain(grain, value)
 
     def install(self, configuration, is_s3_bucket, salt_states):
-        self.load_config(configuration, ls_log)
+        self.load_config(configuration)
         self.is_s3_bucket = is_s3_bucket
 
         self._configuration_validation()
-        self._prepare_for_install(ls_log)
+        self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
 
-        self.process_grains(ls_log)
-        self.process_states(salt_states, ls_log)
+        self.process_grains()
+        self.process_states(salt_states, )
 
         if self.working_dir:
             self.cleanup()
@@ -380,12 +376,12 @@ class SaltWindows(SaltBase, WindowsManager):
         if self.config['saltinstallerurl']:
             self.installerurl = self.config['saltinstallerurl']
         else:
-            ws_log.error(
+            self.log.error(
                 'Parameter `saltinstallerurl` was not provided and is'
                 ' needed for installation of Salt in Windows.'
             )
 
-        super(SaltWindows, self)._prepare_for_install(ws_log)
+        super(SaltWindows, self)._prepare_for_install()
 
         # Extra Salt variable for Windows.
         self.ash_role = self.config['ashrole']
@@ -408,11 +404,11 @@ class SaltWindows(SaltBase, WindowsManager):
         super(SaltWindows, self)._build_salt_formula(self.salt_root)
 
     def _set_grain(self, grain, value):
-        ws_log.info('Setting grain `{0}` ...'.format(grain))
+        self.log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltWindows, self)._set_grain(grain, value)
 
     def install(self, configuration, is_s3_bucket, salt_states):
-        self.load_config(configuration, ws_log)
+        self.load_config(configuration)
         self.is_s3_bucket = is_s3_bucket
 
         self._prepare_for_install()
@@ -423,14 +419,14 @@ class SaltWindows(SaltBase, WindowsManager):
             role = {'role': str(self.ash_role)}
             self._set_grain('ash-windows', role)
 
-        self.process_grains(ws_log)
+        self.process_grains()
 
-        ws_log.info('Generating winrepo cache file...')
+        self.log.info('Generating winrepo cache file...')
         self.run_salt('winrepo.genrepo')
-        ws_log.info('Refreshing package database...')
+        self.log.info('Refreshing package database...')
         self.run_salt('pkg.refresh_db')
 
-        self.process_states(salt_states, ws_log)
+        self.process_states(salt_states)
 
         if self.working_dir:
             self.cleanup()
