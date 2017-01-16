@@ -9,7 +9,7 @@ import zipfile
 
 from six.moves import urllib
 
-from watchmaker.exceptions import ExcLevel, wm_exit
+from watchmaker.exceptions import WatchmakerException
 
 m_log = logging.getLogger('ManagerBase')
 lm_log = logging.getLogger('LinuxManager')
@@ -43,8 +43,10 @@ class ManagerBase(object):
                 ["ClientError"],
                 -1
             )
-        except ImportError as exc:
-            wm_exit("Unable to import boto3 module.", ExcLevel.Critical, True)
+        except ImportError:
+            msg = 'Unable to import boto3 module.'
+            m_log.critical(msg)
+            raise
 
     def _get_s3_file(self, url, bucket_name, key_name, destination):
         self._import_boto3()
@@ -53,17 +55,18 @@ class ManagerBase(object):
             s3 = self.boto3.resource("s3")
             s3.meta.client.head_bucket(Bucket=bucket_name)
             s3.Object(bucket_name, key_name).download_file(destination)
-        except self.boto_client.ClientError as exc:
-            msg = ('Bucket does not exist.  bucket = {0}.  Exception: {1}'
-                   .format(bucket_name, exc))
-            m_log.error(msg)
-            raise SystemError(msg)
-        except Exception as exc:
-            msg = ('Unable to download file from S3 bucket.  url = {0}.  '
-                   'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
-                   .format(url, bucket_name, key_name, destination, exc))
-            m_log.error(msg)
-            raise SystemError(msg)
+        except self.boto_client.ClientError:
+            msg = 'Bucket does not exist.  bucket = {0}.'.format(bucket_name)
+            m_log.critical(msg)
+            raise
+        except Exception:
+            msg = (
+                'Unable to download file from S3 bucket. url = {0}. '
+                'bucket = {1}. key = {2}. file = {3}.'
+                .format(url, bucket_name, key_name, destination)
+            )
+            m_log.critical(msg)
+            raise
 
     def download_file(self, url, filename, sourceiss3bucket=False):
         m_log.debug('Downloading: {0}'.format(url))
@@ -95,18 +98,21 @@ class ManagerBase(object):
                     s3.meta.client.head_bucket(Bucket=bucket_name)
                     s3.Object(bucket_name, key_name).download_file(filename)
                 except Exception as exc:
-                    msg = ('Unable to download file from S3 bucket.  '
-                           'url = {0}.  bucket = {1}.  key = {2}.  '
-                           'file = {3}.  Exception: {4}'
-                           .format(url, bucket_name, key_name, filename, exc))
-                    m_log.error(msg)
-                    raise SystemError(msg)
-            except Exception as exc:
-                msg = ('Unable to download file from S3 bucket.  url = {0}.  '
-                       'bucket = {1}.  key = {2}.  file = {3}.  Exception: {4}'
-                       .format(url, bucket_name, key_name, filename, exc))
-                m_log.error(msg)
-                raise SystemError(msg)
+                    msg = (
+                        'Unable to download file from S3 bucket. url = {0}. '
+                        'bucket = {1}. key = {2}. file = {3}.'
+                        .format(url, bucket_name, key_name, filename)
+                    )
+                    m_log.critical(msg)
+                    raise
+            except Exception:
+                msg = (
+                    'Unable to download file from S3 bucket. url = {0}. '
+                    'bucket = {1}. key = {2}. file = {3}.'
+                    .format(url, bucket_name, key_name, filename)
+                )
+                m_log.critical(msg)
+                raise
             m_log.info(
                 'Downloaded file from S3 bucket  --  url = {0}.  '
                 'filename = {1}'.format(url, filename)
@@ -116,12 +122,14 @@ class ManagerBase(object):
                 response = urllib.request.urlopen(url)
                 with open(filename, 'wb') as outfile:
                     shutil.copyfileobj(response, outfile)
-            except Exception as exc:
-                msg = ('Unable to download file from web server.  url = {0}.  '
-                       'filename = {1}.  Exception: {2}'
-                       .format(url, filename, exc))
-                m_log.error(msg)
-                raise SystemError(msg)
+            except Exception:
+                msg = (
+                    'Unable to download file from web server. url = {0}. '
+                    'filename = {1}.'
+                    .format(url, filename)
+                )
+                m_log.critical(msg)
+                raise
             m_log.info(
                 'Downloaded file from web server  --  url = {0}.  '
                 'filename = {1}'.format(url, filename)
@@ -141,11 +149,13 @@ class ManagerBase(object):
         original_umask = os.umask(0)
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
-        except Exception as exc:
-            wm_exit(
+        except Exception:
+            msg = (
                 'Could not create a working dir in {0}.  Exception: {1}'
-                .format(basedir, exc), ExcLevel.Critical, True
+                .format(basedir)
             )
+            m_log.critical(msg)
+            raise
         m_log.debug('Working directory: {0}'.format(working_dir))
         self.working_dir = working_dir
         os.umask(original_umask)
@@ -153,17 +163,15 @@ class ManagerBase(object):
     @staticmethod
     def call_process(cmd):
         if not isinstance(cmd, list):
-            wm_exit(
-                'Command is not a list: {0}'.format(str(cmd)),
-                ExcLevel.Critical, True
-            )
+            msg = 'Command is not a list: {0}'.format(str(cmd))
+            m_log.critical(msg)
+            raise WatchmakerException(msg)
         rsp = subprocess.call(cmd)
 
         if rsp != 0:
-            wm_exit(
-                'Command failed: {0}'.format(str(cmd)),
-                ExcLevel.Critical, True
-            )
+            msg = 'Command failed: {0}'.format(str(cmd))
+            m_log.critical(msg)
+            raise WatchmakerException(msg)
 
     def cleanup(self):
         m_log.info('Cleanup Time...')
@@ -171,10 +179,9 @@ class ManagerBase(object):
             m_log.debug('{0} being cleaned up.'.format(self.working_dir))
             shutil.rmtree(self.working_dir)
         except Exception as exc:
-            wm_exit(
-                'Cleanup Failed!  Exception: {0}'.format(exc),
-                ExcLevel.Critical, True
-            )
+            msg = 'Cleanup Failed!'
+            m_log.critical(msg)
+            raise
 
         m_log.info(
             'Removed temporary data in working directory -- {0}'
@@ -207,10 +214,12 @@ class ManagerBase(object):
             m_log.debug('File Type: Bzip Tar')
             opener, mode = tarfile.open, 'r:bz2'
         else:
-            wm_exit(
-                'Could not extract "{0}" as no appropriate extractor '
-                'is found.'.format(filepath), ExcLevel.Critical, True
+            msg = (
+                'Could not extract "{0}" as no appropriate extractor is found.'
+                .format(filepath)
             )
+            m_log.critical(msg)
+            raise WatchmakerException(msg)
 
         if create_dir:
             to_directory = os.sep.join((
@@ -222,9 +231,9 @@ class ManagerBase(object):
             os.makedirs(to_directory)
         except OSError:
             if not os.path.isdir(to_directory):
-                msg = ('Unable create directory - {0}'.format(to_directory))
-                m_log.error(msg)
-                raise SystemError(msg)
+                msg = 'Unable create directory - {0}'.format(to_directory)
+                m_log.critical(msg)
+                raise
 
         cwd = os.getcwd()
         os.chdir(to_directory)
@@ -266,10 +275,9 @@ class LinuxManager(ManagerBase):
         lm_log.debug('Return code of yum install: {0}'.format(rsp))
 
         if rsp != 0:
-            wm_exit(
-                'Installing Salt from Yum has failed!',
-                ExcLevel.Critical, True
-            )
+            msg = 'Installing Salt from Yum has failed!'
+            lm_log.critical(msg)
+            raise WatchmakerException(msg)
 
 
 class WindowsManager(ManagerBase):

@@ -1,8 +1,6 @@
 import logging
 import os
 
-from watchmaker.exceptions import ExcLevel, wm_exit
-
 
 def prepare_logging(log_dir, log_level):
     """
@@ -25,11 +23,6 @@ def prepare_logging(log_dir, log_level):
     if not log_dir:
         logging.warning(
             'Watchmaker will not be logging to a file!'
-        )
-    elif os.path.isfile(log_dir):
-        wm_exit(
-            'Log directory passed in is a file. Pass in a directory.',
-            ExcLevel.Error, False
         )
     else:
         if not os.path.exists(log_dir):

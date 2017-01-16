@@ -1,7 +1,17 @@
 import argparse
+import os
+import sys
 
 from watchmaker import Prepare
 from watchmaker.logger import prepare_logging
+
+
+def _validate_log_dir(log_dir):
+    if os.path.isfile(log_dir):
+        raise argparse.ArgumentTypeError(
+            '"{0}" exists as a file.'.format(log_dir)
+        )
+    return log_dir
 
 
 def main():
@@ -22,6 +32,7 @@ def main():
                             'Highstate, or a comma-separated-string'
                         ))
     parser.add_argument('--log-dir', dest='log_dir', default=None,
+                        type=_validate_log_dir,
                         help='Path to the log directory for logging.'
                         )
     parser.add_argument('-vv', action='count', dest='verbosity', default=0,
@@ -35,4 +46,4 @@ def main():
     prepare_logging(arguments.log_dir, arguments.verbosity)
 
     systemprep = Prepare(arguments)
-    systemprep.install_system()
+    sys.exit(systemprep.install_system())

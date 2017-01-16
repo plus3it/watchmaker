@@ -1,17 +1,9 @@
-import logging
-import sys
+"""Watchmaker exception module."""
 
 
-class ExcLevel:
-    Error = 1
-    Critical = 2
+class WatchmakerException(Exception):
+    """An unknown error occurred."""
 
 
-def wm_exit(message, level, has_exc):
-    if level == ExcLevel.Error:
-        logging.error(message, exc_info=has_exc)
-
-    if level == ExcLevel.Critical:
-        logging.critical(message, exc_info=has_exc)
-
-    sys.exit(1)
+class InvalidValue(WatchmakerException):
+    """Passed an invalid value."""
