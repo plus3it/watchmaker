@@ -1,10 +1,7 @@
 import json
-import logging
 import re
 
 from watchmaker.managers.base import LinuxManager
-
-ylog = logging.getLogger('Yum')
 
 
 class Yum(LinuxManager):
@@ -77,9 +74,9 @@ class Yum(LinuxManager):
                 .format(self.dist, self.version)
             )
 
-        ylog.debug('Dist\t\t{0}'.format(self.dist))
-        ylog.debug('Version\t\t{0}'.format(self.version))
-        ylog.debug('EPEL Version\t{0}'.format(self.epel_version))
+        self.log.debug('Dist\t\t{0}'.format(self.dist))
+        self.log.debug('Version\t\t{0}'.format(self.version))
+        self.log.debug('EPEL Version\t{0}'.format(self.epel_version))
 
     def _repo(self, config):
         """
@@ -87,7 +84,7 @@ class Yum(LinuxManager):
         """
         if not isinstance(config['yumrepomap'], list):
             msg = '`yumrepomap` must be a list!'
-            ylog.error(msg, Exception(msg))
+            self.log.error(msg, Exception(msg))
 
     def install(self, configuration):
         """
@@ -105,13 +102,13 @@ class Yum(LinuxManager):
                 'The configuration passed was not properly formed JSON.'
                 'Execution halted.'
             )
-            ylog.critical(msg)
+            self.log.critical(msg)
             raise
 
         if 'yumrepomap' in config and config['yumrepomap']:
             self._repo(config)
         else:
-            ylog.info('yumrepomap did not exist or was empty.')
+            self.log.info('yumrepomap did not exist or was empty.')
 
         self._validate()
 
@@ -119,18 +116,18 @@ class Yum(LinuxManager):
         for repo in config['yumrepomap']:
 
             if repo['dist'] in [self.dist, 'all']:
-                ylog.debug(
+                self.log.debug(
                     '{0} in {1} or all'.format(repo['dist'], self.dist)
                 )
                 if 'epel_version' in repo and \
                         str(repo['epel_version']) != str(self.epel_version):
-                    ylog.debug(
+                    self.log.debug(
                         'Skipping repo - epel_version ({0}) is not valid for '
                         'this repo ({1}).'
                         .format(self.epel_version, repo['url'])
                     )
                 else:
-                    ylog.info(
+                    self.log.info(
                         'All requirements have been validated for repo - {0}.'
                         .format(self.epel_version, repo['url'])
                     )
@@ -140,6 +137,6 @@ class Yum(LinuxManager):
                         url.split('/')[-1])
                     self.download_file(url, repofile)
             else:
-                ylog.debug(
+                self.log.debug(
                     '{0} NOT in {1} or all'.format(repo['dist'], self.dist)
                 )
