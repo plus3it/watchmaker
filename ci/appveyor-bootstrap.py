@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 AppVeyor will at least have few Pythons around so there's no point of implementing a bootstrapper in PowerShell.
 
