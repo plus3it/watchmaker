@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker workers manager."""
 import json
 
 from watchmaker.managers.base import (LinuxManager, WindowsManager,

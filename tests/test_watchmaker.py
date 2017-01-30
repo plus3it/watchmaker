@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker main test module."""
 import pytest
 
 import watchmaker

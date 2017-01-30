@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker base worker."""
 from watchmaker.managers.base import LinuxManager
 
 

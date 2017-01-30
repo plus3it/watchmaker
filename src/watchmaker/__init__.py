@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker module."""
 import datetime
 import logging
 import os

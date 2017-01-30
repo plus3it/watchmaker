@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker salt worker."""
 import json
 import os
 import shutil

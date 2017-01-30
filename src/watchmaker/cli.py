@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker cli."""
 import argparse
 import os
 import sys

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker base manager."""
 import abc
 import logging
 import os

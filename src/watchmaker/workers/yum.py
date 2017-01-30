@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Watchmaker yum worker."""
 import json
 import re
 

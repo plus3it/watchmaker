@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Watchmaker exception module."""
+"""Watchmaker exceptions module."""
 
 
 class WatchmakerException(Exception):
