@@ -3,35 +3,32 @@
 Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.
 
-## Bug reports
+## Bug Reports
 
-When [reporting a bug](https://github.com/plus3it/watchmaker/issues)
-please include:
+When [reporting a bug][0] please include:
 
 *   Your operating system name and version.
-
 *   Any details about your local setup that might be helpful in
     troubleshooting.
-
 *   Detailed steps to reproduce the bug.
 
-## Documentation improvements
+## Documentation Improvements
 
 Watchmaker could always use more documentation, whether as part of the official
 Watchmaker docs, in docstrings, or even on the web in blog posts, articles, and
-such.
+such. The official documentation is maintained within this project in
+docstrings or in the [docs][3] directory. Contributions are
+welcome, and are made the same way as any other code. See
+[Development](#development).
 
-## Feature requests and feedback
+## Feature Requests and Feedback
 
-The best way to send feedback is to file an issue at
-<https://github.com/plus3it/watchmaker/issues>.
+The best way to send feedback is to [file an issue][0] on GitHub.
 
 If you are proposing a feature:
 
 *   Explain in detail how it would work.
-
 *   Keep the scope as narrow as possible, to make it easier to implement.
-
 *   Remember that this is a volunteer-driven project, and that code
     contributions are welcome :)
 
@@ -55,15 +52,24 @@ To set up `watchmaker` for local development:
     git checkout -b name-of-your-bugfix-or-feature
     ```
 
-4. Now you can make your changes locally.
+4.  Now you can make your changes locally.
 
-5.  When you're done making changes, run all the checks, doc builder and spell
-checker with [tox](http://tox.readthedocs.org/en/latest/install.html) one
-command:
+5.  When you're done making changes, run the linter, the tests, the doc
+    builder, and a spell checker using [tox][2]:
 
     ```shell
     tox
     ```
+
+    > **NOTE**: This will test the package in all versions of Python listed in
+    > `tox.ini`. If `tox` cannot find the interpreter for the version, the test
+    > will fail with an `InterpreterNotFound` error. This is ok, as long as at
+    > least one interpreter runs and the tests pass. You can also specify which
+    > [tox environments](#tips) to execute, which can be used to restrict the
+    > Python version required.
+    >
+    > You can also rely on Travis and Appveyor to [run the tests][1] after
+    > opening the pull request. They will be slower though...
 
 6.  Commit your changes and push your branch to GitHub:
 
@@ -77,31 +83,48 @@ command:
 
 ## Pull Request Guidelines
 
-If you need some code review or feedback while you're developing the code just
-make the pull request.
+If you need some code review or feedback while you are developing the code just
+open the pull request.
 
-For merging, you should:
+For pull request acceptance, you should:
 
-1.  Include passing tests (run ``tox``).
-2.  Update documentation when there's new API, functionality etc.
-3.  Add a note to ``CHANGELOG.rst`` about the changes.
-4.  Add yourself to ``AUTHORS.rst``.
-
-> If you don't have all the necessary python versions available locally you
-> can rely on Travis - it will [run the tests](https://travis-ci.org/plus3it/watchmaker/pull_requests)
-> for each change you add in the pull request. It will be slower though...
+1.  Include passing tests (Ensure ``tox`` is successful).
+2.  Update documentation whenever making changes to the API or functionality.
+3.  Add a note to ``CHANGELOG.md`` about the changes. Include a link to the
+    pull request.
 
 ## Tips
 
-To run a subset of tests:
+1.  The primary tox environments for `watchmaker` include:
 
-```shell
-tox -e envname -- py.test -k test_myfeature
-```
+    *   `check`
+    *   `docs`
+    *   `py26`
+    *   `py27`
+    *   `py33`
+    *   `py34`
+    *   `py35`
 
-To run all the test environments in _parallel_ (you need to `pip install
-detox`):
+2.  To run a subset of environments:
 
-```shell
-detox
-```
+    ```shell
+    tox -e <env1>,<env2>,<env3>,etc
+    ```
+
+3.  To run a subset of tests:
+
+    ```shell
+    tox -e <environment> -- py.test -k <test_myfeature>
+    ```
+
+4.  To run all the test environments in _parallel_, use `detox`:
+
+    ```shell
+    pip install detox
+    detox
+    ```
+
+[0]: https://github.com/plus3it/watchmaker/issues
+[1]: https://travis-ci.org/plus3it/watchmaker/pull_requests
+[2]: https://tox.readthedocs.io/en/latest/install.html
+[3]: https://github.com/plus3it/watchmaker/tree/develop/docs

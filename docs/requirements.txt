@@ -1,2 +1,4 @@
-mkdocs>=0.15.3
--e .
+m2r
+recommonmark
+sphinx
+sphinx_rtd_theme
