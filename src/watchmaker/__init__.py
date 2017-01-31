@@ -42,7 +42,7 @@ class Prepare(object):
     Prepare a system for setup and installation.
 
     Args:
-        arguments (dict):
+        arguments (:obj:`dict`):
             A dictionary of arguments. See :func:`cli.main`.
     """
 

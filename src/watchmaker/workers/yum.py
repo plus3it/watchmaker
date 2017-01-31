@@ -84,7 +84,7 @@ class Yum(LinuxManager):
         Install yum repos defined in config file.
 
         Args:
-            configuration (json):
+            configuration (:obj:`json`):
                 The configuration data required to install the yum repos.
         """
         try:

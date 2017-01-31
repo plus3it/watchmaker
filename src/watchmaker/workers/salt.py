@@ -189,7 +189,7 @@ class SaltBase(ManagerBase):
         Set ``self.config`` attribute with config data.
 
         Args:
-            configuration (json):
+            configuration (:obj:`json`):
                 Parameters from the Watchmaker config.yaml file.
         """
         try:
@@ -229,7 +229,7 @@ class SaltBase(ManagerBase):
         Apply salt states.
 
         Args:
-            states (str):
+            states (:obj:`str`):
                 Comma-separated string of salt states to execute. Accepts two
                 special keywords:
 
@@ -359,11 +359,11 @@ class SaltLinux(SaltBase, LinuxManager):
         Install salt and execute salt states.
 
         Args:
-            configuration (json):
+            configuration (:obj:`json`):
                 Parameters from the Watchmaker config.yaml file.
             is_s3_bucket (bool):
                 Switch to determine whether to use boto to download files.
-            salt_states (str):
+            salt_states (:obj:`str`):
                 Comma-separated string of salt states to execute. Accepts two
                 special keywords:
 
@@ -464,11 +464,11 @@ class SaltWindows(SaltBase, WindowsManager):
         Install salt and execute salt states.
 
         Args:
-            configuration (dict):
+            configuration (:obj:`dict`):
                 Parameters from the Watchmaker config.yaml file.
             is_s3_bucket (bool):
                 Switch to determine whether to use boto to download files.
-            salt_states (str):
+            salt_states (:obj:`str`):
                 Comma-separated string of salt states to execute. Accepts two
                 special keywords:
 

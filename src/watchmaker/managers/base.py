@@ -76,9 +76,9 @@ class ManagerBase(object):
         Download a file from a web server or S3 bucket.
 
         Args:
-            url (str):
+            url (:obj:`str`):
                 URL to a file.
-            filename (str):
+            filename (:obj:`str`):
                 Path where the file will be saved.
             sourceiss3bucket (bool):
                 (Defaults to ``False``) Switch to indicate that the download
@@ -155,9 +155,9 @@ class ManagerBase(object):
         Create a directory in ``basedir`` with a prefix of ``prefix``.
 
         Args:
-            prefix (str):
+            prefix (:obj:`str`):
                 Prefix to prepend to the working directory.
-            basedir (str):
+            basedir (:obj:`str`):
                 The directory in which to create the working directory.
         """
         self.log.info('Creating a working directory.')
@@ -180,7 +180,7 @@ class ManagerBase(object):
         Execute a shell command.
 
         Args:
-            cmd (list):
+            cmd (:obj:`list`):
                 Command to execute.
         """
         if not isinstance(cmd, list):
@@ -216,7 +216,7 @@ class ManagerBase(object):
         Extract a compressed archive to the specified directory.
 
         Args:
-            filepath (str):
+            filepath (:obj:`str`):
                 Path to the compressed file. Supported file extensions:
 
                 - `zip`
@@ -225,7 +225,7 @@ class ManagerBase(object):
                 - `.tar.bz2`
                 - `.tbz`
 
-            to_directory (str):
+            to_directory (:obj:`str`):
                 Path to the target directory
             create_dir (bool):
                 (Defaults to ``False``) Switch to control the creation of a

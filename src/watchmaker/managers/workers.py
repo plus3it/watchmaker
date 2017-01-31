@@ -15,11 +15,11 @@ class LinuxWorkersManager(WorkersManagerBase):
     Args:
         s3 (bool):
             Switch to determine whether to use boto to download files.
-        system_params (dict):
+        system_params (:obj:`dict`):
             Attributes, mostly file-paths, specific to the Linux system-type.
-        execution_scripts (dict):
+        execution_scripts (:obj:`dict`):
             Workers to run and associated configuration data.
-        salt_states (str):
+        salt_states (:obj:`str`):
             Comma-separated string of salt states to execute. Accepts two
             special keywords:
 
@@ -72,11 +72,11 @@ class WindowsWorkersManager(WorkersManagerBase):
     Args:
         s3 (bool):
             Switch to determine whether to use boto to download files.
-        system_params (dict):
+        system_params (:obj:`dict`):
             Attributes, mostly file-paths, specific to the Windows system-type.
-        execution_scripts (dict):
+        execution_scripts (:obj:`dict`):
             Workers to run and associated configuration data.
-        salt_states (str):
+        salt_states (:obj:`str`):
             Comma-separated string of salt states to execute. Accepts two
             special keywords:
 
