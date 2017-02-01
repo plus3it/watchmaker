@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+"""MothBall documentation build configuration file."""
 #
-# MothBall documentation build configuration file, created by
-# sphinx-quickstart on Thu Jun 30 20:11:36 2016.
+# Created by sphinx-quickstart on Thu Jun 30 20:11:36 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -18,6 +18,10 @@
 #
 import os
 import sys
+
+from recommonmark.parser import CommonMarkParser
+
+
 sys.path.insert(0, os.path.abspath('../src/'))
 
 # -- General configuration ------------------------------------------------
@@ -38,7 +42,6 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-from recommonmark.parser import CommonMarkParser
 source_suffix = ['.rst', '.md']
 
 parsers = {
@@ -151,8 +154,8 @@ todo_include_todos = False
 # html_logo = None
 
 # The name of an image file (relative to this directory) to use as a favicon of
-# the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
-# pixels large.
+# the docs.  This file should be a Windows icon file (.ico) being 16x16 or
+# 32x32 pixels large.
 #
 # html_favicon = None
 

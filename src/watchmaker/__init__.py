@@ -20,14 +20,15 @@ __version__ = '0.0.1'
 
 
 class PrepArguments(object):
+    """Prepare arguments."""
 
-    def __init__(self):
+    def __init__(self):  # noqa: D102
         self.noreboot = False
         self.s3 = False
         self.config_path = None
         self.saltstates = False
 
-    def __repr__(self):
+    def __repr__(self):  # noqa: D105
         return '< noreboot="{0}", s3="{1}", config_path="{2}"' \
                ', saltstates="{3}" >'.format(self.noreboot,
                                              self.s3,
@@ -39,20 +40,13 @@ class PrepArguments(object):
 class Prepare(object):
     """
     Prepare a system for setup and installation.
+
+    Args:
+        arguments (dict):
+            A dictionary of arguments. See :func:`cli.main`.
     """
-    def __init__(self, arguments):
-        """
-        Args:
-            noreboot (bool):
-                Instances are rebooted after installation.  If this value is
-                set to True then the instance will not be rebooted.
-            s3 (bool):
-                Should an s3 bucket be used for the installation files.
-            config_path (str):
-                Path to YAML configuration file.
-            log_dir (str) or log_file (str):
-                Path to log directory or file for logging.
-        """
+
+    def __init__(self, arguments):  # noqa: D102
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
@@ -80,10 +74,10 @@ class Prepare(object):
 
     def _get_config_data(self):
         """
-        Private method for reading configuration data for installation.
+        Read and validate configuration data for installation.
 
         Returns:
-            Sets the self.config attribute with the data from the
+            Sets the ``self.config`` attribute with the data from the
             configuration YAML file after validation.
         """
         if not self.config_path:
@@ -131,13 +125,7 @@ class Prepare(object):
             raise WatchmakerException(msg)
 
     def _linux_paths(self):
-        """
-        Private method for setting up a linux environment for installation.
-
-        Returns:
-            dict: Map of system_params for a Linux system.
-        """
-
+        """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
         params['prepdir'] = os.path.join(
             '{0}'.format(self.system_drive), 'usr', 'tmp', 'systemprep')
@@ -151,12 +139,7 @@ class Prepare(object):
         self.system_params = params
 
     def _windows_paths(self):
-        """
-        Private method for setting up a Windows environment for installation.
-
-        Returns:
-            dict: Map of system_params for a Windows system.
-        """
+        """Set ``self.system_params`` attribute for Windows systems."""
         params = {}
         # os.path.join does not produce path as expected when first string
         # ends in colon; so using a join on the sep character.
@@ -175,12 +158,7 @@ class Prepare(object):
         self.system_params = params
 
     def _get_system_params(self):
-        """
-        Handles the setup of the OS workspace and environment.
-
-        This method also creates the appropriate directories necessary for
-        installation.
-        """
+        """Set OS-specific attributes."""
         if 'Linux' in self.system:
             self.system_drive = '/'
             self._linux_paths()
@@ -207,12 +185,7 @@ class Prepare(object):
             raise
 
     def _get_scripts_to_execute(self):
-        """
-        Parses and updates configuration data.
-
-        Returns:
-            list: Attribute with configuration data for the target system.
-        """
+        """Set ``self.execution_scripts`` attribute with configuration data."""
         self._get_config_data()
 
         scriptstoexecute = self.config[self.system]
@@ -235,7 +208,8 @@ class Prepare(object):
         """
         Initiate the installation of the prepared system.
 
-        After execution the system should be properly provisioned.
+        Upon successful execution, the system will be properly provisioned,
+        according to the defined configuration and workers.
         """
         self._get_system_params()
         self.log.debug(self.system_params)

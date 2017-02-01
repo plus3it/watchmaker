@@ -11,6 +11,7 @@ from setuptools import find_packages, setup
 
 
 def read(*names, **kwargs):
+    """Read a file."""
     return io.open(
         os.path.join(os.path.dirname(__file__), *names),
         encoding=kwargs.get('encoding', 'utf8')
@@ -18,7 +19,7 @@ def read(*names, **kwargs):
 
 
 def find_version(*file_paths):
-    # Read the version number from a source file.
+    """Read the version number from a source file."""
     # Why read it, and not import?
     # see https://groups.google.com/d/topic/pypa-dev/0PkjVpcxTzQ/discussion
     version_file = read(*file_paths, encoding='latin1')
