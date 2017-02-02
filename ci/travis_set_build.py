@@ -20,6 +20,7 @@ VERSION_FILE_PATHS = ('src', 'watchmaker', '__init__.py')
 
 
 def replace(file_path, pattern, repl, flags=0):
+    """Replace a pattern in a file."""
     with io.open(file_path, mode="r+", newline='') as fh_:
         file_contents = fh_.read()
         file_contents = re.sub(pattern, repl, file_contents, flags=flags)
@@ -29,6 +30,7 @@ def replace(file_path, pattern, repl, flags=0):
 
 
 def append_version(build, file_paths):
+    """Append a build number to a version string in a file."""
     # The version line must have the form
     # __version__ = 'ver'
     pattern = r"^(__version__ = ['\"])([^'\"]*)(['\"])"
@@ -42,6 +44,7 @@ def append_version(build, file_paths):
 
 
 def main(args):
+    """Process args and set version."""
     skip = args.skip
     build = args.build
     build_type = args.build_type

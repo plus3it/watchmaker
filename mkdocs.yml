@@ -1,5 +1,0 @@
-site_name: watchmaker
-theme: readthedocs
-markdown_extensions:
-    - toc:
-        permalink: True

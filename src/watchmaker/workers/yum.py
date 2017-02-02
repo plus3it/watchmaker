@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Watchmaker yum worker."""
 import json
 import re
 
@@ -5,23 +7,16 @@ from watchmaker.managers.base import LinuxManager
 
 
 class Yum(LinuxManager):
-    """
-    Handles linux distro validation and repo installation.
-    """
+    """Install yum repos."""
 
-    def __init__(self):
-        """
-        Instatiates the class.
-        """
+    def __init__(self):  # noqa: D102
         super(Yum, self).__init__()
         self.dist = None
         self.version = None
         self.epel_version = None
 
     def _validate(self):
-        """
-        Validates the linux distrbution uses yum and is configurable.
-        """
+        """Validate the Linux distro and set associated attributes."""
         self.dist = None
         self.version = None
         self.epel_version = None
@@ -79,20 +74,17 @@ class Yum(LinuxManager):
         self.log.debug('EPEL Version\t{0}'.format(self.epel_version))
 
     def _repo(self, config):
-        """
-        Private method that validates that the config is properly formed.
-        """
+        """Validate the ``yumrepomap`` is properly formed."""
         if not isinstance(config['yumrepomap'], list):
             msg = '`yumrepomap` must be a list!'
             self.log.error(msg, Exception(msg))
 
     def install(self, configuration):
         """
-        Checks the distribution version and installs yum repo definition files
-        that are specific to that distribution.
+        Install yum repos defined in config file.
 
         Args:
-            configuration (JSON):
+            configuration (:obj:`json`):
                 The configuration data required to install the yum repos.
         """
         try:

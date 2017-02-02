@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Watchmaker base manager."""
 import abc
 import logging
 import os
@@ -19,10 +21,11 @@ class ManagerBase(object):
     All child classes will have access to methods unless overridden by
     similarly-named method in the child class.
     """
+
     boto3 = None
     boto_client = None
 
-    def __init__(self):
+    def __init__(self):  # noqa: D102
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
@@ -69,6 +72,18 @@ class ManagerBase(object):
             raise
 
     def download_file(self, url, filename, sourceiss3bucket=False):
+        """
+        Download a file from a web server or S3 bucket.
+
+        Args:
+            url (:obj:`str`):
+                URL to a file.
+            filename (:obj:`str`):
+                Path where the file will be saved.
+            sourceiss3bucket (bool):
+                (Defaults to ``False``) Switch to indicate that the download
+                should use boto3 to download the file from an S3 bucket.
+        """
         self.log.debug('Downloading: {0}'.format(url))
         self.log.debug('Destination: {0}'.format(filename))
         self.log.debug('S3: {0}'.format(sourceiss3bucket))
@@ -137,13 +152,13 @@ class ManagerBase(object):
 
     def create_working_dir(self, basedir, prefix):
         """
-        Create a directory in `basedir` with a prefix of `prefix`.
+        Create a directory in ``basedir`` with a prefix of ``prefix``.
 
         Args:
-            prefix (str):
-                Prefix to prepend to the working directory
-            basedir (str):
-                The directory in which to create the working directory
+            prefix (:obj:`str`):
+                Prefix to prepend to the working directory.
+            basedir (:obj:`str`):
+                The directory in which to create the working directory.
         """
         self.log.info('Creating a working directory.')
         original_umask = os.umask(0)
@@ -161,6 +176,13 @@ class ManagerBase(object):
         os.umask(original_umask)
 
     def call_process(self, cmd):
+        """
+        Execute a shell command.
+
+        Args:
+            cmd (:obj:`list`):
+                Command to execute.
+        """
         if not isinstance(cmd, list):
             msg = 'Command is not a list: {0}'.format(str(cmd))
             self.log.critical(msg)
@@ -173,6 +195,7 @@ class ManagerBase(object):
             raise WatchmakerException(msg)
 
     def cleanup(self):
+        """Delete working directory."""
         self.log.info('Cleanup Time...')
         try:
             self.log.debug('{0} being cleaned up.'.format(self.working_dir))
@@ -190,17 +213,24 @@ class ManagerBase(object):
 
     def extract_contents(self, filepath, to_directory, create_dir=False):
         """
-        Extracts a compressed file to the specified directory.
-        Supports files that end in .zip, .tar.gz, .tgz, tar.bz2, or tbz.
+        Extract a compressed archive to the specified directory.
 
         Args:
-            filepath (str):
-                Path to the compressed file
-            to_directory (str):
+            filepath (:obj:`str`):
+                Path to the compressed file. Supported file extensions:
+
+                - `zip`
+                - `tar.gz`
+                - `.tgz`
+                - `.tar.bz2`
+                - `.tbz`
+
+            to_directory (:obj:`str`):
                 Path to the target directory
             create_dir (bool):
-                If true, create subdirectory within to_directory
-                that represents original path of compressed file
+                (Defaults to ``False``) Switch to control the creation of a
+                subdirectory within ``to_directory`` named for the filename of
+                the compressed file.
         """
         if filepath.endswith('.zip'):
             self.log.debug('File Type: zip')
@@ -258,7 +288,7 @@ class LinuxManager(ManagerBase):
     Serves as a foundational class to keep OS consitency.
     """
 
-    def __init__(self):
+    def __init__(self):  # noqa: D102
         super(LinuxManager, self).__init__()
 
     def _install_from_yum(self, packages):
@@ -279,14 +309,18 @@ class LinuxManager(ManagerBase):
 
 class WindowsManager(ManagerBase):
     """
+    Base class for Windows Managers.
 
+    Serves as a foundational class to keep OS consitency.
     """
 
-    def __init__(self):
+    def __init__(self):  # noqa: D102
         super(WindowsManager, self).__init__()
 
 
 class WorkersManagerBase(object):
+    """Metaclass for worker managers."""
+
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
@@ -298,9 +332,9 @@ class WorkersManagerBase(object):
         return
 
     @abc.abstractmethod
-    def worker_cadence(self):
+    def worker_cadence(self):  # noqa: D102
         return
 
     @abc.abstractmethod
-    def cleanup(self):
+    def cleanup(self):  # noqa: D102
         return

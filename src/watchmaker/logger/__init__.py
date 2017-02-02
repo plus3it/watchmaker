@@ -1,14 +1,30 @@
+# -*- coding: utf-8 -*-
+"""Watchmaker logger module."""
 import logging
 import os
 
 
 def prepare_logging(log_dir, log_level):
     """
-    Prepares the logger for handling messages to a file and/or to stdout.
+    Prepare the logger for handling messages to a file and/or to stdout.
+
     Args:
-        log_dir (str):
-            Path of a directory. If this object is not None, then this
-            directory will be used to store a log file.
+        log_dir (:obj:`str`):
+            Path to a directory. If set, Watchmaker logs to the
+            ``watchmaker.log`` file in the specified directory. Both the
+            directory and the file will be created if necessary. If the file
+            already exists, Watchmaker appends to it rather than overwriting
+            it. If this argument evaluates to ``False``, then logging to a file
+            is disabled. Watchmaker will always output to stdout/stderr.
+        log_level (int):
+            Level to log at. Any value other than the integers below will
+            enable DEBUG logging.
+
+            .. code-block:: yaml
+
+                0: WARNING
+                1: INFO
+                *: DEBUG
     """
     logformat = (
         '%(asctime)s [%(name)s][%(levelname)-5s][%(process)s]: %(message)s'

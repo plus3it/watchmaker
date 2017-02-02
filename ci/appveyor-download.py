@@ -1,10 +1,11 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Use the AppVeyor API to download Windows artifacts.
 
-Taken from: https://bitbucket.org/ned/coveragepy/src/tip/ci/download_appveyor.py
-# Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
-# For details: https://bitbucket.org/ned/coveragepy/src/default/NOTICE.txt
+Taken from: <https://bitbucket.org/ned/coveragepy/src/tip/ci/download_appveyor.py>  # noqa: E501
+# Licensed under the Apache License: <http://www.apache.org/licenses/LICENSE-2.0>  # noqa: E501
+# For details: <https://bitbucket.org/ned/coveragepy/src/default/NOTICE.txt>
 """
 from __future__ import unicode_literals
 
@@ -19,8 +20,9 @@ def make_auth_headers():
     path = os.path.expanduser("~/.appveyor.token")
     if not os.path.exists(path):
         raise RuntimeError(
-            "Please create a file named `.appveyor.token` in your home directory. "
-            "You can get the token from https://ci.appveyor.com/api-token"
+            "Please create a file named `.appveyor.token` in your home "
+            "directory. You can get the token from "
+            "<https://ci.appveyor.com/api-token>"
         )
     with open(path) as f:
         token = f.read().strip()
@@ -33,19 +35,26 @@ def make_auth_headers():
 
 def download_latest_artifacts(account_project, build_id):
     """Download all the artifacts from the latest build."""
+    appveyor_projects = "https://ci.appveyor.com/api/projects"
+    appveyor_builds = "https://ci.appveyor.com/api/buildjobs"
     if build_id is None:
-        url = "https://ci.appveyor.com/api/projects/{}".format(account_project)
+        url = "{}/{}".format(appveyor_projects, account_project)
     else:
-        url = "https://ci.appveyor.com/api/projects/{}/build/{}".format(account_project, build_id)
+        url = "{}/{}/build/{}".format(
+            appveyor_projects,
+            account_project,
+            build_id)
     build = requests.get(url, headers=make_auth_headers()).json()
     jobs = build['build']['jobs']
-    print(u"Build {0[build][version]}, {1} jobs: {0[build][message]}".format(build, len(jobs)))
+    print(u"Build {0[build][version]}, {1} jobs: {0[build][message]}".format(
+        build, len(jobs)))
 
     for job in jobs:
         name = job['name']
-        print(u"  {0}: {1[status]}, {1[artifactsCount]} artifacts".format(name, job))
+        print(u"  {0}: {1[status]}, {1[artifactsCount]} artifacts".format(
+            name, job))
 
-        url = "https://ci.appveyor.com/api/buildjobs/{}/artifacts".format(job['jobId'])
+        url = "{}/{}/artifacts".format(appveyor_builds, job['jobId'])
         response = requests.get(url, headers=make_auth_headers())
         artifacts = response.json()
 
@@ -54,7 +63,10 @@ def download_latest_artifacts(account_project, build_id):
             filename = artifact['fileName']
             print(u"    {0}, {1} bytes".format(filename, artifact['size']))
 
-            url = "https://ci.appveyor.com/api/buildjobs/{}/artifacts/{}".format(job['jobId'], filename)
+            url = "{}/{}/artifacts/{}".format(
+                appveyor_builds,
+                job['jobId'],
+                filename)
             download_url(url, filename, make_auth_headers())
 
             if is_zip:
@@ -90,7 +102,8 @@ def unpack_zipfile(filename):
             ensure_dirs(name)
             z.extract(name)
 
-parser = argparse.ArgumentParser(description='Download artifacts from AppVeyor.')
+parser = argparse.ArgumentParser(  # noqa: E305
+    description='Download artifacts from AppVeyor.')
 parser.add_argument('--id',
                     metavar='PROJECT_ID',
                     default='lorengordon/pyro',

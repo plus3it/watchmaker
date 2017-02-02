@@ -1,4 +1,5 @@
-"""Watchmaker exception module."""
+# -*- coding: utf-8 -*-
+"""Watchmaker exceptions module."""
 
 
 class WatchmakerException(Exception):

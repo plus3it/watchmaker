@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Watchmaker salt worker."""
 import json
 import os
 import shutil
@@ -11,6 +13,8 @@ from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 
 class SaltBase(ManagerBase):
+    """Cross-platform worker for running salt."""
+
     salt_base_env = None
     salt_call = None
     salt_conf_path = None
@@ -21,7 +25,7 @@ class SaltBase(ManagerBase):
     salt_working_dir = None
     salt_working_dir_prefix = None
 
-    def __init__(self):
+    def __init__(self):  # noqa: D102
         super(SaltBase, self).__init__()
         self.config = None
         self.ent_env = None
@@ -163,6 +167,16 @@ class SaltBase(ManagerBase):
         self.call_process(cmd)
 
     def run_salt(self, command):
+        """
+        Execute salt command.
+
+        Args:
+            command(str or list):
+                Salt options and a salt module to be executed by salt-call.
+                Watchmaker will always begin the command with the options
+                ``--local`` and ``--retcode-passthrough``, so do not specify
+                those options in the command.
+        """
         cmd = [self.salt_call, '--local', '--retcode-passthrough']
         if isinstance(command, list):
             cmd.extend(command)
@@ -171,6 +185,13 @@ class SaltBase(ManagerBase):
         self.call_process(cmd)
 
     def load_config(self, configuration):
+        """
+        Set ``self.config`` attribute with config data.
+
+        Args:
+            configuration (:obj:`json`):
+                Parameters from the Watchmaker config.yaml file.
+        """
         try:
             self.config = json.loads(configuration)
         except ValueError:
@@ -182,6 +203,7 @@ class SaltBase(ManagerBase):
             raise WatchmakerException(msg)
 
     def process_grains(self):
+        """Set salt grains."""
         ent_env = {'enterprise_environment': str(self.ent_env)}
         self._set_grain('systemprep', ent_env)
 
@@ -203,6 +225,17 @@ class SaltBase(ManagerBase):
         self.run_salt('saltutil.sync_all')
 
     def process_states(self, states):
+        """
+        Apply salt states.
+
+        Args:
+            states (:obj:`str`):
+                Comma-separated string of salt states to execute. Accepts two
+                special keywords:
+
+                - ``'none'``: Do not apply any salt states
+                - ``'highstate'``: Apply the salt highstate
+        """
         if states:
             self.config['saltstates'] = states
         else:
@@ -241,7 +274,9 @@ class SaltBase(ManagerBase):
 
 
 class SaltLinux(SaltBase, LinuxManager):
-    def __init__(self):
+    """Run salt on Linux."""
+
+    def __init__(self):  # noqa: D102
         super(SaltLinux, self).__init__()
 
         # Extra variables needed for Linux.
@@ -320,6 +355,21 @@ class SaltLinux(SaltBase, LinuxManager):
         super(SaltLinux, self)._set_grain(grain, value)
 
     def install(self, configuration, is_s3_bucket, salt_states):
+        """
+        Install salt and execute salt states.
+
+        Args:
+            configuration (:obj:`json`):
+                Parameters from the Watchmaker config.yaml file.
+            is_s3_bucket (bool):
+                Switch to determine whether to use boto to download files.
+            salt_states (:obj:`str`):
+                Comma-separated string of salt states to execute. Accepts two
+                special keywords:
+
+                - ``'none'``: Do not apply any salt states
+                - ``'highstate'``: Apply the salt highstate
+        """
         self.load_config(configuration)
         self.is_s3_bucket = is_s3_bucket
 
@@ -336,7 +386,9 @@ class SaltLinux(SaltBase, LinuxManager):
 
 
 class SaltWindows(SaltBase, WindowsManager):
-    def __init__(self):
+    """Run salt on Windows."""
+
+    def __init__(self):  # noqa: D102
         super(SaltWindows, self).__init__()
 
         # Extra variable needed for Windows.
@@ -408,6 +460,21 @@ class SaltWindows(SaltBase, WindowsManager):
         super(SaltWindows, self)._set_grain(grain, value)
 
     def install(self, configuration, is_s3_bucket, salt_states):
+        """
+        Install salt and execute salt states.
+
+        Args:
+            configuration (:obj:`dict`):
+                Parameters from the Watchmaker config.yaml file.
+            is_s3_bucket (bool):
+                Switch to determine whether to use boto to download files.
+            salt_states (:obj:`str`):
+                Comma-separated string of salt states to execute. Accepts two
+                special keywords:
+
+                - ``'none'``: Do not apply any salt states
+                - ``'highstate'``: Apply the salt highstate
+        """
         self.load_config(configuration)
         self.is_s3_bucket = is_s3_bucket
 

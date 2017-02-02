@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+"""Watchmaker cli."""
 import argparse
 import os
 import sys
@@ -15,6 +17,7 @@ def _validate_log_dir(log_dir):
 
 
 def main():
+    """Entry point for Watchmaker cli."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--noreboot', dest='noreboot', action='store_true',
                         help='No reboot after provisioning.')

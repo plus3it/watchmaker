@@ -1,8 +1,13 @@
+# -*- coding: utf-8 -*-
 """
-AppVeyor will at least have few Pythons around so there's no point of implementing a bootstrapper in PowerShell.
+Script to install all required versions of Python.
 
-This is a port of https://github.com/pypa/python-packaging-user-guide/blob/master/source/code/install.ps1
-with various fixes and improvements that just weren't feasible to implement in PowerShell.
+AppVeyor will at least have few Pythons around so there's no point of
+implementing a bootstrapper in PowerShell.
+
+This is a `port <https://github.com/pypa/python-packaging-user-guide/blob/master/source/code/install.ps1>`_  # noqa: E501
+with various fixes and improvements that just weren't feasible to implement in
+PowerShell.
 """
 from __future__ import print_function
 from os import environ
@@ -29,18 +34,41 @@ URLS = {
     ("3.5", "32"): BASE_URL + "3.5.0/python-3.5.0.exe",
 }
 INSTALL_CMD = {
-    # Commands are allowed to fail only if they are not the last command.  Eg: uninstall (/x) allowed to fail.
-    "2.7": [["msiexec.exe", "/L*+!", "install.log", "/qn", "/x", "{path}"],
-            ["msiexec.exe", "/L*+!", "install.log", "/qn", "/i", "{path}", "TARGETDIR={home}"]],
-    "3.3": [["msiexec.exe", "/L*+!", "install.log", "/qn", "/x", "{path}"],
-            ["msiexec.exe", "/L*+!", "install.log", "/qn", "/i", "{path}", "TARGETDIR={home}"]],
-    "3.4": [["msiexec.exe", "/L*+!", "install.log", "/qn", "/x", "{path}"],
-            ["msiexec.exe", "/L*+!", "install.log", "/qn", "/i", "{path}", "TARGETDIR={home}"]],
+    # Commands are allowed to fail only if they are not the last command.
+    # Eg: uninstall (/x) allowed to fail.
+    "2.7": [
+        [
+            "msiexec.exe", "/L*+!", "install.log", "/qn", "/x", "{path}"
+        ],
+        [
+            "msiexec.exe", "/L*+!", "install.log", "/qn", "/i", "{path}",
+            "TARGETDIR={home}"
+        ]
+    ],
+    "3.3": [
+        [
+            "msiexec.exe", "/L*+!", "install.log", "/qn", "/x", "{path}"
+        ],
+        [
+            "msiexec.exe", "/L*+!", "install.log", "/qn", "/i", "{path}",
+            "TARGETDIR={home}"
+        ]
+    ],
+    "3.4": [
+        [
+            "msiexec.exe", "/L*+!", "install.log", "/qn", "/x", "{path}"
+        ],
+        [
+            "msiexec.exe", "/L*+!", "install.log", "/qn", "/i", "{path}",
+            "TARGETDIR={home}"
+        ]
+    ],
     "3.5": [["{path}", "/quiet", "TargetDir={home}"]],
 }
 
 
 def download_file(url, path):
+    """Download a file."""
     print("Downloading: {} (into {})".format(url, path))
     progress = [0, 0]
 
@@ -55,7 +83,10 @@ def download_file(url, path):
 
 
 def install_python(version, arch, home):
-    print("Installing Python", version, "for", arch, "bit architecture to", home)
+    """Install a version of python."""
+    print(
+        "Installing Python", version, "for", arch, "bit architecture to", home
+    )
     if exists(home):
         return
 
@@ -81,6 +112,7 @@ def install_python(version, arch, home):
 
 
 def download_python(version, arch):
+    """Download python installers."""
     for _ in range(3):
         try:
             return download_file(URLS[version, arch], "installer.exe")
@@ -90,6 +122,7 @@ def download_python(version, arch):
 
 
 def install_pip(home):
+    """Install pip."""
     pip_path = home + "/Scripts/pip.exe"
     python_path = home + "/python.exe"
     if exists(pip_path):
@@ -102,12 +135,24 @@ def install_pip(home):
 
 
 def install_packages(home, *packages):
+    """Install pip packages."""
     cmd = [home + "/Scripts/pip.exe", "install"]
     cmd.extend(packages)
     check_call(cmd)
 
 
 if __name__ == "__main__":
-    install_python(environ['PYTHON_VERSION'], environ['PYTHON_ARCH'], environ['PYTHON_HOME'])
+    install_python(
+        environ['PYTHON_VERSION'],
+        environ['PYTHON_ARCH'],
+        environ['PYTHON_HOME']
+    )
     install_pip(environ['PYTHON_HOME'])
-    install_packages(environ['PYTHON_HOME'], "setuptools>=18.0.1", "wheel", "tox", "virtualenv>=13.1.0", "pypandoc")
+    install_packages(
+        environ['PYTHON_HOME'],
+        "setuptools>=18.0.1",
+        "wheel",
+        "tox",
+        "virtualenv>=13.1.0",
+        "pypandoc"
+    )

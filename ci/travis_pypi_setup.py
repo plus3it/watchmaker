@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Update encrypted deploy password in Travis config file
-"""
+"""Update encrypted deploy password in Travis config file."""
 
 
 from __future__ import print_function
@@ -23,8 +22,8 @@ GITHUB_REPO = 'plus3it/watchmaker'
 
 
 def load_key(pubkey):
-    """Load public RSA key, with work-around for keys using
-    incorrect header/footer format.
+    """
+    Load public RSA key, ensuring correct header/footer format.
 
     Read more about RSA encryption with cryptography:
     https://cryptography.io/latest/hazmat/primitives/asymmetric/rsa/
@@ -38,7 +37,8 @@ def load_key(pubkey):
 
 
 def encrypt(pubkey, password):
-    """Encrypt password using given RSA public key and encode it with base64.
+    """
+    Encrypt password using given RSA public key and encode it with base64.
 
     The encrypted password can only be decrypted by someone with the
     private key (in this case, only Travis).
@@ -63,6 +63,7 @@ def fetch_public_key(repo):
 
 
 def main(args):
+    """Get a secure string for travis deployment."""
     public_key = fetch_public_key(args.repo)
     password = args.password or getpass('PyPI password: ')
     encrypted = encrypt(public_key, password.encode())
