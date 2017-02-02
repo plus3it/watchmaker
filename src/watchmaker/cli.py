@@ -4,6 +4,8 @@ import argparse
 import os
 import sys
 
+import watchmaker
+
 from watchmaker import Prepare
 from watchmaker.logger import prepare_logging
 
@@ -18,7 +20,10 @@ def _validate_log_dir(log_dir):
 
 def main():
     """Entry point for Watchmaker cli."""
+    version_string = 'watchmaker v{0}'.format(watchmaker.__version__)
     parser = argparse.ArgumentParser()
+    parser.add_argument('--version', action='version', version=version_string,
+                        help='Print version info.')
     parser.add_argument('--noreboot', dest='noreboot', action='store_true',
                         help='No reboot after provisioning.')
     parser.add_argument('--sourceiss3bucket', dest='sourceiss3bucket',
