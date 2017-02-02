@@ -48,7 +48,6 @@ Windows:
         #To add other formulas, make sure it is a url to a zipped file as follows:
         #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
         #To "overwrite" submodule formulas, make sure name matches submodule names.
-        - https://s3.amazonaws.com/salt-formulas/dotnet4-formula-master.zip
       formulaterminationstrings:
         - -master
         - -latest
