@@ -1,7 +1,16 @@
 # -*- coding: utf-8 -*-
 """Watchmaker logger module."""
+import collections
 import logging
 import os
+
+LOG_LEVELS = collections.defaultdict(
+    lambda: logging.DEBUG,  # log level if key is not in this dict
+    {
+        0: logging.WARNING,
+        1: logging.INFO
+    }
+)
 
 
 def prepare_logging(log_dir, log_level):
@@ -29,12 +38,7 @@ def prepare_logging(log_dir, log_level):
     logformat = (
         '%(asctime)s [%(name)s][%(levelname)-5s][%(process)s]: %(message)s'
     )
-    if log_level == 0:
-        level = logging.WARNING
-    elif log_level == 1:
-        level = logging.INFO
-    else:
-        level = logging.DEBUG
+    level = LOG_LEVELS[log_level]
 
     logging.basicConfig(format=logformat, level=level)
 
