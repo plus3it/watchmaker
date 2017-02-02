@@ -3,6 +3,7 @@
 import json
 import re
 
+from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager
 
 
@@ -39,18 +40,23 @@ class Yum(LinuxManager):
         try:
             with open(name='/etc/system-release', mode='rb') as f:
                 release = f.readline().strip()
-        except Exception as exc:
-            raise SystemError('Could not read /etc/system-release. '
-                              'Error: {0}'.format(exc))
+        except:
+            self.log.critical(
+                'Failed to read /etc/system-release. Cannot determine system '
+                'distribution!'
+            )
+            raise
 
         # Search the release file for a match against _supported_dists
         matched = match_supported_dist.search(release.lower())
         if matched is None:
             # Release not supported, exit with error
-            raise SystemError(
+            msg = (
                 'Unsupported OS distribution. OS must be one of: {0}'
                 .format(', '.join(supported_dists))
             )
+            self.log.critical(msg)
+            raise WatchmakerException(msg)
 
         # Assign dist,version from the match groups tuple, removing any spaces
         self.dist, self.version = (
@@ -64,10 +70,12 @@ class Yum(LinuxManager):
             self.epel_version = self.version.split('.')[0]
 
         if self.epel_version is None:
-            raise SystemError(
+            msg = (
                 'Unsupported OS version! dist = {0}, version = {1}.'
                 .format(self.dist, self.version)
             )
+            self.log.critical(msg)
+            raise WatchmakerException(msg)
 
         self.log.debug('Dist\t\t{0}'.format(self.dist))
         self.log.debug('Version\t\t{0}'.format(self.version))
@@ -77,7 +85,8 @@ class Yum(LinuxManager):
         """Validate the ``yumrepomap`` is properly formed."""
         if not isinstance(config['yumrepomap'], list):
             msg = '`yumrepomap` must be a list!'
-            self.log.error(msg, Exception(msg))
+            self.log.critical(msg)
+            raise WatchmakerException(msg)
 
     def install(self, configuration):
         """
