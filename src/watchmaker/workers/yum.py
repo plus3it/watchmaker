@@ -16,6 +16,12 @@ class Yum(LinuxManager):
         self.version = None
         self.epel_version = None
 
+    @staticmethod
+    def _get_amazon_epel_version(version):
+        # All amzn linux distros currently available use el6-based packages.
+        # When/if amzn linux switches a distro to el7, rethink this.
+        return '6'
+
     def _validate(self):
         """Validate the Linux distro and set associated attributes."""
         self.dist = None
@@ -29,12 +35,6 @@ class Yum(LinuxManager):
                                           "([\d]+[.][\d]+)"
                                           "(?:.*)"
                                           .format('|'.join(supported_dists)))
-        amazon_epel_versions = {
-            '2014.03': '6',
-            '2014.09': '6',
-            '2015.03': '6',
-            '2015.09': '6',
-        }
 
         # Read first line from /etc/system-release
         try:
@@ -65,7 +65,7 @@ class Yum(LinuxManager):
 
         # Determine epel_version
         if 'amazon' == self.dist:
-            self.epel_version = amazon_epel_versions.get(self.version, None)
+            self.epel_version = self._get_amazon_epel_version(self.version)
         else:
             self.epel_version = self.version.split('.')[0]
 
