@@ -51,7 +51,12 @@ class Prepare(object):
         )
         self.worker_args = {
             'sourceiss3bucket': arguments.sourceiss3bucket,
-            'saltstates': arguments.saltstates
+            'saltstates': arguments.saltstates,
+            'admingroups': arguments.admingroups,
+            'adminusers': arguments.adminusers,
+            'computername': arguments.computername,
+            'entenv': arguments.entenv,
+            'oupath': arguments.oupath,
         }
         self.noreboot = arguments.noreboot
         self.system = platform.system()
