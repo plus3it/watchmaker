@@ -13,28 +13,17 @@ class LinuxWorkersManager(WorkersManagerBase):
     Manage the worker cadence for Linux systems.
 
     Args:
-        s3 (bool):
-            Switch to determine whether to use boto to download files.
         system_params (:obj:`dict`):
             Attributes, mostly file-paths, specific to the Linux system-type.
         execution_scripts (:obj:`dict`):
             Workers to run and associated configuration data.
-        salt_states (:obj:`str`):
-            Comma-separated string of salt states to execute. Accepts two
-            special keywords:
-
-            - ``'None'``: Do not apply any salt states
-            - ``'Highstate'``: Apply the salt highstate
     """
 
-    def __init__(self, s3, system_params, execution_scripts, salt_states
-    ):  # noqa: D102
+    def __init__(self, system_params, execution_scripts):  # noqa: D102
         super(LinuxWorkersManager, self).__init__()
         self.execution_scripts = execution_scripts
         self.manager = LinuxManager()
-        self.is_s3_bucket = s3
         self.system_params = system_params
-        self.salt_states = salt_states
 
     def _worker_execution(self):
         pass
@@ -54,11 +43,7 @@ class LinuxWorkersManager(WorkersManagerBase):
                 yum.install(configuration)
             elif 'Salt' in script:
                 salt = SaltLinux()
-                salt.install(
-                    configuration,
-                    self.is_s3_bucket,
-                    self.salt_states
-                )
+                salt.install(configuration)
 
     def cleanup(self):
         """Execute cleanup function."""
@@ -70,18 +55,10 @@ class WindowsWorkersManager(WorkersManagerBase):
     Manage the worker cadence for Windows systems.
 
     Args:
-        s3 (bool):
-            Switch to determine whether to use boto to download files.
         system_params (:obj:`dict`):
             Attributes, mostly file-paths, specific to the Windows system-type.
         execution_scripts (:obj:`dict`):
             Workers to run and associated configuration data.
-        salt_states (:obj:`str`):
-            Comma-separated string of salt states to execute. Accepts two
-            special keywords:
-
-            - ``'None'``: Do not apply any salt states
-            - ``'Highstate'``: Apply the salt highstate
     """
 
     def __init__(self, s3, system_params, execution_scripts, salt_states
@@ -108,11 +85,7 @@ class WindowsWorkersManager(WorkersManagerBase):
 
             if 'Salt' in script:
                 salt = SaltWindows()
-                salt.install(
-                    configuration,
-                    self.is_s3_bucket,
-                    self.salt_states
-                )
+                salt.install(configuration)
 
     def cleanup(self):
         """Execute cleanup function."""

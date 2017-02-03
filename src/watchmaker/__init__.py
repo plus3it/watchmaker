@@ -49,13 +49,14 @@ class Prepare(object):
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
-        self.kwargs = {}
+        self.worker_args = {
+            'sourceiss3bucket': arguments.sourceiss3bucket,
+            'saltstates': arguments.saltstates
+        }
         self.noreboot = arguments.noreboot
-        self.s3 = arguments.sourceiss3bucket
         self.system = platform.system()
         self.config_path = arguments.config
         self.default_config = os.path.join(static.__path__[0], 'config.yaml')
-        self.saltstates = arguments.saltstates
         self.config = self._get_config_data()
         self.system_params = None
         self.system_drive = None
@@ -64,7 +65,7 @@ class Prepare(object):
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
         self.log.info(header)
-        self.log.info('Parameters:  {0}'.format(self.kwargs))
+        self.log.info('Parameters:  {0}'.format(arguments))
         self.log.info('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
@@ -182,7 +183,7 @@ class Prepare(object):
         for item in self.config[self.system]:
             try:
                 self.config[self.system][item]['Parameters'].update(
-                    self.kwargs
+                    self.worker_args
                 )
             except Exception:
                 msg = (
@@ -212,17 +213,13 @@ class Prepare(object):
 
         if 'Linux' in self.system:
             workers_manager = LinuxWorkersManager(
-                self.s3,
                 self.system_params,
-                self.execution_scripts,
-                self.saltstates
+                self.execution_scripts
             )
         elif 'Windows' in self.system:
             workers_manager = WindowsWorkersManager(
-                self.s3,
                 self.system_params,
-                self.execution_scripts,
-                self.saltstates
+                self.execution_scripts
             )
         else:
             msg = 'There is no known System!'
