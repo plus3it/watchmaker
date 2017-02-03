@@ -43,12 +43,26 @@ class Prepare(object):
     Args:
         arguments (:obj:`dict`):
             A dictionary of arguments. See :func:`cli.main`.
+        extra_arguments (:obj:`list`):
+            (Defaults to ``None``) A list of extra arguments that should be
+            passed through to the worker configurations. The list should be
+            consist of pairs of arguments and values. Any leading hypens in the
+            argument name are stripped. For example:
+
+            .. code-block:: python
+
+                extra_arguments=['--arg1', 'value1', '--arg2', 'value2']
+
+                # This list would be converted to the following dict and merged
+                # into the parameters passed to the worker configurations:
+                {'arg1': 'value1', 'arg2': 'value2'}
     """
 
-    def __init__(self, arguments):  # noqa: D102
+    def __init__(self, arguments, extra_arguments=None):  # noqa: D102
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
+        # Define arguments to pass through to workers
         self.worker_args = {
             'sourceiss3bucket': arguments.sourceiss3bucket,
             'saltstates': arguments.saltstates,
@@ -58,6 +72,11 @@ class Prepare(object):
             'entenv': arguments.entenv,
             'oupath': arguments.oupath,
         }
+        # Convert extra_arguments to a dict and merge it with worker_args
+        extra_arguments = [] if extra_arguments is None else extra_arguments
+        self.worker_args.update(dict(
+            (k.lstrip('-'), v) for k, v in zip(*[iter(extra_arguments)]*2)
+        ))
         self.noreboot = arguments.noreboot
         self.system = platform.system()
         self.config_path = arguments.config
@@ -70,8 +89,9 @@ class Prepare(object):
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
         self.log.info(header)
-        self.log.info('Parameters:  {0}'.format(arguments))
-        self.log.info('System Type: {0}'.format(self.system))
+        self.log.debug('Parameters:  {0}'.format(arguments))
+        self.log.debug('Extra Parameters:  {0}'.format(extra_arguments))
+        self.log.debug('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
         return urllib.parse.urlparse(url).scheme in ['http', 'https']

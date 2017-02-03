@@ -94,8 +94,8 @@ def main():
                             '"OU=SuperCoolApp,DC=example,DC=com"'
                         ))
 
-    arguments = parser.parse_args()
+    arguments, extra_arguments = parser.parse_known_args()
     prepare_logging(arguments.log_dir, arguments.verbosity)
 
-    systemprep = Prepare(arguments)
+    systemprep = Prepare(arguments, extra_arguments)
     sys.exit(systemprep.install_system())
