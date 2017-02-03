@@ -4,20 +4,20 @@ Linux:
       yumrepomap:
         #SaltEL6:
         - dist: redhat
-          epel_version: 6
+          el_version: 6
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el6.repo
         - dist: centos
-          epel_version: 6
+          el_version: 6
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el6.repo
         - dist: amazon
-          epel_version: 6
+          el_version: 6
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-amzn.repo
         #SaltEL7:
         - dist: redhat
-          epel_version: 7
+          el_version: 7
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
         - dist: centos
-          epel_version: 7
+          el_version: 7
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
 
   Salt:
