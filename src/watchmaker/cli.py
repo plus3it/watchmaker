@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--noreboot', dest='noreboot', action='store_true',
                         help='No reboot after provisioning.')
     parser.add_argument('--sourceiss3bucket', dest='sourceiss3bucket',
-                        action='store_true',
+                        action='store_const', const=True, default=None,
                         help=(
                             'Use S3 buckets instead of internet locations for '
                             'files.'
