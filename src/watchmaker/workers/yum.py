@@ -109,6 +109,28 @@ class Yum(LinuxManager):
 
         return config
 
+    def _validate_repo(self, repo):
+        """Check if a repo is applicable to this system."""
+        # Check if this repo applies to this system's dist and el_version.
+        # repo['dist'] must match this system's dist or the keyword 'all'
+        # repo['el_version'] is optional, but if present then it must match
+        # this system's el_version.
+        dist = self.dist_info['dist']
+        el_version = self.dist_info['el_version']
+
+        if repo['dist'] not in [dist, 'all']:
+            # provided repo is not applicable to this system
+            return False
+        elif (
+            'el_version' in repo and
+            str(repo['el_version']) != str(el_version)
+        ):
+            # provided el_version is not a match to this system
+            return False
+        else:
+            # checks pass, repo is valid for this system
+            return True
+
     def install(self, configuration):
         """
         Install yum repos defined in config file.
@@ -117,35 +139,22 @@ class Yum(LinuxManager):
             configuration (:obj:`json`):
                 The configuration data required to install the yum repos.
         """
-        dist = self.dist_info['dist']
-        el_version = self.dist_info['el_version']
-
         config = self._validate_config(configuration)
 
-        # TODO This block is weird.  Correct and done.
         for repo in config.get('yumrepomap', []):
-            if repo['dist'] in [dist, 'all']:
-                self.log.debug(
-                    '{0} in {1} or all'.format(repo['dist'], dist)
-                )
-                if 'el_version' in repo and \
-                        str(repo['el_version']) != str(el_version):
-                    self.log.debug(
-                        'Skipping repo - el_version ({0}) is not valid for '
-                        'this repo ({1}).'
-                        .format(el_version, repo['url'])
-                    )
-                else:
-                    self.log.info(
-                        'All requirements have been validated for repo - {0}.'
-                        .format(el_version, repo['url'])
-                    )
-                    # Download the yum repo definition to /etc/yum.repos.d/
-                    url = repo['url']
-                    repofile = '/etc/yum.repos.d/{0}'.format(
-                        url.split('/')[-1])
-                    self.download_file(url, repofile)
+            if self._validate_repo(repo):
+                # Download the yum repo definition to /etc/yum.repos.d/
+                self.log.info('Installing repo: {0}'.format(repo['url']))
+                url = repo['url']
+                repofile = '/etc/yum.repos.d/{0}'.format(
+                    url.split('/')[-1])
+                self.download_file(url, repofile)
             else:
                 self.log.debug(
-                    '{0} NOT in {1} or all'.format(repo['dist'], dist)
+                    'Skipped repo because it is not valid for this system: '
+                    'dist_info={0}'
+                    .format(self.dist_info)
+                )
+                self.log.debug(
+                    'Skipped repo={0}'.format(repo)
                 )
