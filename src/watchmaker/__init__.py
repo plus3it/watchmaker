@@ -4,7 +4,6 @@ import datetime
 import logging
 import os
 import platform
-import shutil
 import subprocess
 
 import yaml
@@ -57,7 +56,7 @@ class Prepare(object):
         self.config_path = arguments.config
         self.default_config = os.path.join(static.__path__[0], 'config.yaml')
         self.saltstates = arguments.saltstates
-        self.config = None
+        self.config = self._get_config_data()
         self.system_params = None
         self.system_drive = None
         self.execution_scripts = None
@@ -69,7 +68,6 @@ class Prepare(object):
         self.log.info('System Type: {0}'.format(self.system))
 
     def _validate_url(self, url):
-
         return urllib.parse.urlparse(url).scheme in ['http', 'https']
 
     def _get_config_data(self):
@@ -77,9 +75,10 @@ class Prepare(object):
         Read and validate configuration data for installation.
 
         Returns:
-            Sets the ``self.config`` attribute with the data from the
-            configuration YAML file after validation.
+            dict: Data from the YAML configuration file.
         """
+        data = {}
+
         if not self.config_path:
             self.log.warning(
                 'User did not supply a config.  Using the default config.'
@@ -90,10 +89,7 @@ class Prepare(object):
 
         if self._validate_url(self.config_path):
             try:
-                response = urllib.request.urlopen(self.config_path)
-                with open('config.yaml', 'wb') as outfile:
-                    shutil.copyfileobj(response, outfile)
-                self.config_path = 'config.yaml'
+                data = urllib.request.urlopen(self.config_path).read()
             except urllib.error.URLError:
                 msg = (
                     'The URL used to get the user config.yaml file did not '
@@ -101,8 +97,7 @@ class Prepare(object):
                 )
                 self.log.critical(msg)
                 raise
-
-        if self.config_path and not os.path.exists(self.config_path):
+        elif self.config_path and not os.path.exists(self.config_path):
             msg = (
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
@@ -110,17 +105,14 @@ class Prepare(object):
             )
             self.log.critical(msg)
             raise WatchmakerException(msg)
-
-        with open(self.config_path) as f:
-            data = f.read()
+        else:
+            with open(self.config_path) as f:
+                data = f.read()
 
         if data:
-            self.config = yaml.load(data)
+            return(yaml.safe_load(data))
         else:
-            msg = (
-                'Unable to load the data of the default or the user supplied '
-                'config.'
-            )
+            msg = 'Encountered an unknown error loading the config. Aborting!'
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
@@ -186,8 +178,6 @@ class Prepare(object):
 
     def _get_scripts_to_execute(self):
         """Set ``self.execution_scripts`` attribute with configuration data."""
-        self._get_config_data()
-
         scriptstoexecute = self.config[self.system]
         for item in self.config[self.system]:
             try:
