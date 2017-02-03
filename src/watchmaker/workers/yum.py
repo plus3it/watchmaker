@@ -10,11 +10,22 @@ from watchmaker.managers.base import LinuxManager
 class Yum(LinuxManager):
     """Install yum repos."""
 
+    SUPPORTED_DISTS = ('amazon', 'centos', 'red hat')
+
+    # Pattern used to match against the first line of /etc/system-release. A
+    # match will contain two groups: the dist name (e.g. 'red hat' or 'amazon')
+    # and the dist version (e.g. '6.8' or '2016.09').
+    DIST_PATTERN = re.compile(
+        r"^({0})"
+        "(?:[^0-9]+)"
+        "([\d]+[.][\d]+)"
+        "(?:.*)"
+        .format('|'.join(SUPPORTED_DISTS))
+    )
+
     def __init__(self):  # noqa: D102
         super(Yum, self).__init__()
-        self.dist = None
-        self.version = None
-        self.el_version = None
+        self.dist_info = self.get_dist_info()
 
     @staticmethod
     def _get_amazon_el_version(version):
@@ -22,19 +33,11 @@ class Yum(LinuxManager):
         # When/if amzn linux switches a distro to el7, rethink this.
         return '6'
 
-    def _validate(self):
-        """Validate the Linux distro and set associated attributes."""
-        self.dist = None
-        self.version = None
-        self.el_version = None
-
-        supported_dists = ('amazon', 'centos', 'red hat')
-
-        match_supported_dist = re.compile(r"^({0})"
-                                          "(?:[^0-9]+)"
-                                          "([\d]+[.][\d]+)"
-                                          "(?:.*)"
-                                          .format('|'.join(supported_dists)))
+    def get_dist_info(self):
+        """Validate the Linux distro and return info about the distribution."""
+        dist = None
+        version = None
+        el_version = None
 
         # Read first line from /etc/system-release
         try:
@@ -48,38 +51,41 @@ class Yum(LinuxManager):
             raise
 
         # Search the release file for a match against _supported_dists
-        matched = match_supported_dist.search(release.lower())
+        matched = self.DIST_PATTERN.search(release.lower())
         if matched is None:
             # Release not supported, exit with error
             msg = (
                 'Unsupported OS distribution. OS must be one of: {0}'
-                .format(', '.join(supported_dists))
+                .format(', '.join(self.SUPPORTED_DISTS))
             )
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
         # Assign dist,version from the match groups tuple, removing any spaces
-        self.dist, self.version = (
+        dist, version = (
             x.translate(None, ' ') for x in matched.groups()
         )
 
         # Determine el_version
-        if 'amazon' == self.dist:
-            self.el_version = self._get_amazon_el_version(self.version)
+        if dist == 'amazon':
+            el_version = self._get_amazon_el_version(version)
         else:
-            self.el_version = self.version.split('.')[0]
+            el_version = version.split('.')[0]
 
-        if self.el_version is None:
+        if el_version is None:
             msg = (
                 'Unsupported OS version! dist = {0}, version = {1}.'
-                .format(self.dist, self.version)
+                .format(dist, version)
             )
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-        self.log.debug('Dist\t\t{0}'.format(self.dist))
-        self.log.debug('Version\t\t{0}'.format(self.version))
-        self.log.debug('EPEL Version\t{0}'.format(self.el_version))
+        dist_info = {
+            'dist': dist,
+            'el_version': el_version
+        }
+        self.log.debug('dist_info = {0}'.format(dist_info))
+        return dist_info
 
     def _repo(self, config):
         """Validate the ``yumrepomap`` is properly formed."""
@@ -96,6 +102,9 @@ class Yum(LinuxManager):
             configuration (:obj:`json`):
                 The configuration data required to install the yum repos.
         """
+        dist = self.dist_info['dist']
+        el_version = self.dist_info['el_version']
+
         try:
             config = json.loads(configuration)
         except ValueError:
@@ -111,25 +120,23 @@ class Yum(LinuxManager):
         else:
             self.log.info('yumrepomap did not exist or was empty.')
 
-        self._validate()
-
         # TODO This block is weird.  Correct and done.
         for repo in config['yumrepomap']:
-            if repo['dist'] in [self.dist, 'all']:
+            if repo['dist'] in [dist, 'all']:
                 self.log.debug(
-                    '{0} in {1} or all'.format(repo['dist'], self.dist)
+                    '{0} in {1} or all'.format(repo['dist'], dist)
                 )
                 if 'el_version' in repo and \
-                        str(repo['el_version']) != str(self.el_version):
+                        str(repo['el_version']) != str(el_version):
                     self.log.debug(
                         'Skipping repo - el_version ({0}) is not valid for '
                         'this repo ({1}).'
-                        .format(self.el_version, repo['url'])
+                        .format(el_version, repo['url'])
                     )
                 else:
                     self.log.info(
                         'All requirements have been validated for repo - {0}.'
-                        .format(self.el_version, repo['url'])
+                        .format(el_version, repo['url'])
                     )
                     # Download the yum repo definition to /etc/yum.repos.d/
                     url = repo['url']
@@ -138,5 +145,5 @@ class Yum(LinuxManager):
                     self.download_file(url, repofile)
             else:
                 self.log.debug(
-                    '{0} NOT in {1} or all'.format(repo['dist'], self.dist)
+                    '{0} NOT in {1} or all'.format(repo['dist'], dist)
                 )
