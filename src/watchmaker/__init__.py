@@ -180,10 +180,20 @@ class Prepare(object):
     def _get_scripts_to_execute(self):
         """Set ``self.execution_scripts`` attribute with configuration data."""
         scriptstoexecute = self.config[self.system]
+
+        # Remove `None` values from worker_args
+        worker_args = dict(
+            (k, v) for k, v in self.worker_args.iteritems() if v is not None
+        )
+        self.log.debug(
+            'Arguments being merged into worker configs: {0}'
+            .format(worker_args)
+        )
+
         for item in self.config[self.system]:
             try:
                 self.config[self.system][item]['Parameters'].update(
-                    self.worker_args
+                    worker_args
                 )
             except Exception:
                 msg = (
