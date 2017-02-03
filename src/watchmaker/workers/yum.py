@@ -2,6 +2,7 @@
 """Watchmaker yum worker."""
 import json
 import re
+import six
 
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager
@@ -118,8 +119,13 @@ class Yum(LinuxManager):
         dist = self.dist_info['dist']
         el_version = self.dist_info['el_version']
 
-        if repo['dist'] not in [dist, 'all']:
-            # provided repo is not applicable to this system
+        repo_dists = repo['dist']
+        if isinstance(repo_dists, six.string_types):
+            # ensure repo_dist is a list
+            repo_dists = [repo_dists]
+
+        if not set(repo_dists).intersection([dist, 'all']):
+            # provided repo dist is not applicable to this system
             return False
         elif (
             'el_version' in repo and
