@@ -87,12 +87,27 @@ class Yum(LinuxManager):
         self.log.debug('dist_info = {0}'.format(dist_info))
         return dist_info
 
-    def _repo(self, config):
-        """Validate the ``yumrepomap`` is properly formed."""
-        if not isinstance(config['yumrepomap'], list):
+    def _validate_config(self, configuration):
+        """Validate the config is properly formed."""
+        config = {}
+        try:
+            config = json.loads(configuration)
+        except ValueError:
+            msg = (
+                'The configuration passed was not properly formed JSON.'
+                'Execution halted.'
+            )
+            self.log.critical(msg)
+            raise
+
+        if not ('yumrepomap' in config and config['yumrepomap']):
+            self.log.warning('yumrepomap did not exist or was empty.')
+        elif not isinstance(config['yumrepomap'], list):
             msg = '`yumrepomap` must be a list!'
             self.log.critical(msg)
             raise WatchmakerException(msg)
+
+        return config
 
     def install(self, configuration):
         """
@@ -105,23 +120,10 @@ class Yum(LinuxManager):
         dist = self.dist_info['dist']
         el_version = self.dist_info['el_version']
 
-        try:
-            config = json.loads(configuration)
-        except ValueError:
-            msg = (
-                'The configuration passed was not properly formed JSON.'
-                'Execution halted.'
-            )
-            self.log.critical(msg)
-            raise
-
-        if 'yumrepomap' in config and config['yumrepomap']:
-            self._repo(config)
-        else:
-            self.log.info('yumrepomap did not exist or was empty.')
+        config = self._validate_config(configuration)
 
         # TODO This block is weird.  Correct and done.
-        for repo in config['yumrepomap']:
+        for repo in config.get('yumrepomap', []):
             if repo['dist'] in [dist, 'all']:
                 self.log.debug(
                     '{0} in {1} or all'.format(repo['dist'], dist)
