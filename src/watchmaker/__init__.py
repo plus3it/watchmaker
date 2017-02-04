@@ -209,23 +209,25 @@ class Prepare(object):
         worker_args = dict(
             (k, v) for k, v in self.worker_args.iteritems() if v is not None
         )
-        self.log.debug(
-            'Arguments being merged into worker configs: {0}'
-            .format(worker_args)
-        )
 
-        for item in self.config:
+        for worker in self.config:
+            self.log.debug(
+                '{0} config: {1}'.format(worker, self.config[worker])
+            )
             try:
-                self.config[item]['Parameters'].update(
-                    worker_args
-                )
+                self.config[worker]['Parameters'].update(worker_args)
             except Exception:
                 msg = (
                     'For {0} in {1}, the parameters could not be merged.'
-                    .format(item, self.config_path)
+                    .format(worker, self.config_path)
                 )
                 self.log.critical(msg)
                 raise
+
+        self.log.debug(
+            'Arguments merged into worker configs: {0}'
+            .format(worker_args)
+        )
 
     def install_system(self):
         """
@@ -237,11 +239,11 @@ class Prepare(object):
         self._get_system_params()
         self.log.debug('System params: {0}'.format(self.system_params))
 
-        self._merge_args_into_config()
         self.log.info(
             'Workers to execute: {0}.'
             .format(self.config.keys())
         )
+        self._merge_args_into_config()
 
         if 'Linux' in self.system:
             workers_manager = LinuxWorkersManager(
