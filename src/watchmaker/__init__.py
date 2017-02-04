@@ -62,6 +62,17 @@ class Prepare(object):
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
+        self.system = platform.system()
+        self._set_system_params()
+
+        header = ' WATCHMAKER RUN '
+        header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
+        self.log.info(header)
+        self.log.debug('Parameters:  {0}'.format(arguments))
+        self.log.debug('Extra Parameters:  {0}'.format(extra_arguments))
+        self.log.debug('System Type: {0}'.format(self.system))
+        self.log.debug('System Parameters: {0}'.format(self.system_params))
+
         # Define arguments to pass through to workers
         self.worker_args = {
             'sourceiss3bucket': arguments.sourceiss3bucket,
@@ -77,20 +88,13 @@ class Prepare(object):
         self.worker_args.update(dict(
             (k.lstrip('-'), v) for k, v in zip(*[iter(extra_arguments)]*2)
         ))
-        self.noreboot = arguments.noreboot
-        self.system = platform.system()
-        self.config_path = arguments.config
-        self.default_config = os.path.join(static.__path__[0], 'config.yaml')
-        self.config = self._get_config_data()
-        self.system_params = None
-        self.system_drive = None
 
-        header = ' WATCHMAKER RUN '
-        header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
-        self.log.info(header)
-        self.log.debug('Parameters:  {0}'.format(arguments))
-        self.log.debug('Extra Parameters:  {0}'.format(extra_arguments))
-        self.log.debug('System Type: {0}'.format(self.system))
+        self.default_config = os.path.join(static.__path__[0], 'config.yaml')
+        self.noreboot = arguments.noreboot
+        self.config_path = arguments.config
+
+        self.config = self._get_config_data()
+        self._merge_args_into_config()
 
     def _validate_url(self, url):
         return urllib.parse.urlparse(url).scheme in ['http', 'https']
@@ -143,7 +147,7 @@ class Prepare(object):
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-    def _linux_paths(self):
+    def _set_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
         params['prepdir'] = os.path.join(
@@ -157,7 +161,7 @@ class Prepare(object):
         params['restart'] = 'shutdown -r +1 &'
         self.system_params = params
 
-    def _windows_paths(self):
+    def _set_windows_system_params(self):
         """Set ``self.system_params`` attribute for Windows systems."""
         params = {}
         # os.path.join does not produce path as expected when first string
@@ -176,32 +180,20 @@ class Prepare(object):
             '"Watchmaker complete. Rebooting computer."'
         self.system_params = params
 
-    def _get_system_params(self):
+    def _set_system_params(self):
         """Set OS-specific attributes."""
         if 'Linux' in self.system:
             self.system_drive = '/'
-            self._linux_paths()
+            self.workers_manager = LinuxWorkersManager
+            self._set_linux_system_params()
         elif 'Windows' in self.system:
             self.system_drive = os.environ['SYSTEMDRIVE']
-            self._windows_paths()
+            self.workers_manager = WindowsWorkersManager
+            self._set_windows_system_params()
         else:
             msg = 'System, {0}, is not recognized?'.format(self.system)
             self.log.critical(msg)
             raise WatchmakerException(msg)
-
-        # Create watchmaker directories
-        try:
-            if not os.path.exists(self.system_params['logdir']):
-                os.makedirs(self.system_params['logdir'])
-            if not os.path.exists(self.system_params['workingdir']):
-                os.makedirs(self.system_params['workingdir'])
-        except Exception:
-            msg = (
-                'Could not create a directory in {0}.'
-                .format(self.system_params['prepdir'])
-            )
-            self.log.critical(msg)
-            raise
 
     def _merge_args_into_config(self):
         """Merge arguments into configuration data."""
@@ -236,38 +228,33 @@ class Prepare(object):
         Upon successful execution, the system will be properly provisioned,
         according to the defined configuration and workers.
         """
-        self._get_system_params()
-        self.log.debug('System params: {0}'.format(self.system_params))
-
+        self.log.info('Start time: {0}'.format(datetime.datetime.now()))
         self.log.info(
             'Workers to execute: {0}.'
             .format(self.config.keys())
         )
-        self._merge_args_into_config()
 
-        if 'Linux' in self.system:
-            workers_manager = LinuxWorkersManager(
-                self.system_params,
-                self.config
-            )
-        elif 'Windows' in self.system:
-            workers_manager = WindowsWorkersManager(
-                self.system_params,
-                self.config
-            )
-        else:
-            msg = 'There is no known System!'
-            self.log.critical(msg)
-            raise WatchmakerException(msg)
+        # Create watchmaker directories
+        try:
+            os.makedirs(self.system_params['workingdir'])
+        except OSError:
+            if not os.path.exists(self.system_params['workingdir']):
+                msg = (
+                    'Unable create directory - {0}'
+                    .format(self.system_params['workingdir'])
+                )
+                self.log.critical(msg)
+                raise
+
+        workers_manager = self.workers_manager(self.system_params, self.config)
 
         try:
             workers_manager.worker_cadence()
-        except Exception:
+        except:
             msg = 'Execution of the workers cadence has failed.'
             self.log.critical(msg)
             raise
 
-        self.log.info('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
             self.log.info(
                 'Detected `noreboot` switch. System will not be rebooted.'
@@ -277,3 +264,4 @@ class Prepare(object):
                 'Reboot scheduled. System will reboot after the script exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)
+        self.log.info('Stop time: {0}'.format(datetime.datetime.now()))
