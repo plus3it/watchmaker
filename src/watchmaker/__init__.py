@@ -44,10 +44,10 @@ class Prepare(object):
         arguments (:obj:`dict`):
             A dictionary of arguments. See :func:`cli.main`.
         extra_arguments (:obj:`list`):
-            (Defaults to ``None``) A list of extra arguments that should be
-            passed through to the worker configurations. The list should be
-            consist of pairs of arguments and values. Any leading hypens in the
-            argument name are stripped. For example:
+            (Defaults to ``None``) A list of extra arguments to be merged into
+            the worker configurations. The list must be formed as pairs of
+            named arguments and values. Any leading hypens in the argument name
+            are stripped. For example:
 
             .. code-block:: python
 
@@ -84,7 +84,6 @@ class Prepare(object):
         self.config = self._get_config_data()
         self.system_params = None
         self.system_drive = None
-        self.execution_scripts = None
 
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
@@ -101,7 +100,9 @@ class Prepare(object):
         Read and validate configuration data for installation.
 
         Returns:
-            dict: Data from the YAML configuration file.
+            dict: Returns the data from the YAML configuration file, scoped to
+            the value of ``self.system``. If ``self.system`` is not present,
+            returns an empty dict.
         """
         data = {}
 
@@ -136,7 +137,7 @@ class Prepare(object):
                 data = f.read()
 
         if data:
-            return(yaml.safe_load(data))
+            return(yaml.safe_load(data).get(self.system, {}))
         else:
             msg = 'Encountered an unknown error loading the config. Aborting!'
             self.log.critical(msg)
@@ -202,10 +203,8 @@ class Prepare(object):
             self.log.critical(msg)
             raise
 
-    def _get_scripts_to_execute(self):
-        """Set ``self.execution_scripts`` attribute with configuration data."""
-        scriptstoexecute = self.config[self.system]
-
+    def _merge_args_into_config(self):
+        """Merge arguments into configuration data."""
         # Remove `None` values from worker_args
         worker_args = dict(
             (k, v) for k, v in self.worker_args.iteritems() if v is not None
@@ -215,9 +214,9 @@ class Prepare(object):
             .format(worker_args)
         )
 
-        for item in self.config[self.system]:
+        for item in self.config:
             try:
-                self.config[self.system][item]['Parameters'].update(
+                self.config[item]['Parameters'].update(
                     worker_args
                 )
             except Exception:
@@ -228,8 +227,6 @@ class Prepare(object):
                 self.log.critical(msg)
                 raise
 
-        self.execution_scripts = scriptstoexecute
-
     def install_system(self):
         """
         Initiate the installation of the prepared system.
@@ -238,23 +235,23 @@ class Prepare(object):
         according to the defined configuration and workers.
         """
         self._get_system_params()
-        self.log.debug(self.system_params)
+        self.log.debug('System params: {0}'.format(self.system_params))
 
-        self._get_scripts_to_execute()
+        self._merge_args_into_config()
         self.log.info(
-            'Got scripts to execute: {0}.'
-            .format(self.config[self.system].keys())
+            'Workers to execute: {0}.'
+            .format(self.config.keys())
         )
 
         if 'Linux' in self.system:
             workers_manager = LinuxWorkersManager(
                 self.system_params,
-                self.execution_scripts
+                self.config
             )
         elif 'Windows' in self.system:
             workers_manager = WindowsWorkersManager(
                 self.system_params,
-                self.execution_scripts
+                self.config
             )
         else:
             msg = 'There is no known System!'
