@@ -2,91 +2,95 @@
 """Watchmaker yum worker."""
 import json
 import re
+import six
 
+from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager
 
 
 class Yum(LinuxManager):
     """Install yum repos."""
 
+    SUPPORTED_DISTS = ('amazon', 'centos', 'red hat')
+
+    # Pattern used to match against the first line of /etc/system-release. A
+    # match will contain two groups: the dist name (e.g. 'red hat' or 'amazon')
+    # and the dist version (e.g. '6.8' or '2016.09').
+    DIST_PATTERN = re.compile(
+        r"^({0})"
+        "(?:[^0-9]+)"
+        "([\d]+[.][\d]+)"
+        "(?:.*)"
+        .format('|'.join(SUPPORTED_DISTS))
+    )
+
     def __init__(self):  # noqa: D102
         super(Yum, self).__init__()
-        self.dist = None
-        self.version = None
-        self.epel_version = None
+        self.dist_info = self.get_dist_info()
 
-    def _validate(self):
-        """Validate the Linux distro and set associated attributes."""
-        self.dist = None
-        self.version = None
-        self.epel_version = None
+    @staticmethod
+    def _get_amazon_el_version(version):
+        # All amzn linux distros currently available use el6-based packages.
+        # When/if amzn linux switches a distro to el7, rethink this.
+        return '6'
 
-        supported_dists = ('amazon', 'centos', 'red hat')
-
-        match_supported_dist = re.compile(r"^({0})"
-                                          "(?:[^0-9]+)"
-                                          "([\d]+[.][\d]+)"
-                                          "(?:.*)"
-                                          .format('|'.join(supported_dists)))
-        amazon_epel_versions = {
-            '2014.03': '6',
-            '2014.09': '6',
-            '2015.03': '6',
-            '2015.09': '6',
-        }
+    def get_dist_info(self):
+        """Validate the Linux distro and return info about the distribution."""
+        dist = None
+        version = None
+        el_version = None
 
         # Read first line from /etc/system-release
         try:
             with open(name='/etc/system-release', mode='rb') as f:
                 release = f.readline().strip()
-        except Exception as exc:
-            raise SystemError('Could not read /etc/system-release. '
-                              'Error: {0}'.format(exc))
+        except:
+            self.log.critical(
+                'Failed to read /etc/system-release. Cannot determine system '
+                'distribution!'
+            )
+            raise
 
         # Search the release file for a match against _supported_dists
-        matched = match_supported_dist.search(release.lower())
+        matched = self.DIST_PATTERN.search(release.lower())
         if matched is None:
             # Release not supported, exit with error
-            raise SystemError(
+            msg = (
                 'Unsupported OS distribution. OS must be one of: {0}'
-                .format(', '.join(supported_dists))
+                .format(', '.join(self.SUPPORTED_DISTS))
             )
+            self.log.critical(msg)
+            raise WatchmakerException(msg)
 
         # Assign dist,version from the match groups tuple, removing any spaces
-        self.dist, self.version = (
+        dist, version = (
             x.translate(None, ' ') for x in matched.groups()
         )
 
-        # Determine epel_version
-        if 'amazon' == self.dist:
-            self.epel_version = amazon_epel_versions.get(self.version, None)
+        # Determine el_version
+        if dist == 'amazon':
+            el_version = self._get_amazon_el_version(version)
         else:
-            self.epel_version = self.version.split('.')[0]
+            el_version = version.split('.')[0]
 
-        if self.epel_version is None:
-            raise SystemError(
+        if el_version is None:
+            msg = (
                 'Unsupported OS version! dist = {0}, version = {1}.'
-                .format(self.dist, self.version)
+                .format(dist, version)
             )
+            self.log.critical(msg)
+            raise WatchmakerException(msg)
 
-        self.log.debug('Dist\t\t{0}'.format(self.dist))
-        self.log.debug('Version\t\t{0}'.format(self.version))
-        self.log.debug('EPEL Version\t{0}'.format(self.epel_version))
+        dist_info = {
+            'dist': dist,
+            'el_version': el_version
+        }
+        self.log.debug('dist_info = {0}'.format(dist_info))
+        return dist_info
 
-    def _repo(self, config):
-        """Validate the ``yumrepomap`` is properly formed."""
-        if not isinstance(config['yumrepomap'], list):
-            msg = '`yumrepomap` must be a list!'
-            self.log.error(msg, Exception(msg))
-
-    def install(self, configuration):
-        """
-        Install yum repos defined in config file.
-
-        Args:
-            configuration (:obj:`json`):
-                The configuration data required to install the yum repos.
-        """
+    def _validate_config(self, configuration):
+        """Validate the config is properly formed."""
+        config = {}
         try:
             config = json.loads(configuration)
         except ValueError:
@@ -97,38 +101,66 @@ class Yum(LinuxManager):
             self.log.critical(msg)
             raise
 
-        if 'yumrepomap' in config and config['yumrepomap']:
-            self._repo(config)
+        if not ('yumrepomap' in config and config['yumrepomap']):
+            self.log.warning('yumrepomap did not exist or was empty.')
+        elif not isinstance(config['yumrepomap'], list):
+            msg = '`yumrepomap` must be a list!'
+            self.log.critical(msg)
+            raise WatchmakerException(msg)
+
+        return config
+
+    def _validate_repo(self, repo):
+        """Check if a repo is applicable to this system."""
+        # Check if this repo applies to this system's dist and el_version.
+        # repo['dist'] must match this system's dist or the keyword 'all'
+        # repo['el_version'] is optional, but if present then it must match
+        # this system's el_version.
+        dist = self.dist_info['dist']
+        el_version = self.dist_info['el_version']
+
+        repo_dists = repo['dist']
+        if isinstance(repo_dists, six.string_types):
+            # ensure repo_dist is a list
+            repo_dists = [repo_dists]
+
+        if not set(repo_dists).intersection([dist, 'all']):
+            # provided repo dist is not applicable to this system
+            return False
+        elif (
+            'el_version' in repo and
+            str(repo['el_version']) != str(el_version)
+        ):
+            # provided el_version is not a match to this system
+            return False
         else:
-            self.log.info('yumrepomap did not exist or was empty.')
+            # checks pass, repo is valid for this system
+            return True
 
-        self._validate()
+    def install(self, configuration):
+        """
+        Install yum repos defined in config file.
 
-        # TODO This block is weird.  Correct and done.
-        for repo in config['yumrepomap']:
+        Args:
+            configuration (:obj:`json`):
+                The configuration data required to install the yum repos.
+        """
+        config = self._validate_config(configuration)
 
-            if repo['dist'] in [self.dist, 'all']:
-                self.log.debug(
-                    '{0} in {1} or all'.format(repo['dist'], self.dist)
-                )
-                if 'epel_version' in repo and \
-                        str(repo['epel_version']) != str(self.epel_version):
-                    self.log.debug(
-                        'Skipping repo - epel_version ({0}) is not valid for '
-                        'this repo ({1}).'
-                        .format(self.epel_version, repo['url'])
-                    )
-                else:
-                    self.log.info(
-                        'All requirements have been validated for repo - {0}.'
-                        .format(self.epel_version, repo['url'])
-                    )
-                    # Download the yum repo definition to /etc/yum.repos.d/
-                    url = repo['url']
-                    repofile = '/etc/yum.repos.d/{0}'.format(
-                        url.split('/')[-1])
-                    self.download_file(url, repofile)
+        for repo in config.get('yumrepomap', []):
+            if self._validate_repo(repo):
+                # Download the yum repo definition to /etc/yum.repos.d/
+                self.log.info('Installing repo: {0}'.format(repo['url']))
+                url = repo['url']
+                repofile = '/etc/yum.repos.d/{0}'.format(
+                    url.split('/')[-1])
+                self.download_file(url, repofile)
             else:
                 self.log.debug(
-                    '{0} NOT in {1} or all'.format(repo['dist'], self.dist)
+                    'Skipped repo because it is not valid for this system: '
+                    'dist_info={0}'
+                    .format(self.dist_info)
+                )
+                self.log.debug(
+                    'Skipped repo={0}'.format(repo)
                 )
