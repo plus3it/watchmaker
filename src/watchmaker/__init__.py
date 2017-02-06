@@ -23,10 +23,82 @@ class Arguments(dict):
     Create an arguments object for the :class:`Client`.
 
     Args:
+        config_path (:obj:`str`):
+            (Defaults to ``None``) Path or URL to the Watchmaker configuration
+            file. If ``None``, the default config.yaml file is used.
+        log_dir (:obj:`str`):
+            (Defaults to ``None``) See :func:`prepare_logging`.
+        noreboot (:obj:`bool`):
+            (Defaults to ``False``): Switch to control whether to reboot the
+            system upon a successfull execution of
+            :func:`WatchmakerClient.install`. When this parameter is set,
+            Watchmaker will suppress the reboot. Watchmaker automatically
+            suppresses the reboot if it encounters an error.
+        verbosity (:obj:`int`):
+            (Defaults to ``0``) See :func:`prepare_logging`.
 
-    Keyword Arguments:
+    .. important::
+
+        For all **Keyword Arguments**, below, the default value of ``None``
+        means Watchmaker will get the value from the configuration file. Be
+        aware that ``None`` and ``'None'`` are two different values, with
+        different meanings and effects.
+
+    Keyword Args:
+
+        admingroups (:obj:`str`):
+            (Defaults to ``None``) Set a salt grain that specifies the domain
+            _groups_ that should have root privileges on Linux or admin
+            privileges on Windows. Value must be a colon-separated string. On
+            Linux, use the ``^`` to denote spaces in the group name.
+
+            .. code-block:: python
+
+                admingroups = "group1:group2"
+
+                # (Linux only) If there are spaces in the group name, replace
+                # the spaces with a '^':
+                admingroups = "space^out"
+
+                # (Windows only) If there are spaces in the group name, no
+                # special syntax required.
+                admingroups = "space out"
+
+        adminusers (:obj:`str`):
+            (Defaults to ``None``) Set a salt grain that specifies the domain
+            _users_ that should have root privileges on Linux or admin
+            privileges on Windows. Value must be a colon-separated string.
+
+            .. code-block:: python
+
+                adminusers = "user1:user2"
+
+        computername (:obj:`str`):
+            (Defaults to ``None``) Set a salt grain that specifies the
+            computername to apply to the system.
+        entenv (:obj:`str`):
+            (Defaults to ``None``) Set a salt grain that specifies the
+            environment in which the system is being built. For example:
+            ``dev``, ``test``, or ``prod``.
+        saltstates (:obj:`str`):
+            (Defaults to ``None``) Comma-separated string of salt states to
+            apply. A value of ``'None'`` (the string) will not apply any salt
+            states. A value of ``'Highstate'`` will apply the salt highstate.
+        sourceiss3bucket (:obj:`bool`):
+            (Defaults to ``None``) Use S3 utilities to retrieve content instead
+            of http/s utilities. For S3 utilities to work, the system must have
+            boto credentials configured that allow access to the S3 bucket.
+        oupath (:obj:`str`):
+            (Defaults to ``None``) Set a salt grain that specifies the full DN
+            of the OU where the computer account will be created when joining a
+            domain.
+
+            .. code-block:: python
+
+                oupath="OU=Super Cool App,DC=example,DC=com"
+
         extra_arguments (:obj:`list`):
-            (Defaults to ``None``) A list of extra arguments to be merged into
+            (Defaults to ``[]``) A list of extra arguments to be merged into
             the worker configurations. The list must be formed as pairs of
             named arguments and values. Any leading hypens in the argument name
             are stripped. For example:
@@ -48,16 +120,16 @@ class Arguments(dict):
         verbosity=0,
         **kwargs
     ):
-        self.noreboot = noreboot
         self.config_path = config_path
         self.log_dir = log_dir
+        self.noreboot = noreboot
         self.verbosity = verbosity
-        self.sourceiss3bucket = kwargs.pop('sourceiss3bucket', None)
-        self.saltstates = kwargs.pop('saltstates', None)
         self.admingroups = kwargs.pop('admingroups', None)
         self.adminusers = kwargs.pop('adminusers', None)
         self.computername = kwargs.pop('computername', None)
         self.entenv = kwargs.pop('entenv', None)
+        self.saltstates = kwargs.pop('saltstates', None)
+        self.sourceiss3bucket = kwargs.pop('sourceiss3bucket', None)
         self.oupath = kwargs.pop('oupath', None)
         self.extra_arguments = kwargs.pop('extra_arguments', [])
 
