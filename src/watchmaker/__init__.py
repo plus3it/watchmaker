@@ -18,31 +18,13 @@ from watchmaker.managers.workers import (LinuxWorkersManager,
 __version__ = '0.0.1'
 
 
-class Arguments(object):
-    """Prepare arguments."""
-
-    def __init__(self):  # noqa: D102
-        self.noreboot = False
-        self.s3 = False
-        self.config_path = None
-        self.saltstates = False
-
-    def __repr__(self):  # noqa: D105
-        return '< noreboot="{0}", s3="{1}", config_path="{2}"' \
-               ', saltstates="{3}" >'.format(self.noreboot,
-                                             self.s3,
-                                             self.config_path,
-                                             self.saltstates
-                                             )
-
-
-class Client(object):
+class Arguments(dict):
     """
-    Prepare a system for setup and installation.
+    Create an arguments object for the :class:`Client`.
 
     Args:
-        arguments (:obj:`dict`):
-            A dictionary of arguments. See :func:`cli.main`.
+
+    Keyword Arguments:
         extra_arguments (:obj:`list`):
             (Defaults to ``None``) A list of extra arguments to be merged into
             the worker configurations. The list must be formed as pairs of
@@ -58,12 +40,54 @@ class Client(object):
                 {'arg1': 'value1', 'arg2': 'value2'}
     """
 
-    def __init__(self, arguments, extra_arguments=None):  # noqa: D102
+    def __init__(  # noqa: D102
+        self,
+        config_path=None,
+        log_dir=None,
+        noreboot=False,
+        verbosity=0,
+        **kwargs
+    ):
+        self.noreboot = noreboot
+        self.config_path = config_path
+        self.log_dir = log_dir
+        self.verbosity = verbosity
+        self.sourceiss3bucket = kwargs.pop('sourceiss3bucket', None)
+        self.saltstates = kwargs.pop('saltstates', None)
+        self.admingroups = kwargs.pop('admingroups', None)
+        self.adminusers = kwargs.pop('adminusers', None)
+        self.computername = kwargs.pop('computername', None)
+        self.entenv = kwargs.pop('entenv', None)
+        self.oupath = kwargs.pop('oupath', None)
+        self.extra_arguments = kwargs.pop('extra_arguments', [])
+
+    def __getattr__(self, attr):
+        """Support attr-notation for getting dict contents."""
+        return super(Arguments, self).__getitem__(attr)
+
+    def __setattr__(self, attr, value):
+        """Support attr-notation for setting dict contents."""
+        super(Arguments, self).__setitem__(attr, value)
+
+
+class Client(object):
+    """
+    Prepare a system for setup and installation.
+
+    Keyword Arguments:
+        arguments (:obj:`Arguments`):
+            A dictionary of arguments. See :class:`Arguments`.
+    """
+
+    def __init__(self, arguments):  # noqa: D102
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
         self.system = platform.system()
         self._set_system_params()
+
+        # Pop extra_arguments now so we can log it separately
+        extra_arguments = arguments.pop('extra_arguments', [])
 
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
@@ -73,18 +97,17 @@ class Client(object):
         self.log.debug('System Type: {0}'.format(self.system))
         self.log.debug('System Parameters: {0}'.format(self.system_params))
 
-        # Define arguments to pass through to workers
-        worker_args = {
-            'sourceiss3bucket': arguments.sourceiss3bucket,
-            'saltstates': arguments.saltstates,
-            'admingroups': arguments.admingroups,
-            'adminusers': arguments.adminusers,
-            'computername': arguments.computername,
-            'entenv': arguments.entenv,
-            'oupath': arguments.oupath,
-        }
+        # Pop remaining arguments used by watchmaker.Client itself
+        self.default_config = os.path.join(static.__path__[0], 'config.yaml')
+        self.noreboot = arguments.pop('noreboot', False)
+        self.config_path = arguments.pop('config_path')
+        self.log_dir = arguments.pop('log_dir')
+        self.verbosity = arguments.pop('verbosity')
+
+        # All remaining arguments are worker_args
+        worker_args = arguments
+
         # Convert extra_arguments to a dict and merge it with worker_args
-        extra_arguments = [] if extra_arguments is None else extra_arguments
         worker_args.update(dict(
             (k.lstrip('-'), v) for k, v in zip(*[iter(extra_arguments)]*2)
         ))
@@ -92,10 +115,6 @@ class Client(object):
         self.worker_args = dict(
             (k, v) for k, v in worker_args.iteritems() if v is not None
         )
-
-        self.default_config = os.path.join(static.__path__[0], 'config.yaml')
-        self.noreboot = arguments.noreboot
-        self.config_path = arguments.config
 
         self.config = self._get_config()
 

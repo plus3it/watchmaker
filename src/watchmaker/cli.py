@@ -96,5 +96,9 @@ def main():
     arguments, extra_arguments = parser.parse_known_args()
     prepare_logging(arguments.log_dir, arguments.verbosity)
 
-    watchmaker_client = watchmaker.Client(arguments, extra_arguments)
+    watchmaker_arguments = watchmaker.Arguments(**dict(
+        extra_arguments=extra_arguments,
+        **vars(arguments)
+    ))
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
     sys.exit(watchmaker_client.install())
