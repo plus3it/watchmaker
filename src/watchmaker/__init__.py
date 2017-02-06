@@ -18,7 +18,7 @@ from watchmaker.managers.workers import (LinuxWorkersManager,
 __version__ = '0.0.1'
 
 
-class PrepArguments(object):
+class Arguments(object):
     """Prepare arguments."""
 
     def __init__(self):  # noqa: D102
@@ -36,7 +36,7 @@ class PrepArguments(object):
                                              )
 
 
-class Prepare(object):
+class Client(object):
     """
     Prepare a system for setup and installation.
 
@@ -245,7 +245,7 @@ class Prepare(object):
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-    def install_system(self):
+    def install(self):
         """
         Initiate the installation of the prepared system.
 
