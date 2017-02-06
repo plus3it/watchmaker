@@ -4,7 +4,6 @@ import datetime
 import logging
 import os
 import platform
-import shutil
 import subprocess
 
 import yaml
@@ -44,32 +43,60 @@ class Prepare(object):
     Args:
         arguments (:obj:`dict`):
             A dictionary of arguments. See :func:`cli.main`.
+        extra_arguments (:obj:`list`):
+            (Defaults to ``None``) A list of extra arguments to be merged into
+            the worker configurations. The list must be formed as pairs of
+            named arguments and values. Any leading hypens in the argument name
+            are stripped. For example:
+
+            .. code-block:: python
+
+                extra_arguments=['--arg1', 'value1', '--arg2', 'value2']
+
+                # This list would be converted to the following dict and merged
+                # into the parameters passed to the worker configurations:
+                {'arg1': 'value1', 'arg2': 'value2'}
     """
 
-    def __init__(self, arguments):  # noqa: D102
+    def __init__(self, arguments, extra_arguments=None):  # noqa: D102
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
-        self.kwargs = {}
-        self.noreboot = arguments.noreboot
-        self.s3 = arguments.sourceiss3bucket
         self.system = platform.system()
-        self.config_path = arguments.config
-        self.default_config = os.path.join(static.__path__[0], 'config.yaml')
-        self.saltstates = arguments.saltstates
-        self.config = None
-        self.system_params = None
-        self.system_drive = None
-        self.execution_scripts = None
+        self._set_system_params()
 
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
         self.log.info(header)
-        self.log.info('Parameters:  {0}'.format(self.kwargs))
-        self.log.info('System Type: {0}'.format(self.system))
+        self.log.debug('Parameters:  {0}'.format(arguments))
+        self.log.debug('Extra Parameters:  {0}'.format(extra_arguments))
+        self.log.debug('System Type: {0}'.format(self.system))
+        self.log.debug('System Parameters: {0}'.format(self.system_params))
+
+        # Define arguments to pass through to workers
+        self.worker_args = {
+            'sourceiss3bucket': arguments.sourceiss3bucket,
+            'saltstates': arguments.saltstates,
+            'admingroups': arguments.admingroups,
+            'adminusers': arguments.adminusers,
+            'computername': arguments.computername,
+            'entenv': arguments.entenv,
+            'oupath': arguments.oupath,
+        }
+        # Convert extra_arguments to a dict and merge it with worker_args
+        extra_arguments = [] if extra_arguments is None else extra_arguments
+        self.worker_args.update(dict(
+            (k.lstrip('-'), v) for k, v in zip(*[iter(extra_arguments)]*2)
+        ))
+
+        self.default_config = os.path.join(static.__path__[0], 'config.yaml')
+        self.noreboot = arguments.noreboot
+        self.config_path = arguments.config
+
+        self.config = self._get_config_data()
+        self._merge_args_into_config()
 
     def _validate_url(self, url):
-
         return urllib.parse.urlparse(url).scheme in ['http', 'https']
 
     def _get_config_data(self):
@@ -77,9 +104,12 @@ class Prepare(object):
         Read and validate configuration data for installation.
 
         Returns:
-            Sets the ``self.config`` attribute with the data from the
-            configuration YAML file after validation.
+            dict: Returns the data from the YAML configuration file, scoped to
+            the value of ``self.system``. If ``self.system`` is not present,
+            returns an empty dict.
         """
+        data = {}
+
         if not self.config_path:
             self.log.warning(
                 'User did not supply a config.  Using the default config.'
@@ -90,10 +120,7 @@ class Prepare(object):
 
         if self._validate_url(self.config_path):
             try:
-                response = urllib.request.urlopen(self.config_path)
-                with open('config.yaml', 'wb') as outfile:
-                    shutil.copyfileobj(response, outfile)
-                self.config_path = 'config.yaml'
+                data = urllib.request.urlopen(self.config_path).read()
             except urllib.error.URLError:
                 msg = (
                     'The URL used to get the user config.yaml file did not '
@@ -101,8 +128,7 @@ class Prepare(object):
                 )
                 self.log.critical(msg)
                 raise
-
-        if self.config_path and not os.path.exists(self.config_path):
+        elif self.config_path and not os.path.exists(self.config_path):
             msg = (
                 'User supplied config {0} does not exist.  Please '
                 'double-check your config path or use the default config '
@@ -110,21 +136,18 @@ class Prepare(object):
             )
             self.log.critical(msg)
             raise WatchmakerException(msg)
-
-        with open(self.config_path) as f:
-            data = f.read()
+        else:
+            with open(self.config_path) as f:
+                data = f.read()
 
         if data:
-            self.config = yaml.load(data)
+            return(yaml.safe_load(data).get(self.system, {}))
         else:
-            msg = (
-                'Unable to load the data of the default or the user supplied '
-                'config.'
-            )
+            msg = 'Encountered an unknown error loading the config. Aborting!'
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-    def _linux_paths(self):
+    def _set_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
         params['prepdir'] = os.path.join(
@@ -138,7 +161,7 @@ class Prepare(object):
         params['restart'] = 'shutdown -r +1 &'
         self.system_params = params
 
-    def _windows_paths(self):
+    def _set_windows_system_params(self):
         """Set ``self.system_params`` attribute for Windows systems."""
         params = {}
         # os.path.join does not produce path as expected when first string
@@ -157,52 +180,46 @@ class Prepare(object):
             '"Watchmaker complete. Rebooting computer."'
         self.system_params = params
 
-    def _get_system_params(self):
+    def _set_system_params(self):
         """Set OS-specific attributes."""
         if 'Linux' in self.system:
             self.system_drive = '/'
-            self._linux_paths()
+            self.workers_manager = LinuxWorkersManager
+            self._set_linux_system_params()
         elif 'Windows' in self.system:
             self.system_drive = os.environ['SYSTEMDRIVE']
-            self._windows_paths()
+            self.workers_manager = WindowsWorkersManager
+            self._set_windows_system_params()
         else:
             msg = 'System, {0}, is not recognized?'.format(self.system)
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-        # Create watchmaker directories
-        try:
-            if not os.path.exists(self.system_params['logdir']):
-                os.makedirs(self.system_params['logdir'])
-            if not os.path.exists(self.system_params['workingdir']):
-                os.makedirs(self.system_params['workingdir'])
-        except Exception:
-            msg = (
-                'Could not create a directory in {0}.'
-                .format(self.system_params['prepdir'])
+    def _merge_args_into_config(self):
+        """Merge arguments into configuration data."""
+        # Remove `None` values from worker_args
+        worker_args = dict(
+            (k, v) for k, v in self.worker_args.iteritems() if v is not None
+        )
+
+        for worker in self.config:
+            self.log.debug(
+                '{0} config: {1}'.format(worker, self.config[worker])
             )
-            self.log.critical(msg)
-            raise
-
-    def _get_scripts_to_execute(self):
-        """Set ``self.execution_scripts`` attribute with configuration data."""
-        self._get_config_data()
-
-        scriptstoexecute = self.config[self.system]
-        for item in self.config[self.system]:
             try:
-                self.config[self.system][item]['Parameters'].update(
-                    self.kwargs
-                )
+                self.config[worker]['Parameters'].update(worker_args)
             except Exception:
                 msg = (
                     'For {0} in {1}, the parameters could not be merged.'
-                    .format(item, self.config_path)
+                    .format(worker, self.config_path)
                 )
                 self.log.critical(msg)
                 raise
 
-        self.execution_scripts = scriptstoexecute
+        self.log.debug(
+            'Arguments merged into worker configs: {0}'
+            .format(worker_args)
+        )
 
     def install_system(self):
         """
@@ -211,42 +228,33 @@ class Prepare(object):
         Upon successful execution, the system will be properly provisioned,
         according to the defined configuration and workers.
         """
-        self._get_system_params()
-        self.log.debug(self.system_params)
-
-        self._get_scripts_to_execute()
+        self.log.info('Start time: {0}'.format(datetime.datetime.now()))
         self.log.info(
-            'Got scripts to execute: {0}.'
-            .format(self.config[self.system].keys())
+            'Workers to execute: {0}.'
+            .format(self.config.keys())
         )
 
-        if 'Linux' in self.system:
-            workers_manager = LinuxWorkersManager(
-                self.s3,
-                self.system_params,
-                self.execution_scripts,
-                self.saltstates
-            )
-        elif 'Windows' in self.system:
-            workers_manager = WindowsWorkersManager(
-                self.s3,
-                self.system_params,
-                self.execution_scripts,
-                self.saltstates
-            )
-        else:
-            msg = 'There is no known System!'
-            self.log.critical(msg)
-            raise WatchmakerException(msg)
+        # Create watchmaker directories
+        try:
+            os.makedirs(self.system_params['workingdir'])
+        except OSError:
+            if not os.path.exists(self.system_params['workingdir']):
+                msg = (
+                    'Unable create directory - {0}'
+                    .format(self.system_params['workingdir'])
+                )
+                self.log.critical(msg)
+                raise
+
+        workers_manager = self.workers_manager(self.system_params, self.config)
 
         try:
             workers_manager.worker_cadence()
-        except Exception:
+        except:
             msg = 'Execution of the workers cadence has failed.'
             self.log.critical(msg)
             raise
 
-        self.log.info('Stop time: {0}'.format(datetime.datetime.now()))
         if self.noreboot:
             self.log.info(
                 'Detected `noreboot` switch. System will not be rebooted.'
@@ -256,3 +264,4 @@ class Prepare(object):
                 'Reboot scheduled. System will reboot after the script exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)
+        self.log.info('Stop time: {0}'.format(datetime.datetime.now()))

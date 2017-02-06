@@ -51,8 +51,7 @@ class SaltBase(ManagerBase):
 
         self.computer_name = self.config['computername']
         self.ent_env = self.config['entenv']
-        if not self.is_s3_bucket:
-            self.is_s3_bucket = self.config['sourceiss3bucket']
+        self.is_s3_bucket = self.config['sourceiss3bucket']
 
         self.create_working_dir(
             self.salt_working_dir,
@@ -236,36 +235,27 @@ class SaltBase(ManagerBase):
                 - ``'none'``: Do not apply any salt states
                 - ``'highstate'``: Apply the salt highstate
         """
-        if states:
-            self.config['saltstates'] = states
-        else:
-            self.log.info(
-                'No command line argument to override configuration file.'
-            )
-
-        if 'none' == self.config['saltstates'].lower():
+        if 'none' == states.lower():
             self.log.info(
                 'No States were specified. Will not apply any salt states.'
             )
+        elif 'highstate' == states.lower():
+            self.log.info(
+                'Detected the `states` parameter is set to `highstate`. '
+                'Applying the salt `"highstate`" to the system.'
+            )
+            cmd = ['state.highstate']
+            cmd.extend(self.salt_call_args)
+            self.run_salt(cmd)
         else:
-            if 'highstate' == self.config['saltstates'].lower():
-                self.log.info(
-                    'Detected the States parameter is set to `highstate`. '
-                    'Applying the salt `"highstate`" to the system.'
-                )
-                cmd = ['state.highstate']
-                cmd.extend(self.salt_call_args)
-                self.run_salt(cmd)
-
-            else:
-                self.log.info(
-                    'Detected the States parameter is set to: {0}. Applying '
-                    'the user-defined list of states to the system.'
-                    .format(self.config['salt_states'])
-                )
-                cmd = ['state.sls', self.config['saltstates']]
-                cmd.extend(self.salt_call_args)
-                self.run_salt(cmd)
+            self.log.info(
+                'Detected the `states` parameter is set to: `{0}`. Applying '
+                'the user-defined list of states to the system.'
+                .format(states)
+            )
+            cmd = ['state.sls', states]
+            cmd.extend(self.salt_call_args)
+            self.run_salt(cmd)
 
         self.log.info(
             'Salt states all applied successfully! '
@@ -354,24 +344,16 @@ class SaltLinux(SaltBase, LinuxManager):
         self.log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltLinux, self)._set_grain(grain, value)
 
-    def install(self, configuration, is_s3_bucket, salt_states):
+    def install(self, configuration):
         """
         Install salt and execute salt states.
 
         Args:
             configuration (:obj:`json`):
-                Parameters from the Watchmaker config.yaml file.
-            is_s3_bucket (bool):
-                Switch to determine whether to use boto to download files.
-            salt_states (:obj:`str`):
-                Comma-separated string of salt states to execute. Accepts two
-                special keywords:
-
-                - ``'none'``: Do not apply any salt states
-                - ``'highstate'``: Apply the salt highstate
+                Parameters from the Watchmaker config.yaml file, merged with
+                command-line arguments.
         """
         self.load_config(configuration)
-        self.is_s3_bucket = is_s3_bucket
 
         self._configuration_validation()
         self._prepare_for_install()
@@ -379,7 +361,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self._build_salt_formula()
 
         self.process_grains()
-        self.process_states(salt_states, )
+        self.process_states(self.config.get('saltstates', 'none'))
 
         if self.working_dir:
             self.cleanup()
@@ -459,24 +441,15 @@ class SaltWindows(SaltBase, WindowsManager):
         self.log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltWindows, self)._set_grain(grain, value)
 
-    def install(self, configuration, is_s3_bucket, salt_states):
+    def install(self, configuration):
         """
         Install salt and execute salt states.
 
         Args:
             configuration (:obj:`dict`):
                 Parameters from the Watchmaker config.yaml file.
-            is_s3_bucket (bool):
-                Switch to determine whether to use boto to download files.
-            salt_states (:obj:`str`):
-                Comma-separated string of salt states to execute. Accepts two
-                special keywords:
-
-                - ``'none'``: Do not apply any salt states
-                - ``'highstate'``: Apply the salt highstate
         """
         self.load_config(configuration)
-        self.is_s3_bucket = is_s3_bucket
 
         self._prepare_for_install()
         self._install_package()
@@ -493,7 +466,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.log.info('Refreshing package database...')
         self.run_salt('pkg.refresh_db')
 
-        self.process_states(salt_states)
+        self.process_states(self.config.get('saltstates', 'none'))
 
         if self.working_dir:
             self.cleanup()
