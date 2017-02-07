@@ -326,9 +326,22 @@ class WindowsManager(ManagerBase):
 
 
 class WorkersManagerBase(object):
-    """Metaclass for worker managers."""
+    """
+    Base class for worker managers.
+
+    Args:
+        system_params (:obj:`dict`):
+            Attributes, mostly file-paths, specific to the system-type (Linux
+            or Windows).
+        execution_scripts (:obj:`dict`):
+            Workers to run and associated configuration data.
+    """
 
     __metaclass__ = abc.ABCMeta
+
+    def __init__(self, system_params, execution_scripts):  # noqa: D102
+        self.execution_scripts = execution_scripts
+        self.system_params = system_params
 
     @abc.abstractmethod
     def _worker_execution(self):
