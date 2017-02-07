@@ -29,7 +29,7 @@ def prepare_logging(log_dir, log_level):
             Level to log at. Any value other than the integers below will
             enable DEBUG logging.
 
-            .. code-block:: yaml
+            .. code-block:: python
 
                 0: WARNING
                 1: INFO

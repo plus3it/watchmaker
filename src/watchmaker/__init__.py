@@ -27,7 +27,7 @@ class Arguments(dict):
             (Defaults to ``None``) Path or URL to the Watchmaker configuration
             file. If ``None``, the default config.yaml file is used.
         log_dir (:obj:`str`):
-            (Defaults to ``None``) See :func:`prepare_logging`.
+            (Defaults to ``None``) See :func:`logger.prepare_logging`.
         noreboot (:obj:`bool`):
             (Defaults to ``False``): Switch to control whether to reboot the
             system upon a successfull execution of

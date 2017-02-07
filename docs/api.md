@@ -12,6 +12,12 @@
 .. automodule:: watchmaker.cli
 ```
 
+## watchmaker.logger module
+
+```eval_rst
+.. automodule:: watchmaker.logger
+```
+
 ## watchmaker.managers module
 
 ```eval_rst
