@@ -310,14 +310,8 @@ class LinuxManager(ManagerBase):
             yum_cmd.extend(packages)
         else:
             yum_cmd.append(packages)
-        rsp = subprocess.call(yum_cmd)
+        self.call_process(yum_cmd)
         self.log.debug(packages)
-        self.log.debug('Return code of yum install: {0}'.format(rsp))
-
-        if rsp != 0:
-            msg = 'Installing Salt from Yum has failed!'
-            self.log.critical(msg)
-            raise WatchmakerException(msg)
 
 
 class WindowsManager(ManagerBase):
