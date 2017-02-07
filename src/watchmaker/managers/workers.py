@@ -61,14 +61,11 @@ class WindowsWorkersManager(WorkersManagerBase):
             Workers to run and associated configuration data.
     """
 
-    def __init__(self, s3, system_params, execution_scripts, salt_states
-    ):  # noqa: D102
+    def __init__(self, system_params, execution_scripts):  # noqa: D102
         super(WindowsWorkersManager, self).__init__()
         self.execution_scripts = execution_scripts
         self.manager = WindowsManager()
-        self.is_s3_bucket = s3
         self.system_params = system_params
-        self.salt_states = salt_states
 
     def _worker_execution(self):
         pass
