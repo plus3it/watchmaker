@@ -74,7 +74,7 @@ class Prepare(object):
         self.log.debug('System Parameters: {0}'.format(self.system_params))
 
         # Define arguments to pass through to workers
-        self.worker_args = {
+        worker_args = {
             'sourceiss3bucket': arguments.sourceiss3bucket,
             'saltstates': arguments.saltstates,
             'admingroups': arguments.admingroups,
@@ -85,30 +85,34 @@ class Prepare(object):
         }
         # Convert extra_arguments to a dict and merge it with worker_args
         extra_arguments = [] if extra_arguments is None else extra_arguments
-        self.worker_args.update(dict(
+        worker_args.update(dict(
             (k.lstrip('-'), v) for k, v in zip(*[iter(extra_arguments)]*2)
         ))
+        # Set self.worker_args, removing `None` values from worker_args
+        self.worker_args = dict(
+            (k, v) for k, v in worker_args.iteritems() if v is not None
+        )
 
         self.default_config = os.path.join(static.__path__[0], 'config.yaml')
         self.noreboot = arguments.noreboot
         self.config_path = arguments.config
 
-        self.config = self._get_config_data()
-        self._merge_args_into_config()
+        self.config = self._get_config()
 
     def _validate_url(self, url):
         return urllib.parse.urlparse(url).scheme in ['http', 'https']
 
-    def _get_config_data(self):
+    def _get_config(self):
         """
         Read and validate configuration data for installation.
 
         Returns:
             dict: Returns the data from the YAML configuration file, scoped to
-            the value of ``self.system``. If ``self.system`` is not present,
-            returns an empty dict.
+            the value of ``self.system`` and merged with the value of the
+            ``"All"`` key.
         """
-        data = {}
+        config = {}
+        data = ''
 
         if not self.config_path:
             self.log.warning(
@@ -140,12 +144,58 @@ class Prepare(object):
             with open(self.config_path) as f:
                 data = f.read()
 
-        if data:
-            return(yaml.safe_load(data).get(self.system, {}))
-        else:
-            msg = 'Encountered an unknown error loading the config. Aborting!'
+        config_full = yaml.safe_load(data)
+        try:
+            config_system = config_full.get(self.system, {})
+            config = config_full.get('All', {})
+        except AttributeError:
+            msg = 'Malformed config file. Must be a dictionary.'
+            self.log.critical(msg)
+            raise
+
+        # If both config and config_system are empty, raise
+        if not config and not config_system:
+            msg = 'Malformed config file. No valid workers.'
             self.log.critical(msg)
             raise WatchmakerException(msg)
+
+        # Get the union of workers from config and config_system
+        # Merge config_system into config, as needed
+        # Merge worker_args (from the cli) into worker configs
+        workers = set(config) | set(config_system)
+        for worker in workers:
+            try:
+                if worker in config and worker in config_system:
+                    # Worker is present in both, merge the params
+                    config[worker]['Parameters'].update(
+                        config_system[worker]['Parameters']
+                    )
+                elif worker in config_system:
+                    # Worker is only in config_system, add it to config
+                    config[worker] = config_system[worker]
+                else:
+                    # Worker is only in config, no action needed
+                    pass
+
+                self.log.debug(
+                    '{0} config: {1}'.format(worker, config[worker])
+                )
+                # Merge worker_args into config params
+                config[worker]['Parameters'].update(self.worker_args)
+            except KeyError:
+                msg = (
+                    'Malformed worker, missing "Parameters" key; worker = {0}'
+                    .format(worker)
+                )
+                self.log.critical(msg)
+                raise
+
+        self.log.debug(
+            'Arguments merged into worker configs: {0}'
+            .format(self.worker_args)
+        )
+
+        return config
 
     def _set_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
@@ -194,32 +244,6 @@ class Prepare(object):
             msg = 'System, {0}, is not recognized?'.format(self.system)
             self.log.critical(msg)
             raise WatchmakerException(msg)
-
-    def _merge_args_into_config(self):
-        """Merge arguments into configuration data."""
-        # Remove `None` values from worker_args
-        worker_args = dict(
-            (k, v) for k, v in self.worker_args.iteritems() if v is not None
-        )
-
-        for worker in self.config:
-            self.log.debug(
-                '{0} config: {1}'.format(worker, self.config[worker])
-            )
-            try:
-                self.config[worker]['Parameters'].update(worker_args)
-            except Exception:
-                msg = (
-                    'For {0} in {1}, the parameters could not be merged.'
-                    .format(worker, self.config_path)
-                )
-                self.log.critical(msg)
-                raise
-
-        self.log.debug(
-            'Arguments merged into worker configs: {0}'
-            .format(worker_args)
-        )
 
     def install_system(self):
         """
