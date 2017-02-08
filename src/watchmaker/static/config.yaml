@@ -1,58 +1,57 @@
 All:
-  Salt:
-    Parameters:
-      admingroups: None
-      adminusers: None
-      computername: None
-      entenv: False
-      formulaterminationstrings:
-        - -master
-        - -latest
-      oupath: None
-      saltstates: Highstate
-      sourceiss3bucket: False
-      user_formulas:
-        #To add other formulas, make sure it is a url to a zipped file as follows:
-        #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
-        #- https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
-        #To "overwrite" submodule formulas, make sure name matches submodule names.
+  - Salt:
+      Parameters:
+        admingroups: None
+        adminusers: None
+        computername: None
+        entenv: False
+        formulaterminationstrings:
+          - -master
+          - -latest
+        oupath: None
+        saltstates: Highstate
+        sourceiss3bucket: False
+        user_formulas:
+          #To add other formulas, make sure it is a url to a zipped file as follows:
+          #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
+          #- https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+          #To "overwrite" submodule formulas, make sure name matches submodule names.
 
 Linux:
-  Yum:
-    Parameters:
-      yumrepomap:
-        #SaltEL6:
-        - dist:
-            - redhat
-            - centos
-          el_version: 6
-          url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el6.repo
-        - dist: amazon
-          el_version: 6
-          url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-amzn.repo
-        #SaltEL7:
-        - dist:
-            - redhat
-            - centos
-          el_version: 7
-          url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
-
-  Salt:
-    Parameters:
-      salt_debug_log: None
-      salt_results_log: None
-      saltbootstrapsource: None
-      saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
-      saltinstallmethod: yum
-      saltgitrepo: None
-      saltversion: None
+  - Yum:
+      Parameters:
+        yumrepomap:
+          #SaltEL6:
+          - dist:
+              - redhat
+              - centos
+            el_version: 6
+            url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el6.repo
+          - dist: amazon
+            el_version: 6
+            url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-amzn.repo
+          #SaltEL7:
+          - dist:
+              - redhat
+              - centos
+            el_version: 7
+            url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
+  - Salt:
+      Parameters:
+        salt_debug_log: None
+        salt_results_log: None
+        saltbootstrapsource: None
+        saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
+        saltinstallmethod: yum
+        saltgitrepo: None
+        saltversion: None
 
 Windows:
-  Salt:
-    Parameters:
-      ashrole: MemberServer
-      salt_debug_log: None
-      salt_results_log: None
-      saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
-      saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
-      saltworkingdir: SystemContent\Windows\Salt\
+  - Salt:
+      Parameters:
+        ashrole: MemberServer
+        salt_debug_log: None
+        salt_results_log: None
+        saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
+        saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
+        saltworkingdir: SystemContent\Windows\Salt\
