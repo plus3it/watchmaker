@@ -6,7 +6,6 @@ import sys
 
 import watchmaker
 
-from watchmaker import Prepare
 from watchmaker.logger import prepare_logging
 
 
@@ -97,5 +96,9 @@ def main():
     arguments, extra_arguments = parser.parse_known_args()
     prepare_logging(arguments.log_dir, arguments.verbosity)
 
-    systemprep = Prepare(arguments, extra_arguments)
-    sys.exit(systemprep.install_system())
+    watchmaker_arguments = watchmaker.Arguments(**dict(
+        extra_arguments=extra_arguments,
+        **vars(arguments)
+    ))
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+    sys.exit(watchmaker_client.install())
