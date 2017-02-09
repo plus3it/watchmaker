@@ -54,5 +54,5 @@ Windows:
       salt_debug_log: None
       salt_results_log: None
       saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
-      saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.3.4-AMD64-Setup.exe
+      saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
       saltworkingdir: SystemContent\Windows\Salt\
