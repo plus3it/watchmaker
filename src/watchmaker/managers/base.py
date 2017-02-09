@@ -187,8 +187,21 @@ class ManagerBase(object):
             msg = 'Command is not a list: {0}'.format(str(cmd))
             self.log.critical(msg)
             raise WatchmakerException(msg)
-        rsp = subprocess.call(cmd)
 
+        self.log.debug('Running command: {0}'.format(str(cmd)))
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        with process.stdout as stdout:
+            for line in iter(stdout.readline, b''):
+                self.log.debug('Command stdout: {0}'.format(line.rstrip()))
+        with process.stderr as stderr:
+            for line in iter(stderr.readline, b''):
+                self.log.error('Command stderr: {0}'.format(line.rstrip()))
+
+        rsp = process.wait()
         if rsp != 0:
             msg = 'Command failed: {0}'.format(str(cmd))
             self.log.critical(msg)
