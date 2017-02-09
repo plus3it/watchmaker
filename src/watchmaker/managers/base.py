@@ -333,7 +333,7 @@ class WorkersManagerBase(object):
         system_params (:obj:`dict`):
             Attributes, mostly file-paths, specific to the system-type (Linux
             or Windows).
-        workers (:obj:`dict`):
+        workers (:obj:`OrderedDict`):
             Workers to run and associated configuration data.
     """
 

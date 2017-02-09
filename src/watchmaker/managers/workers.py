@@ -23,18 +23,16 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     def worker_cadence(self):
         """Manage worker cadence."""
-        if 'Yum' in self.workers:
+        for worker in self.workers:
             configuration = json.dumps(
-                self.workers['Yum']['Parameters']
+                self.workers[worker]['Parameters']
             )
-            yum = Yum()
-            yum.install(configuration)
-        if 'Salt' in self.workers:
-            configuration = json.dumps(
-                self.workers['Salt']['Parameters']
-            )
-            salt = SaltLinux()
-            salt.install(configuration)
+            if 'Yum' in worker:
+                yum = Yum()
+                yum.install(configuration)
+            elif 'Salt' in worker:
+                salt = SaltLinux()
+                salt.install(configuration)
 
     def cleanup(self):
         """Execute cleanup function."""
@@ -56,12 +54,13 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     def worker_cadence(self):
         """Manage worker cadence."""
-        if 'Salt' in self.workers:
+        for worker in self.workers:
             configuration = json.dumps(
-                self.workers['Salt']['Parameters']
+                self.workers[worker]['Parameters']
             )
-            salt = SaltWindows()
-            salt.install(configuration)
+            if 'Salt' in worker:
+                salt = SaltWindows()
+                salt.install(configuration)
 
     def cleanup(self):
         """Execute cleanup function."""
