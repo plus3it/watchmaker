@@ -9,21 +9,11 @@ from watchmaker.workers.yum import Yum
 
 
 class LinuxWorkersManager(WorkersManagerBase):
-    """
-    Manage the worker cadence for Linux systems.
+    """Manage the worker cadence for Linux systems."""
 
-    Args:
-        system_params (:obj:`dict`):
-            Attributes, mostly file-paths, specific to the Linux system-type.
-        execution_scripts (:obj:`dict`):
-            Workers to run and associated configuration data.
-    """
-
-    def __init__(self, system_params, execution_scripts):  # noqa: D102
-        super(LinuxWorkersManager, self).__init__()
-        self.execution_scripts = execution_scripts
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(LinuxWorkersManager, self).__init__(*args, **kwargs)
         self.manager = LinuxManager()
-        self.system_params = system_params
 
     def _worker_execution(self):
         pass
@@ -33,17 +23,18 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     def worker_cadence(self):
         """Manage worker cadence."""
-        for script in self.execution_scripts:
+        if 'Yum' in self.workers:
             configuration = json.dumps(
-                self.execution_scripts[script]['Parameters']
+                self.workers['Yum']['Parameters']
             )
-
-            if 'Yum' in script:
-                yum = Yum()
-                yum.install(configuration)
-            elif 'Salt' in script:
-                salt = SaltLinux()
-                salt.install(configuration)
+            yum = Yum()
+            yum.install(configuration)
+        if 'Salt' in self.workers:
+            configuration = json.dumps(
+                self.workers['Salt']['Parameters']
+            )
+            salt = SaltLinux()
+            salt.install(configuration)
 
     def cleanup(self):
         """Execute cleanup function."""
@@ -51,24 +42,11 @@ class LinuxWorkersManager(WorkersManagerBase):
 
 
 class WindowsWorkersManager(WorkersManagerBase):
-    """
-    Manage the worker cadence for Windows systems.
+    """Manage the worker cadence for Windows systems."""
 
-    Args:
-        system_params (:obj:`dict`):
-            Attributes, mostly file-paths, specific to the Windows system-type.
-        execution_scripts (:obj:`dict`):
-            Workers to run and associated configuration data.
-    """
-
-    def __init__(self, s3, system_params, execution_scripts, salt_states
-    ):  # noqa: D102
-        super(WindowsWorkersManager, self).__init__()
-        self.execution_scripts = execution_scripts
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(WindowsWorkersManager, self).__init__(*args, **kwargs)
         self.manager = WindowsManager()
-        self.is_s3_bucket = s3
-        self.system_params = system_params
-        self.salt_states = salt_states
 
     def _worker_execution(self):
         pass
@@ -78,14 +56,12 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     def worker_cadence(self):
         """Manage worker cadence."""
-        for script in self.execution_scripts:
+        if 'Salt' in self.workers:
             configuration = json.dumps(
-                self.execution_scripts[script]['Parameters']
+                self.workers['Salt']['Parameters']
             )
-
-            if 'Salt' in script:
-                salt = SaltWindows()
-                salt.install(configuration)
+            salt = SaltWindows()
+            salt.install(configuration)
 
     def cleanup(self):
         """Execute cleanup function."""

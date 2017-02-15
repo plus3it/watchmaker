@@ -310,14 +310,8 @@ class LinuxManager(ManagerBase):
             yum_cmd.extend(packages)
         else:
             yum_cmd.append(packages)
-        rsp = subprocess.call(yum_cmd)
+        self.call_process(yum_cmd)
         self.log.debug(packages)
-        self.log.debug('Return code of yum install: {0}'.format(rsp))
-
-        if rsp != 0:
-            msg = 'Installing Salt from Yum has failed!'
-            self.log.critical(msg)
-            raise WatchmakerException(msg)
 
 
 class WindowsManager(ManagerBase):
@@ -332,9 +326,22 @@ class WindowsManager(ManagerBase):
 
 
 class WorkersManagerBase(object):
-    """Metaclass for worker managers."""
+    """
+    Base class for worker managers.
+
+    Args:
+        system_params (:obj:`dict`):
+            Attributes, mostly file-paths, specific to the system-type (Linux
+            or Windows).
+        workers (:obj:`dict`):
+            Workers to run and associated configuration data.
+    """
 
     __metaclass__ = abc.ABCMeta
+
+    def __init__(self, system_params, workers):  # noqa: D102
+        self.system_params = system_params
+        self.workers = workers
 
     @abc.abstractmethod
     def _worker_execution(self):

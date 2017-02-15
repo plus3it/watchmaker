@@ -361,7 +361,10 @@ class Client(object):
                 self.log.critical(msg)
                 raise
 
-        workers_manager = self.workers_manager(self.system_params, self.config)
+        workers_manager = self.workers_manager(
+            system_params=self.system_params,
+            workers=self.config
+        )
 
         try:
             workers_manager.worker_cadence()

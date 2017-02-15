@@ -3,7 +3,6 @@
 import json
 import os
 import shutil
-import subprocess
 
 import yaml
 
@@ -323,7 +322,7 @@ class SaltLinux(SaltBase, LinuxManager):
                 bootstrap_cmd.append(self.config['saltversion'])
             else:
                 self.log.debug('No salt version defined in config.')
-            subprocess.call(bootstrap_cmd)
+            self.call_process(bootstrap_cmd)
 
     def _build_salt_formula(self):
         formulas_conf = self._get_formulas_conf()
@@ -404,7 +403,7 @@ class SaltWindows(SaltBase, WindowsManager):
             self.is_s3_bucket
         )
         install_cmd = [installer_name, '/S']
-        subprocess.call(install_cmd)
+        self.call_process(install_cmd)
 
     def _prepare_for_install(self):
         if self.config['saltinstallerurl']:
