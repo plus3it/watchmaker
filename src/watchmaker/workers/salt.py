@@ -78,9 +78,11 @@ class SaltBase(ManagerBase):
             )
 
         self.salt_call_args = [
-            '--out', 'yaml', '--out-file', self.salt_results_logfile,
-            '--return', 'local', '--log-file', self.salt_debug_logfile,
-            '--log-file-level', 'debug'
+            '--out-file', self.salt_results_logfile,
+            '--log-file', self.salt_debug_logfile,
+            '--log-file-level', 'debug',
+            '--out', 'highstate',
+            '--no-color'
         ]
 
         for salt_dir in [
