@@ -51,6 +51,7 @@ deploy:
     password:
       secure: o1r3jJSHXoh+QjgYi0FCP3GAOJtEsgGdnW/oKYLCPfW9CQoSHXTZtH5MAYmyOT5c9TQLqKxMtQHu8rRx5ZQoAe5WOmdhzc85c01qMcbC0DW1LaSibGM3oqqDtPFEipoFry3CpJLVIURE2lRV56DJtfTv43DIrUpgwrGU1+ijtCWZdcEzQUizvNKpX+K5jGHty9zyUHnaMx/OiM16loVDeue1Ukh++aTEEW0dqk2eAhN8ihZc0uAhls4DcQgN6R+bLXoR7oBk84QzQtxJlNS6CQcVltmtWA2ARxVV6CUpEr/JegufdNI7/Vdg4THg0g/iu0TatfJy1m2MDopUWSGrUOz8BQRCw1reRwWfPjhvuU0Ny+EINl3cnER2CJ67njo9PRjH0bDFcJQe6umPU7lf3dUOvbXGWeEAYaF1BOn490K9XNpOqw4XcGtjnm3c4YBTSuCp95APji7G8HlWtN54K1UWFZN48IkvKW3WbZX95BgLB3131yITwBdnNaPHm7sgI1OS7V3+/T8eNr5EDXTvunVt0olPuWzcWuLVmRq6/qVwdrko9MHOsmgMSFJi/QNGF23XjfT+9Aa0MP8iGpEZF5b8ZeB0qHdeugw0uMDSZ87msR9wCbgcTCbub89/ZmNCbyqIUTWyarCTtXJ9ARrVqwjrAsTSP78wfizthAqHUt4=
     skip_cleanup: true
+    skip_upload_docs: true
     on:
       branch: develop
       tags: false
@@ -61,6 +62,7 @@ deploy:
     user: plus3it
     password:
       secure: QBRj35p/WVBbfXWsOGaQfZ5LxLo2h/44iJRKaGkqAc/l7fNPubUcvKTvsuvFKDS68wdacnvSPifhVjJB8B/UwDyk3WqWmm/e7MBpWAJhZUina9qceeB7IPO53zSnfD8xAJMBe7iWRnMAQaKpPerSOKPpGn5qkdvfQXWhYHLe1X70RWVSkJlr35kkpBDvcqkKvKCi9EGrkJMbS+px/97n+b86wGKO0T8s2+YKAUh3EN9IHo6r9pG36uME2SCXqfhu9MH9aSlBLirOKvbvH+eVpOtAF+AfSsstMYFD2MbWEDYnXDrav4dqielk9o+Z2jaWvHAwBhCPp3aKYEx+xKrVsgu+9wE5e9i0T1CUPZSpeYkc+qPIjTZLmUpR9S32M19QmyewwyWPXHLD5TlFeHgU+/n0Y+dWJwBUESK58THvAXSewsTOhePEs+zuQfKXUFHHYYM+uJ020X3lv/R5SziSl93eD7nWuulBHwzBF3FEPiQnfrv1Ns0E28zdrkDJ6IxYES0tfHOHdFQZlSwGe8JJgzoXm2jtClJB/wkn/TwwInX7CvlgrVNrNDcHTGBiUoncb/yy6aIIR2DsCjYxd1WMN12DpaY+4OonDik/Ot4DcLiE1CA7b+1TKsbAv3G2YuFBp4QUBellnAU/L8wBxhgmhLTCntAQmPYuWezztRwEyG8=
+    skip_upload_docs: true
     on:
       tags: true
       repo: plus3it/watchmaker

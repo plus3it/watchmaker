@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""Update the version string with a build number."""
+"""Append a build number to a version string. See Pep 440."""
 
 from __future__ import absolute_import
 from __future__ import print_function
@@ -14,9 +14,9 @@ PROJECT_ROOT = os.path.abspath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     os.pardir)
 )
-BUILD_NUMBER = os.environ.get('TRAVIS_BUILD_NUMBER', '')
-BUILD_TYPE = 'dev'  # See PEP 440
 VERSION_FILE_PATHS = ('src', 'watchmaker', '__init__.py')
+VERSION_FILE = os.path.join(PROJECT_ROOT, *VERSION_FILE_PATHS)
+BUILD_NUMBER = os.environ.get('TRAVIS_BUILD_NUMBER', '')
 
 
 def replace(file_path, pattern, repl, flags=0):
@@ -29,13 +29,12 @@ def replace(file_path, pattern, repl, flags=0):
         fh_.write(file_contents)
 
 
-def append_version(build, file_paths):
+def append_build(build, version_file):
     """Append a build number to a version string in a file."""
     # The version line must have the form
     # __version__ = 'ver'
     pattern = r"^(__version__ = ['\"])([^'\"]*)(['\"])"
-    repl = r"\g<1>\g<2>.{0}\g<3>".format(build)
-    version_file = os.path.join(PROJECT_ROOT, *file_paths)
+    repl = r"\g<1>\g<2>{0}\g<3>".format(build)
     print(
         'Updating version in version_file "{0}" with build "{1}"'
         .format(version_file, build)
@@ -47,8 +46,7 @@ def main(args):
     """Process args and set version."""
     skip = args.skip
     build = args.build
-    build_type = args.build_type
-    file_paths = args.file_paths
+    version_file = args.version_file
 
     if skip:
         print(
@@ -56,7 +54,7 @@ def main(args):
             .format(skip)
         )
     else:
-        append_version('{0}{1}'.format(build_type, build), file_paths)
+        append_build(build, version_file)
 
 
 if '__main__' == __name__:
@@ -80,20 +78,11 @@ if '__main__' == __name__:
         )
     )
     parser.add_argument(
-        '--build-type',
-        default=BUILD_TYPE,
+        '--version-file',
+        default=VERSION_FILE,
         help=(
-            'Build type to append to the version. See PEP 440. PyPi will not '
-            'accept non-compliant version identifiers (default: {0})'
-            .format(BUILD_TYPE)
-        )
-    )
-    parser.add_argument(
-        '--file-paths',
-        default=VERSION_FILE_PATHS,
-        help=(
-            'Tuple of paths relative to the project root to a file containing '
-            'the version string. (default: {0})'.format(VERSION_FILE_PATHS)
+            'Path to the file containing the version string. '
+            '(default: {0})'.format(VERSION_FILE)
         )
     )
 
