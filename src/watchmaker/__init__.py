@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Watchmaker module."""
+import collections
 import datetime
 import logging
 import os
@@ -198,13 +199,10 @@ class Client(object):
         Read and validate configuration data for installation.
 
         Returns:
-            dict: Returns the data from the YAML configuration file, scoped to
-            the value of ``self.system`` and merged with the value of the
-            ``"All"`` key.
+            OrderedDict: Returns the data from the the YAML configuration file,
+            scoped to the value of ``self.system`` and merged with the value of
+            the ``"All"`` key.
         """
-        config = {}
-        data = ''
-
         if not self.config_path:
             self.log.warning(
                 'User did not supply a config.  Using the default config.'
@@ -213,6 +211,8 @@ class Client(object):
         else:
             self.log.info('User supplied config being used.')
 
+        # Get the raw config data
+        data = ''
         if self._validate_url(self.config_path):
             try:
                 data = urllib.request.urlopen(self.config_path).read()
@@ -237,42 +237,50 @@ class Client(object):
 
         config_full = yaml.safe_load(data)
         try:
-            config_system = config_full.get(self.system, {})
-            config = config_full.get('All', {})
+            config_all = config_full.get('All', [])
+            config_system = config_full.get(self.system, [])
         except AttributeError:
             msg = 'Malformed config file. Must be a dictionary.'
             self.log.critical(msg)
             raise
 
         # If both config and config_system are empty, raise
-        if not config and not config_system:
-            msg = 'Malformed config file. No valid workers.'
+        if not config_system and not config_all:
+            msg = 'Malformed config file. No workers for this system.'
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-        # Get the union of workers from config and config_system
-        # Merge config_system into config, as needed
-        # Merge worker_args (from the cli) into worker configs
-        workers = set(config) | set(config_system)
-        for worker in workers:
+        # Merge the config data, preserving the listed order of workers
+        config = collections.OrderedDict()
+        for worker in config_system + config_all:
             try:
-                if worker in config and worker in config_system:
-                    # Worker is present in both, merge the params
-                    config[worker]['Parameters'].update(
-                        config_system[worker]['Parameters']
+                # worker is a single-key dict, where the key is the name of the
+                # worker and the value is the worker parameters. we need to
+                # test if the worker is already in the config, but a dict is
+                # is not hashable so cannot be tested directly with
+                # `if worker not in config`. this bit of ugliness extracts the
+                # key and its value so we can use them directly.
+                worker_name, worker_config = list(worker.items())[0]
+                if worker_name not in config:
+                    # Add worker to config
+                    config[worker_name] = worker_config
+                    self.log.debug('{0} config: {1}'.format(
+                        worker_name, worker_config)
                     )
-                elif worker in config_system:
-                    # Worker is only in config_system, add it to config
-                    config[worker] = config_system[worker]
                 else:
-                    # Worker is only in config, no action needed
-                    pass
-
-                self.log.debug(
-                    '{0} config: {1}'.format(worker, config[worker])
-                )
-                # Merge worker_args into config params
-                config[worker]['Parameters'].update(self.worker_args)
+                    # Worker present in both config_system and config_all
+                    config[worker_name]['Parameters'].update(
+                        worker_config['Parameters']
+                    )
+                    self.log.debug('{0} extra config: {1}'.format(
+                        worker_name, worker_config)
+                    )
+                    # Need to (re)merge cli worker args so they override
+                    config[worker_name]['__merged'] = False
+                if not config[worker_name].get('__merged'):
+                    # Merge worker_args into config params
+                    config[worker_name]['Parameters'].update(self.worker_args)
+                    config[worker_name]['__merged'] = True
             except KeyError:
                 msg = (
                     'Malformed worker, missing "Parameters" key; worker = {0}'
@@ -282,7 +290,7 @@ class Client(object):
                 raise
 
         self.log.debug(
-            'Arguments merged into worker configs: {0}'
+            'Command-line arguments merged into worker configs: {0}'
             .format(self.worker_args)
         )
 
