@@ -7,32 +7,29 @@ import shutil
 import yaml
 
 from watchmaker import static
-from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 
 class SaltBase(ManagerBase):
     """Cross-platform worker for running salt."""
 
-    salt_base_env = None
-    salt_call = None
-    salt_conf_path = None
-    salt_file_root = None
-    salt_formula_root = None
-    salt_srv = None
-    salt_log_dir = None
-    salt_working_dir = None
-    salt_working_dir_prefix = None
-
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Pop arguments used by SaltBase
+        self.formulas_to_include = kwargs.pop('user_formulas', None) or []
+        self.formula_termination_strings = \
+            kwargs.pop('formulaterminationstrings', None) or []
+        self.computer_name = kwargs.pop('computername', None) or ''
+        self.ent_env = kwargs.pop('entenv', None) or ''
+        self.is_s3_bucket = kwargs.pop('sourceiss3bucket', None) or False
+        self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
+        self.saltcontentsource = kwargs.pop('saltcontentsource', None) or ''
+        self.oupath = kwargs.pop('oupath', None) or ''
+        self.admingroups = kwargs.pop('admingroups', None) or ''
+        self.adminusers = kwargs.pop('adminusers', None) or ''
+        self.saltstates = kwargs.pop('saltstates', None) or ''
+
+        # Init inherited classes
         super(SaltBase, self).__init__(*args, **kwargs)
-        self.config = None
-        self.ent_env = None
-        self.formula_termination_strings = list()
-        self.formulas_to_include = list()
-        self.is_s3_bucket = None
-        self.salt_conf = None
-        self.working_dir = None
 
     def _set_salt_dirs(self, srv):
         self.salt_file_root = os.sep.join((srv, 'states'))
@@ -41,27 +38,16 @@ class SaltBase(ManagerBase):
         self.salt_pillar_root = os.sep.join((srv, 'pillar'))
 
     def _prepare_for_install(self):
-        if self.config['user_formulas']:
-            self.formulas_to_include = self.config['user_formulas']
-
-        if self.config['formulaterminationstrings']:
-            self.formula_termination_strings = self.config[
-                'formulaterminationstrings']
-
-        self.computer_name = self.config['computername']
-        self.ent_env = self.config['entenv']
-        self.is_s3_bucket = self.config['sourceiss3bucket']
-
         self.create_working_dir(
             self.salt_working_dir,
             self.salt_working_dir_prefix
         )
 
         if (
-            self.config['salt_debug_log'] and
-            self.config['salt_debug_log'] != 'None'
+            self.salt_debug_log and
+            self.salt_debug_log != 'None'
         ):
-            self.salt_debug_logfile = self.config['salt_debug_log']
+            self.salt_debug_logfile = self.salt_debug_log
         else:
             self.salt_debug_logfile = os.sep.join(
                 (self.salt_log_dir, 'salt_call.debug.log')
@@ -120,15 +106,14 @@ class SaltBase(ManagerBase):
         return formulas.values()
 
     def _build_salt_formula(self, extract_dir):
-        if self.config['saltcontentsource']:
-            self.salt_content_filename = self.config[
-                'saltcontentsource'].split('/')[-1]
+        if self.saltcontentsource:
+            self.salt_content_filename = self.saltcontentsource.split('/')[-1]
             self.salt_content_file = os.sep.join((
                 self.working_dir,
                 self.salt_content_filename
             ))
             self.download_file(
-                self.config['saltcontentsource'],
+                self.saltcontentsource,
                 self.salt_content_file,
                 self.is_s3_bucket
             )
@@ -177,36 +162,18 @@ class SaltBase(ManagerBase):
             cmd.append(command)
         self.call_process(cmd)
 
-    def load_config(self, configuration):
-        """
-        Set ``self.config`` attribute with config data.
-
-        Args:
-            configuration (:obj:`json`):
-                Parameters from the Watchmaker config.yaml file.
-        """
-        try:
-            self.config = json.loads(configuration)
-        except ValueError:
-            msg = (
-                'The configuration passed was not properly formed JSON. '
-                'Execution halted.'
-            )
-            self.log.critical(msg)
-            raise WatchmakerException(msg)
-
     def process_grains(self):
         """Set salt grains."""
         ent_env = {'enterprise_environment': str(self.ent_env)}
         self._set_grain('systemprep', ent_env)
 
         grain = {}
-        if self.config['oupath'] and self.config['oupath'] != 'None':
-            grain['oupath'] = self.config['oupath']
-        if self.config['admingroups'] and self.config['admingroups'] != 'None':
-            grain['admingroups'] = self.config['admingroups'].split(':')
-        if self.config['adminusers'] and self.config['adminusers'] != 'None':
-            grain['adminusers'] = self.config['adminusers'].split(':')
+        if self.oupath and self.oupath != 'None':
+            grain['oupath'] = self.oupath
+        if self.admingroups and self.admingroups != 'None':
+            grain['admingroups'] = self.admingroups.split(':')
+        if self.adminusers and self.adminusers != 'None':
+            grain['adminusers'] = self.adminusers.split(':')
         if grain:
             self._set_grain('join-domain', grain)
 
@@ -229,11 +196,11 @@ class SaltBase(ManagerBase):
                 - ``'none'``: Do not apply any salt states
                 - ``'highstate'``: Apply the salt highstate
         """
-        if 'none' == states.lower():
+        if not states or states.lower() == 'none':
             self.log.info(
                 'No States were specified. Will not apply any salt states.'
             )
-        elif 'highstate' == states.lower():
+        elif states.lower() == 'highstate':
             self.log.info(
                 'Detected the `states` parameter is set to `highstate`. '
                 'Applying the salt `"highstate`" to the system.'
@@ -258,10 +225,17 @@ class SaltLinux(SaltBase, LinuxManager):
     """Run salt on Linux."""
 
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Pop arguments used by SaltLinux
+        self.saltinstallmethod = kwargs.pop('saltinstallmethod', None) or 'yum'
+        self.saltbootstrapsource = \
+            kwargs.pop('saltbootstrapsource', None) or ''
+        self.saltgitrepo = kwargs.pop('saltgitrepo', None) or ''
+        self.saltversion = kwargs.pop('saltversion', None) or ''
+
+        # Init inherited classes
         super(SaltLinux, self).__init__(*args, **kwargs)
 
-        # Extra variables needed for Linux.
-        self.salt_bootstrap_filename = None
+        # Extra variables needed for SaltLinux.
         self.yum_pkgs = [
             'policycoreutils-python',
             'selinux-policy-targeted',
@@ -280,38 +254,38 @@ class SaltLinux(SaltBase, LinuxManager):
         self._set_salt_dirs(self.salt_srv)
 
     def _configuration_validation(self):
-        if 'git' == self.config['saltinstallmethod'].lower():
-            if not self.config['saltbootstrapsource']:
+        if 'git' == self.saltinstallmethod.lower():
+            if not self.saltbootstrapsource:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
                     'parameter `saltbootstrapsource` was not provided.'
                 )
             else:
-                self.salt_bootstrap_filename = self.config[
-                    'saltbootstrapsource'].split('/')[-1]
-            if not self.config['saltgitrepo']:
+                self.salt_bootstrap_filename = \
+                    self.saltbootstrapsource.split('/')[-1]
+            if not self.saltgitrepo:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
                     'parameter `saltgitrepo` was not provided.'
                 )
 
     def _install_package(self):
-        if 'yum' == self.config['saltinstallmethod'].lower():
+        if 'yum' == self.saltinstallmethod.lower():
             self._install_from_yum(self.yum_pkgs)
-        elif 'git' == self.config['saltinstallmethod'].lower():
+        elif 'git' == self.saltinstallmethod.lower():
             self.download_file(
-                self.config['saltbootstrapsource'],
+                self.saltbootstrapsource,
                 self.salt_bootstrap_filename
             )
             bootstrap_cmd = [
                 'sh',
                 self.salt_bootstrap_filename,
                 '-g',
-                self.config['saltgitrepo']
+                self.saltgitrepo
             ]
-            if self.config['saltversion']:
+            if self.saltversion:
                 bootstrap_cmd.append('git')
-                bootstrap_cmd.append(self.config['saltversion'])
+                bootstrap_cmd.append(self.saltversion)
             else:
                 self.log.debug('No salt version defined in config.')
             self.call_process(bootstrap_cmd)
@@ -335,24 +309,15 @@ class SaltLinux(SaltBase, LinuxManager):
         self.log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltLinux, self)._set_grain(grain, value)
 
-    def install(self, configuration):
-        """
-        Install salt and execute salt states.
-
-        Args:
-            configuration (:obj:`json`):
-                Parameters from the Watchmaker config.yaml file, merged with
-                command-line arguments.
-        """
-        self.load_config(configuration)
-
+    def install(self):
+        """Install salt and execute salt states."""
         self._configuration_validation()
         self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
 
         self.process_grains()
-        self.process_states(self.config.get('saltstates', 'none'))
+        self.process_states(self.saltstates)
 
         if self.working_dir:
             self.cleanup()
@@ -362,11 +327,14 @@ class SaltWindows(SaltBase, WindowsManager):
     """Run salt on Windows."""
 
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Pop arguments used by SaltWindows
+        self.installerurl = kwargs.pop('saltinstallerurl', None) or ''
+        self.ash_role = kwargs.pop('ashrole', None) or ''
+
+        # Init inherited classes
         super(SaltWindows, self).__init__(*args, **kwargs)
 
-        # Extra variable needed for Windows.
-        self.install_url = None
-
+        # Extra variable needed for SaltWindows.
         sys_drive = os.environ['systemdrive']
 
         # Set up variables for paths to Salt directories and applications.
@@ -396,18 +364,13 @@ class SaltWindows(SaltBase, WindowsManager):
         self.call_process(install_cmd)
 
     def _prepare_for_install(self):
-        if self.config['saltinstallerurl']:
-            self.installerurl = self.config['saltinstallerurl']
-        else:
+        if not self.installerurl:
             self.log.error(
                 'Parameter `saltinstallerurl` was not provided and is'
                 ' needed for installation of Salt in Windows.'
             )
 
         super(SaltWindows, self)._prepare_for_install()
-
-        # Extra Salt variable for Windows.
-        self.ash_role = self.config['ashrole']
 
     def _build_salt_formula(self):
         formulas_conf = self._get_formulas_conf()
@@ -430,16 +393,8 @@ class SaltWindows(SaltBase, WindowsManager):
         self.log.info('Setting grain `{0}` ...'.format(grain))
         super(SaltWindows, self)._set_grain(grain, value)
 
-    def install(self, configuration):
-        """
-        Install salt and execute salt states.
-
-        Args:
-            configuration (:obj:`dict`):
-                Parameters from the Watchmaker config.yaml file.
-        """
-        self.load_config(configuration)
-
+    def install(self):
+        """Install salt and execute salt states."""
         self._prepare_for_install()
         self._install_package()
         self._build_salt_formula()
@@ -455,7 +410,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.log.info('Refreshing package database...')
         self.run_salt('pkg.refresh_db')
 
-        self.process_states(self.config.get('saltstates', 'none'))
+        self.process_states(self.saltstates)
 
         if self.working_dir:
             self.cleanup()
