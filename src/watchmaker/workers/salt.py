@@ -384,7 +384,7 @@ class SaltWindows(SaltBase, WindowsManager):
 
     def _install_package(self):
         installer_name = os.sep.join(
-            (os.environ['tmp'], self.installerurl.split('/')[-1])
+            (self.working_dir, self.installerurl.split('/')[-1])
         )
         self.download_file(
             self.installerurl,
