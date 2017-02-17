@@ -58,16 +58,6 @@ class SaltBase(ManagerBase):
         )
 
         if (
-            self.config['salt_results_log'] and
-            self.config['salt_results_log'] != 'None'
-        ):
-            self.salt_results_logfile = self.config['salt_results_log']
-        else:
-            self.salt_results_logfile = os.sep.join(
-                (self.salt_log_dir, 'salt_call.results.log')
-            )
-
-        if (
             self.config['salt_debug_log'] and
             self.config['salt_debug_log'] != 'None'
         ):
@@ -260,10 +250,7 @@ class SaltBase(ManagerBase):
             cmd.extend(self.salt_call_args)
             self.run_salt(cmd)
 
-        self.log.info(
-            'Salt states all applied successfully! '
-            'Details are in the log {0}'.format(self.salt_results_logfile)
-        )
+        self.log.info('Salt states all applied successfully!')
 
 
 class SaltLinux(SaltBase, LinuxManager):
