@@ -272,7 +272,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_conf_path = '/etc/salt'
         self.salt_min_path = '/etc/salt/minion'
         self.salt_srv = '/srv/salt'
-        self.salt_log_dir = '/var/log/'
+        self.salt_log_dir = self.system_params['logdir']
         self.salt_working_dir = '/usr/tmp/'
         self.salt_working_dir_prefix = 'saltinstall'
 
@@ -376,7 +376,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_min_path = os.sep.join((self.salt_root, 'minion'))
         self.salt_srv = os.sep.join((self.salt_root, 'srv'))
         self.salt_win_repo = os.sep.join((self.salt_srv, 'winrepo'))
-        self.salt_log_dir = os.sep.join((sys_drive, 'Watchmaker', 'Logs'))
+        self.salt_log_dir = self.system_params['logdir']
         self.salt_working_dir = os.sep.join(
             (sys_drive, 'Watchmaker', 'WorkingFiles')
         )
