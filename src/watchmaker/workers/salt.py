@@ -78,11 +78,8 @@ class SaltBase(ManagerBase):
             )
 
         self.salt_call_args = [
-            '--out-file', self.salt_results_logfile,
             '--log-file', self.salt_debug_logfile,
-            '--log-file-level', 'debug',
-            '--out', 'highstate',
-            '--no-color'
+            '--log-file-level', 'debug'
         ]
 
         for salt_dir in [
@@ -174,10 +171,15 @@ class SaltBase(ManagerBase):
             command(str or list):
                 Salt options and a salt module to be executed by salt-call.
                 Watchmaker will always begin the command with the options
-                ``--local`` and ``--retcode-passthrough``, so do not specify
-                those options in the command.
+                ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
+                do not specify those options in the command.
         """
-        cmd = [self.salt_call, '--local', '--retcode-passthrough']
+        cmd = [
+            self.salt_call,
+            '--local',
+            '--retcode-passthrough',
+            '--no-color'
+        ]
         if isinstance(command, list):
             cmd.extend(command)
         else:
