@@ -58,16 +58,6 @@ class SaltBase(ManagerBase):
         )
 
         if (
-            self.config['salt_results_log'] and
-            self.config['salt_results_log'] != 'None'
-        ):
-            self.salt_results_logfile = self.config['salt_results_log']
-        else:
-            self.salt_results_logfile = os.sep.join(
-                (self.salt_log_dir, 'salt_call.results.log')
-            )
-
-        if (
             self.config['salt_debug_log'] and
             self.config['salt_debug_log'] != 'None'
         ):
@@ -78,8 +68,7 @@ class SaltBase(ManagerBase):
             )
 
         self.salt_call_args = [
-            '--out', 'yaml', '--out-file', self.salt_results_logfile,
-            '--return', 'local', '--log-file', self.salt_debug_logfile,
+            '--log-file', self.salt_debug_logfile,
             '--log-file-level', 'debug'
         ]
 
@@ -172,10 +161,15 @@ class SaltBase(ManagerBase):
             command(str or list):
                 Salt options and a salt module to be executed by salt-call.
                 Watchmaker will always begin the command with the options
-                ``--local`` and ``--retcode-passthrough``, so do not specify
-                those options in the command.
+                ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
+                do not specify those options in the command.
         """
-        cmd = [self.salt_call, '--local', '--retcode-passthrough']
+        cmd = [
+            self.salt_call,
+            '--local',
+            '--retcode-passthrough',
+            '--no-color'
+        ]
         if isinstance(command, list):
             cmd.extend(command)
         else:
@@ -256,10 +250,7 @@ class SaltBase(ManagerBase):
             cmd.extend(self.salt_call_args)
             self.run_salt(cmd)
 
-        self.log.info(
-            'Salt states all applied successfully! '
-            'Details are in the log {0}'.format(self.salt_results_logfile)
-        )
+        self.log.info('Salt states all applied successfully!')
 
 
 class SaltLinux(SaltBase, LinuxManager):
