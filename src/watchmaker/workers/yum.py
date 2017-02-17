@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """Watchmaker yum worker."""
-import json
 import re
 import six
 
@@ -25,6 +24,10 @@ class Yum(LinuxManager):
     )
 
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Pop arguments used by Yum
+        self.yumrepomap = kwargs.pop('yumrepomap', None) or []
+
+        # Init inherited classes
         super(Yum, self).__init__(*args, **kwargs)
         self.dist_info = self.get_dist_info()
 
@@ -88,27 +91,14 @@ class Yum(LinuxManager):
         self.log.debug('dist_info = {0}'.format(dist_info))
         return dist_info
 
-    def _validate_config(self, configuration):
+    def _validate_config(self):
         """Validate the config is properly formed."""
-        config = {}
-        try:
-            config = json.loads(configuration)
-        except ValueError:
-            msg = (
-                'The configuration passed was not properly formed JSON.'
-                'Execution halted.'
-            )
-            self.log.critical(msg)
-            raise
-
-        if not ('yumrepomap' in config and config['yumrepomap']):
-            self.log.warning('yumrepomap did not exist or was empty.')
-        elif not isinstance(config['yumrepomap'], list):
+        if not self.yumrepomap:
+            self.log.warning('`yumrepomap` did not exist or was empty.')
+        elif not isinstance(self.yumrepomap, list):
             msg = '`yumrepomap` must be a list!'
             self.log.critical(msg)
             raise WatchmakerException(msg)
-
-        return config
 
     def _validate_repo(self, repo):
         """Check if a repo is applicable to this system."""
@@ -137,17 +127,11 @@ class Yum(LinuxManager):
             # checks pass, repo is valid for this system
             return True
 
-    def install(self, configuration):
-        """
-        Install yum repos defined in config file.
+    def install(self):
+        """Install yum repos defined in config file."""
+        self._validate_config()
 
-        Args:
-            configuration (:obj:`json`):
-                The configuration data required to install the yum repos.
-        """
-        config = self._validate_config(configuration)
-
-        for repo in config.get('yumrepomap', []):
+        for repo in self.yumrepomap:
             if self._validate_repo(repo):
                 # Download the yum repo definition to /etc/yum.repos.d/
                 self.log.info('Installing repo: {0}'.format(repo['url']))
