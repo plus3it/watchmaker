@@ -24,8 +24,8 @@ class Yum(LinuxManager):
         .format('|'.join(SUPPORTED_DISTS))
     )
 
-    def __init__(self):  # noqa: D102
-        super(Yum, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(Yum, self).__init__(*args, **kwargs)
         self.dist_info = self.get_dist_info()
 
     @staticmethod

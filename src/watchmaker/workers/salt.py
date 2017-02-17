@@ -24,8 +24,8 @@ class SaltBase(ManagerBase):
     salt_working_dir = None
     salt_working_dir_prefix = None
 
-    def __init__(self):  # noqa: D102
-        super(SaltBase, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(SaltBase, self).__init__(*args, **kwargs)
         self.config = None
         self.ent_env = None
         self.formula_termination_strings = list()
@@ -256,8 +256,8 @@ class SaltBase(ManagerBase):
 class SaltLinux(SaltBase, LinuxManager):
     """Run salt on Linux."""
 
-    def __init__(self):  # noqa: D102
-        super(SaltLinux, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(SaltLinux, self).__init__(*args, **kwargs)
 
         # Extra variables needed for Linux.
         self.salt_bootstrap_filename = None
@@ -360,8 +360,8 @@ class SaltLinux(SaltBase, LinuxManager):
 class SaltWindows(SaltBase, WindowsManager):
     """Run salt on Windows."""
 
-    def __init__(self):  # noqa: D102
-        super(SaltWindows, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(SaltWindows, self).__init__(*args, **kwargs)
 
         # Extra variable needed for Windows.
         self.install_url = None
