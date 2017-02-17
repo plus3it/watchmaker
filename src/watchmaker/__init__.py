@@ -29,7 +29,7 @@ class Arguments(dict):
             file. If ``None``, the default config.yaml file is used.
         log_dir (:obj:`str`):
             (Defaults to ``None``) See :func:`logger.prepare_logging`.
-        noreboot (:obj:`bool`):
+        no_reboot (:obj:`bool`):
             (Defaults to ``False``): Switch to control whether to reboot the
             system upon a successfull execution of
             :func:`WatchmakerClient.install`. When this parameter is set,
@@ -47,7 +47,7 @@ class Arguments(dict):
 
     Keyword Args:
 
-        admingroups (:obj:`str`):
+        admin_groups (:obj:`str`):
             (Defaults to ``None``) Set a salt grain that specifies the domain
             _groups_ that should have root privileges on Linux or admin
             privileges on Windows. Value must be a colon-separated string. On
@@ -55,48 +55,48 @@ class Arguments(dict):
 
             .. code-block:: python
 
-                admingroups = "group1:group2"
+                admin_groups = "group1:group2"
 
                 # (Linux only) If there are spaces in the group name, replace
                 # the spaces with a '^':
-                admingroups = "space^out"
+                admin_groups = "space^out"
 
                 # (Windows only) If there are spaces in the group name, no
                 # special syntax required.
-                admingroups = "space out"
+                admin_groups = "space out"
 
-        adminusers (:obj:`str`):
+        admin_users (:obj:`str`):
             (Defaults to ``None``) Set a salt grain that specifies the domain
             _users_ that should have root privileges on Linux or admin
             privileges on Windows. Value must be a colon-separated string.
 
             .. code-block:: python
 
-                adminusers = "user1:user2"
+                admin_users = "user1:user2"
 
-        computername (:obj:`str`):
+        computer_name (:obj:`str`):
             (Defaults to ``None``) Set a salt grain that specifies the
             computername to apply to the system.
-        entenv (:obj:`str`):
+        environment (:obj:`str`):
             (Defaults to ``None``) Set a salt grain that specifies the
             environment in which the system is being built. For example:
             ``dev``, ``test``, or ``prod``.
-        saltstates (:obj:`str`):
+        salt_states (:obj:`str`):
             (Defaults to ``None``) Comma-separated string of salt states to
             apply. A value of ``'None'`` (the string) will not apply any salt
             states. A value of ``'Highstate'`` will apply the salt highstate.
-        sourceiss3bucket (:obj:`bool`):
+        s3_source (:obj:`bool`):
             (Defaults to ``None``) Use S3 utilities to retrieve content instead
             of http/s utilities. For S3 utilities to work, the system must have
             boto credentials configured that allow access to the S3 bucket.
-        oupath (:obj:`str`):
+        ou_path (:obj:`str`):
             (Defaults to ``None``) Set a salt grain that specifies the full DN
             of the OU where the computer account will be created when joining a
             domain.
 
             .. code-block:: python
 
-                oupath="OU=Super Cool App,DC=example,DC=com"
+                ou_path="OU=Super Cool App,DC=example,DC=com"
 
         extra_arguments (:obj:`list`):
             (Defaults to ``[]``) A list of extra arguments to be merged into
@@ -117,21 +117,21 @@ class Arguments(dict):
         self,
         config_path=None,
         log_dir=None,
-        noreboot=False,
+        no_reboot=False,
         verbosity=0,
         **kwargs
     ):
         self.config_path = config_path
         self.log_dir = log_dir
-        self.noreboot = noreboot
+        self.no_reboot = no_reboot
         self.verbosity = verbosity
-        self.admingroups = kwargs.pop('admingroups', None)
-        self.adminusers = kwargs.pop('adminusers', None)
-        self.computername = kwargs.pop('computername', None)
-        self.entenv = kwargs.pop('entenv', None)
-        self.saltstates = kwargs.pop('saltstates', None)
-        self.sourceiss3bucket = kwargs.pop('sourceiss3bucket', None)
-        self.oupath = kwargs.pop('oupath', None)
+        self.admin_groups = kwargs.pop('admin_groups', None)
+        self.admin_users = kwargs.pop('admin_users', None)
+        self.computer_name = kwargs.pop('computer_name', None)
+        self.environment = kwargs.pop('environment', None)
+        self.salt_states = kwargs.pop('salt_states', None)
+        self.s3_source = kwargs.pop('s3_source', None)
+        self.ou_path = kwargs.pop('ou_path', None)
         self.extra_arguments = kwargs.pop('extra_arguments', [])
 
     def __getattr__(self, attr):
@@ -167,7 +167,7 @@ class Client(object):
 
         # Pop remaining arguments used by watchmaker.Client itself
         self.default_config = os.path.join(static.__path__[0], 'config.yaml')
-        self.noreboot = arguments.pop('noreboot', False)
+        self.no_reboot = arguments.pop('no_reboot', False)
         self.config_path = arguments.pop('config_path')
         self.log_dir = arguments.pop('log_dir')
         self.verbosity = arguments.pop('verbosity')
@@ -385,13 +385,15 @@ class Client(object):
             self.log.critical(msg)
             raise
 
-        if self.noreboot:
+        if self.no_reboot:
             self.log.info(
-                'Detected `noreboot` switch. System will not be rebooted.'
+                'Detected `no-reboot` switch. System will not be '
+                'rebooted.'
             )
         else:
             self.log.info(
-                'Reboot scheduled. System will reboot after the script exits.'
+                'Reboot scheduled. System will reboot after the script '
+                'exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)
         self.log.info('Stop time: {0}'.format(datetime.datetime.now()))

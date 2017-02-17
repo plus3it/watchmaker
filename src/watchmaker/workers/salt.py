@@ -15,18 +15,18 @@ class SaltBase(ManagerBase):
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by SaltBase
-        self.formulas_to_include = kwargs.pop('user_formulas', None) or []
+        self.user_formulas = kwargs.pop('user_formulas', None) or []
         self.formula_termination_strings = \
-            kwargs.pop('formulaterminationstrings', None) or []
-        self.computer_name = kwargs.pop('computername', None) or ''
-        self.ent_env = kwargs.pop('entenv', None) or ''
-        self.is_s3_bucket = kwargs.pop('sourceiss3bucket', None) or False
+            kwargs.pop('formula_termination_strings', None) or []
+        self.computer_name = kwargs.pop('computer_name', None) or ''
+        self.ent_env = kwargs.pop('environment', None) or ''
+        self.s3_source = kwargs.pop('s3_source', None) or False
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
-        self.saltcontentsource = kwargs.pop('saltcontentsource', None) or ''
-        self.oupath = kwargs.pop('oupath', None) or ''
-        self.admingroups = kwargs.pop('admingroups', None) or ''
-        self.adminusers = kwargs.pop('adminusers', None) or ''
-        self.saltstates = kwargs.pop('saltstates', None) or ''
+        self.content_source = kwargs.pop('content_source', None) or ''
+        self.ou_path = kwargs.pop('ou_path', None) or ''
+        self.admin_groups = kwargs.pop('admin_groups', None) or ''
+        self.admin_users = kwargs.pop('admin_users', None) or ''
+        self.salt_states = kwargs.pop('salt_states', None) or ''
 
         # Init inherited classes
         super(SaltBase, self).__init__(*args, **kwargs)
@@ -82,7 +82,7 @@ class SaltBase(ManagerBase):
                 formulas[formula] = static_path
 
         # Obtain & extract any Salt formulas specified in user_formulas.
-        for source_loc in self.formulas_to_include:
+        for source_loc in self.user_formulas:
             filename = source_loc.split('/')[-1]
             file_loc = os.sep.join((self.working_dir, filename))
             self.download_file(source_loc, file_loc)
@@ -106,16 +106,16 @@ class SaltBase(ManagerBase):
         return formulas.values()
 
     def _build_salt_formula(self, extract_dir):
-        if self.saltcontentsource:
-            self.salt_content_filename = self.saltcontentsource.split('/')[-1]
+        if self.content_source:
+            self.salt_content_filename = self.content_source.split('/')[-1]
             self.salt_content_file = os.sep.join((
                 self.working_dir,
                 self.salt_content_filename
             ))
             self.download_file(
-                self.saltcontentsource,
+                self.content_source,
                 self.salt_content_file,
-                self.is_s3_bucket
+                self.s3_source
             )
             self.extract_contents(
                 filepath=self.salt_content_file,
@@ -168,12 +168,12 @@ class SaltBase(ManagerBase):
         self._set_grain('systemprep', ent_env)
 
         grain = {}
-        if self.oupath and self.oupath != 'None':
-            grain['oupath'] = self.oupath
-        if self.admingroups and self.admingroups != 'None':
-            grain['admingroups'] = self.admingroups.split(':')
-        if self.adminusers and self.adminusers != 'None':
-            grain['adminusers'] = self.adminusers.split(':')
+        if self.ou_path and self.ou_path != 'None':
+            grain['oupath'] = self.ou_path
+        if self.admin_groups and self.admin_groups != 'None':
+            grain['admingroups'] = self.admin_groups.split(':')
+        if self.admin_users and self.admin_users != 'None':
+            grain['adminusers'] = self.admin_users.split(':')
         if grain:
             self._set_grain('join-domain', grain)
 
@@ -226,11 +226,11 @@ class SaltLinux(SaltBase, LinuxManager):
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by SaltLinux
-        self.saltinstallmethod = kwargs.pop('saltinstallmethod', None) or 'yum'
-        self.saltbootstrapsource = \
-            kwargs.pop('saltbootstrapsource', None) or ''
-        self.saltgitrepo = kwargs.pop('saltgitrepo', None) or ''
-        self.saltversion = kwargs.pop('saltversion', None) or ''
+        self.install_method = kwargs.pop('install_method', None) or 'yum'
+        self.bootstrap_source = \
+            kwargs.pop('bootstrap_source', None) or ''
+        self.git_repo = kwargs.pop('git_repo', None) or ''
+        self.salt_version = kwargs.pop('salt_version', None) or ''
 
         # Init inherited classes
         super(SaltLinux, self).__init__(*args, **kwargs)
@@ -254,38 +254,38 @@ class SaltLinux(SaltBase, LinuxManager):
         self._set_salt_dirs(self.salt_srv)
 
     def _configuration_validation(self):
-        if 'git' == self.saltinstallmethod.lower():
-            if not self.saltbootstrapsource:
+        if 'git' == self.install_method.lower():
+            if not self.bootstrap_source:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
-                    'parameter `saltbootstrapsource` was not provided.'
+                    'parameter `bootstrap_source` was not provided.'
                 )
             else:
                 self.salt_bootstrap_filename = \
-                    self.saltbootstrapsource.split('/')[-1]
-            if not self.saltgitrepo:
+                    self.bootstrap_source.split('/')[-1]
+            if not self.git_repo:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
-                    'parameter `saltgitrepo` was not provided.'
+                    'parameter `git_repo` was not provided.'
                 )
 
     def _install_package(self):
-        if 'yum' == self.saltinstallmethod.lower():
+        if 'yum' == self.install_method.lower():
             self._install_from_yum(self.yum_pkgs)
-        elif 'git' == self.saltinstallmethod.lower():
+        elif 'git' == self.install_method.lower():
             self.download_file(
-                self.saltbootstrapsource,
+                self.bootstrap_source,
                 self.salt_bootstrap_filename
             )
             bootstrap_cmd = [
                 'sh',
                 self.salt_bootstrap_filename,
                 '-g',
-                self.saltgitrepo
+                self.git_repo
             ]
-            if self.saltversion:
+            if self.salt_version:
                 bootstrap_cmd.append('git')
-                bootstrap_cmd.append(self.saltversion)
+                bootstrap_cmd.append(self.salt_version)
             else:
                 self.log.debug('No salt version defined in config.')
             self.call_process(bootstrap_cmd)
@@ -317,7 +317,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self._build_salt_formula()
 
         self.process_grains()
-        self.process_states(self.saltstates)
+        self.process_states(self.salt_states)
 
         if self.working_dir:
             self.cleanup()
@@ -328,8 +328,8 @@ class SaltWindows(SaltBase, WindowsManager):
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by SaltWindows
-        self.installerurl = kwargs.pop('saltinstallerurl', None) or ''
-        self.ash_role = kwargs.pop('ashrole', None) or ''
+        self.installer_url = kwargs.pop('installer_url', None) or ''
+        self.ash_role = kwargs.pop('ash_role', None) or ''
 
         # Init inherited classes
         super(SaltWindows, self).__init__(*args, **kwargs)
@@ -353,20 +353,20 @@ class SaltWindows(SaltBase, WindowsManager):
 
     def _install_package(self):
         installer_name = os.sep.join(
-            (self.working_dir, self.installerurl.split('/')[-1])
+            (self.working_dir, self.installer_url.split('/')[-1])
         )
         self.download_file(
-            self.installerurl,
+            self.installer_url,
             installer_name,
-            self.is_s3_bucket
+            self.s3_source
         )
         install_cmd = [installer_name, '/S']
         self.call_process(install_cmd)
 
     def _prepare_for_install(self):
-        if not self.installerurl:
+        if not self.installer_url:
             self.log.error(
-                'Parameter `saltinstallerurl` was not provided and is'
+                'Parameter `installer_url` was not provided and is'
                 ' needed for installation of Salt in Windows.'
             )
 
@@ -410,7 +410,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.log.info('Refreshing package database...')
         self.run_salt('pkg.refresh_db')
 
-        self.process_states(self.saltstates)
+        self.process_states(self.salt_states)
 
         if self.working_dir:
             self.cleanup()

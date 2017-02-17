@@ -25,7 +25,7 @@ class Yum(LinuxManager):
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by Yum
-        self.yumrepomap = kwargs.pop('yumrepomap', None) or []
+        self.yumrepomap = kwargs.pop('repo_map', None) or []
 
         # Init inherited classes
         super(Yum, self).__init__(*args, **kwargs)

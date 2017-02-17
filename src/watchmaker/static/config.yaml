@@ -1,16 +1,16 @@
 All:
   - Salt:
       Parameters:
-        admingroups: None
-        adminusers: None
-        computername: None
-        entenv: False
-        formulaterminationstrings:
+        admin_groups: None
+        admin_users: None
+        computer_name: None
+        environment: False
+        formula_termination_strings:
           - -master
           - -latest
-        oupath: None
-        saltstates: Highstate
-        sourceiss3bucket: False
+        ou_path: None
+        salt_states: Highstate
+        s3_source: False
         user_formulas:
           #To add other formulas, make sure it is a url to a zipped file as follows:
           #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
@@ -20,7 +20,7 @@ All:
 Linux:
   - Yum:
       Parameters:
-        yumrepomap:
+        repo_map:
           #SaltEL6:
           - dist:
               - redhat
@@ -39,16 +39,16 @@ Linux:
   - Salt:
       Parameters:
         salt_debug_log: None
-        saltbootstrapsource: None
-        saltcontentsource: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
-        saltinstallmethod: yum
-        saltgitrepo: None
-        saltversion: None
+        content_source: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
+        install_method: yum
+        bootstrap_source: None
+        git_repo: None
+        salt_version: None
 
 Windows:
   - Salt:
       Parameters:
-        ashrole: MemberServer
         salt_debug_log: None
-        saltcontentsource: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
-        saltinstallerurl: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
+        content_source: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
+        installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
+        ash_role: MemberServer
