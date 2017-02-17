@@ -8,7 +8,14 @@ from watchmaker.managers.base import LinuxManager
 
 
 class Yum(LinuxManager):
-    """Install yum repos."""
+    """
+    Install yum repos.
+
+    Args:
+        repo_map (:obj:`list`):
+            (Defaults to ``[]``) List of dictionaries containing a map
+            of yum repo files to systems.
+    """
 
     SUPPORTED_DISTS = ('amazon', 'centos', 'red hat')
 

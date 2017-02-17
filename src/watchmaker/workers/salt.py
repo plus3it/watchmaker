@@ -11,7 +11,65 @@ from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 
 class SaltBase(ManagerBase):
-    """Cross-platform worker for running salt."""
+    r"""
+    Cross-platform worker for running salt.
+
+    Args:
+        salt_debug_log (:obj:`list`):
+            (Defaults to ``''``) Filesystem path to a file where the salt debug
+            output should be saved. When unset, the salt debug log is saved to
+            the Watchmaker log directory.
+        s3_source (:obj:`bool`):
+            (Defaults to ``False``) Use S3 utilities to download salt content
+            and user formulas from an S3 bucket. If ``True``, you must also
+            install ``boto3`` and ``botocore``. Those dependencies will not be
+            installed by Watchmaker.
+        content_source (:obj:`str`):
+            (Defaults to ``''``) URL to a salt content archive (zip file) that
+            will be uncompressed in the salt "srv" directory. This typically is
+            used to create a top.sls file and to populate salt's file_roots.
+
+            - *Linux*: ``/srv/salt``
+            - *Windows*: ``C:\Salt\srv``
+
+        salt_states (:obj:`str`):
+            (Defaults to ``''``) Comma-separated string of salt states to
+            execute. Accepts two special keywords (case-insensitive):
+
+            - ``none``: Do not apply any salt states.
+            - ``highstate``: Apply the salt "highstate".
+
+        user_formulas (:obj:`list`):
+            (Defaults to ``[]``) URLs to archives (zip files) of salt formulas
+            that will be downloaded and extracted on the system.
+        formula_termination_strings (:obj:`list`):
+            (Defaults to ``[]``) Strings that should be removed from the end
+            of the salt formulas. For example, when downloading the zip archive
+            from GitHub, the name of the branch is appended to the archive.
+            E.g. ``foo-formula-master.zip``, and the zip file would contain a
+            directory named ``foo-formula-master``, where ``master`` is the
+            name of the branch. In this example, setting this option to
+            ``['-master']`` would remove that string from the end of the
+            formula after saving it to the system.
+        admin_groups (:obj:`str`):
+            (Defaults to ``''``) Sets a salt grain that specifies the domain
+            groups that should have root privileges on Linux or admin
+            privileges on Windows. Value must be a colon-separated string.
+            E.g. ``"group1:group2"``
+        admin_users (:obj:`str`):
+            (Defaults to ``''``) Sets a salt grain that specifies the domain
+            users that should have root privileges on Linux or admin
+            privileges on Windows. Value must be a colon-separated string.
+            E.g. ``"user1:user2"``
+        environment (:obj:`str`):
+            (Defaults to ``''``) Sets a salt grain that specifies the
+            environment in which the system is being built. E.g. ``dev``,
+            ``test``, ``prod``, etc.
+        ou_path (:obj:`str`):
+            (Defaults to ``''``) Sets a salt grain that specifies the full DN
+            of the OU where the computer account will be created when joining a
+            domain. E.g. ``"OU=SuperCoolApp,DC=example,DC=com"``
+    """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by SaltBase
@@ -144,7 +202,7 @@ class SaltBase(ManagerBase):
         Execute salt command.
 
         Args:
-            command(str or list):
+            command (str or list):
                 Salt options and a salt module to be executed by salt-call.
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
@@ -191,10 +249,11 @@ class SaltBase(ManagerBase):
         Args:
             states (:obj:`str`):
                 Comma-separated string of salt states to execute. Accepts two
-                special keywords:
+                special keywords (case-insensitive):
 
-                - ``'none'``: Do not apply any salt states
-                - ``'highstate'``: Apply the salt highstate
+                - ``none``: Do not apply any salt states.
+                - ``highstate``: Apply the salt "highstate".
+
         """
         if not states or states.lower() == 'none':
             self.log.info(
@@ -222,7 +281,27 @@ class SaltBase(ManagerBase):
 
 
 class SaltLinux(SaltBase, LinuxManager):
-    """Run salt on Linux."""
+    """
+    Run salt on Linux.
+
+    Args:
+        install_method (:obj:`str`):
+            (Defaults to ``yum``) Method to use to install salt.
+
+            - ``yum``: Install salt from an RPM using yum.
+            - ``git``: Install salt from source, using the salt bootstrap.
+
+        bootstrap_source (:obj:`str`):
+            (Defaults to ``''``) URL to the salt bootstrap script. Required if
+            ``install_method`` is ``git``.
+        git_repo (:obj:`str`):
+            (Defaults to ``''``) URL to the salt git repo. Required if
+            ``install_method`` is ``git``.
+        salt_version (:obj:`str`):
+            (Defaults to ``''``) A git reference present in ``git_repo``, such
+            as a commit or a tag. If not specified, the HEAD of the default
+            branch is used.
+    """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by SaltLinux
@@ -324,7 +403,18 @@ class SaltLinux(SaltBase, LinuxManager):
 
 
 class SaltWindows(SaltBase, WindowsManager):
-    """Run salt on Windows."""
+    """
+    Run salt on Windows.
+
+    Args:
+        installer_url (:obj:`str`):
+            (Defaults to ``''``) Required. URL to the salt installer for
+            Windows.
+        ash_role (:obj:`str`):
+            (Defaults to ``''``) Sets a salt grain that specifies the role
+            used by the ash-windows salt formula. E.g. ``"MemberServer"``,
+            ``"DomainController"``, or ``"Workstation"``
+    """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by SaltWindows
