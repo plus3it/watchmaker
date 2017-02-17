@@ -156,9 +156,6 @@ class Client(object):
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
-        self.system = platform.system()
-        self._set_system_params()
-
         # Pop extra_arguments now so we can log it separately
         extra_arguments = arguments.pop('extra_arguments', [])
 
@@ -167,8 +164,6 @@ class Client(object):
         self.log.info(header)
         self.log.debug('Parameters:  {0}'.format(arguments))
         self.log.debug('Extra Parameters:  {0}'.format(extra_arguments))
-        self.log.debug('System Type: {0}'.format(self.system))
-        self.log.debug('System Parameters: {0}'.format(self.system_params))
 
         # Pop remaining arguments used by watchmaker.Client itself
         self.default_config = os.path.join(static.__path__[0], 'config.yaml')
@@ -176,6 +171,13 @@ class Client(object):
         self.config_path = arguments.pop('config_path')
         self.log_dir = arguments.pop('log_dir')
         self.verbosity = arguments.pop('verbosity')
+
+        # Get the system params
+        self.system = platform.system()
+        self._set_system_params()
+
+        self.log.debug('System Type: {0}'.format(self.system))
+        self.log.debug('System Parameters: {0}'.format(self.system_params))
 
         # All remaining arguments are worker_args
         worker_args = arguments
@@ -296,11 +298,11 @@ class Client(object):
 
         return config
 
-    def _set_linux_system_params(self):
+    def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
         params['prepdir'] = os.path.join(
-            '{0}'.format(self.system_drive), 'usr', 'tmp', 'systemprep')
+            '{0}'.format(self.system_drive), 'usr', 'tmp', 'watchmaker')
         params['readyfile'] = os.path.join(
             '{0}'.format(self.system_drive), 'var', 'run', 'system-is-ready')
         params['logdir'] = os.path.join(
@@ -308,9 +310,9 @@ class Client(object):
         params['workingdir'] = os.path.join(
             '{0}'.format(params['prepdir']), 'workingfiles')
         params['restart'] = 'shutdown -r +1 &'
-        self.system_params = params
+        return params
 
-    def _set_windows_system_params(self):
+    def _get_windows_system_params(self):
         """Set ``self.system_params`` attribute for Windows systems."""
         params = {}
         # os.path.join does not produce path as expected when first string
@@ -327,22 +329,24 @@ class Client(object):
         params['restart'] = params["shutdown_path"] + \
             ' /r /t 30 /d p:2:4 /c ' + \
             '"Watchmaker complete. Rebooting computer."'
-        self.system_params = params
+        return params
 
     def _set_system_params(self):
         """Set OS-specific attributes."""
         if 'Linux' in self.system:
             self.system_drive = '/'
             self.workers_manager = LinuxWorkersManager
-            self._set_linux_system_params()
+            self.system_params = self._get_linux_system_params()
         elif 'Windows' in self.system:
             self.system_drive = os.environ['SYSTEMDRIVE']
             self.workers_manager = WindowsWorkersManager
-            self._set_windows_system_params()
+            self.system_params = self._get_windows_system_params()
         else:
             msg = 'System, {0}, is not recognized?'.format(self.system)
             self.log.critical(msg)
             raise WatchmakerException(msg)
+        if self.log_dir:
+            self.system_params['logdir'] = self.log_dir
 
     def install(self):
         """

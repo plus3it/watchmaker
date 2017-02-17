@@ -24,8 +24,8 @@ class SaltBase(ManagerBase):
     salt_working_dir = None
     salt_working_dir_prefix = None
 
-    def __init__(self):  # noqa: D102
-        super(SaltBase, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(SaltBase, self).__init__(*args, **kwargs)
         self.config = None
         self.ent_env = None
         self.formula_termination_strings = list()
@@ -257,8 +257,8 @@ class SaltBase(ManagerBase):
 class SaltLinux(SaltBase, LinuxManager):
     """Run salt on Linux."""
 
-    def __init__(self):  # noqa: D102
-        super(SaltLinux, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(SaltLinux, self).__init__(*args, **kwargs)
 
         # Extra variables needed for Linux.
         self.salt_bootstrap_filename = None
@@ -273,9 +273,9 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_conf_path = '/etc/salt'
         self.salt_min_path = '/etc/salt/minion'
         self.salt_srv = '/srv/salt'
-        self.salt_log_dir = '/var/log/'
-        self.salt_working_dir = '/usr/tmp/'
-        self.salt_working_dir_prefix = 'saltinstall'
+        self.salt_log_dir = self.system_params['logdir']
+        self.salt_working_dir = self.system_params['workingdir']
+        self.salt_working_dir_prefix = 'salt-'
 
         self._set_salt_dirs(self.salt_srv)
 
@@ -361,8 +361,8 @@ class SaltLinux(SaltBase, LinuxManager):
 class SaltWindows(SaltBase, WindowsManager):
     """Run salt on Windows."""
 
-    def __init__(self):  # noqa: D102
-        super(SaltWindows, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(SaltWindows, self).__init__(*args, **kwargs)
 
         # Extra variable needed for Windows.
         self.install_url = None
@@ -377,17 +377,15 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_min_path = os.sep.join((self.salt_root, 'minion'))
         self.salt_srv = os.sep.join((self.salt_root, 'srv'))
         self.salt_win_repo = os.sep.join((self.salt_srv, 'winrepo'))
-        self.salt_log_dir = os.sep.join((sys_drive, 'Watchmaker', 'Logs'))
-        self.salt_working_dir = os.sep.join(
-            (sys_drive, 'Watchmaker', 'WorkingFiles')
-        )
+        self.salt_log_dir = self.system_params['logdir']
+        self.salt_working_dir = self.system_params['workingdir']
         self.salt_working_dir_prefix = 'Salt-'
 
         self._set_salt_dirs(self.salt_srv)
 
     def _install_package(self):
         installer_name = os.sep.join(
-            (os.environ['tmp'], self.installerurl.split('/')[-1])
+            (self.working_dir, self.installerurl.split('/')[-1])
         )
         self.download_file(
             self.installerurl,

@@ -20,15 +20,21 @@ class ManagerBase(object):
 
     All child classes will have access to methods unless overridden by
     similarly-named method in the child class.
+
+    Args:
+        system_params (:obj:`dict`):
+            Attributes, mostly file-paths, specific to the system-type (Linux
+            or Windows).
     """
 
     boto3 = None
     boto_client = None
 
-    def __init__(self):  # noqa: D102
+    def __init__(self, system_params):  # noqa: D102
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
+        self.system_params = system_params
         self.working_dir = None
         return
 
@@ -301,8 +307,8 @@ class LinuxManager(ManagerBase):
     Serves as a foundational class to keep OS consitency.
     """
 
-    def __init__(self):  # noqa: D102
-        super(LinuxManager, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(LinuxManager, self).__init__(*args, **kwargs)
 
     def _install_from_yum(self, packages):
         yum_cmd = ['sudo', 'yum', '-y', 'install']
@@ -321,8 +327,8 @@ class WindowsManager(ManagerBase):
     Serves as a foundational class to keep OS consitency.
     """
 
-    def __init__(self):  # noqa: D102
-        super(WindowsManager, self).__init__()
+    def __init__(self, *args, **kwargs):  # noqa: D102
+        super(WindowsManager, self).__init__(*args, **kwargs)
 
 
 class WorkersManagerBase(object):

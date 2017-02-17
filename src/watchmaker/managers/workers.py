@@ -2,8 +2,7 @@
 """Watchmaker workers manager."""
 import json
 
-from watchmaker.managers.base import (LinuxManager, WindowsManager,
-                                      WorkersManagerBase)
+from watchmaker.managers.base import WorkersManagerBase
 from watchmaker.workers.salt import SaltLinux, SaltWindows
 from watchmaker.workers.yum import Yum
 
@@ -13,7 +12,6 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         super(LinuxWorkersManager, self).__init__(*args, **kwargs)
-        self.manager = LinuxManager()
 
     def _worker_execution(self):
         pass
@@ -28,10 +26,10 @@ class LinuxWorkersManager(WorkersManagerBase):
                 self.workers[worker]['Parameters']
             )
             if 'Yum' in worker:
-                yum = Yum()
+                yum = Yum(system_params=self.system_params)
                 yum.install(configuration)
             elif 'Salt' in worker:
-                salt = SaltLinux()
+                salt = SaltLinux(system_params=self.system_params)
                 salt.install(configuration)
 
     def cleanup(self):
@@ -44,7 +42,6 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     def __init__(self, *args, **kwargs):  # noqa: D102
         super(WindowsWorkersManager, self).__init__(*args, **kwargs)
-        self.manager = WindowsManager()
 
     def _worker_execution(self):
         pass
@@ -59,7 +56,7 @@ class WindowsWorkersManager(WorkersManagerBase):
                 self.workers[worker]['Parameters']
             )
             if 'Salt' in worker:
-                salt = SaltWindows()
+                salt = SaltWindows(system_params=self.system_params)
                 salt.install(configuration)
 
     def cleanup(self):
