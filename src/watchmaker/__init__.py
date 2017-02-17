@@ -302,7 +302,7 @@ class Client(object):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
         params['prepdir'] = os.path.join(
-            '{0}'.format(self.system_drive), 'usr', 'tmp', 'systemprep')
+            '{0}'.format(self.system_drive), 'usr', 'tmp', 'watchmaker')
         params['readyfile'] = os.path.join(
             '{0}'.format(self.system_drive), 'var', 'run', 'system-is-ready')
         params['logdir'] = os.path.join(
