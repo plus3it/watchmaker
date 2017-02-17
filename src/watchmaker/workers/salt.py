@@ -148,10 +148,11 @@ class SaltBase(ManagerBase):
 
     def _set_grain(self, grain, value):
         cmd = [
-            self.salt_call, '--local', '--retcode-passthrough',
-            'grains.setval', grain, str(json.dumps(value))
+            'grains.setval',
+            grain,
+            str(json.dumps(value))
         ]
-        self.call_process(cmd)
+        self.run_salt(cmd)
 
     def run_salt(self, command):
         """
