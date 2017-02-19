@@ -10,6 +10,7 @@ with various fixes and improvements that just weren't feasible to implement in
 PowerShell.
 """
 from __future__ import print_function
+
 from os import environ
 from os.path import exists
 from subprocess import check_call

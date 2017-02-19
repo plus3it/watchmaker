@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Watchmaker yum worker."""
 import re
+
 import six
 
 from watchmaker.exceptions import WatchmakerException

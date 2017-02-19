@@ -2,13 +2,11 @@
 # -*- coding: utf-8 -*-
 """Append a build number to a version string. See Pep 440."""
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
 import io
 import os
 import re
-
 
 PROJECT_ROOT = os.path.abspath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),

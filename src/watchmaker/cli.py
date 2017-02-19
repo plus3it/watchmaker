@@ -5,7 +5,6 @@ import os
 import sys
 
 import watchmaker
-
 from watchmaker.logger import prepare_logging
 
 

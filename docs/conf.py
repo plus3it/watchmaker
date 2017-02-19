@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 """Watchmaker documentation build configuration file."""
+import os
+import sys
+
+from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
+
 #
 # Created by sphinx-quickstart on Thu Jun 30 20:11:36 2016.
 #
@@ -16,12 +22,6 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-
-from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
-
 
 sys.path.insert(0, os.path.abspath('../src/'))
 rtd = os.environ.get('READTHEDOCS', None) == 'True'

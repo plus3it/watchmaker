@@ -8,7 +8,6 @@ import platform
 import subprocess
 
 import yaml
-
 from six.moves import urllib
 
 from watchmaker import static
