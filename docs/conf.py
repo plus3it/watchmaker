@@ -77,7 +77,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Watchmaker'
-copyright = u'2016, Plus3 IT Systems'
+copyright = u'2016, Plus3 IT Systems'  # noqa: B001
 author = u'Plus3 IT Systems'
 
 # The version info for the project you're documenting, acts as replacement for

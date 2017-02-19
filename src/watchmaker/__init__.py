@@ -187,7 +187,7 @@ class Client(object):
         ))
         # Set self.worker_args, removing `None` values from worker_args
         self.worker_args = dict(
-            (k, v) for k, v in worker_args.iteritems() if v is not None
+            (k, v) for k, v in worker_args.items() if v is not None
         )
 
         self.config = self._get_config()
@@ -379,7 +379,7 @@ class Client(object):
 
         try:
             workers_manager.worker_cadence()
-        except:
+        except Exception:
             msg = 'Execution of the workers cadence has failed.'
             self.log.critical(msg)
             raise

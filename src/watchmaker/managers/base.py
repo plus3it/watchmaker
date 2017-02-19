@@ -9,6 +9,7 @@ import tarfile
 import tempfile
 import zipfile
 
+from six import add_metaclass
 from six.moves import urllib
 
 from watchmaker.exceptions import WatchmakerException
@@ -331,6 +332,7 @@ class WindowsManager(ManagerBase):
         super(WindowsManager, self).__init__(*args, **kwargs)
 
 
+@add_metaclass(abc.ABCMeta)
 class WorkersManagerBase(object):
     """
     Base class for worker managers.
@@ -342,8 +344,6 @@ class WorkersManagerBase(object):
         workers (:obj:`OrderedDict`):
             Workers to run and associated configuration data.
     """
-
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, system_params, workers, *args, **kwargs):  # noqa: D102
         self.system_params = system_params

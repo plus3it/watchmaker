@@ -55,7 +55,7 @@ class Yum(LinuxManager):
         try:
             with open(name='/etc/system-release', mode='rb') as f:
                 release = f.readline().strip()
-        except:
+        except Exception:
             self.log.critical(
                 'Failed to read /etc/system-release. Cannot determine system '
                 'distribution!'
