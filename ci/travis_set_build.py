@@ -33,7 +33,7 @@ def append_build(build, version_file):
     # __version__ = 'ver'
     pattern = r"^(__version__ = ['\"])([^'\"]*)(['\"])"
     repl = r"\g<1>\g<2>{0}\g<3>".format(build)
-    print(
+    print(  # noqa: T003
         'Updating version in version_file "{0}" with build "{1}"'
         .format(version_file, build)
     )
@@ -47,7 +47,7 @@ def main(args):
     version_file = args.version_file
 
     if skip:
-        print(
+        print(  # noqa: T003
             'Not updating version for this build, `skip` set to "{0}"'
             .format(skip)
         )

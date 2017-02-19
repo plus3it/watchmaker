@@ -68,8 +68,8 @@ def main(args):
     public_key = fetch_public_key(args.repo)
     password = args.password or getpass('PyPI password: ')
     encrypted = encrypt(public_key, password.encode())
-    print("{0}".format(dict(secure=encrypted)))
-    print(
+    print("{0}".format(dict(secure=encrypted)))  # noqa: T003
+    print(  # noqa: T003
         "\nUpdate the secure string in .travis.yml and you'll be ready to "
         "deploy!"
     )

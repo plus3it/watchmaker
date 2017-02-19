@@ -70,14 +70,14 @@ INSTALL_CMD = {
 
 def download_file(url, path):
     """Download a file."""
-    print("Downloading: {} (into {})".format(url, path))
+    print("Downloading: {} (into {})".format(url, path))  # noqa: T003
     progress = [0, 0]
 
     def report(count, size, total):
         progress[0] = count * size
         if progress[0] - progress[1] > 1000000:
             progress[1] = progress[0]
-            print("Downloaded {:,}/{:,} ...".format(progress[1], total))
+            print("Downloaded {:,}/{:,} ...".format(progress[1], total))  # noqa: T003,E501
 
     dest, _ = urlretrieve(url, path, reporthook=report)
     return dest
@@ -85,31 +85,31 @@ def download_file(url, path):
 
 def install_python(version, arch, home):
     """Install a version of python."""
-    print(
+    print(  # noqa: T003
         "Installing Python", version, "for", arch, "bit architecture to", home
     )
     if exists(home):
         return
 
     path = download_python(version, arch)
-    print("Installing", path, "to", home)
+    print("Installing", path, "to", home)  # noqa: T003
     success = False
     for cmd in INSTALL_CMD[version]:
         cmd = [part.format(home=home, path=path) for part in cmd]
-        print("Running:", " ".join(cmd))
+        print("Running:", " ".join(cmd))  # noqa: T003
         try:
             check_call(cmd)
         except Exception as exc:
-            print("Failed command", cmd, "with:", exc)
+            print("Failed command", cmd, "with:", exc)  # noqa: T003
             if exists("install.log"):
                 with open("install.log") as fh:
-                    print(fh.read())
+                    print(fh.read())  # noqa: T003
         else:
             success = True
     if success:
-        print("Installation complete!")
+        print("Installation complete!")  # noqa: T003
     else:
-        print("Installation failed")
+        print("Installation failed")  # noqa: T003
 
 
 def download_python(version, arch):
@@ -118,8 +118,8 @@ def download_python(version, arch):
         try:
             return download_file(URLS[version, arch], "installer.exe")
         except Exception as exc:
-            print("Failed to download:", exc)
-        print("Retrying ...")
+            print("Failed to download:", exc)  # noqa: T003
+        print("Retrying ...")  # noqa: T003
 
 
 def install_pip(home):
@@ -127,11 +127,11 @@ def install_pip(home):
     pip_path = home + "/Scripts/pip.exe"
     python_path = home + "/python.exe"
     if exists(pip_path):
-        print("pip already installed.")
+        print("pip already installed.")  # noqa: T003
     else:
-        print("Installing pip...")
+        print("Installing pip...")  # noqa: T003
         download_file(GET_PIP_URL, GET_PIP_PATH)
-        print("Executing:", python_path, GET_PIP_PATH)
+        print("Executing:", python_path, GET_PIP_PATH)  # noqa: T003
         check_call([python_path, GET_PIP_PATH])
 
 
