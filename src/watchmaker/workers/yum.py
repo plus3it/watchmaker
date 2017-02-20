@@ -42,7 +42,7 @@ class Yum(LinuxManager):
     def _get_amazon_el_version(self, version):
         # All amzn linux distros currently available use el6-based packages.
         # When/if amzn linux switches a distro to el7, rethink this.
-        self.log.debug('Amazon Linux version={0}'.format(version))
+        self.log.debug('Amazon Linux, version=%s', version)
         return '6'
 
     def get_dist_info(self):
@@ -96,7 +96,7 @@ class Yum(LinuxManager):
             'dist': dist,
             'el_version': el_version
         }
-        self.log.debug('dist_info = {0}'.format(dist_info))
+        self.log.debug('dist_info=%s', dist_info)
         return dist_info
 
     def _validate_config(self):
@@ -142,7 +142,7 @@ class Yum(LinuxManager):
         for repo in self.yumrepomap:
             if self._validate_repo(repo):
                 # Download the yum repo definition to /etc/yum.repos.d/
-                self.log.info('Installing repo: {0}'.format(repo['url']))
+                self.log.info('Installing repo: %s', repo['url'])
                 url = repo['url']
                 repofile = '/etc/yum.repos.d/{0}'.format(
                     url.split('/')[-1])
@@ -150,9 +150,7 @@ class Yum(LinuxManager):
             else:
                 self.log.debug(
                     'Skipped repo because it is not valid for this system: '
-                    'dist_info={0}'
-                    .format(self.dist_info)
+                    'dist_info=%s',
+                    self.dist_info
                 )
-                self.log.debug(
-                    'Skipped repo={0}'.format(repo)
-                )
+                self.log.debug('Skipped repo=%s', repo)

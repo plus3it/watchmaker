@@ -279,16 +279,16 @@ class SaltBase(ManagerBase):
         elif states.lower() == 'highstate':
             self.log.info(
                 'Detected the `states` parameter is set to `highstate`. '
-                'Applying the salt `"highstate`" to the system.'
+                'Applying the salt "highstate" to the system.'
             )
             cmd = ['state.highstate']
             cmd.extend(self.salt_call_args)
             self.run_salt(cmd)
         else:
             self.log.info(
-                'Detected the `states` parameter is set to: `{0}`. Applying '
-                'the user-defined list of states to the system.'
-                .format(states)
+                'Detected the `states` parameter is set to: `%s`. Applying '
+                'the user-defined list of states to the system.',
+                states
             )
             cmd = ['state.sls', states]
             cmd.extend(self.salt_call_args)
@@ -407,7 +407,7 @@ class SaltLinux(SaltBase, LinuxManager):
         super(SaltLinux, self)._build_salt_formula(srv)
 
     def _set_grain(self, grain, value):
-        self.log.info('Setting grain `{0}` ...'.format(grain))
+        self.log.info('Setting grain `%s` ...', grain)
         super(SaltLinux, self)._set_grain(grain, value)
 
     def install(self):
@@ -506,7 +506,7 @@ class SaltWindows(SaltBase, WindowsManager):
         super(SaltWindows, self)._build_salt_formula(root)
 
     def _set_grain(self, grain, value):
-        self.log.info('Setting grain `{0}` ...'.format(grain))
+        self.log.info('Setting grain `%s` ...', grain)
         super(SaltWindows, self)._set_grain(grain, value)
 
     def install(self):

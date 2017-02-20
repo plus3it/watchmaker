@@ -163,8 +163,8 @@ class Client(object):
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
         self.log.info(header)
-        self.log.debug('Parameters:  {0}'.format(arguments))
-        self.log.debug('Extra Parameters:  {0}'.format(extra_arguments))
+        self.log.debug('Parameters: %s', arguments)
+        self.log.debug('Extra Parameters: %s', extra_arguments)
 
         # Pop remaining arguments used by watchmaker.Client itself
         self.default_config = os.path.join(static.__path__[0], 'config.yaml')
@@ -177,8 +177,8 @@ class Client(object):
         self.system = platform.system()
         self._set_system_params()
 
-        self.log.debug('System Type: {0}'.format(self.system))
-        self.log.debug('System Parameters: {0}'.format(self.system_params))
+        self.log.debug('System Type: %s', self.system)
+        self.log.debug('System Parameters: %s', self.system_params)
 
         # All remaining arguments are worker_args
         worker_args = arguments
@@ -209,7 +209,7 @@ class Client(object):
         """
         if not self.config_path:
             self.log.warning(
-                'User did not supply a config.  Using the default config.'
+                'User did not supply a config. Using the default config.'
             )
             self.config_path = self.default_config
         else:
@@ -223,13 +223,13 @@ class Client(object):
             except urllib.error.URLError:
                 msg = (
                     'The URL used to get the user config.yaml file did not '
-                    'work!  Please make sure your config is available.'
+                    'work! Please make sure your config is available.'
                 )
                 self.log.critical(msg)
                 raise
         elif self.config_path and not os.path.exists(self.config_path):
             msg = (
-                'User supplied config {0} does not exist.  Please '
+                'User supplied config {0} does not exist. Please '
                 'double-check your config path or use the default config '
                 'path.'.format(self.config_path)
             )
@@ -268,16 +268,15 @@ class Client(object):
                 if worker_name not in config:
                     # Add worker to config
                     config[worker_name] = worker_config
-                    self.log.debug('{0} config: {1}'.format(
-                        worker_name, worker_config)
-                    )
+                    self.log.debug('%s config: %s', worker_name, worker_config)
                 else:
                     # Worker present in both config_system and config_all
                     config[worker_name]['Parameters'].update(
                         worker_config['Parameters']
                     )
-                    self.log.debug('{0} extra config: {1}'.format(
-                        worker_name, worker_config)
+                    self.log.debug(
+                        '%s extra config: %s',
+                        worker_name, worker_config
                     )
                     # Need to (re)merge cli worker args so they override
                     config[worker_name]['__merged'] = False
@@ -294,8 +293,8 @@ class Client(object):
                 raise
 
         self.log.debug(
-            'Command-line arguments merged into worker configs: {0}'
-            .format(self.worker_args)
+            'Command-line arguments merged into worker configs: %s',
+            self.worker_args
         )
 
         return config
@@ -357,11 +356,8 @@ class Client(object):
         Upon successful execution, the system will be properly provisioned,
         according to the defined configuration and workers.
         """
-        self.log.info('Start time: {0}'.format(datetime.datetime.now()))
-        self.log.info(
-            'Workers to execute: {0}.'
-            .format(self.config.keys())
-        )
+        self.log.info('Start time: %s', datetime.datetime.now())
+        self.log.info('Workers to execute: %s', self.config.keys())
 
         # Create watchmaker directories
         try:
@@ -398,4 +394,4 @@ class Client(object):
                 'exits.'
             )
             subprocess.call(self.system_params['restart'], shell=True)
-        self.log.info('Stop time: {0}'.format(datetime.datetime.now()))
+        self.log.info('Stop time: %s', datetime.datetime.now())
