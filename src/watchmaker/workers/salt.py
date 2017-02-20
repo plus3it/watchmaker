@@ -71,15 +71,10 @@ class SaltBase(ManagerBase):
             domain. E.g. ``"OU=SuperCoolApp,DC=example,DC=com"``
     """
 
-    # Init attributes used by SaltBase, overridden by inheriting classes
-    salt_working_dir = None
-    salt_working_dir_prefix = None
-    salt_log_dir = None
-    salt_conf_path = None
-    salt_conf = None
-    salt_call = None
-
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Init inherited classes
+        super(SaltBase, self).__init__(*args, **kwargs)
+
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop('user_formulas', None) or []
         self.formula_termination_strings = \
@@ -94,14 +89,28 @@ class SaltBase(ManagerBase):
         self.admin_users = kwargs.pop('admin_users', None) or ''
         self.salt_states = kwargs.pop('salt_states', None) or ''
 
-        # Init inherited classes
-        super(SaltBase, self).__init__(*args, **kwargs)
+        # Init attributes used by SaltBase, overridden by inheriting classes
+        self.salt_working_dir = None
+        self.salt_working_dir_prefix = None
+        self.salt_log_dir = None
+        self.salt_conf_path = None
+        self.salt_conf = None
+        self.salt_call = None
+        self.salt_file_root = None
+        self.salt_base_env = None
+        self.salt_formula_root = None
+        self.salt_call_args = None
+        self.salt_debug_logfile = None
 
-    def _set_salt_dirs(self, srv):
-        self.salt_file_root = os.sep.join((srv, 'states'))
-        self.salt_base_env = os.sep.join((self.salt_file_root, 'base'))
-        self.salt_formula_root = os.sep.join((srv, 'formulas'))
-        self.salt_pillar_root = os.sep.join((srv, 'pillar'))
+    @staticmethod
+    def _get_salt_dirs(srv):
+        salt_file_root = os.sep.join((srv, 'states'))
+        salt_base_env = os.sep.join((salt_file_root, 'base'))
+        salt_formula_root = os.sep.join((srv, 'formulas'))
+        salt_pillar_root = os.sep.join((srv, 'pillar'))
+        return (
+            salt_file_root, salt_base_env, salt_formula_root, salt_pillar_root
+        )
 
     def _prepare_for_install(self):
         self.create_working_dir(
@@ -173,18 +182,18 @@ class SaltBase(ManagerBase):
 
     def _build_salt_formula(self, extract_dir):
         if self.content_source:
-            self.salt_content_filename = self.content_source.split('/')[-1]
-            self.salt_content_file = os.sep.join((
+            salt_content_filename = self.content_source.split('/')[-1]
+            salt_content_file = os.sep.join((
                 self.working_dir,
-                self.salt_content_filename
+                salt_content_filename
             ))
             self.download_file(
                 self.content_source,
-                self.salt_content_file,
+                salt_content_file,
                 self.s3_source
             )
             self.extract_contents(
-                filepath=self.salt_content_file,
+                filepath=salt_content_file,
                 to_directory=extract_dir
             )
 
@@ -312,15 +321,15 @@ class SaltLinux(SaltBase, LinuxManager):
     """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Init inherited classes
+        super(SaltLinux, self).__init__(*args, **kwargs)
+
         # Pop arguments used by SaltLinux
         self.install_method = kwargs.pop('install_method', None) or 'yum'
         self.bootstrap_source = \
             kwargs.pop('bootstrap_source', None) or ''
         self.git_repo = kwargs.pop('git_repo', None) or ''
         self.salt_version = kwargs.pop('salt_version', None) or ''
-
-        # Init inherited classes
-        super(SaltLinux, self).__init__(*args, **kwargs)
 
         # Extra variables needed for SaltLinux.
         self.yum_pkgs = [
@@ -338,7 +347,11 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_working_dir = self.system_params['workingdir']
         self.salt_working_dir_prefix = 'salt-'
 
-        self._set_salt_dirs(self.salt_srv)
+        salt_dirs = self._get_salt_dirs(self.salt_srv)
+        self.salt_file_root = salt_dirs[0]
+        self.salt_base_env = salt_dirs[1]
+        self.salt_formula_root = salt_dirs[2]
+        self.salt_pillar_root = salt_dirs[3]
 
     def _configuration_validation(self):
         if self.install_method.lower() == 'git':
@@ -347,9 +360,6 @@ class SaltLinux(SaltBase, LinuxManager):
                     'Detected `git` as the install method, but the required '
                     'parameter `bootstrap_source` was not provided.'
                 )
-            else:
-                self.salt_bootstrap_filename = \
-                    self.bootstrap_source.split('/')[-1]
             if not self.git_repo:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
@@ -360,13 +370,17 @@ class SaltLinux(SaltBase, LinuxManager):
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
+            salt_bootstrap_filename = os.sep.join((
+                self.working_dir,
+                self.bootstrap_source.split('/')[-1]
+            ))
             self.download_file(
                 self.bootstrap_source,
-                self.salt_bootstrap_filename
+                salt_bootstrap_filename
             )
             bootstrap_cmd = [
                 'sh',
-                self.salt_bootstrap_filename,
+                salt_bootstrap_filename,
                 '-g',
                 self.git_repo
             ]
@@ -447,7 +461,11 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_working_dir = self.system_params['workingdir']
         self.salt_working_dir_prefix = 'Salt-'
 
-        self._set_salt_dirs(self.salt_srv)
+        salt_dirs = self._get_salt_dirs(self.salt_srv)
+        self.salt_file_root = salt_dirs[0]
+        self.salt_base_env = salt_dirs[1]
+        self.salt_formula_root = salt_dirs[2]
+        self.salt_pillar_root = salt_dirs[3]
 
     def _install_package(self):
         installer_name = os.sep.join(
