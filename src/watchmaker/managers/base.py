@@ -37,7 +37,8 @@ class ManagerBase(object):
         )
         self.system_params = system_params
         self.working_dir = None
-        return
+        args = args
+        kwargs = kwargs
 
     def _import_boto3(self):
         if self.boto3:
@@ -119,7 +120,7 @@ class ManagerBase(object):
                     s3_ = self.boto3.resource("s3")
                     s3_.meta.client.head_bucket(Bucket=bucket_name)
                     s3_.Object(bucket_name, key_name).download_file(filename)
-                except Exception as exc:
+                except Exception:
                     msg = (
                         'Unable to download file from S3 bucket. url = {0}. '
                         'bucket = {1}. key = {2}. file = {3}.'
@@ -220,7 +221,7 @@ class ManagerBase(object):
         try:
             self.log.debug('{0} being cleaned up.'.format(self.working_dir))
             shutil.rmtree(self.working_dir)
-        except Exception as exc:
+        except Exception:
             msg = 'Cleanup Failed!'
             self.log.critical(msg)
             raise
@@ -348,6 +349,8 @@ class WorkersManagerBase(object):
     def __init__(self, system_params, workers, *args, **kwargs):  # noqa: D102
         self.system_params = system_params
         self.workers = workers
+        args = args
+        kwargs = kwargs
 
     @abc.abstractmethod
     def _worker_execution(self):

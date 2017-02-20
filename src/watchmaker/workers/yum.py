@@ -39,10 +39,10 @@ class Yum(LinuxManager):
         super(Yum, self).__init__(*args, **kwargs)
         self.dist_info = self.get_dist_info()
 
-    @staticmethod
-    def _get_amazon_el_version(version):
+    def _get_amazon_el_version(self, version):
         # All amzn linux distros currently available use el6-based packages.
         # When/if amzn linux switches a distro to el7, rethink this.
+        self.log.debug('Amazon Linux version={0}'.format(version))
         return '6'
 
     def get_dist_info(self):
