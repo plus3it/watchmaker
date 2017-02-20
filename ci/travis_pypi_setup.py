@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import base64
 import json
+import logging
 from getpass import getpass
 
 from cryptography.hazmat.backends import default_backend
@@ -17,8 +18,11 @@ try:
 except ImportError:
     from urllib.request import urlopen
 
-
 GITHUB_REPO = 'plus3it/watchmaker'
+
+logformat = '[%(name)s]: %(message)s'
+logging.basicConfig(format=logformat, level=logging.INFO)
+log = logging.getLogger('travis_pypi_setup')
 
 
 def load_key(pubkey):
@@ -67,8 +71,8 @@ def main(args):
     public_key = fetch_public_key(args.repo)
     password = args.password or getpass('PyPI password: ')
     encrypted = encrypt(public_key, password.encode())
-    print("{0}".format(dict(secure=encrypted)))  # noqa: T003
-    print(  # noqa: T003
+    log.info("%s", dict(secure=encrypted))
+    log.info(
         "\nUpdate the secure string in .travis.yml and you'll be ready to "
         "deploy!"
     )
