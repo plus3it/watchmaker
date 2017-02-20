@@ -172,10 +172,7 @@ class ManagerBase(object):
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception:
-            msg = (
-                'Could not create a working dir in {0}.  Exception: {1}'
-                .format(basedir)
-            )
+            msg = 'Could not create a working dir in {0}'.format(basedir)
             self.log.critical(msg)
             raise
         self.log.debug('Working directory: {0}'.format(working_dir))
