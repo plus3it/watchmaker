@@ -24,13 +24,13 @@ class LinuxWorkersManager(WorkersManagerBase):
         """Manage worker cadence."""
         for worker in self.workers:
             configuration = self.workers[worker]['config']
-            if 'Yum' in worker:
+            if 'yum' in worker:
                 yum = Yum(
                     system_params=self.system_params,
                     **configuration
                 )
                 yum.install()
-            elif 'Salt' in worker:
+            elif 'salt' in worker:
                 salt = SaltLinux(
                     system_params=self.system_params,
                     **configuration
@@ -58,7 +58,7 @@ class WindowsWorkersManager(WorkersManagerBase):
         """Manage worker cadence."""
         for worker in self.workers:
             configuration = self.workers[worker]['config']
-            if 'Salt' in worker:
+            if 'salt' in worker:
                 salt = SaltWindows(
                     system_params=self.system_params,
                     **configuration

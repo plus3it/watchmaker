@@ -1,5 +1,5 @@
-All:
-  - Salt:
+all:
+  - salt:
       admin_groups: None
       admin_users: None
       computer_name: None
@@ -16,8 +16,8 @@ All:
         #- https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
         #To "overwrite" submodule formulas, make sure name matches submodule names.
 
-Linux:
-  - Yum:
+linux:
+  - yum:
       repo_map:
         #SaltEL6:
         - dist:
@@ -34,7 +34,7 @@ Linux:
             - centos
           el_version: 7
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
-  - Salt:
+  - salt:
       salt_debug_log: None
       content_source: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
       install_method: yum
@@ -42,8 +42,8 @@ Linux:
       git_repo: None
       salt_version: None
 
-Windows:
-  - Salt:
+windows:
+  - salt:
       salt_debug_log: None
       content_source: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
       installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe

@@ -178,7 +178,7 @@ class Client(object):
         self.verbosity = arguments.pop('verbosity')
 
         # Get the system params
-        self.system = platform.system()
+        self.system = platform.system().lower()
         self._set_system_params()
 
         self.log.debug('System Type: %s', self.system)
@@ -245,7 +245,7 @@ class Client(object):
 
         config_full = yaml.safe_load(data)
         try:
-            config_all = config_full.get('All', [])
+            config_all = config_full.get('all', [])
             config_system = config_full.get(self.system, [])
         except AttributeError:
             msg = 'Malformed config file. Must be a dictionary.'
@@ -336,11 +336,11 @@ class Client(object):
 
     def _set_system_params(self):
         """Set OS-specific attributes."""
-        if 'Linux' in self.system:
+        if 'linux' in self.system:
             self.system_drive = '/'
             self.workers_manager = LinuxWorkersManager
             self.system_params = self._get_linux_system_params()
-        elif 'Windows' in self.system:
+        elif 'windows' in self.system:
             self.system_drive = os.environ['SYSTEMDRIVE']
             self.workers_manager = WindowsWorkersManager
             self.system_params = self._get_windows_system_params()
