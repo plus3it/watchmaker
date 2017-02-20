@@ -341,7 +341,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self._set_salt_dirs(self.salt_srv)
 
     def _configuration_validation(self):
-        if 'git' == self.install_method.lower():
+        if self.install_method.lower() == 'git':
             if not self.bootstrap_source:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
@@ -357,9 +357,9 @@ class SaltLinux(SaltBase, LinuxManager):
                 )
 
     def _install_package(self):
-        if 'yum' == self.install_method.lower():
+        if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
-        elif 'git' == self.install_method.lower():
+        elif self.install_method.lower() == 'git':
             self.download_file(
                 self.bootstrap_source,
                 self.salt_bootstrap_filename
