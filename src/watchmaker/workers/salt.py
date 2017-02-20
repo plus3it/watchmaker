@@ -391,7 +391,7 @@ class SaltLinux(SaltBase, LinuxManager):
                 self.log.debug('No salt version defined in config.')
             self.call_process(bootstrap_cmd)
 
-    def _build_salt_formula(self):
+    def _build_salt_formula(self, srv):
         formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.salt_base_env)]
@@ -404,7 +404,7 @@ class SaltLinux(SaltBase, LinuxManager):
             'pillar_roots': {'base': [str(self.salt_pillar_root)]}
         }
 
-        super(SaltLinux, self)._build_salt_formula(self.salt_srv)
+        super(SaltLinux, self)._build_salt_formula(srv)
 
     def _set_grain(self, grain, value):
         self.log.info('Setting grain `{0}` ...'.format(grain))
@@ -415,7 +415,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self._configuration_validation()
         self._prepare_for_install()
         self._install_package()
-        self._build_salt_formula()
+        self._build_salt_formula(self.salt_srv)
 
         self.process_grains()
         self.process_states(self.salt_states)
@@ -488,7 +488,7 @@ class SaltWindows(SaltBase, WindowsManager):
 
         super(SaltWindows, self)._prepare_for_install()
 
-    def _build_salt_formula(self):
+    def _build_salt_formula(self, root):
         formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.salt_base_env), str(self.salt_win_repo)]
@@ -503,7 +503,7 @@ class SaltWindows(SaltBase, WindowsManager):
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
 
-        super(SaltWindows, self)._build_salt_formula(self.salt_root)
+        super(SaltWindows, self)._build_salt_formula(root)
 
     def _set_grain(self, grain, value):
         self.log.info('Setting grain `{0}` ...'.format(grain))
@@ -513,7 +513,7 @@ class SaltWindows(SaltBase, WindowsManager):
         """Install salt and execute salt states."""
         self._prepare_for_install()
         self._install_package()
-        self._build_salt_formula()
+        self._build_salt_formula(self.salt_root)
 
         if self.ash_role and self.ash_role != 'None':
             role = {'role': str(self.ash_role)}
