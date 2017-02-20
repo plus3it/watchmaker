@@ -96,7 +96,6 @@ class ManagerBase(object):
         self.log.debug('Destination: {0}'.format(filename))
         self.log.debug('S3: {0}'.format(sourceiss3bucket))
 
-        # TODO Rework this to properly reflect logic flow cleanly.
         if sourceiss3bucket:
             self._import_boto3()
 
