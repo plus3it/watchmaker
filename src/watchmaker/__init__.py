@@ -271,13 +271,11 @@ class Client(object):
                 worker_name, worker_config = list(worker.items())[0]
                 if worker_name not in config:
                     # Add worker to config
-                    config[worker_name] = worker_config
+                    config[worker_name] = {'config': worker_config}
                     self.log.debug('%s config: %s', worker_name, worker_config)
                 else:
                     # Worker present in both config_system and config_all
-                    config[worker_name]['Parameters'].update(
-                        worker_config['Parameters']
-                    )
+                    config[worker_name]['config'].update(worker_config)
                     self.log.debug(
                         '%s extra config: %s',
                         worker_name, worker_config
@@ -286,11 +284,11 @@ class Client(object):
                     config[worker_name]['__merged'] = False
                 if not config[worker_name].get('__merged'):
                     # Merge worker_args into config params
-                    config[worker_name]['Parameters'].update(self.worker_args)
+                    config[worker_name]['config'].update(self.worker_args)
                     config[worker_name]['__merged'] = True
-            except KeyError:
+            except Exception:
                 msg = (
-                    'Malformed worker, missing "Parameters" key; worker = {0}'
+                    'Failed to merge worker config; worker={0}'
                     .format(worker)
                 )
                 self.log.critical(msg)

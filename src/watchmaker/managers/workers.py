@@ -23,7 +23,7 @@ class LinuxWorkersManager(WorkersManagerBase):
     def worker_cadence(self):
         """Manage worker cadence."""
         for worker in self.workers:
-            configuration = self.workers[worker]['Parameters']
+            configuration = self.workers[worker]['config']
             if 'Yum' in worker:
                 yum = Yum(
                     system_params=self.system_params,
@@ -57,7 +57,7 @@ class WindowsWorkersManager(WorkersManagerBase):
     def worker_cadence(self):
         """Manage worker cadence."""
         for worker in self.workers:
-            configuration = self.workers[worker]['Parameters']
+            configuration = self.workers[worker]['config']
             if 'Salt' in worker:
                 salt = SaltWindows(
                     system_params=self.system_params,
