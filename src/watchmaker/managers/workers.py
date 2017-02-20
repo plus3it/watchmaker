@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Watchmaker workers manager."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
 from watchmaker.managers.base import WorkersManagerBase
 from watchmaker.workers.salt import SaltLinux, SaltWindows
 from watchmaker.workers.yum import Yum

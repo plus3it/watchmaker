@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Watchmaker yum worker."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
 import re
 
 import six
@@ -74,9 +77,7 @@ class Yum(LinuxManager):
             raise WatchmakerException(msg)
 
         # Assign dist,version from the match groups tuple, removing any spaces
-        dist, version = (
-            x.translate(None, ' ') for x in matched.groups()
-        )
+        dist, version = (x.replace(' ', '') for x in matched.groups())
 
         # Determine el_version
         if dist == 'amazon':

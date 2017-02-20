@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 """Watchmaker salt worker."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
+import codecs
 import json
 import os
 import shutil
@@ -200,11 +204,12 @@ class SaltBase(ManagerBase):
         if not os.path.exists(os.path.join(self.salt_conf_path, 'minion.d')):
             os.mkdir(os.path.join(self.salt_conf_path, 'minion.d'))
 
-        with open(
+        with codecs.open(
             os.path.join(self.salt_conf_path, 'minion.d', 'watchmaker.conf'),
-            'w'
+            'w',
+            encoding="utf-8"
         ) as fh_:
-            yaml.dump(self.salt_conf, fh_, default_flow_style=False)
+            yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
 
     def _set_grain(self, grain, value):
         cmd = [

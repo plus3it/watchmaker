@@ -9,7 +9,8 @@ This is a `port <https://github.com/pypa/python-packaging-user-guide/blob/master
 with various fixes and improvements that just weren't feasible to implement in
 PowerShell.
 """
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 from os import environ
 from os.path import exists

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 """Watchmaker module."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
+import codecs
 import collections
 import datetime
 import logging
@@ -236,7 +240,7 @@ class Client(object):
             self.log.critical(msg)
             raise WatchmakerException(msg)
         else:
-            with open(self.config_path) as fh_:
+            with codecs.open(self.config_path, encoding="utf-8") as fh_:
                 data = fh_.read()
 
         config_full = yaml.safe_load(data)

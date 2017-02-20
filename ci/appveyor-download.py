@@ -7,7 +7,8 @@ Taken from: <https://bitbucket.org/ned/coveragepy/src/tip/ci/download_appveyor.p
 # Licensed under the Apache License: <http://www.apache.org/licenses/LICENSE-2.0>  # noqa: E501
 # For details: <https://bitbucket.org/ned/coveragepy/src/default/NOTICE.txt>
 """
-from __future__ import unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import argparse
 import os

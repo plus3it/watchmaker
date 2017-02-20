@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Update encrypted deploy password in Travis config file."""
-
-
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import base64
 import json

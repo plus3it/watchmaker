@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Watchmaker cli."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
 import argparse
 import os
 import sys
