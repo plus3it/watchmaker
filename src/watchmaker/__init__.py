@@ -194,7 +194,8 @@ class Client(object):
 
         self.config = self._get_config()
 
-    def _validate_url(self, url):
+    @staticmethod
+    def _validate_url(url):
         return urllib.parse.urlparse(url).scheme in ['http', 'https']
 
     def _get_config(self):
