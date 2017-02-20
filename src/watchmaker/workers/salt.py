@@ -71,6 +71,14 @@ class SaltBase(ManagerBase):
             domain. E.g. ``"OU=SuperCoolApp,DC=example,DC=com"``
     """
 
+    # Init attributes used by SaltBase, overridden by inheriting classes
+    salt_working_dir = None
+    salt_working_dir_prefix = None
+    salt_log_dir = None
+    salt_conf_path = None
+    salt_conf = None
+    salt_call = None
+
     def __init__(self, *args, **kwargs):  # noqa: D102
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop('user_formulas', None) or []
