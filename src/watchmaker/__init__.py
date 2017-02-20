@@ -118,8 +118,10 @@ class Arguments(dict):
         log_dir=None,
         no_reboot=False,
         verbosity=0,
+        *args,
         **kwargs
     ):
+        super(Arguments, self).__init__(*args, **kwargs)
         self.config_path = config_path
         self.log_dir = log_dir
         self.no_reboot = no_reboot
