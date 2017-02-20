@@ -62,9 +62,9 @@ class ManagerBase(object):
         self._import_boto3()
 
         try:
-            s3 = self.boto3.resource("s3")
-            s3.meta.client.head_bucket(Bucket=bucket_name)
-            s3.Object(bucket_name, key_name).download_file(destination)
+            s3_ = self.boto3.resource("s3")
+            s3_.meta.client.head_bucket(Bucket=bucket_name)
+            s3_.Object(bucket_name, key_name).download_file(destination)
         except self.boto_client.ClientError:
             msg = 'Bucket does not exist.  bucket = {0}.'.format(bucket_name)
             self.log.critical(msg)
@@ -106,9 +106,9 @@ class ManagerBase(object):
             self.log.debug('key_name: {0}'.format(key_name))
 
             try:
-                s3 = self.boto3.resource('s3')
-                s3.meta.client.head_bucket(Bucket=bucket_name)
-                s3.Object(bucket_name, key_name).download_file(filename)
+                s3_ = self.boto3.resource('s3')
+                s3_.meta.client.head_bucket(Bucket=bucket_name)
+                s3_.Object(bucket_name, key_name).download_file(filename)
             except (NameError, self.boto_client.ClientError):
                 self.log.error(
                     'NameError: {0}'.format(self.boto_client.ClientError)
@@ -116,9 +116,9 @@ class ManagerBase(object):
                 try:
                     bucket_name = url.split('/')[2].split('.')[0]
                     key_name = '/'.join(url.split('/')[3:])
-                    s3 = self.boto3.resource("s3")
-                    s3.meta.client.head_bucket(Bucket=bucket_name)
-                    s3.Object(bucket_name, key_name).download_file(filename)
+                    s3_ = self.boto3.resource("s3")
+                    s3_.meta.client.head_bucket(Bucket=bucket_name)
+                    s3_.Object(bucket_name, key_name).download_file(filename)
                 except Exception as exc:
                     msg = (
                         'Unable to download file from S3 bucket. url = {0}. '

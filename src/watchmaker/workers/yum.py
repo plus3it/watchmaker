@@ -53,8 +53,8 @@ class Yum(LinuxManager):
 
         # Read first line from /etc/system-release
         try:
-            with open(name='/etc/system-release', mode='rb') as f:
-                release = f.readline().strip()
+            with open(name='/etc/system-release', mode='rb') as fh_:
+                release = fh_.readline().strip()
         except Exception:
             self.log.critical(
                 'Failed to read /etc/system-release. Cannot determine system '

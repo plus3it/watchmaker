@@ -233,8 +233,8 @@ class Client(object):
             self.log.critical(msg)
             raise WatchmakerException(msg)
         else:
-            with open(self.config_path) as f:
-                data = f.read()
+            with open(self.config_path) as fh_:
+                data = fh_.read()
 
         config_full = yaml.safe_load(data)
         try:

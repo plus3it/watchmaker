@@ -194,8 +194,8 @@ class SaltBase(ManagerBase):
         with open(
             os.path.join(self.salt_conf_path, 'minion.d', 'watchmaker.conf'),
             'w'
-        ) as f:
-            yaml.dump(self.salt_conf, f, default_flow_style=False)
+        ) as fh_:
+            yaml.dump(self.salt_conf, fh_, default_flow_style=False)
 
     def _set_grain(self, grain, value):
         cmd = [
