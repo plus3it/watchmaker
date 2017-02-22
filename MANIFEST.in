@@ -6,6 +6,7 @@ graft tests
 include .coveragerc
 include .editorconfig
 include .gitmodules
+include .pylintrc
 
 include AUTHORS.md
 include CHANGELOG.md

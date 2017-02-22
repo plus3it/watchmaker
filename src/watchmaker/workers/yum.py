@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """Watchmaker yum worker."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
 import re
+
 import six
 
 from watchmaker.exceptions import WatchmakerException
@@ -38,10 +42,10 @@ class Yum(LinuxManager):
         super(Yum, self).__init__(*args, **kwargs)
         self.dist_info = self.get_dist_info()
 
-    @staticmethod
-    def _get_amazon_el_version(version):
+    def _get_amazon_el_version(self, version):
         # All amzn linux distros currently available use el6-based packages.
         # When/if amzn linux switches a distro to el7, rethink this.
+        self.log.debug('Amazon Linux, version=%s', version)
         return '6'
 
     def get_dist_info(self):
@@ -52,9 +56,9 @@ class Yum(LinuxManager):
 
         # Read first line from /etc/system-release
         try:
-            with open(name='/etc/system-release', mode='rb') as f:
-                release = f.readline().strip()
-        except:
+            with open(name='/etc/system-release', mode='rb') as fh_:
+                release = fh_.readline().strip()
+        except Exception:
             self.log.critical(
                 'Failed to read /etc/system-release. Cannot determine system '
                 'distribution!'
@@ -73,9 +77,7 @@ class Yum(LinuxManager):
             raise WatchmakerException(msg)
 
         # Assign dist,version from the match groups tuple, removing any spaces
-        dist, version = (
-            x.translate(None, ' ') for x in matched.groups()
-        )
+        dist, version = (x.replace(' ', '') for x in matched.groups())
 
         # Determine el_version
         if dist == 'amazon':
@@ -95,7 +97,7 @@ class Yum(LinuxManager):
             'dist': dist,
             'el_version': el_version
         }
-        self.log.debug('dist_info = {0}'.format(dist_info))
+        self.log.debug('dist_info=%s', dist_info)
         return dist_info
 
     def _validate_config(self):
@@ -141,7 +143,7 @@ class Yum(LinuxManager):
         for repo in self.yumrepomap:
             if self._validate_repo(repo):
                 # Download the yum repo definition to /etc/yum.repos.d/
-                self.log.info('Installing repo: {0}'.format(repo['url']))
+                self.log.info('Installing repo: %s', repo['url'])
                 url = repo['url']
                 repofile = '/etc/yum.repos.d/{0}'.format(
                     url.split('/')[-1])
@@ -149,9 +151,7 @@ class Yum(LinuxManager):
             else:
                 self.log.debug(
                     'Skipped repo because it is not valid for this system: '
-                    'dist_info={0}'
-                    .format(self.dist_info)
+                    'dist_info=%s',
+                    self.dist_info
                 )
-                self.log.debug(
-                    'Skipped repo={0}'.format(repo)
-                )
+                self.log.debug('Skipped repo=%s', repo)

@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
 """Watchmaker documentation build configuration file."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
+import os
+import sys
+
+from recommonmark.parser import CommonMarkParser
+from recommonmark.transform import AutoStructify
+
 #
 # Created by sphinx-quickstart on Thu Jun 30 20:11:36 2016.
 #
@@ -16,12 +25,6 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
-import sys
-
-from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
-
 
 sys.path.insert(0, os.path.abspath('../src/'))
 rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -47,7 +50,7 @@ extensions = [
 ]
 
 intersphinx_mapping = {
-  'python': ('https://docs.python.org/3', None),
+    'python': ('https://docs.python.org/3', None),
 }
 
 autoclass_content = 'class'
@@ -77,7 +80,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Watchmaker'
-copyright = u'2016, Plus3 IT Systems'
+copyright = u'2016, Plus3 IT Systems'  # noqa: B001
 author = u'Plus3 IT Systems'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -272,21 +275,21 @@ htmlhelp_basename = 'Watchmaker'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
-     # The paper size ('letterpaper' or 'a4paper').
-     #
-     # 'papersize': 'letterpaper',
+    # The paper size ('letterpaper' or 'a4paper').
+    #
+    # 'papersize': 'letterpaper',
 
-     # The font size ('10pt', '11pt' or '12pt').
-     #
-     # 'pointsize': '10pt',
+    # The font size ('10pt', '11pt' or '12pt').
+    #
+    # 'pointsize': '10pt',
 
-     # Additional stuff for the LaTeX preamble.
-     #
-     # 'preamble': '',
+    # Additional stuff for the LaTeX preamble.
+    #
+    # 'preamble': '',
 
-     # Latex figure (float) alignment
-     #
-     # 'figure_align': 'htbp',
+    # Latex figure (float) alignment
+    #
+    # 'figure_align': 'htbp',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

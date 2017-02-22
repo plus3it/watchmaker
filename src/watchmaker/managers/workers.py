@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Watchmaker workers manager."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
 from watchmaker.managers.base import WorkersManagerBase
 from watchmaker.workers.salt import SaltLinux, SaltWindows
 from watchmaker.workers.yum import Yum
@@ -36,7 +39,7 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     def cleanup(self):
         """Execute cleanup function."""
-        self.manager.cleanup()
+        pass
 
 
 class WindowsWorkersManager(WorkersManagerBase):
@@ -64,4 +67,4 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     def cleanup(self):
         """Execute cleanup function."""
-        self.manager.cleanup()
+        pass

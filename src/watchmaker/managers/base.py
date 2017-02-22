@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 """Watchmaker base manager."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
 import abc
 import logging
 import os
@@ -9,6 +12,7 @@ import tarfile
 import tempfile
 import zipfile
 
+from six import add_metaclass
 from six.moves import urllib
 
 from watchmaker.exceptions import WatchmakerException
@@ -36,7 +40,8 @@ class ManagerBase(object):
         )
         self.system_params = system_params
         self.working_dir = None
-        return
+        args = args
+        kwargs = kwargs
 
     def _import_boto3(self):
         if self.boto3:
@@ -61,9 +66,9 @@ class ManagerBase(object):
         self._import_boto3()
 
         try:
-            s3 = self.boto3.resource("s3")
-            s3.meta.client.head_bucket(Bucket=bucket_name)
-            s3.Object(bucket_name, key_name).download_file(destination)
+            s3_ = self.boto3.resource("s3")
+            s3_.meta.client.head_bucket(Bucket=bucket_name)
+            s3_.Object(bucket_name, key_name).download_file(destination)
         except self.boto_client.ClientError:
             msg = 'Bucket does not exist.  bucket = {0}.'.format(bucket_name)
             self.log.critical(msg)
@@ -90,35 +95,32 @@ class ManagerBase(object):
                 (Defaults to ``False``) Switch to indicate that the download
                 should use boto3 to download the file from an S3 bucket.
         """
-        self.log.debug('Downloading: {0}'.format(url))
-        self.log.debug('Destination: {0}'.format(filename))
-        self.log.debug('S3: {0}'.format(sourceiss3bucket))
+        self.log.debug('Downloading: %s', url)
+        self.log.debug('Destination: %s', filename)
+        self.log.debug('S3: %s', sourceiss3bucket)
 
-        # TODO Rework this to properly reflect logic flow cleanly.
         if sourceiss3bucket:
             self._import_boto3()
 
             bucket_name = url.split('/')[3]
             key_name = '/'.join(url.split('/')[4:])
 
-            self.log.debug('Bucket Name: {0}'.format(bucket_name))
-            self.log.debug('key_name: {0}'.format(key_name))
+            self.log.debug('Bucket Name: %s', bucket_name)
+            self.log.debug('key_name: %s', key_name)
 
             try:
-                s3 = self.boto3.resource('s3')
-                s3.meta.client.head_bucket(Bucket=bucket_name)
-                s3.Object(bucket_name, key_name).download_file(filename)
+                s3_ = self.boto3.resource('s3')
+                s3_.meta.client.head_bucket(Bucket=bucket_name)
+                s3_.Object(bucket_name, key_name).download_file(filename)
             except (NameError, self.boto_client.ClientError):
-                self.log.error(
-                    'NameError: {0}'.format(self.boto_client.ClientError)
-                )
+                self.log.error('NameError: %s', self.boto_client.ClientError)
                 try:
                     bucket_name = url.split('/')[2].split('.')[0]
                     key_name = '/'.join(url.split('/')[3:])
-                    s3 = self.boto3.resource("s3")
-                    s3.meta.client.head_bucket(Bucket=bucket_name)
-                    s3.Object(bucket_name, key_name).download_file(filename)
-                except Exception as exc:
+                    s3_ = self.boto3.resource("s3")
+                    s3_.meta.client.head_bucket(Bucket=bucket_name)
+                    s3_.Object(bucket_name, key_name).download_file(filename)
+                except Exception:
                     msg = (
                         'Unable to download file from S3 bucket. url = {0}. '
                         'bucket = {1}. key = {2}. file = {3}.'
@@ -135,8 +137,8 @@ class ManagerBase(object):
                 self.log.critical(msg)
                 raise
             self.log.info(
-                'Downloaded file from S3 bucket  --  url = {0}.  '
-                'filename = {1}'.format(url, filename)
+                'Downloaded file from S3 bucket. url=%s. filename=%s',
+                url, filename
             )
         else:
             try:
@@ -152,8 +154,8 @@ class ManagerBase(object):
                 self.log.critical(msg)
                 raise
             self.log.info(
-                'Downloaded file from web server  --  url = {0}.  '
-                'filename = {1}'.format(url, filename)
+                'Downloaded file from web server. url=%s. filename=%s',
+                url, filename
             )
 
     def create_working_dir(self, basedir, prefix):
@@ -171,13 +173,10 @@ class ManagerBase(object):
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception:
-            msg = (
-                'Could not create a working dir in {0}.  Exception: {1}'
-                .format(basedir)
-            )
+            msg = 'Could not create a working dir in {0}'.format(basedir)
             self.log.critical(msg)
             raise
-        self.log.debug('Working directory: {0}'.format(working_dir))
+        self.log.debug('Working directory: %s', working_dir)
         self.working_dir = working_dir
         os.umask(original_umask)
 
@@ -190,11 +189,11 @@ class ManagerBase(object):
                 Command to execute.
         """
         if not isinstance(cmd, list):
-            msg = 'Command is not a list: {0}'.format(str(cmd))
+            msg = 'Command is not a list: {0}'.format(cmd)
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-        self.log.debug('Running command: {0}'.format(str(cmd)))
+        self.log.debug('Running command: %s', cmd)
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -202,14 +201,14 @@ class ManagerBase(object):
         )
         with process.stdout as stdout:
             for line in iter(stdout.readline, b''):
-                self.log.debug('Command stdout: {0}'.format(line.rstrip()))
+                self.log.debug('Command stdout: %s', line.rstrip())
         with process.stderr as stderr:
             for line in iter(stderr.readline, b''):
-                self.log.error('Command stderr: {0}'.format(line.rstrip()))
+                self.log.error('Command stderr: %s', line.rstrip())
 
         rsp = process.wait()
         if rsp != 0:
-            msg = 'Command failed: {0}'.format(str(cmd))
+            msg = 'Command failed! Exit code={0}, cmd={1}'.format(rsp, cmd)
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
@@ -217,17 +216,14 @@ class ManagerBase(object):
         """Delete working directory."""
         self.log.info('Cleanup Time...')
         try:
-            self.log.debug('{0} being cleaned up.'.format(self.working_dir))
+            self.log.debug('working_dir=%s', self.working_dir)
             shutil.rmtree(self.working_dir)
-        except Exception as exc:
+            self.log.info('Deleted working directory...')
+        except Exception:
             msg = 'Cleanup Failed!'
             self.log.critical(msg)
             raise
 
-        self.log.info(
-            'Removed temporary data in working directory -- {0}'
-            .format(self.working_dir)
-        )
         self.log.info('Exiting cleanup routine...')
 
     def extract_contents(self, filepath, to_directory, create_dir=False):
@@ -295,8 +291,8 @@ class ManagerBase(object):
             os.chdir(cwd)
 
         self.log.info(
-            'Extracted file  --  source = {0}  dest   = {1}'
-            .format(filepath, to_directory)
+            'Extracted file. source=%s, dest=%s',
+            filepath, to_directory
         )
 
 
@@ -331,6 +327,7 @@ class WindowsManager(ManagerBase):
         super(WindowsManager, self).__init__(*args, **kwargs)
 
 
+@add_metaclass(abc.ABCMeta)
 class WorkersManagerBase(object):
     """
     Base class for worker managers.
@@ -343,11 +340,11 @@ class WorkersManagerBase(object):
             Workers to run and associated configuration data.
     """
 
-    __metaclass__ = abc.ABCMeta
-
     def __init__(self, system_params, workers, *args, **kwargs):  # noqa: D102
         self.system_params = system_params
         self.workers = workers
+        args = args
+        kwargs = kwargs
 
     @abc.abstractmethod
     def _worker_execution(self):

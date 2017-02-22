@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 """Watchmaker salt worker."""
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
+import codecs
 import json
 import os
 import shutil
@@ -72,6 +76,9 @@ class SaltBase(ManagerBase):
     """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Init inherited classes
+        super(SaltBase, self).__init__(*args, **kwargs)
+
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop('user_formulas', None) or []
         self.formula_termination_strings = \
@@ -86,14 +93,28 @@ class SaltBase(ManagerBase):
         self.admin_users = kwargs.pop('admin_users', None) or ''
         self.salt_states = kwargs.pop('salt_states', None) or ''
 
-        # Init inherited classes
-        super(SaltBase, self).__init__(*args, **kwargs)
+        # Init attributes used by SaltBase, overridden by inheriting classes
+        self.salt_working_dir = None
+        self.salt_working_dir_prefix = None
+        self.salt_log_dir = None
+        self.salt_conf_path = None
+        self.salt_conf = None
+        self.salt_call = None
+        self.salt_file_root = None
+        self.salt_base_env = None
+        self.salt_formula_root = None
+        self.salt_call_args = None
+        self.salt_debug_logfile = None
 
-    def _set_salt_dirs(self, srv):
-        self.salt_file_root = os.sep.join((srv, 'states'))
-        self.salt_base_env = os.sep.join((self.salt_file_root, 'base'))
-        self.salt_formula_root = os.sep.join((srv, 'formulas'))
-        self.salt_pillar_root = os.sep.join((srv, 'pillar'))
+    @staticmethod
+    def _get_salt_dirs(srv):
+        salt_file_root = os.sep.join((srv, 'states'))
+        salt_base_env = os.sep.join((salt_file_root, 'base'))
+        salt_formula_root = os.sep.join((srv, 'formulas'))
+        salt_pillar_root = os.sep.join((srv, 'pillar'))
+        return (
+            salt_file_root, salt_base_env, salt_formula_root, salt_pillar_root
+        )
 
     def _prepare_for_install(self):
         self.create_working_dir(
@@ -165,29 +186,30 @@ class SaltBase(ManagerBase):
 
     def _build_salt_formula(self, extract_dir):
         if self.content_source:
-            self.salt_content_filename = self.content_source.split('/')[-1]
-            self.salt_content_file = os.sep.join((
+            salt_content_filename = self.content_source.split('/')[-1]
+            salt_content_file = os.sep.join((
                 self.working_dir,
-                self.salt_content_filename
+                salt_content_filename
             ))
             self.download_file(
                 self.content_source,
-                self.salt_content_file,
+                salt_content_file,
                 self.s3_source
             )
             self.extract_contents(
-                filepath=self.salt_content_file,
+                filepath=salt_content_file,
                 to_directory=extract_dir
             )
 
         if not os.path.exists(os.path.join(self.salt_conf_path, 'minion.d')):
             os.mkdir(os.path.join(self.salt_conf_path, 'minion.d'))
 
-        with open(
+        with codecs.open(
             os.path.join(self.salt_conf_path, 'minion.d', 'watchmaker.conf'),
-            'w'
-        ) as f:
-            yaml.dump(self.salt_conf, f, default_flow_style=False)
+            'w',
+            encoding="utf-8"
+        ) as fh_:
+            yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
 
     def _set_grain(self, grain, value):
         cmd = [
@@ -262,16 +284,16 @@ class SaltBase(ManagerBase):
         elif states.lower() == 'highstate':
             self.log.info(
                 'Detected the `states` parameter is set to `highstate`. '
-                'Applying the salt `"highstate`" to the system.'
+                'Applying the salt "highstate" to the system.'
             )
             cmd = ['state.highstate']
             cmd.extend(self.salt_call_args)
             self.run_salt(cmd)
         else:
             self.log.info(
-                'Detected the `states` parameter is set to: `{0}`. Applying '
-                'the user-defined list of states to the system.'
-                .format(states)
+                'Detected the `states` parameter is set to: `%s`. Applying '
+                'the user-defined list of states to the system.',
+                states
             )
             cmd = ['state.sls', states]
             cmd.extend(self.salt_call_args)
@@ -304,15 +326,15 @@ class SaltLinux(SaltBase, LinuxManager):
     """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
+        # Init inherited classes
+        super(SaltLinux, self).__init__(*args, **kwargs)
+
         # Pop arguments used by SaltLinux
         self.install_method = kwargs.pop('install_method', None) or 'yum'
         self.bootstrap_source = \
             kwargs.pop('bootstrap_source', None) or ''
         self.git_repo = kwargs.pop('git_repo', None) or ''
         self.salt_version = kwargs.pop('salt_version', None) or ''
-
-        # Init inherited classes
-        super(SaltLinux, self).__init__(*args, **kwargs)
 
         # Extra variables needed for SaltLinux.
         self.yum_pkgs = [
@@ -330,18 +352,19 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_working_dir = self.system_params['workingdir']
         self.salt_working_dir_prefix = 'salt-'
 
-        self._set_salt_dirs(self.salt_srv)
+        salt_dirs = self._get_salt_dirs(self.salt_srv)
+        self.salt_file_root = salt_dirs[0]
+        self.salt_base_env = salt_dirs[1]
+        self.salt_formula_root = salt_dirs[2]
+        self.salt_pillar_root = salt_dirs[3]
 
     def _configuration_validation(self):
-        if 'git' == self.install_method.lower():
+        if self.install_method.lower() == 'git':
             if not self.bootstrap_source:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
                     'parameter `bootstrap_source` was not provided.'
                 )
-            else:
-                self.salt_bootstrap_filename = \
-                    self.bootstrap_source.split('/')[-1]
             if not self.git_repo:
                 self.log.error(
                     'Detected `git` as the install method, but the required '
@@ -349,16 +372,20 @@ class SaltLinux(SaltBase, LinuxManager):
                 )
 
     def _install_package(self):
-        if 'yum' == self.install_method.lower():
+        if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
-        elif 'git' == self.install_method.lower():
+        elif self.install_method.lower() == 'git':
+            salt_bootstrap_filename = os.sep.join((
+                self.working_dir,
+                self.bootstrap_source.split('/')[-1]
+            ))
             self.download_file(
                 self.bootstrap_source,
-                self.salt_bootstrap_filename
+                salt_bootstrap_filename
             )
             bootstrap_cmd = [
                 'sh',
-                self.salt_bootstrap_filename,
+                salt_bootstrap_filename,
                 '-g',
                 self.git_repo
             ]
@@ -369,7 +396,7 @@ class SaltLinux(SaltBase, LinuxManager):
                 self.log.debug('No salt version defined in config.')
             self.call_process(bootstrap_cmd)
 
-    def _build_salt_formula(self):
+    def _build_salt_formula(self, srv):
         formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.salt_base_env)]
@@ -382,10 +409,10 @@ class SaltLinux(SaltBase, LinuxManager):
             'pillar_roots': {'base': [str(self.salt_pillar_root)]}
         }
 
-        super(SaltLinux, self)._build_salt_formula(self.salt_srv)
+        super(SaltLinux, self)._build_salt_formula(srv)
 
     def _set_grain(self, grain, value):
-        self.log.info('Setting grain `{0}` ...'.format(grain))
+        self.log.info('Setting grain `%s` ...', grain)
         super(SaltLinux, self)._set_grain(grain, value)
 
     def install(self):
@@ -393,7 +420,7 @@ class SaltLinux(SaltBase, LinuxManager):
         self._configuration_validation()
         self._prepare_for_install()
         self._install_package()
-        self._build_salt_formula()
+        self._build_salt_formula(self.salt_srv)
 
         self.process_grains()
         self.process_states(self.salt_states)
@@ -439,7 +466,11 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_working_dir = self.system_params['workingdir']
         self.salt_working_dir_prefix = 'Salt-'
 
-        self._set_salt_dirs(self.salt_srv)
+        salt_dirs = self._get_salt_dirs(self.salt_srv)
+        self.salt_file_root = salt_dirs[0]
+        self.salt_base_env = salt_dirs[1]
+        self.salt_formula_root = salt_dirs[2]
+        self.salt_pillar_root = salt_dirs[3]
 
     def _install_package(self):
         installer_name = os.sep.join(
@@ -462,7 +493,7 @@ class SaltWindows(SaltBase, WindowsManager):
 
         super(SaltWindows, self)._prepare_for_install()
 
-    def _build_salt_formula(self):
+    def _build_salt_formula(self, root):
         formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.salt_base_env), str(self.salt_win_repo)]
@@ -477,17 +508,17 @@ class SaltWindows(SaltBase, WindowsManager):
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
 
-        super(SaltWindows, self)._build_salt_formula(self.salt_root)
+        super(SaltWindows, self)._build_salt_formula(root)
 
     def _set_grain(self, grain, value):
-        self.log.info('Setting grain `{0}` ...'.format(grain))
+        self.log.info('Setting grain `%s` ...', grain)
         super(SaltWindows, self)._set_grain(grain, value)
 
     def install(self):
         """Install salt and execute salt states."""
         self._prepare_for_install()
         self._install_package()
-        self._build_salt_formula()
+        self._build_salt_formula(self.salt_root)
 
         if self.ash_role and self.ash_role != 'None':
             role = {'role': str(self.ash_role)}

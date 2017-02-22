@@ -9,7 +9,10 @@ This is a `port <https://github.com/pypa/python-packaging-user-guide/blob/master
 with various fixes and improvements that just weren't feasible to implement in
 PowerShell.
 """
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
+
+import logging
 from os import environ
 from os.path import exists
 from subprocess import check_call
@@ -18,6 +21,10 @@ try:
     from urllib.request import urlretrieve
 except ImportError:
     from urllib import urlretrieve
+
+logformat = '[%(name)s]: %(message)s'
+logging.basicConfig(format=logformat, level=logging.INFO)
+log = logging.getLogger('appveyor-bootstrap')
 
 BASE_URL = "https://www.python.org/ftp/python/"
 GET_PIP_URL = "https://bootstrap.pypa.io/get-pip.py"
@@ -69,14 +76,14 @@ INSTALL_CMD = {
 
 def download_file(url, path):
     """Download a file."""
-    print("Downloading: {} (into {})".format(url, path))
+    log.info("Downloading: %s (into %s)", url, path)
     progress = [0, 0]
 
     def report(count, size, total):
         progress[0] = count * size
         if progress[0] - progress[1] > 1000000:
             progress[1] = progress[0]
-            print("Downloaded {:,}/{:,} ...".format(progress[1], total))
+            log.info("Downloaded {:,}/{:,} ...".format(progress[1], total))
 
     dest, _ = urlretrieve(url, path, reporthook=report)
     return dest
@@ -84,31 +91,32 @@ def download_file(url, path):
 
 def install_python(version, arch, home):
     """Install a version of python."""
-    print(
-        "Installing Python", version, "for", arch, "bit architecture to", home
+    log.info(
+        "Installing Python %s for %s bit architecture to %s",
+        version, arch, home
     )
     if exists(home):
         return
 
     path = download_python(version, arch)
-    print("Installing", path, "to", home)
+    log.info("Installing %s to %s", path, home)
     success = False
     for cmd in INSTALL_CMD[version]:
         cmd = [part.format(home=home, path=path) for part in cmd]
-        print("Running:", " ".join(cmd))
+        log.info("Running: %s", " ".join(cmd))
         try:
             check_call(cmd)
         except Exception as exc:
-            print("Failed command", cmd, "with:", exc)
+            log.info("Failed command %s with: %s", cmd, exc)
             if exists("install.log"):
                 with open("install.log") as fh:
-                    print(fh.read())
+                    print(fh.read())  # noqa: T003
         else:
             success = True
     if success:
-        print("Installation complete!")
+        log.info("Installation complete!")
     else:
-        print("Installation failed")
+        log.info("Installation failed")
 
 
 def download_python(version, arch):
@@ -117,8 +125,8 @@ def download_python(version, arch):
         try:
             return download_file(URLS[version, arch], "installer.exe")
         except Exception as exc:
-            print("Failed to download:", exc)
-        print("Retrying ...")
+            log.info("Failed to download: %s", exc)
+        log.info("Retrying ...")
 
 
 def install_pip(home):
@@ -126,11 +134,11 @@ def install_pip(home):
     pip_path = home + "/Scripts/pip.exe"
     python_path = home + "/python.exe"
     if exists(pip_path):
-        print("pip already installed.")
+        log.info("pip already installed.")
     else:
-        print("Installing pip...")
+        log.info("Installing pip...")
         download_file(GET_PIP_URL, GET_PIP_PATH)
-        print("Executing:", python_path, GET_PIP_PATH)
+        log.info("Executing: %s %s", python_path, GET_PIP_PATH)
         check_call([python_path, GET_PIP_PATH])
 
 
