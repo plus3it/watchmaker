@@ -42,6 +42,7 @@ notifications:
 # ci/travis_pypi_setup.py script and set the secure passwords to
 # finish PyPI deployment setup
 before_deploy:
+  - pip install m2r
   - python $TRAVIS_BUILD_DIR/ci/travis_set_build.py --skip "$TRAVIS_TAG"
 deploy:
   - provider: pypi

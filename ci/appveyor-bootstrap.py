@@ -161,6 +161,5 @@ if __name__ == "__main__":
         "setuptools>=18.0.1",
         "wheel",
         "tox",
-        "virtualenv>=13.1.0",
-        "pypandoc"
+        "virtualenv>=13.1.0"
     )
