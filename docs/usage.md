@@ -1,6 +1,6 @@
 # Usage
 
-## `watchmaker` from the CLI:
+## `watchmaker` from the CLI
 
 ```shell
 # watchmaker --help
@@ -53,7 +53,48 @@ optional arguments:
                         "OU=SuperCoolApp,DC=example,DC=com"
 ```
 
-## `watchmaker` as a library:
+## `watchmaker` as EC2 userdata
+
+For Linux, you must ensure `pip` is installed, and then you can install
+`watchmaker` from PyPi. After that, run `watchmaker` using any option available
+on the [CLI](#watchmaker-from-the-cli). Here is an example:
+
+```shell
+#!/bin/sh
+# Install pip
+yum -y --enablerepo=epel install python-pip
+
+# Install watchmaker
+pip install --upgrade pip setuptools watchmaker
+
+# Run watchmaker
+watchmaker -vv --log-dir=/var/log/watchmaker
+```
+
+For Windows, the first step is to install Python. `Watchmaker` provides a simple
+bootstrap script to do that for you. After installing Python, install
+`watchmaker` using `pip` and then run it.
+
+```shell
+<powershell>
+$BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/master/docs/files/bootstrap/watchmaker-bootstrap.ps1"
+
+# Download bootstrap file
+$BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
+(New-Object System.Net.WebClient).DownloadFile($BootstrapUrl, $BootstrapFile)
+
+# Install python
+& $BootstrapFile -Verbose -ErrorAction Stop
+
+# Install watchmaker
+pip install --upgrade pip setuptools watchmaker
+
+# Run watchmaker
+watchmaker -vv --log-dir=C:\Watchmaker\Logs
+</powershell>
+```
+
+## `watchmaker` as a library
 
 ```python
 import watchmaker
