@@ -33,7 +33,7 @@ def main():
                             'include DEBUG, if option is left out, only '
                             'WARNINGS and higher are logged.'
                         ))
-    parser.add_argument('-c', '--config', dest='config', default=None,
+    parser.add_argument('-c', '--config', dest='config_path', default=None,
                         help='Path or URL to the config.yaml file.')
     parser.add_argument('-n', '--no-reboot', dest='no_reboot',
                         action='store_true',
