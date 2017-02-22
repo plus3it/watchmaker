@@ -178,7 +178,7 @@ class Client(object):
         self.verbosity = arguments.pop('verbosity')
 
         # Get the system params
-        self.system = platform.system()
+        self.system = platform.system().lower()
         self._set_system_params()
 
         self.log.debug('System Type: %s', self.system)
@@ -245,7 +245,7 @@ class Client(object):
 
         config_full = yaml.safe_load(data)
         try:
-            config_all = config_full.get('All', [])
+            config_all = config_full.get('all', [])
             config_system = config_full.get(self.system, [])
         except AttributeError:
             msg = 'Malformed config file. Must be a dictionary.'
@@ -271,13 +271,11 @@ class Client(object):
                 worker_name, worker_config = list(worker.items())[0]
                 if worker_name not in config:
                     # Add worker to config
-                    config[worker_name] = worker_config
+                    config[worker_name] = {'config': worker_config}
                     self.log.debug('%s config: %s', worker_name, worker_config)
                 else:
                     # Worker present in both config_system and config_all
-                    config[worker_name]['Parameters'].update(
-                        worker_config['Parameters']
-                    )
+                    config[worker_name]['config'].update(worker_config)
                     self.log.debug(
                         '%s extra config: %s',
                         worker_name, worker_config
@@ -286,11 +284,11 @@ class Client(object):
                     config[worker_name]['__merged'] = False
                 if not config[worker_name].get('__merged'):
                     # Merge worker_args into config params
-                    config[worker_name]['Parameters'].update(self.worker_args)
+                    config[worker_name]['config'].update(self.worker_args)
                     config[worker_name]['__merged'] = True
-            except KeyError:
+            except Exception:
                 msg = (
-                    'Malformed worker, missing "Parameters" key; worker = {0}'
+                    'Failed to merge worker config; worker={0}'
                     .format(worker)
                 )
                 self.log.critical(msg)
@@ -338,11 +336,11 @@ class Client(object):
 
     def _set_system_params(self):
         """Set OS-specific attributes."""
-        if 'Linux' in self.system:
+        if 'linux' in self.system:
             self.system_drive = '/'
             self.workers_manager = LinuxWorkersManager
             self.system_params = self._get_linux_system_params()
-        elif 'Windows' in self.system:
+        elif 'windows' in self.system:
             self.system_drive = os.environ['SYSTEMDRIVE']
             self.workers_manager = WindowsWorkersManager
             self.system_params = self._get_windows_system_params()
