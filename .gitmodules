@@ -1,0 +1,39 @@
+[submodule "src/watchmaker/static/salt/formulas/ash-linux-formula"]
+	path = src/watchmaker/static/salt/formulas/ash-linux-formula
+	url = https://github.com/plus3it/ash-linux-formula.git
+[submodule "src/watchmaker/static/salt/formulas/ash-windows-formula"]
+	path = src/watchmaker/static/salt/formulas/ash-windows-formula
+	url = https://github.com/plus3it/ash-windows-formula.git
+[submodule "src/watchmaker/static/salt/formulas/join-domain-formula"]
+	path = src/watchmaker/static/salt/formulas/join-domain-formula
+	url = https://github.com/plus3it/join-domain-formula.git
+[submodule "src/watchmaker/static/salt/formulas/splunkforwarder-formula"]
+	path = src/watchmaker/static/salt/formulas/splunkforwarder-formula
+	url = https://github.com/plus3it/splunkforwarder-formula.git
+[submodule "src/watchmaker/static/salt/formulas/mcafee-agent-formula"]
+	path = src/watchmaker/static/salt/formulas/mcafee-agent-formula
+	url = https://github.com/plus3it/mcafee-agent-formula.git
+[submodule "src/watchmaker/static/salt/formulas/name-computer-formula"]
+	path = src/watchmaker/static/salt/formulas/name-computer-formula
+	url = https://github.com/plus3it/name-computer-formula.git
+[submodule "src/watchmaker/static/salt/formulas/emet-formula"]
+	path = src/watchmaker/static/salt/formulas/emet-formula
+	url = https://github.com/plus3it/emet-formula.git
+[submodule "src/watchmaker/static/salt/formulas/scc-formula"]
+	path = src/watchmaker/static/salt/formulas/scc-formula
+	url = https://github.com/plus3it/scc-formula.git
+[submodule "src/watchmaker/static/salt/formulas/windows-update-agent-formula"]
+	path = src/watchmaker/static/salt/formulas/windows-update-agent-formula
+	url = https://github.com/plus3it/windows-update-agent-formula.git
+[submodule "src/watchmaker/static/salt/formulas/systemprep-formula"]
+	path = src/watchmaker/static/salt/formulas/systemprep-formula
+	url = https://github.com/plus3it/systemprep-formula.git
+[submodule "src/watchmaker/static/salt/formulas/netbanner-formula"]
+	path = src/watchmaker/static/salt/formulas/netbanner-formula
+	url = https://github.com/plus3it/netbanner-formula.git
+[submodule "src/watchmaker/static/salt/formulas/ntp-client-windows-formula"]
+	path = src/watchmaker/static/salt/formulas/ntp-client-windows-formula
+	url = https://github.com/plus3it/ntp-client-windows-formula.git
+[submodule "src/watchmaker/static/salt/formulas/dotnet4-formula"]
+	path = src/watchmaker/static/salt/formulas/dotnet4-formula
+	url = https://github.com/plus3it/dotnet4-formula.git
