@@ -54,8 +54,8 @@ To set up `watchmaker` for local development:
 
 4.  Now you can make your changes locally.
 
-5.  When you're done making changes, run the linter, the tests, the doc
-    builder, and a spell checker using [tox][2]:
+5.  When you're done making changes, use [tox][2] to run the linter, the tests,
+    and the doc builder:
 
     ```shell
     tox
@@ -71,7 +71,18 @@ To set up `watchmaker` for local development:
     > You can also rely on Travis and Appveyor to [run the tests][1] after
     > opening the pull request. They will be slower though...
 
-6.  Commit your changes and push your branch to GitHub:
+6.  In addition to building the package and running the tests, `tox` will build
+    any docs associated with the change. They will be located in the
+    `dist/docs` directory. Navigate to the folder, open index.html in your
+    browser, and verify that the doc text and formatting are as you intended.
+
+    If you _only_ want to build the docs, run:
+
+    ```shell
+    tox -e docs
+    ```
+
+7.  Commit your changes and push your branch to GitHub:
 
     ```shell
     git add .
@@ -79,7 +90,7 @@ To set up `watchmaker` for local development:
     git push origin name-of-your-bugfix-or-feature
     ```
 
-7.  Submit a pull request through the GitHub website.
+8.  Submit a pull request through the GitHub website.
 
 ## Pull Request Guidelines
 
