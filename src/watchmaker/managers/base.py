@@ -142,8 +142,11 @@ class ManagerBase(object):
             )
         else:
             try:
+                self.log.debug('Opening connection to web server, %s', url)
                 response = urllib.request.urlopen(url)
+                self.log.debug('Opening the file handle, %s', filename)
                 with open(filename, 'wb') as outfile:
+                    self.log.debug('Saving file to local filesystem...')
                     shutil.copyfileobj(response, outfile)
             except Exception:
                 msg = (
