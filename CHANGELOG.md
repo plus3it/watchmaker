@@ -1,6 +1,6 @@
 # Changelog
 
-0.1.1.dev (TBD)
+0.1.1 (2017.02.28)
 
 *   Adds more logging messages when downloading files
 
