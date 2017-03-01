@@ -18,16 +18,10 @@ can guide you through the process.
 
 The sources for `watchmaker` can be downloaded from the [`GitHub repo`][2].
 
-You can either clone the public repository:
+First clone the public repository:
 
 ```bash
-git clone https://github.com/plus3it/watchmaker.git
-```
-
-Or download the [`tarball`][3]:
-
-```bash
-curl -OL https://github.com/plus3it/watchmaker/tarball/develop
+git clone https://github.com/plus3it/watchmaker.git && cd watchmaker
 ```
 
 This project uses submodules, so once you have a copy of the source, you need
@@ -40,10 +34,9 @@ git submodule update --init --recursive
 Then you can install Watchmaker:
 
 ```bash
-python setup.py install
+pip install .
 ```
 
 [0]: https://pip.pypa.io/en/stable/
 [1]: https://python-guide.readthedocs.io/en/latest/starting/installation/
 [2]: https://github.com/plus3it/watchmaker
-[3]: https://github.com/plus3it/watchmaker/tarball/develop
