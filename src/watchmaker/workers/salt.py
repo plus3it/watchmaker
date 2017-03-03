@@ -151,14 +151,12 @@ class SaltBase(ManagerBase):
                     raise SystemError(msg)
 
     def _get_formulas_conf(self):
-        formulas = {}
 
         # Append Salt formulas that came with Watchmaker package.
         formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
         for formula in os.listdir(formulas_path):
-            static_path = os.sep.join((formulas_path, formula))
-            if os.path.isdir(static_path) and os.listdir(static_path):
-                formulas[formula] = static_path
+            shutil.copytree(os.sep.join((formulas_path, formula)),
+                            os.path.join(self.salt_formula_root, '', formula))
 
         # Obtain & extract any Salt formulas specified in user_formulas.
         for source_loc in self.user_formulas:
@@ -178,11 +176,8 @@ class SaltBase(ManagerBase):
                     if os.path.exists(new_formula_dir):
                         shutil.rmtree(new_formula_dir)
                     shutil.move(formula_loc, new_formula_dir)
-                    formula_loc = new_formula_dir
 
-            formulas[filename] = formula_loc
-
-        return formulas.values()
+        return [x for x in os.listdir(self.salt_formula_root) if os.path.exists(x)]
 
     def _build_salt_formula(self, extract_dir):
         if self.content_source:
