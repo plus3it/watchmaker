@@ -178,7 +178,7 @@ class SaltBase(ManagerBase):
                     shutil.move(formula_loc, new_formula_dir)
 
         return [x for x in os.listdir(self.salt_formula_root)
-                if os.path.exists(x)]
+                if os.path.isdir(x)]
 
     def _build_salt_formula(self, extract_dir):
         if self.content_source:
