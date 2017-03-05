@@ -16,7 +16,7 @@ watchmaker.
 ```python setup.py install```
 
 
-#### How do I know if watchmaker has completed with out errors?
+#### How do I know if watchmaker has completed without errors?
 
 The watchmaker process will complete and the system will be rebooted so
 the changes can take affect. If this happens watchmaker was executed
