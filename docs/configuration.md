@@ -12,12 +12,12 @@ You can create a file using the above format with your own set of standard value
 [1]: https://github.com/plus3it/watchmaker/blob/develop/src/watchmaker/static/config.yaml
 
 # Config.yaml
-## all
+## All
 
 Section for configurations that affect the deployment of the system that are Operating System agnostic.
 
 
-### all sub section: salt
+### Salt
 
 The salt user defined parameters.
 
