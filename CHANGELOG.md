@@ -2,6 +2,8 @@
 
 0.x.x (TBD)
 
+*   Adds a FAQ page to the docs
+*   Moves salt formulas to the correct location on the local filesystem
 *   join-domain-formula:
     *   (Linux) Modifies decryption routine for FIPS compliance
 *   ash-linux-formula:
