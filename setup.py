@@ -87,6 +87,7 @@ setup(
     },
     install_requires=[
         "six",
-        "PyYAML"
+        "PyYAML",
+        "argparse"
     ]
 )
