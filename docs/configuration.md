@@ -14,7 +14,7 @@ You can create a file using the above format with your own set of standard value
 # Config.yaml
 ## All
 
-Section for configurations that affect the deployment of the system that are Operating System agnostic.
+Section for configurations that affect the deployment of the system. All of the configuration parameters can be set in this section. The `all:` section will override parameters that are set in the OS specific sections of the config.yaml, therefor it is suggested practice to break them into the OS blocks of the config. This practice is used in the example config supplied in the next section.
 
 
 ### Salt
