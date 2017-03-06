@@ -14,33 +14,34 @@ You can create a file using the above format with your own set of standard value
 # Config.yaml
 ## All
 
-Section for configurations that affect the deployment of the system. All of the configuration parameters can be set in this section. The `all:` section will override parameters that are set in the OS specific sections of the config.yaml, therefor it is suggested practice to break them into the OS blocks of the config. This practice is used in the example config supplied in the next section.
+Section for configurations that affect the deployment of the system. All of the configuration parameters can be set in this section. The `all:` section will override parameters that are set in the OS specific sections of the config.yaml, therefore it is suggested practice to break them into the OS blocks of the config. This practice is used in the example config supplied in the next section.
 
 
 ### Salt
 
-The salt user defined parameters.
+The salt user-defined parameters.
 
 |Option | Type | Description|
 |-------|:-----:|------------|
-|admin_groups: | (list) | The group(s) that you would like the admin accounts placed.|
+|admin_groups: | (list) | The group(s) that you would like the admin accounts placed within.|
 |admin_users: | (list) |  The user(s) that would be created as admins.  |
 |computer_name: | (string) | The computer or hostname that should be applied. |
 | environment: | (boolean) |Set for the environment in which the system is being built. </br> `environment: dev`|
-|formula_termination_strings: | (list) | The defaults are the typical salt formula naming convention. If a user has a salt formula that deviates from the standard naming conventions in Salt, additional strings to match can be defined. </br> Example: Salt default package: `systemprep-formula` </br>User defined package: `systemprep-formula-homemade.zip` </br>The termination string `-homemade` should be added, so that the default formula is overridden properly. |
+|formula_termination_strings: | (list) | The defaults are the typical salt formula naming convention. If a user has a salt formula that deviates from the standard naming conventions in Salt, additional strings to match can be defined. </br> Example: Salt default package: `systemprep-formula` </br>User-defined package: `systemprep-formula-homemade.zip` </br>The termination string `-homemade` should be added, so that the default formula is overridden properly. |
 | ou_path: | (String) | Specifies the full DN of the OU where the computer account will be created when joining a domain. </br>`ou_path: "OU=Super Cool App, DC=example,DC=com"`|
-| salt_state: | (String) comma seperated | User defined salt states. </br>`salt_state: Highstate, Userstate` |
+| salt_state: | (String) comma seperated | User-defined salt states. </br>`salt_state: Highstate, Userstate` |
 |  s3_source: | (string) | Use S3 utilities to retrieve content instead of http(s) utilities. For S3 utilities to work, the system must have boto credentials configured that allow access to the S3 bucket.|
-| user_formulas: | (list) | URL(s) for user defined Salt formulas. |
+| user_formulas: | (list) | URL(s) for user-defined Salt formulas. |
 
 ## Linux
-Section for configurations that affect the deployment of the system that are only applicable to Linux based systems.
+Section for configurations that affect the deployment of the system that are only applicable to Linux-based systems.
 
 ### Yum
 
 |Option | Type | Description|
 |------|:----:|-----|
-|repo_map: | Add Section |There be dragons here!</br>Please becareful making changes to the existing repos unless you are sure of what you are doing. You can add repos here that you would like enabled but be weary of changing the existing. Select the EL version that an additional repo should be added to. Then add a full block, redhat and centos are the only supported 'enterprise linux' distros currently supported. Must include dist, el_version, and url|
+
+|repo_map: | Add Entire Sub-Block |There be dragons here!</br>Please be careful making changes to the existing repos unless you are sure of what you are doing. You can add repos here that you would like enabled but be weary of changing the existing repos. Select the EL version that an additional repo should be added to. Then add a full block, redhat and centos are the only supported 'enterprise linux' distros currently supported. Must include dist, el_version, and url|
 |dist: |(String) | Distributions that would install this repo. Some repos are supported by multiple distros. (Currently supported distros are redhat, centos, and amazon) |
 |el_version:| (6 or 7)| The EL version you are installing a yum repo for. |
 |url: | (String) | URL location of the repo to be added to the system.|
