@@ -16,5 +16,6 @@ with maintaining them.
 *   [Installation](installation.md)
 *   [Configuration](configuration.md)
 *   [Usage](usage.md)
+*   [Frequently Asked Questions](faq.md)
 *   [API Reference](api.md)
 *   [Contributing](contributing.rst)
