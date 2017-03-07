@@ -7,7 +7,13 @@
 *   join-domain-formula:
     *   (Linux) Modifies decryption routine for FIPS compliance
 *   ash-linux-formula:
-    *   (EL7-dev) Various patches to improve support for EL7
+    *   Removes several error exits in favor of warnings
+    *   (EL7-alpha) Various patches to improve support for EL7
+*   dotnet4-formula:
+    *   Adds support for .NET 4.6.2
+    *   Adds support for Windows Server 2016
+*   emet-formula:
+    *   Adds support for EMET 5.52
 
 0.1.1 (2017.02.28)
 
