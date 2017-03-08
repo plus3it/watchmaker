@@ -187,9 +187,12 @@ class Client(object):
         # All remaining arguments are worker_args
         worker_args = arguments
 
-        # Convert extra_arguments to a dict and merge it with worker_args
+        # Convert extra_arguments to a dict and merge it with worker_args.
+        # Leading hypens are removed, and other hyphens are converted to
+        # underscores
         worker_args.update(dict(
-            (k.lstrip('-'), v) for k, v in zip(*[iter(extra_arguments)] * 2)
+            (k.lstrip('-').replace('-', '_'), v) for k, v in zip(
+                *[iter(extra_arguments)] * 2)
         ))
         # Set self.worker_args, removing `None` values from worker_args
         self.worker_args = dict(
