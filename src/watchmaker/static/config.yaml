@@ -47,4 +47,3 @@ windows:
       salt_debug_log: None
       content_source: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
       installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
-      ash_role: MemberServer
