@@ -155,8 +155,12 @@ class SaltBase(ManagerBase):
         # Append Salt formulas that came with Watchmaker package.
         formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
         for formula in os.listdir(formulas_path):
-            shutil.copytree(os.sep.join((formulas_path, formula)),
-                            os.path.join(self.salt_formula_root, '', formula))
+            formula_path = os.path.join(self.salt_formula_root, '', formula)
+            if os.path.exists(formula_path):
+                shutil.rmtree(formula_path)
+            shutil.copytree(
+                os.sep.join((formulas_path, formula)),
+                formula_path)
 
         # Obtain & extract any Salt formulas specified in user_formulas.
         for source_loc in self.user_formulas:
