@@ -1,5 +1,15 @@
 # Changelog
 
+0.1.3 (2017.03.08)
+
+*   [[Issue #164][164]] Aligns cli syntax for extra_arguments with other cli opts
+*   [[Issue #165][165]] Removes ash_role from default config file
+*   [[Issue #173][173]] Fixes exception when re-running watchmaker
+
+[173]: https://github.com/plus3it/watchmaker/issues/173
+[164]: https://github.com/plus3it/watchmaker/issues/164
+[165]: https://github.com/plus3it/watchmaker/issues/165
+
 0.1.2 (2017.03.07)
 
 *   Adds a FAQ page to the docs
