@@ -181,8 +181,10 @@ class SaltBase(ManagerBase):
                         shutil.rmtree(new_formula_dir)
                     shutil.move(formula_loc, new_formula_dir)
 
-        return [x for x in os.listdir(self.salt_formula_root)
-                if os.path.isdir(x)]
+        return [
+            os.path.join(self.salt_formula_root, x) for x in next(os.walk(
+                self.salt_formula_root))[1]
+        ]
 
     def _build_salt_formula(self, extract_dir):
         if self.content_source:

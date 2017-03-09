@@ -1,5 +1,11 @@
 # Changelog
 
+0.1.4 (2017.03.09)
+
+*   [[Issue #180][180]] Fixes bug where file_roots did not contain formula paths
+
+[180]: https://github.com/plus3it/watchmaker/issues/180
+
 0.1.3 (2017.03.08)
 
 *   [[Issue #164][164]] Aligns cli syntax for extra_arguments with other cli opts
