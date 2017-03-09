@@ -6,7 +6,7 @@ flake8-docstrings
 flake8-isort==2.1.3
 flake8-future-import
 flake8-print==2.0.2
-pep8-naming
+pep8-naming==0.4.1
 pygments
 pylint
 readme-renderer>=17.0
