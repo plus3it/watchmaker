@@ -1,5 +1,5 @@
 check-manifest>=0.33
-flake8
+flake8==3.3.0
 flake8-bugbear
 flake8-builtins
 flake8-docstrings
