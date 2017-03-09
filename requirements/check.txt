@@ -8,5 +8,5 @@ flake8-future-import
 flake8-print
 pep8-naming
 pygments
-pylint
+pylint==1.6.5
 readme-renderer>=17.0
