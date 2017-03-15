@@ -1,6 +1,6 @@
 # Changelog
 
-0.x.x (TBD)
+0.1.5 (2017.03.15)
 
     *   ash-linux-formula
         *   Adds policies to disable insecure Ciphers and MACs in sshd_config
