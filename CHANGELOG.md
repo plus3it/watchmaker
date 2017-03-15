@@ -2,7 +2,18 @@
 
 0.x.x (TBD)
 
-*   TBD
+    *   ash-linux-formula
+        *   Adds policies to disable insecure Ciphers and MACs in sshd_config
+    *   ash-windows-formula
+        *   Adds `scm` and `stig` baselines for Windows 10
+        *   Adds `scm` baseline for Windows Server 2016 (Alpha)
+        *   Updates all `scm` and `stig` baselines with latest content
+    *   mcafee-agent-formula
+        *   Uses firewalld on EL7 rather than iptables
+    *   scc-formula
+        *   Skips verification of GPG key when install SCC RPM
+    *   splunkforwarder-formula
+        *   Uses firewalld on EL7 rather than iptables
 
 0.1.4 (2017.03.09)
 
