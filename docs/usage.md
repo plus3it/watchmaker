@@ -67,7 +67,8 @@ PYPI_URL=https://pypi.org/simple
 yum -y --enablerepo=epel install python-pip
 
 # Install watchmaker
-pip install --index-url $PYPI_URL --upgrade pip setuptools watchmaker
+pip install --index-url $PYPI_URL --upgrade pip setuptools
+pip install --index-url $PYPI_URL --upgrade watchmaker
 
 # Run watchmaker
 watchmaker -vv --log-dir=/var/log/watchmaker
@@ -91,7 +92,8 @@ $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
 & $BootstrapFile -PythonUrl $PythonUrl -Verbose -ErrorAction Stop
 
 # Install watchmaker
-pip install --index-url $PypiUrl --upgrade pip setuptools watchmaker
+pip install --index-url $PypiUrl --upgrade pip setuptools
+pip install --index-url $PypiUrl --upgrade watchmaker
 
 # Run watchmaker
 watchmaker -vv --log-dir=C:\Watchmaker\Logs
