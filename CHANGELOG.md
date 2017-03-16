@@ -1,6 +1,6 @@
 # Changelog
 
-0.x.x (TBD)
+0.1.6 (2017.03.16)
 
     *   ash-linux-formula
         *   Provides same baseline states for both EL6 and EL7
