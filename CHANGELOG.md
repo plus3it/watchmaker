@@ -2,7 +2,8 @@
 
 0.x.x (TBD)
 
-    *   TBD
+    *   ash-linux-formula
+        *   Provides same baseline states for both EL6 and EL7
 
 0.1.5 (2017.03.15)
 
