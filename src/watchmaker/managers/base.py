@@ -202,16 +202,16 @@ class ManagerBase(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
-        with process.stdout as stdout:
-            for line in iter(stdout.readline, b''):
-                self.log.debug('Command stdout: %s', line.rstrip())
-        with process.stderr as stderr:
-            for line in iter(stderr.readline, b''):
-                self.log.error('Command stderr: %s', line.rstrip())
+        stdout, stderr = process.communicate()
 
-        rsp = process.wait()
-        if rsp != 0:
-            msg = 'Command failed! Exit code={0}, cmd={1}'.format(rsp, cmd)
+        for line in stdout.splitlines():
+            self.log.debug('Command stdout: %s', line)
+        for line in stderr.splitlines():
+            self.log.error('Command stderr: %s', line)
+
+        if process.returncode != 0:
+            msg = 'Command failed! Exit code={0}, cmd={1}'.format(
+                process.returncode, cmd)
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
