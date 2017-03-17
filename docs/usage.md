@@ -55,7 +55,7 @@ optional arguments:
 
 ## `watchmaker` as EC2 userdata
 
-For Linux, you must ensure `pip` is installed, and then you can install
+For **Linux**, you must ensure `pip` is installed, and then you can install
 `watchmaker` from PyPi. After that, run `watchmaker` using any option available
 on the [CLI](#watchmaker-from-the-cli). Here is an example:
 
@@ -76,8 +76,30 @@ pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-exte
 watchmaker -vv --log-dir=/var/log/watchmaker
 ```
 
-For Windows, the first step is to install Python. `Watchmaker` provides a simple
-bootstrap script to do that for you. After installing Python, install
+Alternatively, cloud-config directives can also be used on **Linux**:
+
+```yaml
+#cloud-config
+
+runcmd:
+  - |
+    PYPI_URL=https://pypi.org/simple
+
+    # Get the host
+    PYPI_HOST=$(echo $PYPI_URL |sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
+
+    # Install pip
+    yum -y --enablerepo=epel install python-pip
+
+    # Install watchmaker
+    pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external --upgrade pip setuptools watchmaker
+
+    # Run watchmaker
+    watchmaker -vv --log-dir=/var/log/watchmaker
+```
+
+For **Windows**, the first step is to install Python. `Watchmaker` provides a
+simple bootstrap script to do that for you. After installing Python, install
 `watchmaker` using `pip` and then run it.
 
 ```shell
@@ -90,7 +112,7 @@ $PypiUrl = "https://pypi.org/simple"
 $PypiHost="$(([System.Uri]$PypiUrl).Host)"
 
 # Download bootstrap file
-$BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
+$BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 (New-Object System.Net.WebClient).DownloadFile("$BootstrapUrl", "$BootstrapFile")
 
 # Install python
