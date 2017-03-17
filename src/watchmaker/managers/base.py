@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import abc
+import io
 import logging
 import os
 import shutil
@@ -204,10 +205,12 @@ class ManagerBase(object):
         )
         stdout, stderr = process.communicate()
 
-        for line in stdout.splitlines():
-            self.log.debug('Command stdout: %s', line)
-        for line in stderr.splitlines():
-            self.log.error('Command stderr: %s', line)
+        with io.BytesIO(stdout) as fh_:
+            for line in fh_:
+                self.log.debug('Command stdout: %s', line.rstrip())
+        with io.BytesIO(stderr) as fh_:
+            for line in fh_:
+                self.log.error('Command stderr: %s', line.rstrip())
 
         if process.returncode != 0:
             msg = 'Command failed! Exit code={0}, cmd={1}'.format(
