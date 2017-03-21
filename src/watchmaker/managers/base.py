@@ -186,8 +186,11 @@ class ManagerBase(object):
 
     @staticmethod
     def _pipe_logger(pipe, logger, prefix_msg=''):
-        for line in iter(pipe.readline, b''):
-            logger('%s%s', prefix_msg, line.rstrip())
+        try:
+            for line in iter(pipe.readline, b''):
+                logger('%s%s', prefix_msg, line.rstrip())
+        finally:
+            pipe.close()
 
     def call_process(self, cmd):
         """
@@ -223,8 +226,6 @@ class ManagerBase(object):
 
         stdout_reader.join()
         stderr_reader.join()
-        process.stdout.close()
-        process.stderr.close()
 
         returncode = process.wait()
 
