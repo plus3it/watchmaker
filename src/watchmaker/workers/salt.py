@@ -134,7 +134,8 @@ class SaltBase(ManagerBase):
 
         self.salt_call_args = [
             '--log-file', self.salt_debug_logfile,
-            '--log-file-level', 'debug'
+            '--log-file-level', 'debug',
+            '--state-output', 'mixed_id'
         ]
 
         for salt_dir in [
