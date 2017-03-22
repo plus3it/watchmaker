@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
+import threading
 import zipfile
 
 from six import add_metaclass
@@ -183,6 +184,14 @@ class ManagerBase(object):
         self.working_dir = working_dir
         os.umask(original_umask)
 
+    @staticmethod
+    def _pipe_logger(pipe, logger, prefix_msg=''):
+        try:
+            for line in iter(pipe.readline, b''):
+                logger('%s%s', prefix_msg, line.rstrip())
+        finally:
+            pipe.close()
+
     def call_process(self, cmd):
         """
         Execute a shell command.
@@ -202,14 +211,25 @@ class ManagerBase(object):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE
         )
-        stdout, stderr = process.communicate()
 
-        for line in stdout.splitlines():
-            self.log.debug('Command stdout: %s', line)
-        for line in stderr.splitlines():
-            self.log.error('Command stderr: %s', line)
+        stdout_reader = threading.Thread(
+            target=self._pipe_logger,
+            args=(process.stdout, self.log.debug, 'Command stdout: '))
+        stdout_reader.daemon = True
+        stdout_reader.start()
 
-        if process.returncode != 0:
+        stderr_reader = threading.Thread(
+            target=self._pipe_logger,
+            args=(process.stderr, self.log.error, 'Command stderr: '))
+        stderr_reader.daemon = True
+        stderr_reader.start()
+
+        stdout_reader.join()
+        stderr_reader.join()
+
+        returncode = process.wait()
+
+        if returncode != 0:
             msg = 'Command failed! Exit code={0}, cmd={1}'.format(
                 process.returncode, cmd)
             self.log.critical(msg)
