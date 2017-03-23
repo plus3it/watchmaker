@@ -139,7 +139,7 @@ For pull request acceptance, you should:
     something like this in EC2 userdata:
 
     *   **For Linux**: Modify `GIT_REPO` and `GIT_BRANCH` to reflect working
-        values for your development build.
+        values for your development build. Modify `PYPI_URL` as needed.
 
         ```shell
         #!/bin/sh
@@ -148,12 +148,15 @@ For pull request acceptance, you should:
 
         PYPI_URL=https://pypi.org/simple
 
+        # Get the host
+        PYPI_HOST=$(echo $PYPI_URL |sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
+
         # Install git and pip
         yum -y install epel-release
         yum -y --enablerepo=epel install python-pip git
 
         # Upgrade pip and setuptools
-        pip install --index-url "$PYPI_URL" --upgrade pip setuptools
+        pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external --upgrade pip setuptools
 
         # Clone watchmaker
         git clone "$GIT_REPO" && cd watchmaker
@@ -161,7 +164,7 @@ For pull request acceptance, you should:
         git submodule update --init --recursive
 
         # Install watchmaker
-        pip install --index-url "$PYPI_URL" .
+        pip install --index-url "$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external .
 
         # Run watchmaker
         watchmaker -vv --log-dir=/var/log/watchmaker
@@ -181,15 +184,18 @@ For pull request acceptance, you should:
         $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.12.0.windows.1/Git-2.12.0-64-bit.exe"
         $PypiUrl = "https://pypi.org/simple"
 
+        # Get the host
+        $PypiHost="$(([System.Uri]$PypiUrl).Host)"
+
         # Download bootstrap file
         $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
         (New-Object System.Net.WebClient).DownloadFile($BootstrapUrl, $BootstrapFile)
 
         # Install python and git
-        & $BootstrapFile -PythonUrl "$PythonUrl" -GitUrl "$GitUrl" -Verbose -ErrorAction Stop
+        & "$BootstrapFile" -PythonUrl "$PythonUrl" -GitUrl "$GitUrl" -Verbose -ErrorAction Stop
 
         # Upgrade pip and setuptools
-        pip install --index-url "$PypiUrl" --upgrade pip setuptools
+        pip install --index-url="$PypiUrl" --trusted-host="$PypiHost" --allow-all-external --upgrade pip setuptools
 
         # Clone watchmaker
         git clone "$GitRepo"
@@ -198,7 +204,7 @@ For pull request acceptance, you should:
         git submodule update --init --recursive
 
         # Install watchmaker
-        pip install --index-url "$PypiUrl" .
+        pip install --index-url "$PypiUrl" --trusted-host="$PypiHost" --allow-all-external .
 
         # Run watchmaker
         watchmaker -vv --log-dir=C:\Watchmaker\Logs
