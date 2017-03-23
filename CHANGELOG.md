@@ -2,7 +2,13 @@
 
 0.x.x (TBD)
 
-    *   TBD
+    *   join-domain-formula
+        *   (Linux) Exits with stateful failure on a bad decryption error
+    *   mcafee-agent-formula
+        *   (Linux) Avoids attempting to diff a binary file
+        *   (Linux) Installs `ed` as a dependency of the McAfee VSEL agent
+    *   scc-formula
+        *   Retries scan up to 5 times if scc exits with an error
 
 0.1.6 (2017.03.16)
 
