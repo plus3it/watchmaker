@@ -1,34 +1,40 @@
 # Changelog
 
-0.x.x (TBD)
+0.1.7 (2017.03.23)
 
-    *   join-domain-formula
-        *   (Linux) Exits with stateful failure on a bad decryption error
-    *   mcafee-agent-formula
-        *   (Linux) Avoids attempting to diff a binary file
-        *   (Linux) Installs `ed` as a dependency of the McAfee VSEL agent
-    *   scc-formula
-        *   Retries scan up to 5 times if scc exits with an error
+*   Uses threads to stream stdout and stderr to the watchmaker log when
+    executing a command via subproces
+*   [[Issue #226][226]] Minimizes salt output of successful states, to
+    make it easier to identify failed states
+*   join-domain-formula
+    *   (Linux) Exits with stateful failure on a bad decryption error
+*   mcafee-agent-formula
+    *   (Linux) Avoids attempting to diff a binary file
+    *   (Linux) Installs `ed` as a dependency of the McAfee VSEL agent
+*   scc-formula
+    *   Retries scan up to 5 times if scc exits with an error
+
+[226]: https://github.com/plus3it/watchmaker/issues/226
 
 0.1.6 (2017.03.16)
 
-    *   ash-linux-formula
-        *   Provides same baseline states for both EL6 and EL7
+*   ash-linux-formula
+    *   Provides same baseline states for both EL6 and EL7
 
 0.1.5 (2017.03.15)
 
-    *   ash-linux-formula
-        *   Adds policies to disable insecure Ciphers and MACs in sshd_config
-    *   ash-windows-formula
-        *   Adds `scm` and `stig` baselines for Windows 10
-        *   Adds `scm` baseline for Windows Server 2016 (Alpha)
-        *   Updates all `scm` and `stig` baselines with latest content
-    *   mcafee-agent-formula
-        *   Uses firewalld on EL7 rather than iptables
-    *   scc-formula
-        *   Skips verification of GPG key when install SCC RPM
-    *   splunkforwarder-formula
-        *   Uses firewalld on EL7 rather than iptables
+*   ash-linux-formula
+    *   Adds policies to disable insecure Ciphers and MACs in sshd_config
+*   ash-windows-formula
+    *   Adds `scm` and `stig` baselines for Windows 10
+    *   Adds `scm` baseline for Windows Server 2016 (Alpha)
+    *   Updates all `scm` and `stig` baselines with latest content
+*   mcafee-agent-formula
+    *   Uses firewalld on EL7 rather than iptables
+*   scc-formula
+    *   Skips verification of GPG key when install SCC RPM
+*   splunkforwarder-formula
+    *   Uses firewalld on EL7 rather than iptables
 
 0.1.4 (2017.03.09)
 
