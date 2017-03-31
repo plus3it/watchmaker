@@ -37,3 +37,9 @@
 [submodule "src/watchmaker/static/salt/formulas/dotnet4-formula"]
 	path = src/watchmaker/static/salt/formulas/dotnet4-formula
 	url = https://github.com/plus3it/dotnet4-formula.git
+[submodule "src/watchmaker/static/salt/formulas/scap-formula"]
+	path = src/watchmaker/static/salt/formulas/scap-formula
+	url = https://github.com/plus3it/scap-formula.git
+[submodule "src/watchmaker/static/salt/formulas/pshelp-formula"]
+	path = src/watchmaker/static/salt/formulas/pshelp-formula
+	url = https://github.com/plus3it/pshelp-formula.git
