@@ -516,7 +516,7 @@ class SaltWindows(SaltBase, WindowsManager):
         """Install salt and execute salt states."""
         self._prepare_for_install()
         self._install_package()
-        self._build_salt_formula(self.salt_root)
+        self._build_salt_formula(self.salt_srv)
 
         if self.ash_role and self.ash_role != 'None':
             role = {'role': str(self.ash_role)}
