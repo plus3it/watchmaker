@@ -100,7 +100,6 @@ class SaltBase(ManagerBase):
         self.salt_conf_path = None
         self.salt_conf = None
         self.salt_call = None
-        self.salt_file_root = None
         self.salt_base_env = None
         self.salt_formula_root = None
         self.salt_call_args = None
@@ -108,12 +107,11 @@ class SaltBase(ManagerBase):
 
     @staticmethod
     def _get_salt_dirs(srv):
-        salt_file_root = os.sep.join((srv, 'states'))
-        salt_base_env = os.sep.join((salt_file_root, 'base'))
+        salt_base_env = os.sep.join((srv, 'states'))
         salt_formula_root = os.sep.join((srv, 'formulas'))
         salt_pillar_root = os.sep.join((srv, 'pillar'))
         return (
-            salt_file_root, salt_base_env, salt_formula_root, salt_pillar_root
+            salt_base_env, salt_formula_root, salt_pillar_root
         )
 
     def _prepare_for_install(self):
@@ -139,7 +137,6 @@ class SaltBase(ManagerBase):
         ]
 
         for salt_dir in [
-            self.salt_file_root,
             self.salt_base_env,
             self.salt_formula_root
         ]:
@@ -356,10 +353,9 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_working_dir_prefix = 'salt-'
 
         salt_dirs = self._get_salt_dirs(self.salt_srv)
-        self.salt_file_root = salt_dirs[0]
-        self.salt_base_env = salt_dirs[1]
-        self.salt_formula_root = salt_dirs[2]
-        self.salt_pillar_root = salt_dirs[3]
+        self.salt_base_env = salt_dirs[0]
+        self.salt_formula_root = salt_dirs[1]
+        self.salt_pillar_root = salt_dirs[2]
 
     def _configuration_validation(self):
         if self.install_method.lower() == 'git':
@@ -470,10 +466,9 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_working_dir_prefix = 'Salt-'
 
         salt_dirs = self._get_salt_dirs(self.salt_srv)
-        self.salt_file_root = salt_dirs[0]
-        self.salt_base_env = salt_dirs[1]
-        self.salt_formula_root = salt_dirs[2]
-        self.salt_pillar_root = salt_dirs[3]
+        self.salt_base_env = salt_dirs[0]
+        self.salt_formula_root = salt_dirs[1]
+        self.salt_pillar_root = salt_dirs[2]
 
     def _install_package(self):
         installer_name = os.sep.join(
