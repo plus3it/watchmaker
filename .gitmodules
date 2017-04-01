@@ -19,15 +19,9 @@
 [submodule "src/watchmaker/static/salt/formulas/emet-formula"]
 	path = src/watchmaker/static/salt/formulas/emet-formula
 	url = https://github.com/plus3it/emet-formula.git
-[submodule "src/watchmaker/static/salt/formulas/scc-formula"]
-	path = src/watchmaker/static/salt/formulas/scc-formula
-	url = https://github.com/plus3it/scc-formula.git
 [submodule "src/watchmaker/static/salt/formulas/windows-update-agent-formula"]
 	path = src/watchmaker/static/salt/formulas/windows-update-agent-formula
 	url = https://github.com/plus3it/windows-update-agent-formula.git
-[submodule "src/watchmaker/static/salt/formulas/systemprep-formula"]
-	path = src/watchmaker/static/salt/formulas/systemprep-formula
-	url = https://github.com/plus3it/systemprep-formula.git
 [submodule "src/watchmaker/static/salt/formulas/netbanner-formula"]
 	path = src/watchmaker/static/salt/formulas/netbanner-formula
 	url = https://github.com/plus3it/netbanner-formula.git
