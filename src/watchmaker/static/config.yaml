@@ -2,6 +2,7 @@ all:
   - salt:
       admin_groups: None
       admin_users: None
+      content_source: https://s3.amazonaws.com/watchmaker/salt-content.zip
       computer_name: None
       environment: False
       formula_termination_strings:
@@ -36,7 +37,6 @@ linux:
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
   - salt:
       salt_debug_log: None
-      content_source: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
       install_method: yum
       bootstrap_source: None
       git_repo: None
@@ -45,5 +45,4 @@ linux:
 windows:
   - salt:
       salt_debug_log: None
-      content_source: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
       installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
