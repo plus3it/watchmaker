@@ -80,7 +80,7 @@ class SaltBase(ManagerBase):
         super(SaltBase, self).__init__(*args, **kwargs)
 
         # Pop arguments used by SaltBase
-        self.user_formulas = kwargs.pop('user_formulas', None) or []
+        self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.formula_termination_strings = \
             kwargs.pop('formula_termination_strings', None) or []
         self.computer_name = kwargs.pop('computer_name', None) or ''
@@ -150,7 +150,7 @@ class SaltBase(ManagerBase):
 
     def _get_formulas_conf(self):
 
-        # Append Salt formulas that came with Watchmaker package.
+        # Append Salt formulas bundled with Watchmaker package.
         formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
         for formula in os.listdir(formulas_path):
             formula_path = os.path.join(self.salt_formula_root, '', formula)
@@ -161,23 +161,39 @@ class SaltBase(ManagerBase):
                 formula_path)
 
         # Obtain & extract any Salt formulas specified in user_formulas.
-        for source_loc in self.user_formulas:
-            filename = source_loc.split('/')[-1]
+        for formula_name, formula_url in self.user_formulas.items():
+            filename = os.path.basename(formula_url)
             file_loc = os.sep.join((self.working_dir, filename))
-            self.download_file(source_loc, file_loc)
+
+            # Download the formula
+            self.download_file(formula_url, file_loc)
+
+            # Extract the formula
+            formula_working_dir = self.create_working_dir(
+                self.working_dir,
+                '{0}-'.format(filename)
+            )
             self.extract_contents(
                 filepath=file_loc,
-                to_directory=self.salt_formula_root
+                to_directory=formula_working_dir
             )
-            filebase = '.'.join(filename.split('.')[:-1])
-            formula_loc = os.sep.join((self.salt_formula_root, filebase))
 
-            for string in self.formula_termination_strings:
-                if filebase.endswith(string):
-                    new_formula_dir = formula_loc[:-len(string)]
-                    if os.path.exists(new_formula_dir):
-                        shutil.rmtree(new_formula_dir)
-                    shutil.move(formula_loc, new_formula_dir)
+            # Get the first directory within the extracted directory
+            formula_inner_dir = os.path.join(
+                formula_working_dir,
+                next(os.walk(formula_working_dir))[1][0]
+            )
+
+            # Move the formula to the formula root
+            formula_loc = os.sep.join((self.salt_formula_root, formula_name))
+            self.log.debug(
+                'Placing user formula in salt file roots. formula_url=%s, '
+                'formula_loc=%s',
+                formula_url, formula_loc
+            )
+            if os.path.exists(formula_loc):
+                shutil.rmtree(formula_loc)
+            shutil.move(formula_inner_dir, formula_loc)
 
         return [
             os.path.join(self.salt_formula_root, x) for x in next(os.walk(
