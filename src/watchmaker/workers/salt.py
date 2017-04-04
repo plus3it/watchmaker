@@ -115,7 +115,7 @@ class SaltBase(ManagerBase):
         )
 
     def _prepare_for_install(self):
-        self.create_working_dir(
+        self.working_dir = self.create_working_dir(
             self.salt_working_dir,
             self.salt_working_dir_prefix
         )
