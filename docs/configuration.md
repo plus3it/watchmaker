@@ -47,25 +47,6 @@ Parameters supported by the Salt Worker:
 -   `computer_name` (_string_): The computer or hostname that should be applied.
 -   `environment` (_string_): Set for the environment in which the system is
     being built.
--   `formula_termination_strings` (_list_): Strings to remove from the end of a
-    salt formula zip archive. The defaults are common branch or tag names when
-    a salt formula is hosted on GitHub. If a user has a salt formula with a
-    different convention, additional strings to match can be defined. For
-    example:
-
-    ```
-    Salt formula name: `systemprep-formula`
-    User-defined formula zip filename: `systemprep-formula-homemade.zip`
-
-    formula_termination_strings:
-      - -master
-      - -latest
-      - -homemade
-
-    The termination string `-homemade` should be added, so that the default
-    formula is overridden properly.
-    ```
-
 -   `ou_path` (_string_): Specifies the full DN of the OU where the computer
     account will be created when joining a domain.
 
@@ -82,7 +63,17 @@ Parameters supported by the Salt Worker:
 -   `s3_source` (_boolean_): Use S3 utilities to retrieve content instead of
     http(s) utilities. For S3 utilities to work, the system must have boto
     credentials configured that allow access to the S3 bucket.
--   `user_formulas` (_list_): URL(s) for user-defined Salt formulas.
+-   `user_formulas` (_dict_): Map of formula names and URLs to zip archives of
+      salt formulas. These formulas will be downloaded, extracted, and added to
+      the salt file roots. The zip archive must contain a top-level directory
+      that, itself, contains the actual salt formula. To "overwrite" bundled
+      submodule formulas, make sure the formula name matches the submodule name.
+
+    ```yaml
+    user_formulas:
+      foo-formula: https://path/to/foo.zip
+    ```
+
 -   `salt_debug_log` (_string_): Path to the debug logfile that salt will write
     to.
 -   `content_source` (_string_): URL to the Salt content file that contains
@@ -137,19 +128,22 @@ all:
   - salt:
       admin_groups: None
       admin_users: None
+      content_source: https://s3.amazonaws.com/watchmaker/salt-content.zip
       computer_name: None
       environment: False
-      formula_termination_strings:
-        - -master
-        - -latest
       ou_path: None
       salt_states: Highstate
       s3_source: False
       user_formulas:
-        #To add other formulas, make sure it is a url to a zipped file as follows:
-        #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
-        #- https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
-        #To "overwrite" submodule formulas, make sure name matches submodule names.
+        # To add extra formulas, specify them as a map of
+        #    <formula_name>: <archive_url>
+        # The <formula_name> is the name of the directory in the salt file_root
+        # where the formula will be placed. The <archive_url> must be a zip
+        # file, and the zip must contain a top-level directory that, itself,
+        # contains the actual salt formula. To "overwrite" submodule formulas,
+        # make sure <formula_name> matches submodule names. E.g.:
+        #ash-linux-formula: https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+        #scap-formula: https://s3.amazonaws.com/salt-formulas/scap-formula-master.zip
 
 linux:
   - yum:
@@ -171,7 +165,6 @@ linux:
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
   - salt:
       salt_debug_log: None
-      content_source: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
       install_method: yum
       bootstrap_source: None
       git_repo: None
@@ -180,7 +173,6 @@ linux:
 windows:
   - salt:
       salt_debug_log: None
-      content_source: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
       installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
 ```
 

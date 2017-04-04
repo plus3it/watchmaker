@@ -171,6 +171,9 @@ class ManagerBase(object):
                 Prefix to prepend to the working directory.
             basedir (:obj:`str`):
                 The directory in which to create the working directory.
+
+        Returns:
+            :obj:`str`: Path to the working directory.
         """
         self.log.info('Creating a working directory.')
         original_umask = os.umask(0)
@@ -180,9 +183,9 @@ class ManagerBase(object):
             msg = 'Could not create a working dir in {0}'.format(basedir)
             self.log.critical(msg)
             raise
-        self.log.debug('Working directory: %s', working_dir)
-        self.working_dir = working_dir
+        self.log.debug('Created working directory: %s', working_dir)
         os.umask(original_umask)
+        return working_dir
 
     @staticmethod
     def _pipe_logger(pipe, logger, prefix_msg=''):
