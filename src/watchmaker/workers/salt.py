@@ -43,18 +43,13 @@ class SaltBase(ManagerBase):
             - ``none``: Do not apply any salt states.
             - ``highstate``: Apply the salt "highstate".
 
-        user_formulas (:obj:`list`):
-            (Defaults to ``[]``) URLs to archives (zip files) of salt formulas
-            that will be downloaded and extracted on the system.
-        formula_termination_strings (:obj:`list`):
-            (Defaults to ``[]``) Strings that should be removed from the end
-            of the salt formulas. For example, when downloading the zip archive
-            from GitHub, the name of the branch is appended to the archive.
-            E.g. ``foo-formula-master.zip``, and the zip file would contain a
-            directory named ``foo-formula-master``, where ``master`` is the
-            name of the branch. In this example, setting this option to
-            ``['-master']`` would remove that string from the end of the
-            formula after saving it to the system.
+        user_formulas (:obj:`dict`):
+            (Defaults to ``{}``) Map of formula names and URLs to zip archives
+            of salt formulas. These formulas will be downloaded, extracted, and
+            added to the salt file roots. The zip archive must contain a
+            top-level directory that, itself, contains the actual salt formula.
+            To "overwrite" bundled submodule formulas, make sure the formula
+            name matches the submodule name.
         admin_groups (:obj:`str`):
             (Defaults to ``''``) Sets a salt grain that specifies the domain
             groups that should have root privileges on Linux or admin
@@ -81,8 +76,6 @@ class SaltBase(ManagerBase):
 
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop('user_formulas', None) or {}
-        self.formula_termination_strings = \
-            kwargs.pop('formula_termination_strings', None) or []
         self.computer_name = kwargs.pop('computer_name', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
         self.s3_source = kwargs.pop('s3_source', None) or False
