@@ -14,7 +14,7 @@ import threading
 import zipfile
 
 from six import add_metaclass
-from six.moves import urllib
+from six.moves import queue, urllib
 
 from watchmaker.exceptions import WatchmakerException
 
@@ -188,21 +188,33 @@ class ManagerBase(object):
         return working_dir
 
     @staticmethod
-    def _pipe_logger(pipe, logger, prefix_msg=''):
+    def _pipe_logger(pipe, logger, prefix_msg='', pipe_queue=None):
         try:
             for line in iter(pipe.readline, b''):
                 logger('%s%s', prefix_msg, line.rstrip())
+                if pipe_queue:
+                    pipe_queue.put(line)
         finally:
             pipe.close()
 
-    def call_process(self, cmd):
+    def call_process(self, cmd, stdout=False):
         """
         Execute a shell command.
 
         Args:
             cmd (:obj:`list`):
                 Command to execute.
+            stdout (:obj:`bool`):
+                (Defaults to ``False``) Switch to control whether to return
+                stdout.
+
+        Returns:
+            :obj:`None` unless ``stdout`` is ``True``. In that case, the stdout
+            is returned.
         """
+        ret = None
+        stdout_queue = queue.Queue() if stdout else None
+
         if not isinstance(cmd, list):
             msg = 'Command is not a list: {0}'.format(cmd)
             self.log.critical(msg)
@@ -217,7 +229,11 @@ class ManagerBase(object):
 
         stdout_reader = threading.Thread(
             target=self._pipe_logger,
-            args=(process.stdout, self.log.debug, 'Command stdout: '))
+            args=(
+                process.stdout,
+                self.log.debug,
+                'Command stdout: ',
+                stdout_queue))
         stdout_reader.daemon = True
         stdout_reader.start()
 
@@ -237,6 +253,19 @@ class ManagerBase(object):
                 process.returncode, cmd)
             self.log.critical(msg)
             raise WatchmakerException(msg)
+
+        if stdout_queue:
+            # Return stdout
+            ret = b''
+            while not stdout_queue.empty():
+                try:
+                    ret = ret + stdout_queue.get(False)
+                except queue.Empty:
+                    continue
+                stdout_queue.task_done()
+            stdout_queue.join()
+
+        return ret
 
     def cleanup(self):
         """Delete working directory."""
