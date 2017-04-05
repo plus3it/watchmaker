@@ -228,7 +228,7 @@ class SaltBase(ManagerBase):
         ]
         self.run_salt(cmd)
 
-    def run_salt(self, command):
+    def run_salt(self, command, stdout=False):
         """
         Execute salt command.
 
@@ -238,6 +238,7 @@ class SaltBase(ManagerBase):
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
                 do not specify those options in the command.
+            stdout (obj:`bool`) Switch to control whether to return stdout.
         """
         cmd = [
             self.salt_call,
@@ -249,7 +250,63 @@ class SaltBase(ManagerBase):
             cmd.extend(command)
         else:
             cmd.append(command)
-        self.call_process(cmd)
+        ret = self.call_process(cmd, stdout=stdout)
+        if stdout:
+            return ret
+
+    def get_service_status(self, service):
+        """
+        Get the service status using salt.
+
+        Args:
+            service (obj:`str`): Name of the service to query.
+
+        Returns:
+            obj:`bool`. ``True`` if the service is running. ``False`` if the
+            service is not running or not present.
+        """
+        cmd = [
+            'service.status', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def stop_service(self, service):
+        """
+        Stop a service status using salt.
+
+        Args:
+            service (obj:`str`): Name of the service to stop.
+
+        Returns:
+            obj:`bool`. ``True`` if the service was stopped. ``False`` if the
+            service could not be stopped.
+        """
+        cmd = [
+            'service.stop', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def start_service(self, service):
+        """
+        Start a service status using salt.
+
+        Args:
+            service (obj:`str`): Name of the service to start.
+
+        Returns:
+            obj:`bool`. ``True`` if the service was started. ``False`` if the
+            service could not be started.
+        """
+        cmd = [
+            'service.start', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
 
     def process_grains(self):
         """Set salt grains."""
@@ -427,8 +484,17 @@ class SaltLinux(SaltBase, LinuxManager):
         """Install salt and execute salt states."""
         self._configuration_validation()
         self._prepare_for_install()
+
+        status_salt = False
+        if os.path.exists(self.salt_call):
+            status_salt = self.get_service_status('salt-minion')
         self._install_package()
+        stopped_salt = self.stop_service('salt-minion')
         self._build_salt_formula(self.salt_srv)
+        if status_salt and stopped_salt:
+            started_salt = self.start_service('salt-minion')
+            if not started_salt:
+                self.log.error('Failed to restart salt-minion service')
 
         self.process_grains()
         self.process_states(self.salt_states)
@@ -524,8 +590,17 @@ class SaltWindows(SaltBase, WindowsManager):
     def install(self):
         """Install salt and execute salt states."""
         self._prepare_for_install()
+
+        status_salt = False
+        if os.path.exists(self.salt_call):
+            status_salt = self.get_service_status('salt-minion')
         self._install_package()
+        stopped_salt = self.stop_service('salt-minion')
         self._build_salt_formula(self.salt_srv)
+        if status_salt and stopped_salt:
+            started_salt = self.start_service('salt-minion')
+            if not started_salt:
+                self.log.error('Failed to restart salt-minion service')
 
         if self.ash_role and self.ash_role != 'None':
             role = {'role': str(self.ash_role)}
