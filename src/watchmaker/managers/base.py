@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import abc
+import concurrent.futures
 import logging
 import os
 import shutil
@@ -227,24 +228,22 @@ class ManagerBase(object):
             stderr=subprocess.PIPE
         )
 
-        stdout_reader = threading.Thread(
-            target=self._pipe_logger,
-            args=(
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            stdout_future = executor.submit(
+                self._pipe_logger,
                 process.stdout,
                 self.log.debug,
                 'Command stdout: ',
-                stdout_queue))
-        stdout_reader.daemon = True
-        stdout_reader.start()
+                stdout_queue)
 
-        stderr_reader = threading.Thread(
-            target=self._pipe_logger,
-            args=(process.stderr, self.log.error, 'Command stderr: '))
-        stderr_reader.daemon = True
-        stderr_reader.start()
+            stderr_future = executor.submit(
+                self._pipe_logger,
+                process.stderr,
+                self.log.error,
+                'Command stderr: ')
 
-        stdout_reader.join()
-        stderr_reader.join()
+            stdout_ret = stdout_future.result()
+            stderr_ret = stderr_future.result()
 
         returncode = process.wait()
 
