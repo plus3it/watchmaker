@@ -8,7 +8,7 @@ import os
 import sys
 
 import watchmaker
-from watchmaker.logger import prepare_logging
+from watchmaker.logger import exception_hook, prepare_logging
 
 
 def _validate_log_dir(log_dir):
@@ -100,6 +100,9 @@ def main():
 
     arguments, extra_arguments = parser.parse_known_args()
     prepare_logging(arguments.log_dir, arguments.verbosity)
+
+    # Setup excepthook to log all unhandled exceptions
+    sys.excepthook = exception_hook
 
     watchmaker_arguments = watchmaker.Arguments(**dict(
         extra_arguments=extra_arguments,
