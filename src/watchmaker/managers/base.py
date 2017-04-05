@@ -11,11 +11,10 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
-import threading
 import zipfile
 
 from six import add_metaclass
-from six.moves import queue, urllib
+from six.moves import urllib
 
 from watchmaker.exceptions import WatchmakerException
 
@@ -189,14 +188,17 @@ class ManagerBase(object):
         return working_dir
 
     @staticmethod
-    def _pipe_logger(pipe, logger, prefix_msg='', pipe_queue=None):
+    def _pipe_logger(pipe, logger, prefix_msg='', return_output=False):
+        ret = b''
         try:
             for line in iter(pipe.readline, b''):
                 logger('%s%s', prefix_msg, line.rstrip())
-                if pipe_queue:
-                    pipe_queue.put(line)
+                if return_output:
+                    ret = ret + line
         finally:
             pipe.close()
+
+        return ret or None
 
     def call_process(self, cmd, stdout=False):
         """
@@ -214,7 +216,8 @@ class ManagerBase(object):
             is returned.
         """
         ret = None
-        stdout_queue = queue.Queue() if stdout else None
+        stdout_ret = b''
+        stderr_ret = b''  # pylint: disable=unused-variable
 
         if not isinstance(cmd, list):
             msg = 'Command is not a list: {0}'.format(cmd)
@@ -234,7 +237,7 @@ class ManagerBase(object):
                 process.stdout,
                 self.log.debug,
                 'Command stdout: ',
-                stdout_queue)
+                stdout)
 
             stderr_future = executor.submit(
                 self._pipe_logger,
@@ -243,8 +246,9 @@ class ManagerBase(object):
                 'Command stderr: ')
 
             stdout_ret = stdout_future.result()
-            stderr_ret = stderr_future.result()
+            stderr_ret = stderr_future.result()  # noqa: F841,E501  # pylint: disable=unused-variable
 
+        self.log.debug('stdout_ret=%s', stdout_ret)
         returncode = process.wait()
 
         if returncode != 0:
@@ -253,16 +257,9 @@ class ManagerBase(object):
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-        if stdout_queue:
+        if stdout:
             # Return stdout
-            ret = b''
-            while not stdout_queue.empty():
-                try:
-                    ret = ret + stdout_queue.get(False)
-                except queue.Empty:
-                    continue
-                stdout_queue.task_done()
-            stdout_queue.join()
+            ret = stdout_ret
 
         return ret
 
