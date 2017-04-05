@@ -16,6 +16,16 @@ LOG_LEVELS = collections.defaultdict(
 )
 
 
+def exception_hook(exc_type, exc_value, exc_traceback):
+    """Hook for sys.excepthook to log unhandled exceptions."""
+    log = logging.getLogger('watchmaker')
+    log.error('%s', str(exc_value))
+    log.debug(
+        '',
+        exc_info=(exc_type, exc_value, exc_traceback)
+    )
+
+
 def prepare_logging(log_dir, log_level):
     """
     Prepare the logger for handling messages to a file and/or to stdout.
