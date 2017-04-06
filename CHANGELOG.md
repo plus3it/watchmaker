@@ -1,8 +1,43 @@
 # Changelog
 
-0.x.x (TBD)
+0.2.0 (2017.04.06)
 
-*   TBD
+*   [[Issue #238][238]] Captures all unhandled exceptions and logs them
+*   [[Issue #234][234]] Stops the salt service prior to managing salt formulas,
+    to ensure that the filesystem does not throw any errors about the files
+    being locked
+*   [[Issue #72][72]] Manages salt service so the service state after
+    watchmaker completes is the same as it was prior to running watchmaker. If
+    the service was running beforehand, it remains running afterwards. If the
+    service was stopped (or non-existent) beforehad, the service remains
+    stopped afterwards
+*   [[Issue #163][163]] Modifies the `user_formulas` config option to support
+    a map of `<formula_name>:<formula_url>`
+*   [[PR #235][235]] Extracts salt content to the same target `srv` location
+    for both Window and Linux. Previously, the salt content was extracted to
+    different points in the filesystem hierarchy, which required different
+    content for Windows and Linux. Now the same salt content archive can be
+    used for both
+*   [[PR #242][242]] Renames salt worker param `content_source` to
+    `salt_content`
+*   systemprep-formula
+    *   Deprecated and removed. Replaced by new salt content structure that
+        uses native salt capabilities to map states to a system
+*   scc-formula
+    *   Deprecated and removed. Replaced by scap-formula
+*   scap-formula
+    *   New bundled salt formula. Provides SCAP scans using either `openscap`
+        or `scc`
+*   pshelp-formula
+    *   New bundled salt formula. Installs updated PowerShell help content to
+        Windows systems
+
+[242]: https://github.com/plus3it/watchmaker/pull/242
+[235]: https://github.com/plus3it/watchmaker/pull/235
+[163]: https://github.com/plus3it/watchmaker/issues/163
+[72]: https://github.com/plus3it/watchmaker/issues/72
+[234]: https://github.com/plus3it/watchmaker/issues/234
+[238]: https://github.com/plus3it/watchmaker/issues/238
 
 0.1.7 (2017.03.23)
 
