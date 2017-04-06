@@ -2,10 +2,10 @@ all:
   - salt:
       admin_groups: None
       admin_users: None
-      content_source: https://s3.amazonaws.com/watchmaker/salt-content.zip
       computer_name: None
       environment: False
       ou_path: None
+      salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
       salt_states: Highstate
       s3_source: False
       user_formulas:

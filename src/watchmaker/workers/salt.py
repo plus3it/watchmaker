@@ -28,7 +28,7 @@ class SaltBase(ManagerBase):
             and user formulas from an S3 bucket. If ``True``, you must also
             install ``boto3`` and ``botocore``. Those dependencies will not be
             installed by Watchmaker.
-        content_source (:obj:`str`):
+        salt_content (:obj:`str`):
             (Defaults to ``''``) URL to a salt content archive (zip file) that
             will be uncompressed in the salt "srv" directory. This typically is
             used to create a top.sls file and to populate salt's file_roots.
@@ -80,7 +80,7 @@ class SaltBase(ManagerBase):
         self.ent_env = kwargs.pop('environment', None) or ''
         self.s3_source = kwargs.pop('s3_source', None) or False
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
-        self.content_source = kwargs.pop('content_source', None) or ''
+        self.salt_content = kwargs.pop('salt_content', None) or ''
         self.ou_path = kwargs.pop('ou_path', None) or ''
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
@@ -194,14 +194,14 @@ class SaltBase(ManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
-        if self.content_source:
-            salt_content_filename = self.content_source.split('/')[-1]
+        if self.salt_content:
+            salt_content_filename = self.salt_content.split('/')[-1]
             salt_content_file = os.sep.join((
                 self.working_dir,
                 salt_content_filename
             ))
             self.download_file(
-                self.content_source,
+                self.salt_content,
                 salt_content_file,
                 self.s3_source
             )

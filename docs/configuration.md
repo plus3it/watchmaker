@@ -76,7 +76,7 @@ Parameters supported by the Salt Worker:
 
 -   `salt_debug_log` (_string_): Path to the debug logfile that salt will write
     to.
--   `content_source` (_string_): URL to the Salt content file that contains
+-   `salt_content` (_string_): URL to the Salt content file that contains
     further configuration specific to the salt install.
 -   `install_method` (_string_): (Linux-only) The method used to install Salt.
     Currently supports: `yum`, `git`
@@ -128,10 +128,10 @@ all:
   - salt:
       admin_groups: None
       admin_users: None
-      content_source: https://s3.amazonaws.com/watchmaker/salt-content.zip
       computer_name: None
       environment: False
       ou_path: None
+      salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
       salt_states: Highstate
       s3_source: False
       user_formulas:
