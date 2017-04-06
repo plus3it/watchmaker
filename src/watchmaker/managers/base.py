@@ -248,7 +248,6 @@ class ManagerBase(object):
             stdout_ret = stdout_future.result()
             stderr_ret = stderr_future.result()  # noqa: F841,E501  # pylint: disable=unused-variable
 
-        self.log.debug('stdout_ret=%s', stdout_ret)
         returncode = process.wait()
 
         if returncode != 0:
