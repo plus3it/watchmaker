@@ -28,7 +28,7 @@ class SaltBase(ManagerBase):
             and user formulas from an S3 bucket. If ``True``, you must also
             install ``boto3`` and ``botocore``. Those dependencies will not be
             installed by Watchmaker.
-        content_source (:obj:`str`):
+        salt_content (:obj:`str`):
             (Defaults to ``''``) URL to a salt content archive (zip file) that
             will be uncompressed in the salt "srv" directory. This typically is
             used to create a top.sls file and to populate salt's file_roots.
@@ -43,18 +43,13 @@ class SaltBase(ManagerBase):
             - ``none``: Do not apply any salt states.
             - ``highstate``: Apply the salt "highstate".
 
-        user_formulas (:obj:`list`):
-            (Defaults to ``[]``) URLs to archives (zip files) of salt formulas
-            that will be downloaded and extracted on the system.
-        formula_termination_strings (:obj:`list`):
-            (Defaults to ``[]``) Strings that should be removed from the end
-            of the salt formulas. For example, when downloading the zip archive
-            from GitHub, the name of the branch is appended to the archive.
-            E.g. ``foo-formula-master.zip``, and the zip file would contain a
-            directory named ``foo-formula-master``, where ``master`` is the
-            name of the branch. In this example, setting this option to
-            ``['-master']`` would remove that string from the end of the
-            formula after saving it to the system.
+        user_formulas (:obj:`dict`):
+            (Defaults to ``{}``) Map of formula names and URLs to zip archives
+            of salt formulas. These formulas will be downloaded, extracted, and
+            added to the salt file roots. The zip archive must contain a
+            top-level directory that, itself, contains the actual salt formula.
+            To "overwrite" bundled submodule formulas, make sure the formula
+            name matches the submodule name.
         admin_groups (:obj:`str`):
             (Defaults to ``''``) Sets a salt grain that specifies the domain
             groups that should have root privileges on Linux or admin
@@ -80,14 +75,12 @@ class SaltBase(ManagerBase):
         super(SaltBase, self).__init__(*args, **kwargs)
 
         # Pop arguments used by SaltBase
-        self.user_formulas = kwargs.pop('user_formulas', None) or []
-        self.formula_termination_strings = \
-            kwargs.pop('formula_termination_strings', None) or []
+        self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.computer_name = kwargs.pop('computer_name', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
         self.s3_source = kwargs.pop('s3_source', None) or False
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
-        self.content_source = kwargs.pop('content_source', None) or ''
+        self.salt_content = kwargs.pop('salt_content', None) or ''
         self.ou_path = kwargs.pop('ou_path', None) or ''
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
@@ -100,7 +93,6 @@ class SaltBase(ManagerBase):
         self.salt_conf_path = None
         self.salt_conf = None
         self.salt_call = None
-        self.salt_file_root = None
         self.salt_base_env = None
         self.salt_formula_root = None
         self.salt_call_args = None
@@ -108,16 +100,15 @@ class SaltBase(ManagerBase):
 
     @staticmethod
     def _get_salt_dirs(srv):
-        salt_file_root = os.sep.join((srv, 'states'))
-        salt_base_env = os.sep.join((salt_file_root, 'base'))
+        salt_base_env = os.sep.join((srv, 'states'))
         salt_formula_root = os.sep.join((srv, 'formulas'))
         salt_pillar_root = os.sep.join((srv, 'pillar'))
         return (
-            salt_file_root, salt_base_env, salt_formula_root, salt_pillar_root
+            salt_base_env, salt_formula_root, salt_pillar_root
         )
 
     def _prepare_for_install(self):
-        self.create_working_dir(
+        self.working_dir = self.create_working_dir(
             self.salt_working_dir,
             self.salt_working_dir_prefix
         )
@@ -139,7 +130,6 @@ class SaltBase(ManagerBase):
         ]
 
         for salt_dir in [
-            self.salt_file_root,
             self.salt_base_env,
             self.salt_formula_root
         ]:
@@ -153,7 +143,7 @@ class SaltBase(ManagerBase):
 
     def _get_formulas_conf(self):
 
-        # Append Salt formulas that came with Watchmaker package.
+        # Append Salt formulas bundled with Watchmaker package.
         formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
         for formula in os.listdir(formulas_path):
             formula_path = os.path.join(self.salt_formula_root, '', formula)
@@ -164,23 +154,39 @@ class SaltBase(ManagerBase):
                 formula_path)
 
         # Obtain & extract any Salt formulas specified in user_formulas.
-        for source_loc in self.user_formulas:
-            filename = source_loc.split('/')[-1]
+        for formula_name, formula_url in self.user_formulas.items():
+            filename = os.path.basename(formula_url)
             file_loc = os.sep.join((self.working_dir, filename))
-            self.download_file(source_loc, file_loc)
+
+            # Download the formula
+            self.download_file(formula_url, file_loc)
+
+            # Extract the formula
+            formula_working_dir = self.create_working_dir(
+                self.working_dir,
+                '{0}-'.format(filename)
+            )
             self.extract_contents(
                 filepath=file_loc,
-                to_directory=self.salt_formula_root
+                to_directory=formula_working_dir
             )
-            filebase = '.'.join(filename.split('.')[:-1])
-            formula_loc = os.sep.join((self.salt_formula_root, filebase))
 
-            for string in self.formula_termination_strings:
-                if filebase.endswith(string):
-                    new_formula_dir = formula_loc[:-len(string)]
-                    if os.path.exists(new_formula_dir):
-                        shutil.rmtree(new_formula_dir)
-                    shutil.move(formula_loc, new_formula_dir)
+            # Get the first directory within the extracted directory
+            formula_inner_dir = os.path.join(
+                formula_working_dir,
+                next(os.walk(formula_working_dir))[1][0]
+            )
+
+            # Move the formula to the formula root
+            formula_loc = os.sep.join((self.salt_formula_root, formula_name))
+            self.log.debug(
+                'Placing user formula in salt file roots. formula_url=%s, '
+                'formula_loc=%s',
+                formula_url, formula_loc
+            )
+            if os.path.exists(formula_loc):
+                shutil.rmtree(formula_loc)
+            shutil.move(formula_inner_dir, formula_loc)
 
         return [
             os.path.join(self.salt_formula_root, x) for x in next(os.walk(
@@ -188,14 +194,14 @@ class SaltBase(ManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
-        if self.content_source:
-            salt_content_filename = self.content_source.split('/')[-1]
+        if self.salt_content:
+            salt_content_filename = self.salt_content.split('/')[-1]
             salt_content_file = os.sep.join((
                 self.working_dir,
                 salt_content_filename
             ))
             self.download_file(
-                self.content_source,
+                self.salt_content,
                 salt_content_file,
                 self.s3_source
             )
@@ -222,7 +228,7 @@ class SaltBase(ManagerBase):
         ]
         self.run_salt(cmd)
 
-    def run_salt(self, command):
+    def run_salt(self, command, stdout=False):
         """
         Execute salt command.
 
@@ -232,6 +238,7 @@ class SaltBase(ManagerBase):
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
                 do not specify those options in the command.
+            stdout (obj:`bool`) Switch to control whether to return stdout.
         """
         cmd = [
             self.salt_call,
@@ -243,7 +250,63 @@ class SaltBase(ManagerBase):
             cmd.extend(command)
         else:
             cmd.append(command)
-        self.call_process(cmd)
+        ret = self.call_process(cmd, stdout=stdout)
+        if stdout:
+            return ret
+
+    def get_service_status(self, service):
+        """
+        Get the service status using salt.
+
+        Args:
+            service (obj:`str`): Name of the service to query.
+
+        Returns:
+            obj:`bool`. ``True`` if the service is running. ``False`` if the
+            service is not running or not present.
+        """
+        cmd = [
+            'service.status', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def stop_service(self, service):
+        """
+        Stop a service status using salt.
+
+        Args:
+            service (obj:`str`): Name of the service to stop.
+
+        Returns:
+            obj:`bool`. ``True`` if the service was stopped. ``False`` if the
+            service could not be stopped.
+        """
+        cmd = [
+            'service.stop', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def start_service(self, service):
+        """
+        Start a service status using salt.
+
+        Args:
+            service (obj:`str`): Name of the service to start.
+
+        Returns:
+            obj:`bool`. ``True`` if the service was started. ``False`` if the
+            service could not be started.
+        """
+        cmd = [
+            'service.start', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
 
     def process_grains(self):
         """Set salt grains."""
@@ -356,10 +419,9 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_working_dir_prefix = 'salt-'
 
         salt_dirs = self._get_salt_dirs(self.salt_srv)
-        self.salt_file_root = salt_dirs[0]
-        self.salt_base_env = salt_dirs[1]
-        self.salt_formula_root = salt_dirs[2]
-        self.salt_pillar_root = salt_dirs[3]
+        self.salt_base_env = salt_dirs[0]
+        self.salt_formula_root = salt_dirs[1]
+        self.salt_pillar_root = salt_dirs[2]
 
     def _configuration_validation(self):
         if self.install_method.lower() == 'git':
@@ -422,8 +484,17 @@ class SaltLinux(SaltBase, LinuxManager):
         """Install salt and execute salt states."""
         self._configuration_validation()
         self._prepare_for_install()
+
+        status_salt = False
+        if os.path.exists(self.salt_call):
+            status_salt = self.get_service_status('salt-minion')
         self._install_package()
+        stopped_salt = self.stop_service('salt-minion')
         self._build_salt_formula(self.salt_srv)
+        if status_salt and stopped_salt:
+            started_salt = self.start_service('salt-minion')
+            if not started_salt:
+                self.log.error('Failed to restart salt-minion service')
 
         self.process_grains()
         self.process_states(self.salt_states)
@@ -470,10 +541,9 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_working_dir_prefix = 'Salt-'
 
         salt_dirs = self._get_salt_dirs(self.salt_srv)
-        self.salt_file_root = salt_dirs[0]
-        self.salt_base_env = salt_dirs[1]
-        self.salt_formula_root = salt_dirs[2]
-        self.salt_pillar_root = salt_dirs[3]
+        self.salt_base_env = salt_dirs[0]
+        self.salt_formula_root = salt_dirs[1]
+        self.salt_pillar_root = salt_dirs[2]
 
     def _install_package(self):
         installer_name = os.sep.join(
@@ -520,8 +590,17 @@ class SaltWindows(SaltBase, WindowsManager):
     def install(self):
         """Install salt and execute salt states."""
         self._prepare_for_install()
+
+        status_salt = False
+        if os.path.exists(self.salt_call):
+            status_salt = self.get_service_status('salt-minion')
         self._install_package()
-        self._build_salt_formula(self.salt_root)
+        stopped_salt = self.stop_service('salt-minion')
+        self._build_salt_formula(self.salt_srv)
+        if status_salt and stopped_salt:
+            started_salt = self.start_service('salt-minion')
+            if not started_salt:
+                self.log.error('Failed to restart salt-minion service')
 
         if self.ash_role and self.ash_role != 'None':
             role = {'role': str(self.ash_role)}

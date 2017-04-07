@@ -4,17 +4,20 @@ all:
       admin_users: None
       computer_name: None
       environment: False
-      formula_termination_strings:
-        - -master
-        - -latest
       ou_path: None
+      salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
       salt_states: Highstate
       s3_source: False
       user_formulas:
-        #To add other formulas, make sure it is a url to a zipped file as follows:
-        #- https://s3.amazonaws.com/salt-formulas/systemprep-formula-master.zip
-        #- https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
-        #To "overwrite" submodule formulas, make sure name matches submodule names.
+        # To add extra formulas, specify them as a map of
+        #    <formula_name>: <archive_url>
+        # The <formula_name> is the name of the directory in the salt file_root
+        # where the formula will be placed. The <archive_url> must be a zip
+        # file, and the zip must contain a top-level directory that, itself,
+        # contains the actual salt formula. To "overwrite" submodule formulas,
+        # make sure <formula_name> matches submodule names. E.g.:
+        #ash-linux-formula: https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+        #scap-formula: https://s3.amazonaws.com/salt-formulas/scap-formula-master.zip
 
 linux:
   - yum:
@@ -36,7 +39,6 @@ linux:
           url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
   - salt:
       salt_debug_log: None
-      content_source: https://s3.amazonaws.com/systemprep-content/linux/salt/salt-content.zip
       install_method: yum
       bootstrap_source: None
       git_repo: None
@@ -45,5 +47,4 @@ linux:
 windows:
   - salt:
       salt_debug_log: None
-      content_source: https://s3.amazonaws.com/systemprep-content/windows/salt/salt-content.zip
       installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe

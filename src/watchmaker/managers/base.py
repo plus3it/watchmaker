@@ -4,13 +4,13 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import abc
+import concurrent.futures
 import logging
 import os
 import shutil
 import subprocess
 import tarfile
 import tempfile
-import threading
 import zipfile
 
 from six import add_metaclass
@@ -171,6 +171,9 @@ class ManagerBase(object):
                 Prefix to prepend to the working directory.
             basedir (:obj:`str`):
                 The directory in which to create the working directory.
+
+        Returns:
+            :obj:`str`: Path to the working directory.
         """
         self.log.info('Creating a working directory.')
         original_umask = os.umask(0)
@@ -180,26 +183,42 @@ class ManagerBase(object):
             msg = 'Could not create a working dir in {0}'.format(basedir)
             self.log.critical(msg)
             raise
-        self.log.debug('Working directory: %s', working_dir)
-        self.working_dir = working_dir
+        self.log.debug('Created working directory: %s', working_dir)
         os.umask(original_umask)
+        return working_dir
 
     @staticmethod
-    def _pipe_logger(pipe, logger, prefix_msg=''):
+    def _pipe_logger(pipe, logger, prefix_msg='', return_output=False):
+        ret = b''
         try:
             for line in iter(pipe.readline, b''):
                 logger('%s%s', prefix_msg, line.rstrip())
+                if return_output:
+                    ret = ret + line
         finally:
             pipe.close()
 
-    def call_process(self, cmd):
+        return ret or None
+
+    def call_process(self, cmd, stdout=False):
         """
         Execute a shell command.
 
         Args:
             cmd (:obj:`list`):
                 Command to execute.
+            stdout (:obj:`bool`):
+                (Defaults to ``False``) Switch to control whether to return
+                stdout.
+
+        Returns:
+            :obj:`None` unless ``stdout`` is ``True``. In that case, the stdout
+            is returned.
         """
+        ret = None
+        stdout_ret = b''
+        stderr_ret = b''  # pylint: disable=unused-variable
+
         if not isinstance(cmd, list):
             msg = 'Command is not a list: {0}'.format(cmd)
             self.log.critical(msg)
@@ -212,20 +231,22 @@ class ManagerBase(object):
             stderr=subprocess.PIPE
         )
 
-        stdout_reader = threading.Thread(
-            target=self._pipe_logger,
-            args=(process.stdout, self.log.debug, 'Command stdout: '))
-        stdout_reader.daemon = True
-        stdout_reader.start()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            stdout_future = executor.submit(
+                self._pipe_logger,
+                process.stdout,
+                self.log.debug,
+                'Command stdout: ',
+                stdout)
 
-        stderr_reader = threading.Thread(
-            target=self._pipe_logger,
-            args=(process.stderr, self.log.error, 'Command stderr: '))
-        stderr_reader.daemon = True
-        stderr_reader.start()
+            stderr_future = executor.submit(
+                self._pipe_logger,
+                process.stderr,
+                self.log.error,
+                'Command stderr: ')
 
-        stdout_reader.join()
-        stderr_reader.join()
+            stdout_ret = stdout_future.result()
+            stderr_ret = stderr_future.result()  # noqa: F841,E501  # pylint: disable=unused-variable
 
         returncode = process.wait()
 
@@ -234,6 +255,12 @@ class ManagerBase(object):
                 process.returncode, cmd)
             self.log.critical(msg)
             raise WatchmakerException(msg)
+
+        if stdout:
+            # Return stdout
+            ret = stdout_ret
+
+        return ret
 
     def cleanup(self):
         """Delete working directory."""
