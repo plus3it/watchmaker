@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (TBD)
+
+*   TBD
+
 0.2.0 (2017.04.06)
 
 *   [[Issue #238][238]] Captures all unhandled exceptions and logs them
