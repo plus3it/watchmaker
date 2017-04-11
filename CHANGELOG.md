@@ -1,5 +1,13 @@
 # Changelog
 
+0.2.1 (2017.04.10)
+
+*   ash-linux-formula
+    *   Reduces spurious stderr output
+    *   Removes notify script flagged by McAfee scans
+*   splunkforwarder-formula
+    *   (Windows) Clears system name entries from local Splunk config files
+
 0.2.0 (2017.04.06)
 
 *   [[Issue #238][238]] Captures all unhandled exceptions and logs them
