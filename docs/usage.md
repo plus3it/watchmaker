@@ -126,6 +126,38 @@ watchmaker -vv --log-dir=C:\Watchmaker\Logs
 </powershell>
 ```
 
+## `watchmaker` as a CloudFormation template
+
+Watchmaker can be integrated into a CloudFormation template as well. This
+project provides a handful of CloudFormation templates that launch instances or
+create autoscaling groups, and that install and execute Watchmaker during the
+launch. These templates are intended as examples for you to modify and extend
+as you need.
+
+*   [Linux Autoscale Group][lx-autoscale]
+*   [Linux Instance][lx-instance]
+*   [Windows Autoscale Group][win-autoscale]
+*   [Windows Instance][win-instance]
+
+Sometimes it is helpful to define the parameters for the template in a file,
+and pass those to CloudFormation along with the template. We call those
+"parameter maps", and provide one for each of the templates above.
+
+*   [Linux Autoscale Params][lx-autoscale-params]
+*   [Linux Instance Params][lx-instance-params]
+*   [Windows Autoscale Params][win-autoscale-params]
+*   [Windows Instance Params][win-instance-params]
+
+[lx-autoscale]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-lx-autoscale.template
+[lx-instance]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-lx-instance.template
+[win-autoscale]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-win-autoscale.template
+[win-instance]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-win-instance.template
+
+[lx-autoscale-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-lx-autoscale.params.json
+[lx-instance-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-lx-instance.params.json
+[win-autoscale-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-win-autoscale.params.json
+[win-instance-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-win-instance.params.json
+
 ## `watchmaker` as a library
 
 ```python
