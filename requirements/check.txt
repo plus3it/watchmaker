@@ -1,6 +1,6 @@
 check-manifest>=0.33
 flake8==3.3.0
-flake8-bugbear==17.3.0
+flake8-bugbear==17.4.0
 flake8-builtins==0.2
 flake8-docstrings==1.0.3
 flake8-isort==2.2
