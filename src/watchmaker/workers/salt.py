@@ -461,7 +461,7 @@ class SaltLinux(SaltBase, LinuxManager):
                 self.log.debug('No salt version defined in config.')
             self.call_process(bootstrap_cmd)
 
-    def _build_salt_formula(self, srv):
+    def _build_salt_formula(self, extract_dir):
         formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.salt_base_env)]
@@ -474,7 +474,7 @@ class SaltLinux(SaltBase, LinuxManager):
             'pillar_roots': {'base': [str(self.salt_pillar_root)]}
         }
 
-        super(SaltLinux, self)._build_salt_formula(srv)
+        super(SaltLinux, self)._build_salt_formula(extract_dir)
 
     def _set_grain(self, grain, value):
         self.log.info('Setting grain `%s` ...', grain)
@@ -566,7 +566,7 @@ class SaltWindows(SaltBase, WindowsManager):
 
         super(SaltWindows, self)._prepare_for_install()
 
-    def _build_salt_formula(self, root):
+    def _build_salt_formula(self, extract_dir):
         formulas_conf = self._get_formulas_conf()
 
         file_roots = [str(self.salt_base_env), str(self.salt_win_repo)]
@@ -581,7 +581,7 @@ class SaltWindows(SaltBase, WindowsManager):
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
 
-        super(SaltWindows, self)._build_salt_formula(root)
+        super(SaltWindows, self)._build_salt_formula(extract_dir)
 
     def _set_grain(self, grain, value):
         self.log.info('Setting grain `%s` ...', grain)

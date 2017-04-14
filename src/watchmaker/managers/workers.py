@@ -11,9 +11,6 @@ from watchmaker.workers.yum import Yum
 class LinuxWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Linux systems."""
 
-    def __init__(self, *args, **kwargs):  # noqa: D102
-        super(LinuxWorkersManager, self).__init__(*args, **kwargs)
-
     def _worker_execution(self):
         pass
 
@@ -44,9 +41,6 @@ class LinuxWorkersManager(WorkersManagerBase):
 
 class WindowsWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Windows systems."""
-
-    def __init__(self, *args, **kwargs):  # noqa: D102
-        super(WindowsWorkersManager, self).__init__(*args, **kwargs)
 
     def _worker_execution(self):
         pass
