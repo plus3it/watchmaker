@@ -1,0 +1,122 @@
+[
+  {
+    "ParameterKey": "AmiId",
+    "ParameterValue": "__AMIID__"
+  },
+  {
+    "ParameterKey": "AmiDistro",
+    "ParameterValue": "__AMIDISTRO__"
+  },
+  {
+    "ParameterKey": "AppScriptParams",
+    "ParameterValue": "__APPSCRIPTPARAMS__"
+  },
+  {
+    "ParameterKey": "AppScriptShell",
+    "ParameterValue": "__APPSCRIPTSHELL__"
+  },
+  {
+    "ParameterKey": "AppScriptUrl",
+    "ParameterValue": "__APPSCRIPTURL__"
+  },
+  {
+    "ParameterKey": "AppVolumeDevice",
+    "ParameterValue": "__APPVOLUMEDEVICE__"
+  },
+  {
+    "ParameterKey": "AppVolumeMountPath",
+    "ParameterValue": "__APPVOLUMEMOUNTPATH__"
+  },
+  {
+    "ParameterKey": "AppVolumeType",
+    "ParameterValue": "__APPVOLUMETYPE__"
+  },
+  {
+    "ParameterKey": "AppVolumeSize",
+    "ParameterValue": "__APPVOLUMESIZE__"
+  },
+  {
+    "ParameterKey": "KeyPairName",
+    "ParameterValue": "__KEYPAIRNAME__"
+  },
+  {
+    "ParameterKey": "InstanceRole",
+    "ParameterValue": "__INSTANCEROLE__"
+  },
+  {
+    "ParameterKey": "InstanceType",
+    "ParameterValue": "__INSTANCETYPE__"
+  },
+  {
+    "ParameterKey": "MinCapacity",
+    "ParameterValue": "__MINCAPACITY__"
+  },
+  {
+    "ParameterKey": "MaxCapacity",
+    "ParameterValue": "__MAXCAPACITY__"
+  },
+  {
+    "ParameterKey": "DesiredCapacity",
+    "ParameterValue": "__DESIREDCAPACITY__"
+  },
+  {
+    "ParameterKey": "NoPublicIp",
+    "ParameterValue": "__NOPUBLICIP__"
+  },
+  {
+    "ParameterKey": "NoReboot",
+    "ParameterValue": "__NOREBOOT__"
+  },
+  {
+    "ParameterKey": "NoUpdates",
+    "ParameterValue": "__NOUPDATES__"
+  },
+  {
+    "ParameterKey": "SecurityGroupIds",
+    "ParameterValue": "__SECURITYGROUPIDS__"
+  },
+  {
+    "ParameterKey": "SubnetIds",
+    "ParameterValue": "__SUBNETIDS__"
+  },
+  {
+    "ParameterKey": "PypiIndexUrl",
+    "ParameterValue": "__PYPIINDEXURL__"
+  },
+  {
+    "ParameterKey": "WatchmakerConfig",
+    "ParameterValue": "__WATCHMAKERCONFIG__"
+  },
+  {
+    "ParameterKey": "WatchmakerEnvironment",
+    "ParameterValue": "__WATCHMAKERENVIRONMENT__"
+  },
+  {
+    "ParameterKey": "WatchmakerOuPath",
+    "ParameterValue": "__WATCHMAKEROUPATH__"
+  },
+  {
+    "ParameterKey": "WatchmakerAdminGroups",
+    "ParameterValue": "__WATCHMAKERADMINGROUPS__"
+  },
+  {
+    "ParameterKey": "CfnEndpointUrl",
+    "ParameterValue": "__CFNENDPOINTURL__"
+  },
+  {
+    "ParameterKey": "CfnGetPipUrl",
+    "ParameterValue": "__CFNGETPIPURL__"
+  },
+  {
+    "ParameterKey": "CfnBootstrapUtilsUrl",
+    "ParameterValue": "__CFNBOOTSTRAPUTILSURL__"
+  },
+  {
+    "ParameterKey": "ToggleCfnInitUpdate",
+    "ParameterValue": "__TOGGLECFNINITUPDATE__"
+  },
+  {
+    "ParameterKey": "ToggleNewInstances",
+    "ParameterValue": "__TOGGLENEWINSTANCES__"
+  }
+]
