@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (TBD)
+
+*   TBD
+
 0.2.2 (2017.04.15)
 
 *   [[PR #251][251]] Adds CloudFormation templates that integrate Watchmaker
