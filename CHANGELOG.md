@@ -1,5 +1,15 @@
 # Changelog
 
+0.2.2 (2017.04.15)
+
+*   [[PR #251][251]] Adds CloudFormation templates that integrate Watchmaker
+    with an EC2 instance or Autoscale Group
+*   join-domain-formula
+    *   (Linux) Corrects tests that determine whether the instance is already
+        joined to the domain
+
+[251]: https://github.com/plus3it/watchmaker/pull/251
+
 0.2.1 (2017.04.10)
 
 *   ash-linux-formula

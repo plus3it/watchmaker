@@ -123,18 +123,17 @@ class Yum(LinuxManager):
             # ensure repo_dist is a list
             repo_dists = [repo_dists]
 
-        if not set(repo_dists).intersection([dist, 'all']):
-            # provided repo dist is not applicable to this system
-            return False
-        elif (
+        # is repo dist applicable to this system?
+        check_dist = bool(set(repo_dists).intersection([dist, 'all']))
+
+        # is repo el_version applicable to this system?
+        check_el_version = (
             'el_version' in repo and
-            str(repo['el_version']) != str(el_version)
-        ):
-            # provided el_version is not a match to this system
-            return False
-        else:
-            # checks pass, repo is valid for this system
-            return True
+            str(repo['el_version']) == str(el_version)
+        )
+
+        # return True if all checks pass, otherwise False
+        return check_dist and check_el_version
 
     def install(self):
         """Install yum repos defined in config file."""

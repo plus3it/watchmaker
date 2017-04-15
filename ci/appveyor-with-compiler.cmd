@@ -20,10 +20,11 @@
 SET COMMAND_TO_RUN=%*
 SET WIN_SDK_ROOT=C:\Program Files\Microsoft SDKs\Windows
 SET WIN_WDK="c:\Program Files (x86)\Windows Kits\10\Include\wdf"
-ECHO SDK: %WINDOWS_SDK_VERSION% ARCH: %PYTHON_ARCH%
+ECHO SDK: %WINDOWS_SDK_VERSION% VS: %VS_VERSION% ARCH: %PYTHON_ARCH%
 
+CALL "C:\Program Files (x86)\Microsoft Visual Studio %VS_VERSION%\VC\vcvarsall.bat" %PYTHON_ARCH%
 
-IF "%PYTHON_VERSION%"=="3.5" (
+IF "%VS_VERSION%"=="14.0" (
     IF EXIST %WIN_WDK% (
         REM See: https://connect.microsoft.com/VisualStudio/feedback/details/1610302/
         REN %WIN_WDK% 0wdf
@@ -31,14 +32,10 @@ IF "%PYTHON_VERSION%"=="3.5" (
     GOTO main
 )
 
-IF "%PYTHON_ARCH%"=="32" (
-    GOTO main
-)
-
 SET DISTUTILS_USE_SDK=1
 SET MSSdk=1
 "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Setup\WindowsSdkVer.exe" -q -version:%WINDOWS_SDK_VERSION%
-CALL "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /x64 /release
+CALL "%WIN_SDK_ROOT%\%WINDOWS_SDK_VERSION%\Bin\SetEnv.cmd" /%PYTHON_ARCH% /release
 
 :main
 

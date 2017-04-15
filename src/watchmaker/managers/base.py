@@ -353,9 +353,6 @@ class LinuxManager(ManagerBase):
     Serves as a foundational class to keep OS consitency.
     """
 
-    def __init__(self, *args, **kwargs):  # noqa: D102
-        super(LinuxManager, self).__init__(*args, **kwargs)
-
     def _install_from_yum(self, packages):
         yum_cmd = ['sudo', 'yum', '-y', 'install']
         if isinstance(packages, list):
@@ -372,9 +369,6 @@ class WindowsManager(ManagerBase):
 
     Serves as a foundational class to keep OS consitency.
     """
-
-    def __init__(self, *args, **kwargs):  # noqa: D102
-        super(WindowsManager, self).__init__(*args, **kwargs)
 
 
 @add_metaclass(abc.ABCMeta)
