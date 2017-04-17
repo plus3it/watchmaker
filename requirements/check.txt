@@ -8,5 +8,5 @@ flake8-future-import==0.4.3
 flake8-print==2.0.2
 pep8-naming==0.4.1
 pygments==2.2.0
-pylint==1.7.0
+pylint==1.7.1
 readme-renderer>=17.0
