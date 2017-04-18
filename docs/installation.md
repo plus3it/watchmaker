@@ -1,41 +1,49 @@
 # Installation
 
-## Stable release
+## From Python Package Index
 
-To install `watchmaker`, run this command in your terminal:
+The preferred method to install `watchmaker` is from the Python Package Index
+(PyPi), using [`pip`][0]. Without any other options, this will always install
+the most recent stable release.
 
 ```bash
 pip install watchmaker
 ```
 
-This is the preferred method to install `watchmaker`, as it
-will always install the most recent stable release.
-
-If you do not have [`pip`][0] installed, this [Python installation guide][1]
+If you do not have Python or [`pip`][0], this [Python installation guide][1]
 can guide you through the process.
 
 ## From sources
 
-The sources for `watchmaker` can be downloaded from the [`GitHub repo`][2].
+Watchmaker can also be built and installed from source, using `git` and `pip`.
+The sources for `watchmaker` are available from the [`GitHub repo`][2].
 
-First clone the public repository:
+1.  First clone the public repository to pull the code to your local machine:
 
-```bash
-git clone https://github.com/plus3it/watchmaker.git && cd watchmaker
-```
+    ```bash
+    git clone https://github.com/plus3it/watchmaker.git --recursive && cd watchmaker
+    ```
 
-This project uses submodules, so once you have a copy of the source, you need
-to pull them in as well.
+    This project uses submodules, so it's easiest to use the `--recursive`
+    flag, as above. If you don't, you will need to pull in the submodules as
+    well:
 
-```bash
-git submodule update --init --recursive
-```
+    ```bash
+    git submodule update --init --recursive
+    ```
 
-Then you can install Watchmaker:
+2.  If you want to install a specific branch or tag, check it out before
+    installing watchmaker:
 
-```bash
-pip install .
-```
+    ```bash
+    git checkout <branch-tag-foo>
+    ```
+
+3.  Then you can install Watchmaker:
+
+    ```bash
+    pip install .
+    ```
 
 [0]: https://pip.pypa.io/en/stable/
 [1]: https://python-guide.readthedocs.io/en/latest/starting/installation/

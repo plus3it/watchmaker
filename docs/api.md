@@ -1,60 +1,42 @@
 # API Reference
 
-## watchmaker module
+## watchmaker
 
 ```eval_rst
 .. automodule:: watchmaker
 ```
 
-## watchmaker.cli module
-
-```eval_rst
-.. automodule:: watchmaker.cli
-```
-
-## watchmaker.logger module
-
-```eval_rst
-.. automodule:: watchmaker.logger
-```
-
-## watchmaker.managers module
+### watchmaker.managers
 
 ```eval_rst
 .. automodule:: watchmaker.managers
 ```
 
-## watchmaker.managers.base module
+#### watchmaker.managers.base
 
 ```eval_rst
 .. automodule:: watchmaker.managers.base
 ```
 
-## watchmaker.managers.workers module
+#### watchmaker.managers.workers
 
 ```eval_rst
 .. automodule:: watchmaker.managers.workers
 ```
 
-## watchmaker.workers module
+### watchmaker.workers
 
 ```eval_rst
 .. automodule:: watchmaker.workers
 ```
 
-## watchmaker.workers.base module
-
-```eval_rst
-.. automodule:: watchmaker.workers.base
-```
-
-## watchmaker.workers.salt module
+#### watchmaker.workers.salt
 
 ```eval_rst
 .. automodule:: watchmaker.workers.salt
 ```
 
-## watchmaker.workers.yum module
+#### watchmaker.workers.yum
 
 ```eval_rst
 .. automodule:: watchmaker.workers.yum

@@ -16,9 +16,9 @@ class Yum(LinuxManager):
     Install yum repos.
 
     Args:
-        repo_map (:obj:`list`):
-            (Defaults to ``[]``) List of dictionaries containing a map
-            of yum repo files to systems.
+        repo_map: (:obj:`list`)
+            List of dictionaries containing a map of yum repo files to systems.
+            (*Default*: ``[]``)
     """
 
     SUPPORTED_DISTS = ('amazon', 'centos', 'red hat')

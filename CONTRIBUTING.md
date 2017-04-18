@@ -29,8 +29,8 @@ If you are proposing a feature:
 
 *   Explain in detail how it would work.
 *   Keep the scope as narrow as possible, to make it easier to implement.
-*   Remember that this is a volunteer-driven project, and that code
-    contributions are welcome :)
+*   Remember that this is a community-driven, open-source project, and that
+    code contributions are welcome. :)
 
 ## Development
 
@@ -104,17 +104,16 @@ For pull request acceptance, you should:
 3.  Add a note to `CHANGELOG.md` about the changes. Include a link to the
     pull request.
 
-## Tips
+## Tox Tips
 
-1.  The primary tox environments for `watchmaker` include:
+1.  The _primary_ tox environments for `watchmaker` include:
 
     *   `check`
     *   `docs`
     *   `py26`
     *   `py27`
-    *   `py33`
-    *   `py34`
     *   `py35`
+    *   `py36`
 
 2.  To run a subset of environments:
 
@@ -135,81 +134,103 @@ For pull request acceptance, you should:
     detox
     ```
 
-5.  To install and run a development branch of watchmaker on a new system, do
-    something like this in EC2 userdata:
+## Build a Development Branch in EC2
 
-    *   **For Linux**: Modify `GIT_REPO` and `GIT_BRANCH` to reflect working
-        values for your development build. Modify `PYPI_URL` as needed.
+To install and run a development branch of watchmaker on a new EC2 instance,
+specify something like this for EC2 userdata:
 
-        ```shell
-        #!/bin/sh
-        GIT_REPO=https://github.com/<your-github-username>/watchmaker.git
-        GIT_BRANCH=<your-branch>
+*   **For Linux**: Modify `GIT_REPO` and `GIT_BRANCH` to reflect working
+    values for your development build. Modify `PYPI_URL` as needed.
 
-        PYPI_URL=https://pypi.org/simple
+    ```shell
+    #!/bin/sh
+    GIT_REPO=https://github.com/<your-github-username>/watchmaker.git
+    GIT_BRANCH=<your-branch>
 
-        # Get the host
-        PYPI_HOST=$(echo $PYPI_URL |sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
+    PYPI_URL=https://pypi.org/simple
 
-        # Install git and pip
-        yum -y install epel-release
-        yum -y --enablerepo=epel install python-pip git
+    # Get the host
+    PYPI_HOST=$(echo $PYPI_URL |sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
 
-        # Upgrade pip and setuptools
-        pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external --upgrade pip setuptools
+    # Install git and pip
+    yum -y install epel-release
+    yum -y --enablerepo=epel install python-pip git
 
-        # Clone watchmaker
-        git clone "$GIT_REPO" && cd watchmaker
-        git checkout "$GIT_BRANCH"
-        git submodule update --init --recursive
+    # Upgrade pip and setuptools
+    pip install \
+        --index-url="$PYPI_URL" \
+        --trusted-host="$PYPI_HOST" \
+        --allow-all-external \
+        --upgrade \
+        pip setuptools
 
-        # Install watchmaker
-        pip install --index-url "$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external .
+    # Clone watchmaker
+    git clone "$GIT_REPO" --branch "$GIT_BRANCH" --recursive
+    cd watchmaker
 
-        # Run watchmaker
-        watchmaker -vv --log-dir=/var/log/watchmaker
-        ```
+    # Install watchmaker
+    pip install \
+        --index-url "$PYPI_URL" \
+        --trusted-host="$PYPI_HOST" \
+        --allow-all-external \
+        --editable \
+        .
 
-    *   **For Windows**: Modify `GitRepo` and `GitBranch` to reflect working
-        values for your development build. Optionally modify `BootstrapUrl`,
-        `PythonUrl`, `GitUrl`, and `PypiUrl` as needed.
+    # Run watchmaker
+    watchmaker -vv --log-dir=/var/log/watchmaker
+    ```
 
-        ```shell
-        <powershell>
-        $GitRepo = "https://github.com/<your-github-username>/watchmaker.git"
-        $GitBranch = "<your-branch>"
+*   **For Windows**: Modify `GitRepo` and `GitBranch` to reflect working
+    values for your development build. Optionally modify `BootstrapUrl`,
+    `PythonUrl`, `GitUrl`, and `PypiUrl` as needed.
 
-        $BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/master/docs/files/bootstrap/watchmaker-bootstrap.ps1"
-        $PythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-amd64.exe"
-        $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.12.0.windows.1/Git-2.12.0-64-bit.exe"
-        $PypiUrl = "https://pypi.org/simple"
+    ```shell
+    <powershell>
+    $GitRepo = "https://github.com/<your-github-username>/watchmaker.git"
+    $GitBranch = "<your-branch>"
 
-        # Get the host
-        $PypiHost="$(([System.Uri]$PypiUrl).Host)"
+    $BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/master/docs/files/bootstrap/watchmaker-bootstrap.ps1"
+    $PythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-amd64.exe"
+    $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.12.2.windows.2/Git-2.12.2.2-64-bit.exe"
+    $PypiUrl = "https://pypi.org/simple"
 
-        # Download bootstrap file
-        $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
-        (New-Object System.Net.WebClient).DownloadFile($BootstrapUrl, $BootstrapFile)
+    # Get the host
+    $PypiHost="$(([System.Uri]$PypiUrl).Host)"
 
-        # Install python and git
-        & "$BootstrapFile" -PythonUrl "$PythonUrl" -GitUrl "$GitUrl" -Verbose -ErrorAction Stop
+    # Download bootstrap file
+    $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
+    (New-Object System.Net.WebClient).DownloadFile($BootstrapUrl, $BootstrapFile)
 
-        # Upgrade pip and setuptools
-        pip install --index-url="$PypiUrl" --trusted-host="$PypiHost" --allow-all-external --upgrade pip setuptools
+    # Install python and git
+    & "$BootstrapFile" `
+        -PythonUrl "$PythonUrl" `
+        -GitUrl "$GitUrl" `
+        -Verbose -ErrorAction Stop
 
-        # Clone watchmaker
-        git clone "$GitRepo"
-        cd watchmaker
-        git checkout "$GitBranch"
-        git submodule update --init --recursive
+    # Upgrade pip and setuptools
+    pip install `
+        --index-url="$PypiUrl" `
+        --trusted-host="$PypiHost" `
+        --allow-all-external `
+        --upgrade `
+        pip setuptools
 
-        # Install watchmaker
-        pip install --index-url "$PypiUrl" --trusted-host="$PypiHost" --allow-all-external .
+    # Clone watchmaker
+    git clone "$GitRepo" --branch "$GitBranch" --recursive
+    cd watchmaker
 
-        # Run watchmaker
-        watchmaker -vv --log-dir=C:\Watchmaker\Logs
-        </powershell>
-        ```
+    # Install watchmaker
+    pip install `
+        --index-url "$PypiUrl" `
+        --trusted-host="$PypiHost" `
+        --allow-all-external `
+        --editable `
+        .
+
+    # Run watchmaker
+    watchmaker -vv --log-dir=C:\Watchmaker\Logs
+    </powershell>
+    ```
 
 [0]: https://github.com/plus3it/watchmaker/issues
 [1]: https://travis-ci.org/plus3it/watchmaker/pull_requests

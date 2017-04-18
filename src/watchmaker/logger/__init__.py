@@ -31,14 +31,15 @@ def prepare_logging(log_dir, log_level):
     Prepare the logger for handling messages to a file and/or to stdout.
 
     Args:
-        log_dir (:obj:`str`):
-            Path to a directory. If set, Watchmaker logs to the
-            ``watchmaker.log`` file in the specified directory. Both the
-            directory and the file will be created if necessary. If the file
-            already exists, Watchmaker appends to it rather than overwriting
-            it. If this argument evaluates to ``False``, then logging to a file
-            is disabled. Watchmaker will always output to stdout/stderr.
-        log_level (int):
+        log_dir: (:obj:`str`)
+            Path to a directory. If set, Watchmaker logs to a file named
+            ``watchmaker.log`` in the specified directory. Both the directory
+            and the file will be created if necessary. If the file already
+            exists, Watchmaker appends to it rather than overwriting it. If
+            this argument evaluates to ``False``, then logging to a file is
+            disabled. Watchmaker will always output to stdout/stderr.
+
+        log_level: (:obj:`int`)
             Level to log at. Any value other than the integers below will
             enable DEBUG logging.
 

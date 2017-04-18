@@ -1,13 +1,12 @@
 # Configuration
 
-Watchmaker is configured using a YAML file. To understand YAML, read up on it
-[here][0].
+Watchmaker is configured using a [YAML][0] file. Watchmaker's default
+[config.yaml][1] file should work out-of-the-box for most systems and
+environments. You can also use it as an example to create your own
+configuration file. The default config file will install Salt and use the
+bundled Salt formulas to harden the system according to the DISA STIG.
 
-Watchmaker comes with a default [config.yaml][1] file, which should work
-out-of-the-box. You can also use it as an example to create your own
-configuration file.
-
-The configuration is a dictionary. The parent nodes (keys) are `all`, `linux`,
+The configuration is a dictionary. The parent nodes (keys) are: `all`, `linux`,
 or `windows`. The parent nodes contain a list of workers to execute, and each
 worker contains parameters specific to that worker. The `all` node is applied
 to every system, and `linux` and `windows` are applied only to their respective
@@ -37,16 +36,26 @@ systems.
 
 ## Config.yaml Worker Nodes
 
+Watchmaker includes the _workers_ listed below. See the corresponding sections
+for details on their configuration parameters.
+
+*   [salt](#salt)
+*   [yum (Linux-only)](#yum-linux-only)
+
 ### salt
 
 Parameters supported by the Salt Worker:
 
 -   `admin_groups` (_list_): The group(s) that you would like the admin accounts
     placed within.
+
 -   `admin_users` (_list_): The user(s) that would be created as admins.
+
 -   `computer_name` (_string_): The computer or hostname that should be applied.
+
 -   `environment` (_string_): Set for the environment in which the system is
     being built.
+
 -   `ou_path` (_string_): Specifies the full DN of the OU where the computer
     account will be created when joining a domain.
 
@@ -54,7 +63,8 @@ Parameters supported by the Salt Worker:
     ou_path: "OU=Super Cool App,DC=example,DC=com"
     ```
 
--   `salt_states` (_string, comma-separated_): User-defined salt states to apply.
+-   `salt_states` (_string, comma-separated_): User-defined salt states to
+    apply.
 
     ```yaml
     salt_states: foo,bar
@@ -63,11 +73,12 @@ Parameters supported by the Salt Worker:
 -   `s3_source` (_boolean_): Use S3 utilities to retrieve content instead of
     http(s) utilities. For S3 utilities to work, the system must have boto
     credentials configured that allow access to the S3 bucket.
+
 -   `user_formulas` (_dict_): Map of formula names and URLs to zip archives of
-      salt formulas. These formulas will be downloaded, extracted, and added to
-      the salt file roots. The zip archive must contain a top-level directory
-      that, itself, contains the actual salt formula. To "overwrite" bundled
-      submodule formulas, make sure the formula name matches the submodule name.
+    salt formulas. These formulas will be downloaded, extracted, and added to
+    the salt file roots. The zip archive must contain a top-level directory
+    that, itself, contains the actual salt formula. To "overwrite" bundled
+    submodule formulas, make sure the formula name matches the submodule name.
 
     ```yaml
     user_formulas:
@@ -76,14 +87,19 @@ Parameters supported by the Salt Worker:
 
 -   `salt_debug_log` (_string_): Path to the debug logfile that salt will write
     to.
+
 -   `salt_content` (_string_): URL to the Salt content file that contains
     further configuration specific to the salt install.
+
 -   `install_method` (_string_): (Linux-only) The method used to install Salt.
     Currently supports: `yum`, `git`
+
 -   `bootstrap_source` (_string_): (Linux-only) URL to the salt bootstrap
     script. This is required if `install_method` is set to `git`.
+
 -   `git_repo` (_string_): (Linux-only) URL to the salt git repo. This is
     required if `install_method` is set to `git`.
+
 -   `salt_version` (_string_): (Linux-only) A git reference present in
     `git_repo`, such as a commit or a tag. If not specifid, the HEAD of the
     default branch will be used.
