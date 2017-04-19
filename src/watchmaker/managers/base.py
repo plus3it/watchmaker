@@ -23,13 +23,29 @@ class ManagerBase(object):
     """
     Base class for operating system managers.
 
-    All child classes will have access to methods unless overridden by
-    similarly-named method in the child class.
+    All child classes will have access to methods unless overridden by an
+    identically-named method in the child class.
 
     Args:
-        system_params (:obj:`dict`):
+        system_params: (:obj:`dict`)
             Attributes, mostly file-paths, specific to the system-type (Linux
-            or Windows).
+            or Windows). The dict keys are as follows:
+
+            prepdir:
+                Directory where Watchmaker will keep files on the system.
+            readyfile:
+                Path to a file that will be created upon successful
+                completion.
+            logdir:
+                Directory to store log files.
+            workingdir:
+                Directory to store temporary files. Deleted upon successful
+                completion.
+            restart:
+                Command to use to restart the system upon successful
+                completion.
+            shutdown_path:
+                (Windows-only) Path to the Windows ``shutdown.exe`` command.
     """
 
     boto3 = None
@@ -88,13 +104,16 @@ class ManagerBase(object):
         Download a file from a web server or S3 bucket.
 
         Args:
-            url (:obj:`str`):
+            url: (:obj:`str`)
                 URL to a file.
-            filename (:obj:`str`):
+
+            filename: (:obj:`str`)
                 Path where the file will be saved.
-            sourceiss3bucket (bool):
-                (Defaults to ``False``) Switch to indicate that the download
-                should use boto3 to download the file from an S3 bucket.
+
+            sourceiss3bucket: (:obj:`bool`)
+                Switch to indicate that the download should use boto3 to
+                download the file from an S3 bucket.
+                (*Default*: ``False``)
         """
         self.log.debug('Downloading: %s', url)
         self.log.debug('Destination: %s', filename)
@@ -167,9 +186,10 @@ class ManagerBase(object):
         Create a directory in ``basedir`` with a prefix of ``prefix``.
 
         Args:
-            prefix (:obj:`str`):
+            prefix: (:obj:`str`)
                 Prefix to prepend to the working directory.
-            basedir (:obj:`str`):
+
+            basedir: (:obj:`str`)
                 The directory in which to create the working directory.
 
         Returns:
@@ -205,15 +225,17 @@ class ManagerBase(object):
         Execute a shell command.
 
         Args:
-            cmd (:obj:`list`):
+            cmd: (:obj:`list`)
                 Command to execute.
-            stdout (:obj:`bool`):
-                (Defaults to ``False``) Switch to control whether to return
-                stdout.
+
+            stdout: (:obj:`bool`)
+                Switch to control whether to return stdout.
+                (*Default*: ``False``)
 
         Returns:
-            :obj:`None` unless ``stdout`` is ``True``. In that case, the stdout
-            is returned.
+            :obj:`None` or :obj:`bytes`:
+                ``None`` unless ``stdout`` is ``True``. In that case, the
+                stdout is returned as a bytes object.
         """
         ret = None
         stdout_ret = b''
@@ -281,21 +303,22 @@ class ManagerBase(object):
         Extract a compressed archive to the specified directory.
 
         Args:
-            filepath (:obj:`str`):
+            filepath: (:obj:`str`)
                 Path to the compressed file. Supported file extensions:
 
-                - `zip`
-                - `tar.gz`
+                - `.zip`
+                - `.tar.gz`
                 - `.tgz`
                 - `.tar.bz2`
                 - `.tbz`
 
-            to_directory (:obj:`str`):
+            to_directory: (:obj:`str`)
                 Path to the target directory
-            create_dir (bool):
-                (Defaults to ``False``) Switch to control the creation of a
-                subdirectory within ``to_directory`` named for the filename of
-                the compressed file.
+
+            create_dir: (:obj:`bool`)
+                Switch to control the creation of a subdirectory within
+                ``to_directory`` named for the filename of the compressed file.
+                (*Default*: ``False``)
         """
         if filepath.endswith('.zip'):
             self.log.debug('File Type: zip')
@@ -377,10 +400,11 @@ class WorkersManagerBase(object):
     Base class for worker managers.
 
     Args:
-        system_params (:obj:`dict`):
+        system_params: (:obj:`dict`)
             Attributes, mostly file-paths, specific to the system-type (Linux
             or Windows).
-        workers (:obj:`OrderedDict`):
+
+        workers: (:obj:`collections.OrderedDict`)
             Workers to run and associated configuration data.
     """
 

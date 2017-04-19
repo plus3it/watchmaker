@@ -24,14 +24,14 @@ def main():
     version_string = 'watchmaker v{0}'.format(watchmaker.__version__)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--version', action='version', version=version_string,
-                        help='Print version info.')
+    parser.add_argument('-V', '--version', action='version',
+                        version=version_string, help='Print version info.')
     parser.add_argument('-v', '--verbose', action='count', dest='verbosity',
                         default=0,
                         help=(
                             'Enable verbose logging: -v for INFO, -vv to '
-                            'include DEBUG, if option is left out, only '
-                            'WARNINGS and higher are logged.'
+                            'include DEBUG. If not specified, the default is '
+                            'to log only WARNINGS and higher.'
                         ))
     parser.add_argument('-c', '--config', dest='config_path', default=None,
                         help='Path or URL to the config.yaml file.')
@@ -46,13 +46,17 @@ def main():
                         ))
     parser.add_argument('-l', '--log-dir', dest='log_dir', default=None,
                         type=_validate_log_dir,
-                        help='Path to the log directory for logging.'
-                        )
+                        help=(
+                            'Path to the directory where Watchmaker log files '
+                            'will be saved.'
+                        ))
     parser.add_argument('--s3-source', dest='s3_source',
                         action='store_const', const=True, default=None,
                         help=(
                             'Use S3 utilities to retrieve content instead of '
-                            'http/s utilities.'
+                            'http/s utilities. Boto3 must be installed, and '
+                            'boto3 credentials must be configured that allow '
+                            'access to the S3 bucket.'
                         ))
     parser.add_argument('-s', '--salt-states', dest='salt_states',
                         default=None,
