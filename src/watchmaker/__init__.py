@@ -19,27 +19,47 @@ from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
-__version__ = '0.2.2'
+__version__ = '0.2.3.dev'
 
 
 class Arguments(dict):
     """
-    Create an arguments object for the :class:`Client`.
+    Create an arguments object for the :class:`watchmaker.Client`.
 
     Args:
-        config_path (:obj:`str`):
-            (Defaults to ``None``) Path or URL to the Watchmaker configuration
+        config_path: (:obj:`str`)
+            Path or URL to the Watchmaker configuration
             file. If ``None``, the default config.yaml file is used.
-        log_dir (:obj:`str`):
-            (Defaults to ``None``) See :func:`logger.prepare_logging`.
-        no_reboot (:obj:`bool`):
-            (Defaults to ``False``): Switch to control whether to reboot the
-            system upon a successfull execution of
-            :func:`WatchmakerClient.install`. When this parameter is set,
-            Watchmaker will suppress the reboot. Watchmaker automatically
-            suppresses the reboot if it encounters an error.
-        verbosity (:obj:`int`):
-            (Defaults to ``0``) See :func:`prepare_logging`.
+            (*Default*: ``None``)
+
+        log_dir: (:obj:`str`)
+            Path to a directory. If set, Watchmaker logs to a file named
+            ``watchmaker.log`` in the specified directory. Both the directory
+            and the file will be created if necessary. If the file already
+            exists, Watchmaker appends to it rather than overwriting it. If
+            this argument evaluates to ``False``, then logging to a file is
+            disabled. Watchmaker will always output to stdout/stderr.
+            Additionaly, Watchmaker workers may use this directory to keep
+            other log files.
+            (*Default*: ``None``)
+
+        no_reboot: (:obj:`bool`)
+            Switch to control whether to reboot the system upon a successful
+            execution of :func:`watchmaker.Client.install`. When this parameter
+            is set, Watchmaker will suppress the reboot. Watchmaker
+            automatically suppresses the reboot if it encounters an error.
+            (*Default*: ``False``)
+
+        verbosity: (:obj:`int`)
+            Level to log at. Any value other than the integers below will
+            enable DEBUG logging.
+            (*Default*: ``0``)
+
+            .. code-block:: python
+
+                0: WARNING
+                1: INFO
+                *: DEBUG
 
     .. important::
 
@@ -48,64 +68,74 @@ class Arguments(dict):
         aware that ``None`` and ``'None'`` are two different values, with
         different meanings and effects.
 
-    Keyword Args:
-
-        admin_groups (:obj:`str`):
-            (Defaults to ``None``) Set a salt grain that specifies the domain
+    Keyword Arguments:
+        admin_groups: (:obj:`str`)
+            Set a salt grain that specifies the domain
             _groups_ that should have root privileges on Linux or admin
             privileges on Windows. Value must be a colon-separated string. On
             Linux, use the ``^`` to denote spaces in the group name.
+            (*Default*: ``None``)
 
             .. code-block:: python
 
                 admin_groups = "group1:group2"
 
-                # (Linux only) If there are spaces in the group name, replace
-                # the spaces with a '^':
+                # (Linux only) The group names must be lowercased. Also, if
+                # there are spaces in a group name, replace the spaces with a
+                # '^'.
                 admin_groups = "space^out"
 
-                # (Windows only) If there are spaces in the group name, no
-                # special syntax required.
-                admin_groups = "space out"
+                # (Windows only) No special capitalization nor syntax
+                # requirements.
+                admin_groups = "Space Out"
 
-        admin_users (:obj:`str`):
-            (Defaults to ``None``) Set a salt grain that specifies the domain
+        admin_users: (:obj:`str`)
+            Set a salt grain that specifies the domain
             _users_ that should have root privileges on Linux or admin
             privileges on Windows. Value must be a colon-separated string.
+            (*Default*: ``None``)
 
             .. code-block:: python
 
                 admin_users = "user1:user2"
 
-        computer_name (:obj:`str`):
-            (Defaults to ``None``) Set a salt grain that specifies the
-            computername to apply to the system.
-        environment (:obj:`str`):
-            (Defaults to ``None``) Set a salt grain that specifies the
-            environment in which the system is being built. For example:
-            ``dev``, ``test``, or ``prod``.
-        salt_states (:obj:`str`):
-            (Defaults to ``None``) Comma-separated string of salt states to
-            apply. A value of ``'None'`` (the string) will not apply any salt
-            states. A value of ``'Highstate'`` will apply the salt highstate.
-        s3_source (:obj:`bool`):
-            (Defaults to ``None``) Use S3 utilities to retrieve content instead
-            of http/s utilities. For S3 utilities to work, the system must have
-            boto credentials configured that allow access to the S3 bucket.
-        ou_path (:obj:`str`):
-            (Defaults to ``None``) Set a salt grain that specifies the full DN
-            of the OU where the computer account will be created when joining a
-            domain.
+        computer_name: (:obj:`str`)
+            Set a salt grain that specifies the computername to apply to the
+            system.
+            (*Default*: ``None``)
+
+        environment: (:obj:`str`)
+            Set a salt grain that specifies the environment in which the system
+            is being built. For example: ``dev``, ``test``, or ``prod``.
+            (*Default*: ``None``)
+
+        salt_states: (:obj:`str`)
+            Comma-separated string of salt states to apply. A value of
+            ``'None'`` (the string) will not apply any salt states. A value
+            of ``'Highstate'`` will apply the salt highstate.
+            (*Default*: ``None``)
+
+        s3_source: (:obj:`bool`)
+            Use S3 utilities to retrieve content instead of http/s utilities.
+            For S3 utilities to work, ``boto3`` must be installed, and the
+            system must have boto credentials configured that allow access to
+            the S3 bucket.
+            (*Default*: ``None``)
+
+        ou_path: (:obj:`str`)
+            Set a salt grain that specifies the full DN of the OU where the
+            computer account will be created when joining a domain.
+            (*Default*: ``None``)
 
             .. code-block:: python
 
                 ou_path="OU=Super Cool App,DC=example,DC=com"
 
-        extra_arguments (:obj:`list`):
-            (Defaults to ``[]``) A list of extra arguments to be merged into
-            the worker configurations. The list must be formed as pairs of
-            named arguments and values. Any leading hypens in the argument name
-            are stripped. For example:
+        extra_arguments: (:obj:`list`)
+            A list of extra arguments to be merged into the worker
+            configurations. The list must be formed as pairs of named arguments
+            and values. Any leading hypens in the argument name are stripped.
+            (*Default*: ``[]``)
 
             .. code-block:: python
 
@@ -153,8 +183,8 @@ class Client(object):
     Prepare a system for setup and installation.
 
     Keyword Arguments:
-        arguments (:obj:`Arguments`):
-            A dictionary of arguments. See :class:`Arguments`.
+        arguments: (:obj:`Arguments`)
+            A dictionary of arguments. See :class:`watchmaker.Arguments`.
     """
 
     def __init__(self, arguments):  # noqa: D102
@@ -210,9 +240,9 @@ class Client(object):
         Read and validate configuration data for installation.
 
         Returns:
-            OrderedDict: Returns the data from the the YAML configuration file,
-            scoped to the value of ``self.system`` and merged with the value of
-            the ``"All"`` key.
+            :obj:`collections.OrderedDict`: Returns the data from the the YAML
+            configuration file, scoped to the value of ``self.system`` and
+            merged with the value of the ``"All"`` key.
         """
         if not self.config_path:
             self.log.warning(
@@ -356,7 +386,7 @@ class Client(object):
 
     def install(self):
         """
-        Initiate the installation of the prepared system.
+        Execute the watchmaker workers against the system.
 
         Upon successful execution, the system will be properly provisioned,
         according to the defined configuration and workers.
@@ -370,7 +400,7 @@ class Client(object):
         except OSError:
             if not os.path.exists(self.system_params['workingdir']):
                 msg = (
-                    'Unable create directory - {0}'
+                    'Unable to create directory - {0}'
                     .format(self.system_params['workingdir'])
                 )
                 self.log.critical(msg)

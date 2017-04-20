@@ -2,27 +2,25 @@
 
 ## How do I know if watchmaker has installed?
 
-There are several ways to validate that watchmaker has been installed on your
-system. The simplest method is to run the command `watchmaker --help`. If it
-displays the cli help page, watchmaker is installed.
+To determine whether watchmaker is installed, the simplest method is to run the
+command `watchmaker --help`. If it displays the cli help page, watchmaker is
+installed. Another option is to check `pip list | grep watchmaker`.
 
 ## What do I do if watchmaker failed to install?
 
-First, review the installation documentation provided with the watchmaker
-package. If `pip` is not working as your primary installation process you can
-attempt to install the package by cloning the repo of watchmaker.
-
-```
-python setup.py install
-```
+First, review the [installation](installation.md) document. Then double-check
+the output of a failed installation. Usually, the output points pretty clearly
+at the source of the problem. Watchmaker can be re-installed over itself with
+no problem, so once the root cause is resolved, simply re-install watchmaker.
 
 ## How do I know if watchmaker has completed without errors?
 
 By default, watchmaker will reboot the system after a sucessful execution.
-Therefore, if the system reboots, watchmaker executed successfully. After the
-reboot, the logs should be checked for errors. If anything fails, watchmaker
-will suppress the reboot. (The `--no-reboot` flag can be used to suppress the
-reboot even after a successful execution.)
+Therefore, if the system reboots, watchmaker executed successfully. If you are
+investigating sometime after watchmaker completed, check the logs for errors.
+If anything fails, watchmaker will suppress the reboot. (Though note that the
+`--no-reboot` flag can be used to suppress the reboot even after a successful
+execution.)
 
 You can also test the watchmaker exit code programmatically. If watchmaker
 fails, it will return a non-zero exit code. If watchmaker completes

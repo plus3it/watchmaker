@@ -19,55 +19,67 @@ class SaltBase(ManagerBase):
     Cross-platform worker for running salt.
 
     Args:
-        salt_debug_log (:obj:`list`):
-            (Defaults to ``''``) Filesystem path to a file where the salt debug
-            output should be saved. When unset, the salt debug log is saved to
-            the Watchmaker log directory.
-        s3_source (:obj:`bool`):
-            (Defaults to ``False``) Use S3 utilities to download salt content
-            and user formulas from an S3 bucket. If ``True``, you must also
-            install ``boto3`` and ``botocore``. Those dependencies will not be
-            installed by Watchmaker.
-        salt_content (:obj:`str`):
-            (Defaults to ``''``) URL to a salt content archive (zip file) that
-            will be uncompressed in the salt "srv" directory. This typically is
-            used to create a top.sls file and to populate salt's file_roots.
+        salt_debug_log: (:obj:`list`)
+            Filesystem path to a file where the salt debug output should be
+            saved. When unset, the salt debug log is saved to the Watchmaker
+            log directory.
+            (*Default*: ``''``)
+
+        s3_source: (:obj:`bool`)
+            Use S3 utilities to download salt content and user formulas from
+            an S3 bucket. If ``True``, you must also install ``boto3`` and
+            ``botocore``. Those dependencies will not be installed by
+            Watchmaker.
+            (*Default*: ``False``)
+
+        salt_content: (:obj:`str`)
+            URL to a salt content archive (zip file) that will be uncompressed
+            in the salt "srv" directory. This typically is used to create a
+            top.sls file and to populate salt's file_roots.
+            (*Default*: ``''``)
 
             - *Linux*: ``/srv/salt``
             - *Windows*: ``C:\Salt\srv``
 
-        salt_states (:obj:`str`):
-            (Defaults to ``''``) Comma-separated string of salt states to
-            execute. Accepts two special keywords (case-insensitive):
+        salt_states: (:obj:`str`)
+            Comma-separated string of salt states to execute. Accepts two
+            special keywords (case-insensitive).
+            (*Default*: ``''``)
 
             - ``none``: Do not apply any salt states.
             - ``highstate``: Apply the salt "highstate".
 
-        user_formulas (:obj:`dict`):
-            (Defaults to ``{}``) Map of formula names and URLs to zip archives
-            of salt formulas. These formulas will be downloaded, extracted, and
-            added to the salt file roots. The zip archive must contain a
-            top-level directory that, itself, contains the actual salt formula.
-            To "overwrite" bundled submodule formulas, make sure the formula
-            name matches the submodule name.
-        admin_groups (:obj:`str`):
-            (Defaults to ``''``) Sets a salt grain that specifies the domain
-            groups that should have root privileges on Linux or admin
-            privileges on Windows. Value must be a colon-separated string.
-            E.g. ``"group1:group2"``
-        admin_users (:obj:`str`):
-            (Defaults to ``''``) Sets a salt grain that specifies the domain
-            users that should have root privileges on Linux or admin
-            privileges on Windows. Value must be a colon-separated string.
-            E.g. ``"user1:user2"``
-        environment (:obj:`str`):
-            (Defaults to ``''``) Sets a salt grain that specifies the
-            environment in which the system is being built. E.g. ``dev``,
-            ``test``, ``prod``, etc.
-        ou_path (:obj:`str`):
-            (Defaults to ``''``) Sets a salt grain that specifies the full DN
-            of the OU where the computer account will be created when joining a
-            domain. E.g. ``"OU=SuperCoolApp,DC=example,DC=com"``
+        user_formulas: (:obj:`dict`)
+            Map of formula names and URLs to zip archives of salt formulas.
+            These formulas will be downloaded, extracted, and added to the salt
+            file roots. The zip archive must contain a top-level directory
+            that, itself, contains the actual salt formula. To "overwrite"
+            bundled submodule formulas, make sure the formula name matches the
+            submodule name.
+            (*Default*: ``{}``)
+
+        admin_groups: (:obj:`str`)
+            Sets a salt grain that specifies the domain groups that should have
+            root privileges on Linux or admin privileges on Windows. Value must
+            be a colon-separated string. E.g. ``"group1:group2"``
+            (*Default*: ``''``)
+
+        admin_users: (:obj:`str`)
+            Sets a salt grain that specifies the domain users that should have
+            root privileges on Linux or admin privileges on Windows. Value must
+            be a colon-separated string. E.g. ``"user1:user2"``
+            (*Default*: ``''``)
+
+        environment: (:obj:`str`)
+            Sets a salt grain that specifies the environment in which the
+            system is being built. E.g. ``dev``, ``test``, ``prod``, etc.
+            (*Default*: ``''``)
+
+        ou_path: (:obj:`str`)
+            Sets a salt grain that specifies the full DN of the OU where the
+            computer account will be created when joining a domain.
+            E.g. ``"OU=SuperCoolApp,DC=example,DC=com"``
+            (*Default*: ``''``)
     """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
@@ -233,12 +245,15 @@ class SaltBase(ManagerBase):
         Execute salt command.
 
         Args:
-            command (str or list):
+            command: (:obj:`str` or :obj:`list`)
                 Salt options and a salt module to be executed by salt-call.
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
                 do not specify those options in the command.
-            stdout (obj:`bool`) Switch to control whether to return stdout.
+
+            stdout: (:obj:`bool`)
+                Switch to control whether to return stdout.
+                (*Default*: ``False``)
         """
         cmd = [
             self.salt_call,
@@ -254,34 +269,45 @@ class SaltBase(ManagerBase):
         if stdout:
             return ret
 
-    def get_service_status(self, service):
+    def service_status(self, service):
         """
         Get the service status using salt.
 
         Args:
-            service (obj:`str`): Name of the service to query.
+            service: (obj:`str`)
+                Name of the service to query.
 
         Returns:
-            obj:`bool`. ``True`` if the service is running. ``False`` if the
-            service is not running or not present.
+            :obj:`tuple`: ``('running', 'enabled')``
+                First element is the service running status. Second element is
+                the service enabled status. Each element is a :obj:`bool`
+                representing whether the service is running or enabled.
         """
-        cmd = [
+        cmd_status = [
             'service.status', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        cmd_enabled = [
+            'service.enabled', service,
+            '--out', 'newline_values_only'
+        ]
+        return (
+            self.run_salt(cmd_status, stdout=True).strip().lower() == b'true',
+            self.run_salt(cmd_enabled, stdout=True).strip().lower() == b'true'
+        )
 
-    def stop_service(self, service):
+    def service_stop(self, service):
         """
         Stop a service status using salt.
 
         Args:
-            service (obj:`str`): Name of the service to stop.
+            service: (:obj:`str`)
+                Name of the service to stop.
 
         Returns:
-            obj:`bool`. ``True`` if the service was stopped. ``False`` if the
-            service could not be stopped.
+            :obj:`bool`:
+                ``True`` if the service was stopped. ``False`` if the service
+                could not be stopped.
         """
         cmd = [
             'service.stop', service,
@@ -290,19 +316,61 @@ class SaltBase(ManagerBase):
         ret = self.run_salt(cmd, stdout=True)
         return ret.strip().lower() == b'true'
 
-    def start_service(self, service):
+    def service_start(self, service):
         """
         Start a service status using salt.
 
         Args:
-            service (obj:`str`): Name of the service to start.
+            service: (:obj:`str`)
+                Name of the service to start.
 
         Returns:
-            obj:`bool`. ``True`` if the service was started. ``False`` if the
-            service could not be started.
+            :obj:`bool`:
+                ``True`` if the service was started. ``False`` if the service
+                could not be started.
         """
         cmd = [
             'service.start', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def service_disable(self, service):
+        """
+        Disable a service using salt.
+
+        Args:
+            service: (:obj:`str`)
+                Name of the service to disable.
+
+        Returns:
+            :obj:`bool`:
+                ``True`` if the service was disabled. ``False`` if the service
+                could not be disabled.
+        """
+        cmd = [
+            'service.disable', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def service_enable(self, service):
+        """
+        Enable a service using salt.
+
+        Args:
+            service: (:obj:`str`)
+                Name of the service to enable.
+
+        Returns:
+            :obj:`bool`:
+                ``True`` if the service was enabled. ``False`` if the service
+                could not be enabled.
+        """
+        cmd = [
+            'service.enable', service,
             '--out', 'newline_values_only'
         ]
         ret = self.run_salt(cmd, stdout=True)
@@ -335,7 +403,7 @@ class SaltBase(ManagerBase):
         Apply salt states.
 
         Args:
-            states (:obj:`str`):
+            states: (:obj:`str`)
                 Comma-separated string of salt states to execute. Accepts two
                 special keywords (case-insensitive):
 
@@ -373,22 +441,27 @@ class SaltLinux(SaltBase, LinuxManager):
     Run salt on Linux.
 
     Args:
-        install_method (:obj:`str`):
-            (Defaults to ``yum``) Method to use to install salt.
+        install_method: (:obj:`str`)
+            **Required**. Method to use to install salt.
+            (*Default*: ``yum``)
 
             - ``yum``: Install salt from an RPM using yum.
             - ``git``: Install salt from source, using the salt bootstrap.
 
-        bootstrap_source (:obj:`str`):
-            (Defaults to ``''``) URL to the salt bootstrap script. Required if
-            ``install_method`` is ``git``.
-        git_repo (:obj:`str`):
-            (Defaults to ``''``) URL to the salt git repo. Required if
-            ``install_method`` is ``git``.
-        salt_version (:obj:`str`):
-            (Defaults to ``''``) A git reference present in ``git_repo``, such
-            as a commit or a tag. If not specified, the HEAD of the default
-            branch is used.
+        bootstrap_source: (:obj:`str`)
+            URL to the salt bootstrap script. Required if ``install_method`` is
+            ``git``.
+            (*Default*: ``''``)
+
+        git_repo: (:obj:`str`)
+            URL to the salt git repo. Required if ``install_method`` is
+            ``git``.
+            (*Default*: ``''``)
+
+        salt_version: (:obj:`str`)
+            A git reference present in ``git_repo``, such as a commit or a tag.
+            If not specified, the HEAD of the default branch is used.
+            (*Default*: ``''``)
     """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
@@ -471,7 +544,8 @@ class SaltLinux(SaltBase, LinuxManager):
             'file_client': 'local',
             'hash_type': 'sha512',
             'file_roots': {'base': file_roots},
-            'pillar_roots': {'base': [str(self.salt_pillar_root)]}
+            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True
         }
 
         super(SaltLinux, self)._build_salt_formula(extract_dir)
@@ -485,16 +559,23 @@ class SaltLinux(SaltBase, LinuxManager):
         self._configuration_validation()
         self._prepare_for_install()
 
-        status_salt = False
+        salt_running = False
+        salt_enabled = False
+        salt_svc = 'salt-minion'
         if os.path.exists(self.salt_call):
-            status_salt = self.get_service_status('salt-minion')
+            salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
-        stopped_salt = self.stop_service('salt-minion')
+        salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
-        if status_salt and stopped_salt:
-            started_salt = self.start_service('salt-minion')
-            if not started_salt:
-                self.log.error('Failed to restart salt-minion service')
+        if salt_enabled:
+            if not self.service_enable(salt_svc):
+                self.log.error('Failed to enable %s service', salt_svc)
+        else:
+            if not self.service_disable(salt_svc):
+                self.log.error('Failed to disable %s service', salt_svc)
+        if salt_running and salt_stopped:
+            if not self.service_start(salt_svc):
+                self.log.error('Failed to restart %s service', salt_svc)
 
         self.process_grains()
         self.process_states(self.salt_states)
@@ -508,13 +589,14 @@ class SaltWindows(SaltBase, WindowsManager):
     Run salt on Windows.
 
     Args:
-        installer_url (:obj:`str`):
-            (Defaults to ``''``) Required. URL to the salt installer for
-            Windows.
-        ash_role (:obj:`str`):
-            (Defaults to ``''``) Sets a salt grain that specifies the role
-            used by the ash-windows salt formula. E.g. ``"MemberServer"``,
-            ``"DomainController"``, or ``"Workstation"``
+        installer_url: (:obj:`str`)
+            **Required**. URL to the salt installer for Windows.
+            (*Default*: ``''``)
+        ash_role: (:obj:`str`)
+            Sets a salt grain that specifies the role used by the ash-windows
+            salt formula. E.g. ``"MemberServer"``, ``"DomainController"``, or
+            ``"Workstation"``
+            (*Default*: ``''``)
     """
 
     def __init__(self, *args, **kwargs):  # noqa: D102
@@ -577,6 +659,7 @@ class SaltWindows(SaltBase, WindowsManager):
             'hash_type': 'sha512',
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True,
             'winrepo_source_dir': 'salt://winrepo',
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
@@ -591,16 +674,23 @@ class SaltWindows(SaltBase, WindowsManager):
         """Install salt and execute salt states."""
         self._prepare_for_install()
 
-        status_salt = False
+        salt_running = False
+        salt_enabled = False
+        salt_svc = 'salt-minion'
         if os.path.exists(self.salt_call):
-            status_salt = self.get_service_status('salt-minion')
+            salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
-        stopped_salt = self.stop_service('salt-minion')
+        salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
-        if status_salt and stopped_salt:
-            started_salt = self.start_service('salt-minion')
-            if not started_salt:
-                self.log.error('Failed to restart salt-minion service')
+        if salt_enabled:
+            if not self.service_enable(salt_svc):
+                self.log.error('Failed to enable %s service', salt_svc)
+        else:
+            if not self.service_disable(salt_svc):
+                self.log.error('Failed to disable %s service', salt_svc)
+        if salt_running and salt_stopped:
+            if not self.service_start(salt_svc):
+                self.log.error('Failed to restart %s service', salt_svc)
 
         if self.ash_role and self.ash_role != 'None':
             role = {'role': str(self.ash_role)}

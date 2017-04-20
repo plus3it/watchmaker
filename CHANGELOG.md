@@ -1,5 +1,17 @@
 # Changelog
 
+0.2.3 (2017.04.20)
+
+*   [[Issue #262][262]] Merges lists in pillar files, rather than overwriting
+    them
+*   [[Issue #261][261]] Manages the enabled/disabled state of the salt-minion
+    service, before and after the install
+*   splunkforwarder-formula
+    *   (Windows) Ignores false bad exits from Splunk clone-prep-clear-config
+
+[262]: https://github.com/plus3it/watchmaker/issues/262
+[261]: https://github.com/plus3it/watchmaker/issues/261
+
 0.2.2 (2017.04.15)
 
 *   [[PR #251][251]] Adds CloudFormation templates that integrate Watchmaker
