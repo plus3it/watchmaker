@@ -497,7 +497,8 @@ class SaltLinux(SaltBase, LinuxManager):
             'file_client': 'local',
             'hash_type': 'sha512',
             'file_roots': {'base': file_roots},
-            'pillar_roots': {'base': [str(self.salt_pillar_root)]}
+            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True
         }
 
         super(SaltLinux, self)._build_salt_formula(extract_dir)
@@ -604,6 +605,7 @@ class SaltWindows(SaltBase, WindowsManager):
             'hash_type': 'sha512',
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True,
             'winrepo_source_dir': 'salt://winrepo',
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
