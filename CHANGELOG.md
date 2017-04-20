@@ -1,5 +1,9 @@
 # Changelog
 
+0.2.4 (2017.04.20)
+
+*   Fixes a bad version string
+
 0.2.3 (2017.04.20)
 
 *   [[Issue #262][262]] Merges lists in pillar files, rather than overwriting
