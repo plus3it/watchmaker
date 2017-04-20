@@ -269,7 +269,7 @@ class SaltBase(ManagerBase):
         if stdout:
             return ret
 
-    def get_service_status(self, service):
+    def service_status(self, service):
         """
         Get the service status using salt.
 
@@ -278,18 +278,25 @@ class SaltBase(ManagerBase):
                 Name of the service to query.
 
         Returns:
-            :obj:`bool`:
-                ``True`` if the service is running. ``False`` if the service is
-                not running or not present.
+            :obj:`tuple`: ``('running', 'enabled')``
+                First element is the service running status. Second element is
+                the service enabled status. Each element is a :obj:`bool`
+                representing whether the service is running or enabled.
         """
-        cmd = [
+        cmd_status = [
             'service.status', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        cmd_enabled = [
+            'service.enabled', service,
+            '--out', 'newline_values_only'
+        ]
+        return (
+            self.run_salt(cmd_status, stdout=True).strip().lower() == b'true',
+            self.run_salt(cmd_enabled, stdout=True).strip().lower() == b'true'
+        )
 
-    def stop_service(self, service):
+    def service_stop(self, service):
         """
         Stop a service status using salt.
 
@@ -309,7 +316,7 @@ class SaltBase(ManagerBase):
         ret = self.run_salt(cmd, stdout=True)
         return ret.strip().lower() == b'true'
 
-    def start_service(self, service):
+    def service_start(self, service):
         """
         Start a service status using salt.
 
@@ -324,6 +331,46 @@ class SaltBase(ManagerBase):
         """
         cmd = [
             'service.start', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def service_disable(self, service):
+        """
+        Disable a service using salt.
+
+        Args:
+            service: (:obj:`str`)
+                Name of the service to disable.
+
+        Returns:
+            :obj:`bool`:
+                ``True`` if the service was disabled. ``False`` if the service
+                could not be disabled.
+        """
+        cmd = [
+            'service.disable', service,
+            '--out', 'newline_values_only'
+        ]
+        ret = self.run_salt(cmd, stdout=True)
+        return ret.strip().lower() == b'true'
+
+    def service_enable(self, service):
+        """
+        Enable a service using salt.
+
+        Args:
+            service: (:obj:`str`)
+                Name of the service to enable.
+
+        Returns:
+            :obj:`bool`:
+                ``True`` if the service was enabled. ``False`` if the service
+                could not be enabled.
+        """
+        cmd = [
+            'service.enable', service,
             '--out', 'newline_values_only'
         ]
         ret = self.run_salt(cmd, stdout=True)
@@ -512,16 +559,23 @@ class SaltLinux(SaltBase, LinuxManager):
         self._configuration_validation()
         self._prepare_for_install()
 
-        status_salt = False
+        salt_running = False
+        salt_enabled = False
+        salt_svc = 'salt-minion'
         if os.path.exists(self.salt_call):
-            status_salt = self.get_service_status('salt-minion')
+            salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
-        stopped_salt = self.stop_service('salt-minion')
+        salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
-        if status_salt and stopped_salt:
-            started_salt = self.start_service('salt-minion')
-            if not started_salt:
-                self.log.error('Failed to restart salt-minion service')
+        if salt_enabled:
+            if not self.service_enable(salt_svc):
+                self.log.error('Failed to enable %s service', salt_svc)
+        else:
+            if not self.service_disable(salt_svc):
+                self.log.error('Failed to disable %s service', salt_svc)
+        if salt_running and salt_stopped:
+            if not self.service_start(salt_svc):
+                self.log.error('Failed to restart %s service', salt_svc)
 
         self.process_grains()
         self.process_states(self.salt_states)
@@ -620,16 +674,23 @@ class SaltWindows(SaltBase, WindowsManager):
         """Install salt and execute salt states."""
         self._prepare_for_install()
 
-        status_salt = False
+        salt_running = False
+        salt_enabled = False
+        salt_svc = 'salt-minion'
         if os.path.exists(self.salt_call):
-            status_salt = self.get_service_status('salt-minion')
+            salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
-        stopped_salt = self.stop_service('salt-minion')
+        salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
-        if status_salt and stopped_salt:
-            started_salt = self.start_service('salt-minion')
-            if not started_salt:
-                self.log.error('Failed to restart salt-minion service')
+        if salt_enabled:
+            if not self.service_enable(salt_svc):
+                self.log.error('Failed to enable %s service', salt_svc)
+        else:
+            if not self.service_disable(salt_svc):
+                self.log.error('Failed to disable %s service', salt_svc)
+        if salt_running and salt_stopped:
+            if not self.service_start(salt_svc):
+                self.log.error('Failed to restart %s service', salt_svc)
 
         if self.ash_role and self.ash_role != 'None':
             role = {'role': str(self.ash_role)}
