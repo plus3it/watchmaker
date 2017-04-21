@@ -5,10 +5,17 @@ from __future__ import (absolute_import, division, print_function,
 
 import argparse
 import os
+import platform
 import sys
 
 import watchmaker
 from watchmaker.logger import exception_hook, prepare_logging
+
+LOG_LOCATIONS = {
+    'linux': os.path.sep.join(('', 'var', 'log', 'watchmaker')),
+    'windows': os.path.sep.join((
+        os.environ.get('SYSTEMDRIVE', 'C:'), 'Watchmaker', 'Logs'))
+}
 
 
 def _validate_log_dir(log_dir):
@@ -44,7 +51,11 @@ def main():
                             'the reboot automatically if it encounters a'
                             'failure.'
                         ))
-    parser.add_argument('-l', '--log-dir', dest='log_dir', default=None,
+    parser.add_argument('-l', '--log-dir', dest='log_dir',
+                        default=LOG_LOCATIONS.get(
+                            platform.system().lower(),
+                            None
+                        ),
                         type=_validate_log_dir,
                         help=(
                             'Path to the directory where Watchmaker log files '
