@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (TBD)
+
+*   TBD
+
 0.2.4 (2017.04.20)
 
 *   Fixes a bad version string
