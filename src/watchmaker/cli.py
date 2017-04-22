@@ -33,12 +33,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-V', '--version', action='version',
                         version=version_string, help='Print version info.')
-    parser.add_argument('-v', '--verbose', action='count', dest='verbosity',
-                        default=0,
+    parser.add_argument('-v', '--verbose', dest='verbosity',
+                        default='debug',
                         help=(
-                            'Enable verbose logging: -v for INFO, -vv to '
-                            'include DEBUG. If not specified, the default is '
-                            'to log only WARNINGS and higher.'
+                            'Set the log level. Case-insensitive. Valid '
+                            'values include: "critical", "error", "warning", '
+                            '"info", and "debug".'
                         ))
     parser.add_argument('-c', '--config', dest='config_path', default=None,
                         help='Path or URL to the config.yaml file.')
@@ -48,7 +48,7 @@ def main():
                             'If this flag is not passed, Watchmaker will '
                             'reboot the system upon success. This flag '
                             'suppresses that behavior. Watchmaker suppresses '
-                            'the reboot automatically if it encounters a'
+                            'the reboot automatically if it encounters a '
                             'failure.'
                         ))
     parser.add_argument('-l', '--log-dir', dest='log_dir',
