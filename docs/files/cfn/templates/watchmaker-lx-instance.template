@@ -626,7 +626,7 @@
                             {
                                 "command" :
                                 { "Fn::Join" : [ "", [
-                                    "watchmaker -vv",
+                                    "watchmaker --log-level debug",
                                     " --log-dir /var/log/watchmaker",
                                     " --noreboot",
                                     {
@@ -701,7 +701,7 @@
                             {
                                 "command" :
                                 { "Fn::Join" : [ "", [
-                                    "watchmaker -vv",
+                                    "watchmaker --log-level debug",
                                     " --log-dir /var/log/watchmaker",
                                     " --saltstates None",
                                     " --noreboot",
