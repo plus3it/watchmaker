@@ -31,27 +31,18 @@ def main():
     version_string = 'watchmaker v{0}'.format(watchmaker.__version__)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-V', '--version', action='version',
+    parser.add_argument('-v', '-V', '--version', action='version',
                         version=version_string, help='Print version info.')
-    parser.add_argument('-v', '--verbose', dest='verbosity',
+    parser.add_argument('-c', '--config', dest='config_path', default=None,
+                        help='Path or URL to the config.yaml file.')
+    parser.add_argument('-l', '--log-level', dest='log_level',
                         default='debug',
                         help=(
                             'Set the log level. Case-insensitive. Valid '
                             'values include: "critical", "error", "warning", '
                             '"info", and "debug".'
                         ))
-    parser.add_argument('-c', '--config', dest='config_path', default=None,
-                        help='Path or URL to the config.yaml file.')
-    parser.add_argument('-n', '--no-reboot', dest='no_reboot',
-                        action='store_true',
-                        help=(
-                            'If this flag is not passed, Watchmaker will '
-                            'reboot the system upon success. This flag '
-                            'suppresses that behavior. Watchmaker suppresses '
-                            'the reboot automatically if it encounters a '
-                            'failure.'
-                        ))
-    parser.add_argument('-l', '--log-dir', dest='log_dir',
+    parser.add_argument('-d', '--log-dir', dest='log_dir',
                         default=LOG_LOCATIONS.get(
                             platform.system().lower(),
                             None
@@ -61,13 +52,14 @@ def main():
                             'Path to the directory where Watchmaker log files '
                             'will be saved.'
                         ))
-    parser.add_argument('--s3-source', dest='s3_source',
-                        action='store_const', const=True, default=None,
+    parser.add_argument('-n', '--no-reboot', dest='no_reboot',
+                        action='store_true',
                         help=(
-                            'Use S3 utilities to retrieve content instead of '
-                            'http/s utilities. Boto3 must be installed, and '
-                            'boto3 credentials must be configured that allow '
-                            'access to the S3 bucket.'
+                            'If this flag is not passed, Watchmaker will '
+                            'reboot the system upon success. This flag '
+                            'suppresses that behavior. Watchmaker suppresses '
+                            'the reboot automatically if it encounters a '
+                            'failure.'
                         ))
     parser.add_argument('-s', '--salt-states', dest='salt_states',
                         default=None,
@@ -76,6 +68,14 @@ def main():
                             'A value of \'None\' will not apply any salt '
                             'states. A value of \'Highstate\' will apply the '
                             'salt highstate.'
+                        ))
+    parser.add_argument('--s3-source', dest='s3_source',
+                        action='store_const', const=True, default=None,
+                        help=(
+                            'Use S3 utilities to retrieve content instead of '
+                            'http/s utilities. Boto3 must be installed, and '
+                            'boto3 credentials must be configured that allow '
+                            'access to the S3 bucket.'
                         ))
     parser.add_argument('-A', '--admin-groups', dest='admin_groups',
                         default=None,
@@ -114,7 +114,7 @@ def main():
                         ))
 
     arguments, extra_arguments = parser.parse_known_args()
-    prepare_logging(arguments.log_dir, arguments.verbosity)
+    prepare_logging(arguments.log_dir, arguments.log_level)
 
     # Setup excepthook to log all unhandled exceptions
     sys.excepthook = exception_hook
