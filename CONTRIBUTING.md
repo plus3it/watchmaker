@@ -177,7 +177,7 @@ specify something like this for EC2 userdata:
         .
 
     # Run watchmaker
-    watchmaker -vv --log-dir=/var/log/watchmaker
+    watchmaker --log-level debug --log-dir=/var/log/watchmaker
     ```
 
 *   **For Windows**: Modify `GitRepo` and `GitBranch` to reflect working
@@ -228,7 +228,7 @@ specify something like this for EC2 userdata:
         .
 
     # Run watchmaker
-    watchmaker -vv --log-dir=C:\Watchmaker\Logs
+    watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs
     </powershell>
     ```
 

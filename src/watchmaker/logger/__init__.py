@@ -10,8 +10,11 @@ import os
 LOG_LEVELS = collections.defaultdict(
     lambda: logging.DEBUG,  # log level if key is not in this dict
     {
-        0: logging.WARNING,
-        1: logging.INFO
+        'critical': logging.CRITICAL,
+        'error': logging.ERROR,
+        'warning': logging.WARNING,
+        'info': logging.INFO,
+        'debug': logging.DEBUG
     }
 )
 
@@ -39,20 +42,20 @@ def prepare_logging(log_dir, log_level):
             this argument evaluates to ``False``, then logging to a file is
             disabled. Watchmaker will always output to stdout/stderr.
 
-        log_level: (:obj:`int`)
-            Level to log at. Any value other than the integers below will
-            enable DEBUG logging.
+        log_level: (:obj:`str`)
+            Level to log at. Case-insensitive. Valid options include,
+            from least to most verbose:
 
-            .. code-block:: python
-
-                0: WARNING
-                1: INFO
-                *: DEBUG
+            - ``critical``
+            - ``error``
+            - ``warning``
+            - ``info``
+            - ``debug``
     """
     logformat = (
         '%(asctime)s [%(name)s][%(levelname)-5s][%(process)s]: %(message)s'
     )
-    level = LOG_LEVELS[log_level]
+    level = LOG_LEVELS[str(log_level).lower()]
 
     logging.basicConfig(format=logformat, level=level)
 
