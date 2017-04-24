@@ -9,31 +9,35 @@ the output of `watchmaker --help`, showing the CLI options.
 
 ```shell
 # watchmaker --help
-usage: watchmaker [-h] [--version] [-v] [-c CONFIG] [-n] [-l LOG_DIR]
-                  [--s3-source] [-s SALT_STATES] [-A ADMIN_GROUPS]
+usage: watchmaker [-h] [-v] [-c CONFIG_PATH] [-l LOG_LEVEL] [-d LOG_DIR] [-n]
+                  [-s SALT_STATES] [--s3-source] [-A ADMIN_GROUPS]
                   [-a ADMIN_USERS] [-t COMPUTER_NAME] [-e ENVIRONMENT]
                   [-p OU_PATH]
 
 optional arguments:
   -h, --help            show this help message and exit
-  --version             Print version info.
-  -v, --verbose         Enable verbose logging: -v for INFO, -vv to include
-                        DEBUG, if option is left out, only WARNINGS and higher
-                        are logged.
-  -c CONFIG, --config CONFIG
+  -v, -V, --version     Print version info.
+  -c CONFIG_PATH, --config CONFIG_PATH
                         Path or URL to the config.yaml file.
+  -l LOG_LEVEL, --log-level LOG_LEVEL
+                        Set the log level. Case-insensitive. Valid values
+                        include: "critical", "error", "warning", "info", and
+                        "debug".
+  -d LOG_DIR, --log-dir LOG_DIR
+                        Path to the directory where Watchmaker log files will
+                        be saved.
   -n, --no-reboot       If this flag is not passed, Watchmaker will reboot the
                         system upon success. This flag suppresses that
                         behavior. Watchmaker suppresses the reboot
-                        automatically if it encounters afailure.
-  -l LOG_DIR, --log-dir LOG_DIR
-                        Path to the log directory for logging.
-  --s3-source           Use S3 utilities to retrieve content instead of http/s
-                        utilities.
+                        automatically if it encounters a failure.
   -s SALT_STATES, --salt-states SALT_STATES
                         Comma-separated string of salt states to apply. A
                         value of 'None' will not apply any salt states. A
                         value of 'Highstate' will apply the salt highstate.
+  --s3-source           Use S3 utilities to retrieve content instead of http/s
+                        utilities. Boto3 must be installed, and boto3
+                        credentials must be configured that allow access to
+                        the S3 bucket.
   -A ADMIN_GROUPS, --admin-groups ADMIN_GROUPS
                         Set a salt grain that specifies the domain groups that
                         should have root privileges on Linux or admin
@@ -96,7 +100,7 @@ yum -y --enablerepo=epel install python-pip
 pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external --upgrade pip setuptools watchmaker
 
 # Run watchmaker
-watchmaker -vv --log-dir=/var/log/watchmaker
+watchmaker --log-level debug --log-dir=/var/log/watchmaker
 ```
 
 Alternatively, cloud-config directives can also be used on **Linux**:
@@ -118,7 +122,7 @@ runcmd:
     pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external --upgrade pip setuptools watchmaker
 
     # Run watchmaker
-    watchmaker -vv --log-dir=/var/log/watchmaker
+    watchmaker --log-level debug --log-dir=/var/log/watchmaker
 ```
 
 ### Windows
@@ -147,7 +151,7 @@ $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 pip install --index-url="$PypiUrl" --trusted-host="$PypiHost" --upgrade pip setuptools watchmaker
 
 # Run watchmaker
-watchmaker -vv --log-dir=C:\Watchmaker\Logs
+watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs
 </powershell>
 ```
 

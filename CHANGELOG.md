@@ -1,5 +1,21 @@
 # Changelog
 
+0.3.0 (2017.04.24)
+
+*   [[Issue #270][270]] Defaults to a platform-specific log directory when
+    call from the CLI:
+    *   Windows: `${Env:SystemDrive}\Watchmaker\Logs`
+    *   Linux: `/var/log/watchmaker`
+*   [[PR #271][271]] Modifies CLI arguments to use explicit log-levels rather
+    than a verbosity count. Arguments have been adjusted to better accommodate
+    the semantics of this approach:
+    *   Uses `-l|--log-level` instead of `-v|--verbose`
+    *   `-v` and `-V` are now both used for `--version`
+    *   `-d` is now used for `--log-dir`
+
+[271]: https://github.com/plus3it/watchmaker/pull/271
+[270]: https://github.com/plus3it/watchmaker/issues/270
+
 0.2.4 (2017.04.20)
 
 *   Fixes a bad version string

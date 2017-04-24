@@ -626,7 +626,7 @@
                                     },
                                     " \"& {",
                                     " c:\\cfn\\scripts\\watchmaker-install.ps1;",
-                                    " watchmaker -vv",
+                                    " watchmaker --log-level debug",
                                     " --log-dir C:\\Watchmaker\\Logs",
                                     " --no-reboot",
                                     {
@@ -699,7 +699,7 @@
                                     },
                                     " \"& {",
                                     " c:\\cfn\\scripts\\watchmaker-install.ps1;",
-                                    " watchmaker -vv",
+                                    " watchmaker --log-level debug",
                                     " --log-dir C:\\Watchmaker\\Logs",
                                     " --salt-states None",
                                     " --no-reboot",
