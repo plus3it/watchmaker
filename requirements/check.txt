@@ -8,7 +8,7 @@ flake8-future-import==0.4.3
 flake8-print==2.0.2
 pep8-naming==0.4.1
 # Range-pin pydocstyle until flake8-docstrings supports 2.0.0
-pydocstyle>=1.1.1,<2.0.0
+pydocstyle==2.0.0
 pygments==2.2.0
 pylint==1.7.1
 readme-renderer==17.2
