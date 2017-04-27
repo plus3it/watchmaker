@@ -701,7 +701,7 @@
                                         [
                                             "UseEnvironment",
                                             { "Fn::Join" : [ "", [
-                                                " --environment \"",
+                                                " --env \"",
                                                 { "Ref" : "WatchmakerEnvironment" },
                                                 "\""
                                             ]]},
@@ -765,7 +765,7 @@
                                         [
                                             "UseEnvironment",
                                             { "Fn::Join" : [ "", [
-                                                " --environment \"",
+                                                " --env \"",
                                                 { "Ref" : "WatchmakerEnvironment" },
                                                 "\""
                                             ]]},
