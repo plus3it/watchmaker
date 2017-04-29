@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Watchmaker documentation build configuration file."""
+"""Configure Watchmaker documentation."""
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
@@ -372,7 +372,7 @@ github_doc_root = 'https://github.com/plus3it/watchmaker/tree/develop/docs/'
 
 
 def setup(app):
-    """Setup sphinx build."""
+    """Configure sphinx setup."""
     app.add_config_value(
         'recommonmark_config',
         {
