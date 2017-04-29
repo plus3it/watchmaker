@@ -243,6 +243,7 @@ class Client(object):
             :obj:`collections.OrderedDict`: Returns the data from the the YAML
             configuration file, scoped to the value of ``self.system`` and
             merged with the value of the ``"All"`` key.
+
         """
         if not self.config_path:
             self.log.warning(
