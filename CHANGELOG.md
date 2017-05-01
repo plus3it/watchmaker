@@ -1,5 +1,20 @@
 # Changelog
 
+0.3.1 (2017.05.01)
+
+*   [[PR #280][280]] Modifies the dynamic import of boto3 to use only absolute
+    imports, as the previous approach (attempt absolute and relative import)
+    was deprecated in Python 3.3
+*   ntp-client-windows-formula:
+    *   Stops using deprecated arguments on reg.present states, which cleans up
+        extraneous log messages in watchmaker runs under some configurations
+*   join-domain-formula:
+    *   (Windows) Sets the DNS search suffix when joining the domain, including
+        a new pillar config option, `ec2config` to enable/disable the EC2Config
+        option that also modifies the DNS suffix list.
+
+[280]: https://github.com/plus3it/watchmaker/pull/280
+
 0.3.0 (2017.04.24)
 
 *   [[Issue #270][270]] Defaults to a platform-specific log directory when
