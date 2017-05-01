@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (TBD)
+
+*   TBD
+
 0.3.1 (2017.05.01)
 
 *   [[PR #280][280]] Modifies the dynamic import of boto3 to use only absolute
