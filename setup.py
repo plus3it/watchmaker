@@ -88,7 +88,7 @@ setup(
         ]
     },
     install_requires=[
-        "argparse",
+        "click",
         "futures",
         "six",
         "PyYAML",

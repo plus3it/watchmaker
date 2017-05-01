@@ -167,7 +167,7 @@ class Arguments(dict):
         self.salt_states = kwargs.pop('salt_states', None)
         self.s3_source = kwargs.pop('s3_source', None)
         self.ou_path = kwargs.pop('ou_path', None)
-        self.extra_arguments = kwargs.pop('extra_arguments', [])
+        self.extra_arguments = kwargs.pop('extra_arguments', None) or []
 
     def __getattr__(self, attr):
         """Support attr-notation for getting dict contents."""
