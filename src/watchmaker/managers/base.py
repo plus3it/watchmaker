@@ -46,6 +46,7 @@ class ManagerBase(object):
                 completion.
             shutdown_path:
                 (Windows-only) Path to the Windows ``shutdown.exe`` command.
+
     """
 
     boto3 = None
@@ -72,7 +73,7 @@ class ManagerBase(object):
                 globals(),
                 locals(),
                 ["ClientError"],
-                -1
+                0
             )
         except ImportError:
             msg = 'Unable to import boto3 module.'
@@ -194,6 +195,7 @@ class ManagerBase(object):
 
         Returns:
             :obj:`str`: Path to the working directory.
+
         """
         self.log.info('Creating a working directory.')
         original_umask = os.umask(0)
@@ -236,6 +238,7 @@ class ManagerBase(object):
             :obj:`None` or :obj:`bytes`:
                 ``None`` unless ``stdout`` is ``True``. In that case, the
                 stdout is returned as a bytes object.
+
         """
         ret = None
         stdout_ret = b''
@@ -406,6 +409,7 @@ class WorkersManagerBase(object):
 
         workers: (:obj:`collections.OrderedDict`)
             Workers to run and associated configuration data.
+
     """
 
     def __init__(self, system_params, workers, *args, **kwargs):  # noqa: D102

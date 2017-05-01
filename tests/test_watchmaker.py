@@ -10,7 +10,7 @@ import watchmaker
 
 @pytest.fixture
 def setup_object():
-    """Placeholder for tests."""
+    """Test setup."""
     pass
 
 

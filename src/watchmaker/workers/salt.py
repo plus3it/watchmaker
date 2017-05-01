@@ -282,6 +282,7 @@ class SaltBase(ManagerBase):
                 First element is the service running status. Second element is
                 the service enabled status. Each element is a :obj:`bool`
                 representing whether the service is running or enabled.
+
         """
         cmd_status = [
             'service.status', service,
@@ -308,6 +309,7 @@ class SaltBase(ManagerBase):
             :obj:`bool`:
                 ``True`` if the service was stopped. ``False`` if the service
                 could not be stopped.
+
         """
         cmd = [
             'service.stop', service,
@@ -328,6 +330,7 @@ class SaltBase(ManagerBase):
             :obj:`bool`:
                 ``True`` if the service was started. ``False`` if the service
                 could not be started.
+
         """
         cmd = [
             'service.start', service,
@@ -348,6 +351,7 @@ class SaltBase(ManagerBase):
             :obj:`bool`:
                 ``True`` if the service was disabled. ``False`` if the service
                 could not be disabled.
+
         """
         cmd = [
             'service.disable', service,
@@ -368,6 +372,7 @@ class SaltBase(ManagerBase):
             :obj:`bool`:
                 ``True`` if the service was enabled. ``False`` if the service
                 could not be enabled.
+
         """
         cmd = [
             'service.enable', service,

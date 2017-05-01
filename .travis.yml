@@ -50,6 +50,12 @@ notifications:
   email:
     on_success: never
     on_failure: always
+  slack:
+    rooms:
+      - secure: nsbTI19SAiog6V6OnN1diYU2V3RIwtmY+IqV4uAvki87dQZteWU22/kQ0wI0OZAOzvEG3lLrc7ZGnbKh+IiH3QJkAwwHgtgC2zdzy6EGkjyEQpeAFUujaEHcRKEIpeAdtNpSUTrPsywdbnT6sO4XN/S7ZhSxS3TRmL2Wi399i36/D0T7gt/GAcPdxrFKwZ20PN20By+5j54FO6/X7y0IVcoUgKdYIvP5NGILRyo+tlWP6dJKFeuxT7lU3FV6W7J7DQs/2yjwH1naBmulxWp22+wNopJ1loW9PHtsJzlN0kUp1Up/+pwHvr7bVbZBzXSZZ5V7j+Xi7uh0de8GYckg0ATJTvrB5c1KZaG9p2unhyMlVAyDfNez3LtgUERnd7S1YXxz8JwbyWlEodzKO/dcnA1PkzcPECEbeXQJtxdhXuz+8pVqIAkDejCv4bhZVUtC4beeQFjxTrqKewxMNpTKKCacIWEBLrCUzr4y15qy7ziRU8CPvFkaUYBkPSWIOp2Xv7FOBwlEhR8d5P6P2eJ7P1vbYVB1vvrYgo0Z4pQkaM02E2/YgSoEfpWsgrSNS+9W0aQtAxcIg6ilY4ZcY83xAmwa8W7uILygqqK0Q7m+UiirIePMWXJ3r9MNkpHHlEr+WebFQYYNhOqVDJ5oX1+KKZY91bJl0ozqUvy4KSlBPO8=
+    on_success: never
+    on_failure: always
+
 # After you create the Github repo and add it to Travis, run the
 # ci/travis_pypi_setup.py script and set the secure passwords to
 # finish PyPI deployment setup
