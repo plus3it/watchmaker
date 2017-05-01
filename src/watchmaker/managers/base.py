@@ -73,7 +73,7 @@ class ManagerBase(object):
                 globals(),
                 locals(),
                 ["ClientError"],
-                -1
+                0
             )
         except ImportError:
             msg = 'Unable to import boto3 module.'
