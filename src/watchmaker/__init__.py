@@ -50,16 +50,15 @@ class Arguments(dict):
             automatically suppresses the reboot if it encounters an error.
             (*Default*: ``False``)
 
-        verbosity: (:obj:`int`)
-            Level to log at. Any value other than the integers below will
-            enable DEBUG logging.
-            (*Default*: ``0``)
+        log_level: (:obj:`str`)
+            Level to log at. Case-insensitive. Valid options include,
+            from least to most verbose:
 
-            .. code-block:: python
-
-                0: WARNING
-                1: INFO
-                *: DEBUG
+            - ``critical``
+            - ``error``
+            - ``warning``
+            - ``info``
+            - ``debug``
 
     .. important::
 
@@ -151,7 +150,7 @@ class Arguments(dict):
         config_path=None,
         log_dir=None,
         no_reboot=False,
-        verbosity=0,
+        log_level=None,
         *args,
         **kwargs
     ):
@@ -159,7 +158,7 @@ class Arguments(dict):
         self.config_path = config_path
         self.log_dir = log_dir
         self.no_reboot = no_reboot
-        self.verbosity = verbosity
+        self.log_level = log_level
         self.admin_groups = kwargs.pop('admin_groups', None)
         self.admin_users = kwargs.pop('admin_users', None)
         self.computer_name = kwargs.pop('computer_name', None)
@@ -205,7 +204,7 @@ class Client(object):
         self.no_reboot = arguments.pop('no_reboot', False)
         self.config_path = arguments.pop('config_path')
         self.log_dir = arguments.pop('log_dir')
-        self.verbosity = arguments.pop('verbosity')
+        self.log_level = arguments.pop('log_level')
 
         # Get the system params
         self.system = platform.system().lower()
