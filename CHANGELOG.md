@@ -2,7 +2,9 @@
 
 x.x.x (TBD)
 
-*   TBD
+*   pshelp-formula
+    *   Attempts to address occasional stack overflow exception when updating
+        powershell help
 
 0.3.1 (2017.05.01)
 
