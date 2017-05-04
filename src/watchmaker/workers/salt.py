@@ -397,7 +397,7 @@ class SaltBase(ManagerBase):
             self._set_grain('join-domain', grain)
 
         if self.computer_name and self.computer_name != 'None':
-            name = {'computer_name': str(self.computer_name)}
+            name = {'computername': str(self.computer_name)}
             self._set_grain('name-computer', name)
 
         self.log.info('Syncing custom salt modules...')
