@@ -9,57 +9,51 @@ the output of `watchmaker --help`, showing the CLI options.
 
 ```shell
 # watchmaker --help
-usage: watchmaker [-h] [-v] [-c CONFIG_PATH] [-l LOG_LEVEL] [-d LOG_DIR] [-n]
-                  [-s SALT_STATES] [--s3-source] [-A ADMIN_GROUPS]
-                  [-a ADMIN_USERS] [-t COMPUTER_NAME] [-e ENVIRONMENT]
-                  [-p OU_PATH]
+Usage: watchmaker [OPTIONS]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, -V, --version     Print version info.
-  -c CONFIG_PATH, --config CONFIG_PATH
-                        Path or URL to the config.yaml file.
-  -l LOG_LEVEL, --log-level LOG_LEVEL
-                        Set the log level. Case-insensitive. Valid values
-                        include: "critical", "error", "warning", "info", and
-                        "debug".
-  -d LOG_DIR, --log-dir LOG_DIR
-                        Path to the directory where Watchmaker log files will
-                        be saved.
-  -n, --no-reboot       If this flag is not passed, Watchmaker will reboot the
-                        system upon success. This flag suppresses that
-                        behavior. Watchmaker suppresses the reboot
-                        automatically if it encounters a failure.
-  -s SALT_STATES, --salt-states SALT_STATES
-                        Comma-separated string of salt states to apply. A
-                        value of 'None' will not apply any salt states. A
-                        value of 'Highstate' will apply the salt highstate.
-  --s3-source           Use S3 utilities to retrieve content instead of http/s
-                        utilities. Boto3 must be installed, and boto3
-                        credentials must be configured that allow access to
-                        the S3 bucket.
-  -A ADMIN_GROUPS, --admin-groups ADMIN_GROUPS
-                        Set a salt grain that specifies the domain groups that
-                        should have root privileges on Linux or admin
-                        privileges on Windows. Value must be a colon-separated
-                        string. E.g. "group1:group2"
-  -a ADMIN_USERS, --admin-users ADMIN_USERS
-                        Set a salt grain that specifies the domain users that
-                        should have root privileges on Linux or admin
-                        privileges on Windows. Value must be a colon-separated
-                        string. E.g. "user1:user2"
-  -t COMPUTER_NAME, --computer-name COMPUTER_NAME
-                        Set a salt grain that specifies the computername to
-                        apply to the system.
-  -e ENVIRONMENT, --env ENVIRONMENT
-                        Set a salt grain that specifies the environment in
-                        which the system is being built. E.g. dev, test, or
-                        prod
-  -p OU_PATH, --ou-path OU_PATH
-                        Set a salt grain that specifies the full DN of the OU
-                        where the computer account will be created when
-                        joining a domain. E.g.
-                        "OU=SuperCoolApp,DC=example,DC=com"
+  Entry point for Watchmaker cli.
+
+Options:
+  --version                       Show the version and exit.
+  -c, --config TEXT               Path or URL to the config.yaml file.
+  -l, --log-level [info|debug|critical|warning|error]
+                                  Set the log level. Case-insensitive.
+  -d, --log-dir DIRECTORY         Path to the directory where Watchmaker log
+                                  files will be saved.
+  -n, --no-reboot                 If this flag is not passed, Watchmaker will
+                                  reboot the system upon success. This flag
+                                  suppresses that behavior. Watchmaker
+                                  suppresses the reboot automatically if it
+                                  encounters a failure.
+  -s, --salt-states TEXT          Comma-separated string of salt states to
+                                  apply. A value of 'None' will not apply any
+                                  salt states. A value of 'Highstate' will
+                                  apply the salt highstate.
+  --s3-source                     Use S3 utilities to retrieve content instead
+                                  of http/s utilities. Boto3 must be
+                                  installed, and boto3 credentials must be
+                                  configured that allow access to the S3
+                                  bucket.
+  -A, --admin-groups TEXT         Set a salt grain that specifies the domain
+                                  groups that should have root privileges on
+                                  Linux or admin privileges on Windows. Value
+                                  must be a colon-separated string. E.g.
+                                  "group1:group2"
+  -a, --admin-users TEXT          Set a salt grain that specifies the domain
+                                  users that should have root privileges on
+                                  Linux or admin privileges on Windows. Value
+                                  must be a colon-separated string. E.g.
+                                  "user1:user2"
+  -t, --computer-name TEXT        Set a salt grain that specifies the
+                                  computername to apply to the system.
+  -e, --env TEXT                  Set a salt grain that specifies the
+                                  environment in which the system is being
+                                  built. E.g. dev, test, or prod
+  -p, --ou-path TEXT              Set a salt grain that specifies the full DN
+                                  of the OU where the computer account will be
+                                  created when joining a domain. E.g.
+                                  "OU=SuperCoolApp,DC=example,DC=com"
+  --help                          Show this message and exit.
 ```
 
 ## `watchmaker` as EC2 userdata
