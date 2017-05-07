@@ -1,5 +1,24 @@
 # Changelog
 
+0.4.0 (2017.05.06)
+
+*   [[PR #286 ][286]] Sets the computername grain with the correct key expected
+    by the formula
+*   [[PR #284 ][284]] Converts cli argument parsing from `argparse` to `click`.
+    This modifies the `watchmaker` depedencies, which warranted a 0.x.0 version
+    bump. Cli and API arguments remain the same, so the change should be
+    backwards-compatible.
+*   name-computer-formula
+    *   Adds support for getting the computername from pillar
+    *   Adds support for validating the specified computername against a
+        pattern
+*   pshelp-formula
+    *   Attempts to address occasional stack overflow exception when updating
+        powershell help
+
+[286]: https://github.com/plus3it/watchmaker/pull/286
+[284]: https://github.com/plus3it/watchmaker/pull/284
+
 0.3.1 (2017.05.01)
 
 *   [[PR #280][280]] Modifies the dynamic import of boto3 to use only absolute
