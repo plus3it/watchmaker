@@ -19,7 +19,7 @@ from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
-__version__ = '0.4.0'
+__version__ = '0.4.1.dev'
 
 
 class Arguments(dict):

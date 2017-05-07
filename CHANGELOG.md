@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (TBD)
+
+*   TBD
+
 0.4.0 (2017.05.06)
 
 *   [[PR #286 ][286]] Sets the computername grain with the correct key expected
