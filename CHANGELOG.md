@@ -1,5 +1,23 @@
 # Changelog
 
+0.4.1 (2017.05.09)
+
+*   (EL7) Running _watchmaker_ against EL7 systems will now pin the resulting
+    configuration to the watchmaker version. See the updates to the two
+    formulas in this version. Previously, _ash-linux_ always used the content
+    from the `scap-security-guide` rpm, which was updated out-of-sync with
+    _watchmaker_, and so the resulting configuration could not be pinned by
+    pinning the _watchmaker_ version. With this version, _ash-linux_ uses
+    content distributed by _watchmaker_, via _scap-formula_, and so the
+    resulting configuration will always be same on EL7 for a given version of
+    _watchmaker_ (as has always been the case for the other supported
+    operating systems).
+*   ash-linux-formula
+    *   Supports getting scap content locations from pillar
+*   scap-formula
+    *   Updates stig content with latest benchmark versions
+    *   Adds openscap ds.xml content, used to support remediate actions
+
 0.4.0 (2017.05.06)
 
 *   [[PR #286 ][286]] Sets the computername grain with the correct key expected
