@@ -2,7 +2,11 @@
 
 x.x.x (TBD)
 
-*   TBD
+*   ash-linux-formula
+    *   Supports getting scap content locations from pillar
+*   scap-formula
+    *   Updates stig content with latest benchmark versions
+    *   Adds openscap ds.xml content, used to support remediate actions
 
 0.4.0 (2017.05.06)
 
