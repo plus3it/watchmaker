@@ -69,8 +69,7 @@ examples.
 
     The ``pip`` commands in the examples are a bit more complex than
     necessarily needed, depending on your use case. In these examples, we are
-    taking into account differences in pip versions available to different
-    platforms, as well as limitations in FIPS support in the default PyPi repo.
+    taking into account limitations in FIPS support in the default PyPi repo.
     This way the same ``pip`` command works for all platforms.
 ```
 
@@ -82,16 +81,14 @@ on the [CLI](#watchmaker-from-the-cli). Here is an example:
 
 ```shell
 #!/bin/sh
+PIP_URL=https://bootstrap.pypa.io/get-pip.py
 PYPI_URL=https://pypi.org/simple
 
-# Get the host
-PYPI_HOST=$(echo $PYPI_URL |sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
-
 # Install pip
-yum -y --enablerepo=epel install python-pip
+curl "$PIP_URL" | python - --index-url="$PYPI_URL"
 
 # Install watchmaker
-pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external --upgrade pip setuptools watchmaker
+pip install --index-url="$PYPI_URL" --upgrade pip setuptools watchmaker
 
 # Run watchmaker
 watchmaker --log-level debug --log-dir=/var/log/watchmaker
@@ -104,16 +101,14 @@ Alternatively, cloud-config directives can also be used on **Linux**:
 
 runcmd:
   - |
+    PIP_URL=https://bootstrap.pypa.io/get-pip.py
     PYPI_URL=https://pypi.org/simple
 
-    # Get the host
-    PYPI_HOST=$(echo $PYPI_URL |sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
-
     # Install pip
-    yum -y --enablerepo=epel install python-pip
+    curl "$PIP_URL" | python - --index-url="$PYPI_URL"
 
     # Install watchmaker
-    pip install --index-url="$PYPI_URL" --trusted-host="$PYPI_HOST" --allow-all-external --upgrade pip setuptools watchmaker
+    pip install --index-url="$PYPI_URL" --upgrade pip setuptools watchmaker
 
     # Run watchmaker
     watchmaker --log-level debug --log-dir=/var/log/watchmaker
@@ -131,9 +126,6 @@ $BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/master/doc
 $PythonUrl = "https://www.python.org/ftp/python/3.6.0/python-3.6.0-amd64.exe"
 $PypiUrl = "https://pypi.org/simple"
 
-# Get the host
-$PypiHost="$(([System.Uri]$PypiUrl).Host)"
-
 # Download bootstrap file
 $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 (New-Object System.Net.WebClient).DownloadFile("$BootstrapUrl", "$BootstrapFile")
@@ -142,7 +134,7 @@ $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 & "$BootstrapFile" -PythonUrl "$PythonUrl" -Verbose -ErrorAction Stop
 
 # Install watchmaker
-pip install --index-url="$PypiUrl" --trusted-host="$PypiHost" --upgrade pip setuptools watchmaker
+pip install --index-url="$PypiUrl" --upgrade pip setuptools watchmaker
 
 # Run watchmaker
 watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs
