@@ -140,41 +140,32 @@ To install and run a development branch of watchmaker on a new EC2 instance,
 specify something like this for EC2 userdata:
 
 *   **For Linux**: Modify `GIT_REPO` and `GIT_BRANCH` to reflect working
-    values for your development build. Modify `PYPI_URL` as needed.
+    values for your development build. Modify `PIP_URL` and `PYPI_URL` as
+    needed.
 
     ```shell
     #!/bin/sh
     GIT_REPO=https://github.com/<your-github-username>/watchmaker.git
     GIT_BRANCH=<your-branch>
 
+    PIP_URL=https://bootstrap.pypa.io/get-pip.py
     PYPI_URL=https://pypi.org/simple
 
-    # Get the host
-    PYPI_HOST=$(echo $PYPI_URL |sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/")
+    # Install pip
+    curl "$PIP_URL" | python - --index-url="$PYPI_URL"
 
-    # Install git and pip
-    yum -y install epel-release
-    yum -y --enablerepo=epel install python-pip git
+    # Install git
+    yum -y install git
 
     # Upgrade pip and setuptools
-    pip install \
-        --index-url="$PYPI_URL" \
-        --trusted-host="$PYPI_HOST" \
-        --allow-all-external \
-        --upgrade \
-        pip setuptools
+    pip install --index-url="$PYPI_URL" --upgrade pip setuptools
 
     # Clone watchmaker
     git clone "$GIT_REPO" --branch "$GIT_BRANCH" --recursive
-    cd watchmaker
 
     # Install watchmaker
-    pip install \
-        --index-url "$PYPI_URL" \
-        --trusted-host="$PYPI_HOST" \
-        --allow-all-external \
-        --editable \
-        .
+    cd watchmaker
+    pip install --index-url "$PYPI_URL" --editable .
 
     # Run watchmaker
     watchmaker --log-level debug --log-dir=/var/log/watchmaker
@@ -194,9 +185,6 @@ specify something like this for EC2 userdata:
     $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.12.2.windows.2/Git-2.12.2.2-64-bit.exe"
     $PypiUrl = "https://pypi.org/simple"
 
-    # Get the host
-    $PypiHost="$(([System.Uri]$PypiUrl).Host)"
-
     # Download bootstrap file
     $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
     (New-Object System.Net.WebClient).DownloadFile($BootstrapUrl, $BootstrapFile)
@@ -208,24 +196,14 @@ specify something like this for EC2 userdata:
         -Verbose -ErrorAction Stop
 
     # Upgrade pip and setuptools
-    pip install `
-        --index-url="$PypiUrl" `
-        --trusted-host="$PypiHost" `
-        --allow-all-external `
-        --upgrade `
-        pip setuptools
+    pip install --index-url="$PypiUrl" --upgrade pip setuptools
 
     # Clone watchmaker
     git clone "$GitRepo" --branch "$GitBranch" --recursive
-    cd watchmaker
 
     # Install watchmaker
-    pip install `
-        --index-url "$PypiUrl" `
-        --trusted-host="$PypiHost" `
-        --allow-all-external `
-        --editable `
-        .
+    cd watchmaker
+    pip install --index-url "$PypiUrl" --editable .
 
     # Run watchmaker
     watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs
