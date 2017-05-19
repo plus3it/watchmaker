@@ -390,9 +390,9 @@ class SaltBase(ManagerBase):
         if self.ou_path and self.ou_path != 'None':
             grain['oupath'] = self.ou_path
         if self.admin_groups and self.admin_groups != 'None':
-            grain['admingroups'] = self.admin_groups.split(':')
+            grain['admin_groups'] = self.admin_groups.split(':')
         if self.admin_users and self.admin_users != 'None':
-            grain['adminusers'] = self.admin_users.split(':')
+            grain['admin_users'] = self.admin_users.split(':')
         if grain:
             self._set_grain('join-domain', grain)
 

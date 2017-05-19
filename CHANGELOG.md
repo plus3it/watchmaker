@@ -1,5 +1,30 @@
 # Changelog
 
+0.4.2 (2017.05.19)
+
+*   [[PR #301][301]] Sets the grains for admin_groups and admin_users so the
+    keys are named as expected by the join-domain formula
+*   ash-linux-formula
+    *   Adds a custom module that lists users from the shadow file
+    *   Gets local users from the shadow file rather than `user.list_users`.
+        Prevents a domain-joined system from attempting to iterate over all
+        domain users (and potentially deadlocking on especially large domains)
+*   join-domain-formula
+    *   Modifies PBIS install method to use RPMs directly, rather than the
+        SHAR installer
+    *   Updates approaches to checking for collisions and current join status
+        to better handle various scenarios: not joined, no collision; not
+        joined, collision; joined, computer object present; joined, computer
+        object missing
+    *   Disables NSS enumeration to prevent PBIS from querying user info from
+        the domain for every call to getent (or equivalents); domain-based
+        user authentication still works fine
+*   name-computer-formula
+    *   (Linux) Does not attempt to retain network settings, to avoid a bug in
+        salt; will be revisited when a patched salt version has been released
+
+[301]: https://github.com/plus3it/watchmaker/pull/301
+
 0.4.1 (2017.05.09)
 
 *   (EL7) Running _watchmaker_ against EL7 systems will now pin the resulting
