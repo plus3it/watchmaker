@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (UNRELEASED)
+
+*   TBD
+
 0.4.2 (2017.05.19)
 
 *   [[PR #301][301]] Sets the grains for admin_groups and admin_users so the
