@@ -789,7 +789,7 @@
                                         [
                                             "UseAdminGroups",
                                             { "Fn::Join" : [ "", [
-                                                " --admingroups \"",
+                                                " --admin-groups \"",
                                                 { "Ref" : "WatchmakerAdminGroups" },
                                                 "\""
                                             ]]},
