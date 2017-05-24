@@ -40,18 +40,6 @@
     "ParameterValue": "__INSTANCETYPE__"
   },
   {
-    "ParameterKey": "MinCapacity",
-    "ParameterValue": "__MINCAPACITY__"
-  },
-  {
-    "ParameterKey": "MaxCapacity",
-    "ParameterValue": "__MAXCAPACITY__"
-  },
-  {
-    "ParameterKey": "DesiredCapacity",
-    "ParameterValue": "__DESIREDCAPACITY__"
-  },
-  {
     "ParameterKey": "NoPublicIp",
     "ParameterValue": "__NOPUBLICIP__"
   },
