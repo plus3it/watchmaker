@@ -2,7 +2,7 @@
 
 ## `watchmaker` from the CLI
 
-Once wathmaker is [installed](installation.md) and a [configuration file](configuration.md)
+Once watchmaker is [installed](installation.md) and a [configuration file](configuration.md)
 has been created (or you have decided to use the default configuration), using
 watchmaker as a CLI utility is as simple as executing `watchmaker`. Below is
 the output of `watchmaker --help`, showing the CLI options.
