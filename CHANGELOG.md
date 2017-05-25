@@ -1,5 +1,11 @@
 # Changelog
 
+0.4.3 (2017.05.25)
+
+*   name-computer-formula
+    *   (Linux) Uses an alternate method of working around a bad code-path in
+        salt that does not handle quoted values in /etc/sysconfig/network.
+
 0.4.2 (2017.05.19)
 
 *   [[PR #301][301]] Sets the grains for admin_groups and admin_users so the
