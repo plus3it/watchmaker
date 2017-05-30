@@ -1,5 +1,13 @@
 # Changelog
 
+0.4.4 (2017.05.30)
+
+*   join-domain-formula
+    *   (Linux) Ignores a bad exit code from pbis config utility. The utility
+        will return exit code 5 when modifying the NssEnumerationEnabled
+        setting, but still sets the requested value. This exit code is now
+        ignored
+
 0.4.3 (2017.05.25)
 
 *   name-computer-formula
