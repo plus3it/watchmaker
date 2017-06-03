@@ -420,25 +420,23 @@ class SaltBase(ManagerBase):
             self.log.info(
                 'No States were specified. Will not apply any salt states.'
             )
-        elif states.lower() == 'highstate':
-            self.log.info(
-                'Detected the `states` parameter is set to `highstate`. '
-                'Applying the salt "highstate" to the system.'
-            )
-            cmd = ['state.highstate']
-            cmd.extend(self.salt_call_args)
-            self.run_salt(cmd)
         else:
-            self.log.info(
-                'Detected the `states` parameter is set to: `%s`. Applying '
-                'the user-defined list of states to the system.',
-                states
-            )
-            cmd = ['state.sls', states]
-            cmd.extend(self.salt_call_args)
-            self.run_salt(cmd)
+            cmd = [self.salt_call_args]
+            if states.lower() == 'highstate':
+                self.log.info(
+                    'Applying the salt "highstate", states=%s',
+                    states
+                )
+                cmd.extend(['state.highstate'])
+            else:
+                self.log.info(
+                    'Applying the user-defined list of states, states=%s',
+                    states
+                )
+                cmd.extend(['state.sls', states])
 
-        self.log.info('Salt states all applied successfully!')
+            ret = self.run_salt(cmd, stdout=True)
+            self.log.info('Salt states all applied successfully!')
 
 
 class SaltLinux(SaltBase, LinuxManager):
