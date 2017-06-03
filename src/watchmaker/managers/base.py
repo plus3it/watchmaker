@@ -222,7 +222,7 @@ class ManagerBase(object):
 
         return ret or None
 
-    def call_process(self, cmd, stdout=False):
+    def call_process(self, cmd, stdout=False, raise_error=True):
         """
         Execute a shell command.
 
@@ -233,6 +233,11 @@ class ManagerBase(object):
             stdout: (:obj:`bool`)
                 Switch to control whether to return stdout.
                 (*Default*: ``False``)
+
+            raise_error: (:obj:`bool`)
+                Switch to control whether to raise if the command return code
+                is non-zero.
+                (*Default*: ``True``)
 
         Returns:
             :obj:`None` or :obj:`bytes`:
@@ -275,7 +280,7 @@ class ManagerBase(object):
 
         returncode = process.wait()
 
-        if returncode != 0:
+        if raise_error and returncode != 0:
             msg = 'Command failed! Exit code={0}, cmd={1}'.format(
                 process.returncode, cmd)
             self.log.critical(msg)

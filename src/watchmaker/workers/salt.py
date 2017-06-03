@@ -6,11 +6,13 @@ from __future__ import (absolute_import, division, print_function,
 import codecs
 import json
 import os
+import re
 import shutil
 
 import yaml
 
 from watchmaker import static
+from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 
@@ -138,7 +140,7 @@ class SaltBase(ManagerBase):
         self.salt_state_args = [
             '--log-file', self.salt_debug_logfile,
             '--log-file-level', 'debug',
-            '--state-output', 'mixed_id'
+            '--state_verbose', 'false'
         ]
 
         for salt_dir in [
@@ -240,7 +242,7 @@ class SaltBase(ManagerBase):
         ]
         self.run_salt(cmd)
 
-    def run_salt(self, command, stdout=False):
+    def run_salt(self, command, **kwargs):
         """
         Execute salt command.
 
@@ -250,10 +252,6 @@ class SaltBase(ManagerBase):
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
                 do not specify those options in the command.
-
-            stdout: (:obj:`bool`)
-                Switch to control whether to return stdout.
-                (*Default*: ``False``)
         """
         cmd = [
             self.salt_call,
@@ -265,9 +263,8 @@ class SaltBase(ManagerBase):
             cmd.extend(command)
         else:
             cmd.append(command)
-        ret = self.call_process(cmd, stdout=stdout)
-        if stdout:
-            return ret
+
+        return self.call_process(cmd, **kwargs)
 
     def service_status(self, service):
         """
@@ -435,7 +432,14 @@ class SaltBase(ManagerBase):
                 )
                 cmd.extend(['state.sls', states])
 
-            ret = self.run_salt(cmd, stdout=True)
+            ret = self.run_salt(cmd, stdout=True, raise_error=False)
+
+            if ret['retcode'] != 0:
+                raise WatchmakerException(
+                    'Salt states failed to apply!{0}{1}'
+                    .format(os.linesep, ret['stdout'])
+                )
+
             self.log.info('Salt states all applied successfully!')
 
 
