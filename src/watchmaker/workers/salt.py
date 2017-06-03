@@ -107,7 +107,7 @@ class SaltBase(ManagerBase):
         self.salt_call = None
         self.salt_base_env = None
         self.salt_formula_root = None
-        self.salt_call_args = None
+        self.salt_state_args = None
         self.salt_debug_logfile = None
 
     @staticmethod
@@ -135,7 +135,7 @@ class SaltBase(ManagerBase):
                 (self.salt_log_dir, 'salt_call.debug.log')
             )
 
-        self.salt_call_args = [
+        self.salt_state_args = [
             '--log-file', self.salt_debug_logfile,
             '--log-file-level', 'debug',
             '--state-output', 'mixed_id'
@@ -421,7 +421,7 @@ class SaltBase(ManagerBase):
                 'No States were specified. Will not apply any salt states.'
             )
         else:
-            cmd = [self.salt_call_args]
+            cmd = self.salt_state_args
             if states.lower() == 'highstate':
                 self.log.info(
                     'Applying the salt "highstate", states=%s',
