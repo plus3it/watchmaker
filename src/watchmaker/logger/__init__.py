@@ -22,8 +22,7 @@ LOG_LEVELS = collections.defaultdict(
 def exception_hook(exc_type, exc_value, exc_traceback):
     """Log unhandled exceptions with hook for sys.excepthook."""
     log = logging.getLogger('watchmaker')
-    log.error('%s', str(exc_value))
-    log.debug(
+    log.critical(
         '',
         exc_info=(exc_type, exc_value, exc_traceback)
     )
