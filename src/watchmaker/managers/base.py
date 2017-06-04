@@ -210,24 +210,30 @@ class ManagerBase(object):
         return working_dir
 
     @staticmethod
-    def _pipe_logger(pipe, logger, prefix_msg=''):
+    def _pipe_handler(pipe, logger=None, prefix_msg=''):
         ret = b''
         try:
             for line in iter(pipe.readline, b''):
-                logger('%s%s', prefix_msg, line.rstrip())
+                if logger:
+                    logger('%s%s', prefix_msg, line.rstrip())
                 ret += line
         finally:
             pipe.close()
 
         return ret
 
-    def call_process(self, cmd, raise_error=True):
+    def call_process(self, cmd, log_pipe='all', raise_error=True):
         """
         Execute a shell command.
 
         Args:
             cmd: (:obj:`list`)
                 Command to execute.
+
+            log_pipe: (:obj:`str`)
+                Controls what to log from the command output. Supports three
+                values: ``stdout``, ``stderr``, ``all``.
+                (*Default*: ``all``)
 
             raise_error: (:obj:`bool`)
                 Switch to control whether to raise if the command return code
@@ -260,16 +266,16 @@ class ManagerBase(object):
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             stdout_future = executor.submit(
-                self._pipe_logger,
+                self._pipe_handler,
                 process.stdout,
-                self.log.debug,
+                self.log.debug if log_pipe in ['stdout', 'all'] else None,
                 'Command stdout: '
             )
 
             stderr_future = executor.submit(
-                self._pipe_logger,
+                self._pipe_handler,
                 process.stderr,
-                self.log.error,
+                self.log.error if log_pipe in ['stderr', 'all'] else None,
                 'Command stderr: ')
 
             ret['stdout'] = stdout_future.result()

@@ -440,7 +440,7 @@ class SaltBase(ManagerBase):
                 )
                 cmd.extend(['state.sls', states])
 
-            ret = self.run_salt(cmd, raise_error=False)
+            ret = self.run_salt(cmd, log_pipe='stderr', raise_error=False)
 
             if ret['retcode'] != 0:
                 failed_states = self._get_failed_states(
