@@ -3,6 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
+import ast
 import codecs
 import json
 import os
@@ -139,7 +140,9 @@ class SaltBase(ManagerBase):
         self.salt_state_args = [
             '--log-file', self.salt_debug_logfile,
             '--log-file-level', 'debug',
-            '--state_verbose', 'false'
+            '--log-level', 'error',
+            '--out', 'quiet',
+            '--return', 'local'
         ]
 
         for salt_dir in [
@@ -240,6 +243,16 @@ class SaltBase(ManagerBase):
             str(json.dumps(value))
         ]
         self.run_salt(cmd)
+
+    @staticmethod
+    def _get_failed_states(state_ret):
+        failed_states = {}
+        salt_id_delim = '_|-'
+        salt_id_pos = 1
+        for state, data in state_ret['return'].items():
+            if data['result'] is False:
+                failed_states[state.split(salt_id_delim)[salt_id_pos]] = data
+        return failed_states
 
     def run_salt(self, command, **kwargs):
         """
@@ -430,9 +443,17 @@ class SaltBase(ManagerBase):
             ret = self.run_salt(cmd, raise_error=False)
 
             if ret['retcode'] != 0:
+                failed_states = self._get_failed_states(
+                    ast.literal_eval(ret['stdout'].decode('utf-8')))
                 raise WatchmakerException(
-                    'Salt states failed to apply!{0}{1}'
-                    .format(os.linesep, ret['stdout'])
+                    yaml.safe_dump(
+                        {
+                            'One or more Salt states failed to apply':
+                            failed_states
+                        },
+                        default_flow_style=False,
+                        indent=4
+                    )
                 )
 
             self.log.info('Salt states all applied successfully!')
