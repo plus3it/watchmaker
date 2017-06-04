@@ -6,7 +6,6 @@ from __future__ import (absolute_import, division, print_function,
 import codecs
 import json
 import os
-import re
 import shutil
 
 import yaml
@@ -290,8 +289,8 @@ class SaltBase(ManagerBase):
             '--out', 'newline_values_only'
         ]
         return (
-            self.run_salt(cmd_status, stdout=True).strip().lower() == b'true',
-            self.run_salt(cmd_enabled, stdout=True).strip().lower() == b'true'
+            self.run_salt(cmd_status)['stdout'].strip().lower() == b'true',
+            self.run_salt(cmd_enabled)['stdout'].strip().lower() == b'true'
         )
 
     def service_stop(self, service):
@@ -312,8 +311,7 @@ class SaltBase(ManagerBase):
             'service.stop', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def service_start(self, service):
         """
@@ -333,8 +331,7 @@ class SaltBase(ManagerBase):
             'service.start', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def service_disable(self, service):
         """
@@ -354,8 +351,7 @@ class SaltBase(ManagerBase):
             'service.disable', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def service_enable(self, service):
         """
@@ -375,8 +371,7 @@ class SaltBase(ManagerBase):
             'service.enable', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def process_grains(self):
         """Set salt grains."""
@@ -432,7 +427,7 @@ class SaltBase(ManagerBase):
                 )
                 cmd.extend(['state.sls', states])
 
-            ret = self.run_salt(cmd, stdout=True, raise_error=False)
+            ret = self.run_salt(cmd, raise_error=False)
 
             if ret['retcode'] != 0:
                 raise WatchmakerException(
