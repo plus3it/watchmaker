@@ -244,14 +244,24 @@ class SaltBase(ManagerBase):
         ]
         self.run_salt(cmd)
 
-    @staticmethod
-    def _get_failed_states(state_ret):
+    def _get_failed_states(self, state_ret):
         failed_states = {}
-        salt_id_delim = '_|-'
-        salt_id_pos = 1
-        for state, data in state_ret['return'].items():
-            if data['result'] is False:
-                failed_states[state.split(salt_id_delim)[salt_id_pos]] = data
+        try:
+            # parse state return
+            salt_id_delim = '_|-'
+            salt_id_pos = 1
+            for state, data in state_ret['return'].items():
+                if data['result'] is False:
+                    state_id = state.split(salt_id_delim)[salt_id_pos]
+                    failed_states[state_id] = data
+        except AttributeError:
+            # some error other than a failed state, msg is in the 'return' key
+            self.log.debug('Salt return (AttributeError): %s', state_ret)
+            failed_states = state_ret['return']
+        except KeyError:
+            # not sure what failed, just return everything
+            self.log.debug('Salt return (KeyError): %s', state_ret)
+            failed_states = state_ret
         return failed_states
 
     def run_salt(self, command, **kwargs):
@@ -445,16 +455,17 @@ class SaltBase(ManagerBase):
             if ret['retcode'] != 0:
                 failed_states = self._get_failed_states(
                     ast.literal_eval(ret['stdout'].decode('utf-8')))
-                raise WatchmakerException(
-                    yaml.safe_dump(
-                        {
-                            'One or more Salt states failed to apply':
-                            failed_states
-                        },
-                        default_flow_style=False,
-                        indent=4
+                if failed_states:
+                    raise WatchmakerException(
+                        yaml.safe_dump(
+                            {
+                                'Salt state execution failed':
+                                failed_states
+                            },
+                            default_flow_style=False,
+                            indent=4
+                        )
                     )
-                )
 
             self.log.info('Salt states all applied successfully!')
 
