@@ -3,6 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
+import ast
 import codecs
 import json
 import os
@@ -11,6 +12,7 @@ import shutil
 import yaml
 
 from watchmaker import static
+from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 
@@ -107,7 +109,7 @@ class SaltBase(ManagerBase):
         self.salt_call = None
         self.salt_base_env = None
         self.salt_formula_root = None
-        self.salt_call_args = None
+        self.salt_state_args = None
         self.salt_debug_logfile = None
 
     @staticmethod
@@ -135,10 +137,12 @@ class SaltBase(ManagerBase):
                 (self.salt_log_dir, 'salt_call.debug.log')
             )
 
-        self.salt_call_args = [
+        self.salt_state_args = [
             '--log-file', self.salt_debug_logfile,
             '--log-file-level', 'debug',
-            '--state-output', 'mixed_id'
+            '--log-level', 'error',
+            '--out', 'quiet',
+            '--return', 'local'
         ]
 
         for salt_dir in [
@@ -240,7 +244,27 @@ class SaltBase(ManagerBase):
         ]
         self.run_salt(cmd)
 
-    def run_salt(self, command, stdout=False):
+    def _get_failed_states(self, state_ret):
+        failed_states = {}
+        try:
+            # parse state return
+            salt_id_delim = '_|-'
+            salt_id_pos = 1
+            for state, data in state_ret['return'].items():
+                if data['result'] is False:
+                    state_id = state.split(salt_id_delim)[salt_id_pos]
+                    failed_states[state_id] = data
+        except AttributeError:
+            # some error other than a failed state, msg is in the 'return' key
+            self.log.debug('Salt return (AttributeError): %s', state_ret)
+            failed_states = state_ret['return']
+        except KeyError:
+            # not sure what failed, just return everything
+            self.log.debug('Salt return (KeyError): %s', state_ret)
+            failed_states = state_ret
+        return failed_states
+
+    def run_salt(self, command, **kwargs):
         """
         Execute salt command.
 
@@ -250,10 +274,6 @@ class SaltBase(ManagerBase):
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
                 do not specify those options in the command.
-
-            stdout: (:obj:`bool`)
-                Switch to control whether to return stdout.
-                (*Default*: ``False``)
         """
         cmd = [
             self.salt_call,
@@ -265,9 +285,8 @@ class SaltBase(ManagerBase):
             cmd.extend(command)
         else:
             cmd.append(command)
-        ret = self.call_process(cmd, stdout=stdout)
-        if stdout:
-            return ret
+
+        return self.call_process(cmd, **kwargs)
 
     def service_status(self, service):
         """
@@ -293,8 +312,8 @@ class SaltBase(ManagerBase):
             '--out', 'newline_values_only'
         ]
         return (
-            self.run_salt(cmd_status, stdout=True).strip().lower() == b'true',
-            self.run_salt(cmd_enabled, stdout=True).strip().lower() == b'true'
+            self.run_salt(cmd_status)['stdout'].strip().lower() == b'true',
+            self.run_salt(cmd_enabled)['stdout'].strip().lower() == b'true'
         )
 
     def service_stop(self, service):
@@ -315,8 +334,7 @@ class SaltBase(ManagerBase):
             'service.stop', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def service_start(self, service):
         """
@@ -336,8 +354,7 @@ class SaltBase(ManagerBase):
             'service.start', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def service_disable(self, service):
         """
@@ -357,8 +374,7 @@ class SaltBase(ManagerBase):
             'service.disable', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def service_enable(self, service):
         """
@@ -378,8 +394,7 @@ class SaltBase(ManagerBase):
             'service.enable', service,
             '--out', 'newline_values_only'
         ]
-        ret = self.run_salt(cmd, stdout=True)
-        return ret.strip().lower() == b'true'
+        return self.run_salt(cmd)['stdout'].strip().lower() == b'true'
 
     def process_grains(self):
         """Set salt grains."""
@@ -420,25 +435,39 @@ class SaltBase(ManagerBase):
             self.log.info(
                 'No States were specified. Will not apply any salt states.'
             )
-        elif states.lower() == 'highstate':
-            self.log.info(
-                'Detected the `states` parameter is set to `highstate`. '
-                'Applying the salt "highstate" to the system.'
-            )
-            cmd = ['state.highstate']
-            cmd.extend(self.salt_call_args)
-            self.run_salt(cmd)
         else:
-            self.log.info(
-                'Detected the `states` parameter is set to: `%s`. Applying '
-                'the user-defined list of states to the system.',
-                states
-            )
-            cmd = ['state.sls', states]
-            cmd.extend(self.salt_call_args)
-            self.run_salt(cmd)
+            cmd = self.salt_state_args
+            if states.lower() == 'highstate':
+                self.log.info(
+                    'Applying the salt "highstate", states=%s',
+                    states
+                )
+                cmd.extend(['state.highstate'])
+            else:
+                self.log.info(
+                    'Applying the user-defined list of states, states=%s',
+                    states
+                )
+                cmd.extend(['state.sls', states])
 
-        self.log.info('Salt states all applied successfully!')
+            ret = self.run_salt(cmd, log_pipe='stderr', raise_error=False)
+
+            if ret['retcode'] != 0:
+                failed_states = self._get_failed_states(
+                    ast.literal_eval(ret['stdout'].decode('utf-8')))
+                if failed_states:
+                    raise WatchmakerException(
+                        yaml.safe_dump(
+                            {
+                                'Salt state execution failed':
+                                failed_states
+                            },
+                            default_flow_style=False,
+                            indent=4
+                        )
+                    )
+
+            self.log.info('Salt states all applied successfully!')
 
 
 class SaltLinux(SaltBase, LinuxManager):
