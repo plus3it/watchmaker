@@ -56,7 +56,7 @@ class Yum(LinuxManager):
 
         # Read first line from /etc/system-release
         try:
-            with open('/etc/system-release', mode='rb') as fh_:
+            with open('/etc/system-release') as fh_:
                 release = fh_.readline().strip()
         except Exception:
             self.log.critical(
