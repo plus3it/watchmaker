@@ -80,6 +80,10 @@
     "ParameterValue": "__WATCHMAKERADMINGROUPS__"
   },
   {
+    "ParameterKey": "WatchmakerAdminUsers",
+    "ParameterValue": "__WATCHMAKERADMINUSERS__"
+  },
+  {
     "ParameterKey": "WatchmakerComputerName",
     "ParameterValue": "__COMPUTERNAME__"
   },
