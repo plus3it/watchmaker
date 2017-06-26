@@ -9,5 +9,5 @@ flake8-print==2.0.2
 pep8-naming==0.4.1
 pydocstyle==2.0.0
 pygments==2.2.0
-pylint==1.7.1
+pylint==1.7.2
 readme-renderer==17.2
