@@ -727,7 +727,7 @@ class SaltWindows(SaltBase, WindowsManager):
                 self.log.error('Failed to restart %s service', salt_svc)
 
         if self.ash_role and self.ash_role != 'None':
-            role = {'role': str(self.ash_role)}
+            role = {'lookup': {'role': str(self.ash_role)}}
             self._set_grain('ash-windows', role)
 
         self.process_grains()
