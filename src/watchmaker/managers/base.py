@@ -210,19 +210,19 @@ class ManagerBase(object):
         return working_dir
 
     @staticmethod
-    def _pipe_logger(pipe, logger, prefix_msg='', return_output=False):
+    def _pipe_handler(pipe, logger=None, prefix_msg=''):
         ret = b''
         try:
             for line in iter(pipe.readline, b''):
-                logger('%s%s', prefix_msg, line.rstrip())
-                if return_output:
-                    ret = ret + line
+                if logger:
+                    logger('%s%s', prefix_msg, line.rstrip())
+                ret += line
         finally:
             pipe.close()
 
-        return ret or None
+        return ret
 
-    def call_process(self, cmd, stdout=False):
+    def call_process(self, cmd, log_pipe='all', raise_error=True):
         """
         Execute a shell command.
 
@@ -230,26 +230,34 @@ class ManagerBase(object):
             cmd: (:obj:`list`)
                 Command to execute.
 
-            stdout: (:obj:`bool`)
-                Switch to control whether to return stdout.
-                (*Default*: ``False``)
+            log_pipe: (:obj:`str`)
+                Controls what to log from the command output. Supports three
+                values: ``stdout``, ``stderr``, ``all``.
+                (*Default*: ``all``)
+
+            raise_error: (:obj:`bool`)
+                Switch to control whether to raise if the command return code
+                is non-zero.
+                (*Default*: ``True``)
 
         Returns:
-            :obj:`None` or :obj:`bytes`:
-                ``None`` unless ``stdout`` is ``True``. In that case, the
-                stdout is returned as a bytes object.
+            :obj:`dict`:
+                Dictionary containing three keys: ``retcode`` (:obj:`int`),
+                ``stdout`` (:obj:`bytes`), and ``stderr`` (:obj:`bytes`).
 
         """
-        ret = None
-        stdout_ret = b''
-        stderr_ret = b''  # pylint: disable=unused-variable
+        ret = {
+            'retcode': 0,
+            'stdout': b'',
+            'stderr': b''
+        }
 
         if not isinstance(cmd, list):
             msg = 'Command is not a list: {0}'.format(cmd)
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-        self.log.debug('Running command: %s', cmd)
+        self.log.debug('Command: %s', ' '.join(cmd))
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -258,32 +266,30 @@ class ManagerBase(object):
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             stdout_future = executor.submit(
-                self._pipe_logger,
+                self._pipe_handler,
                 process.stdout,
-                self.log.debug,
-                'Command stdout: ',
-                stdout)
+                self.log.debug if log_pipe in ['stdout', 'all'] else None,
+                'Command stdout: '
+            )
 
             stderr_future = executor.submit(
-                self._pipe_logger,
+                self._pipe_handler,
                 process.stderr,
-                self.log.error,
+                self.log.error if log_pipe in ['stderr', 'all'] else None,
                 'Command stderr: ')
 
-            stdout_ret = stdout_future.result()
-            stderr_ret = stderr_future.result()  # noqa: F841,E501  # pylint: disable=unused-variable
+            ret['stdout'] = stdout_future.result()
+            ret['stderr'] = stderr_future.result()
 
-        returncode = process.wait()
+        ret['retcode'] = process.wait()
 
-        if returncode != 0:
+        self.log.debug('Command retcode: %s', ret['retcode'])
+
+        if raise_error and ret['retcode'] != 0:
             msg = 'Command failed! Exit code={0}, cmd={1}'.format(
-                process.returncode, cmd)
+                ret['retcode'], ' '.join(cmd))
             self.log.critical(msg)
             raise WatchmakerException(msg)
-
-        if stdout:
-            # Return stdout
-            ret = stdout_ret
 
         return ret
 

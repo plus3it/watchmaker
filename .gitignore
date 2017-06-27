@@ -80,6 +80,7 @@ src/*.log
 tests/*.log
 
 # Unit test / coverage reports
+.cache
 .coverage
 .tox
 .coverage.*

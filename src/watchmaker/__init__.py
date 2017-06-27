@@ -19,7 +19,7 @@ from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
-__version__ = '0.4.4'
+__version__ = '0.5.0'
 
 
 class Arguments(dict):
@@ -196,6 +196,7 @@ class Client(object):
         header = ' WATCHMAKER RUN '
         header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
         self.log.info(header)
+        self.log.debug('Watchmaker Version: %s', __version__)
         self.log.debug('Parameters: %s', arguments)
         self.log.debug('Extra Parameters: %s', extra_arguments)
 
