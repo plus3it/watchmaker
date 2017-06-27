@@ -1,8 +1,32 @@
 # Changelog
 
-x.x.x (UNRELEASED)
+0.5.0 (2017.06.27)
 
-*   TBD
+*   [[Issue #331][331]][[PR #332][332]] Writes the `role` grain to the key
+    expected by the ash-windows formula. Fixes usage of the `--ash-role` option
+    in the salt worker
+*   [[Issue #329][329]][[PR #330][330]] Outputs watchmaker version at the debug
+    log level
+*   [[Issue #322][322]][[PR #323][323]][[PR #324][324]] Fixes py2/py3
+    compatibility bug in how the yum worker handles file opening to check the
+    Linux distro
+*   [[Issue #316][316]][[PR #320][320]] Improves logging when salt state
+    execution fails due to failed a state. The salt output is now returned to
+    the salt worker, which processes the output, identifies the failed state,
+    and raises an exception with the state failure
+*   join-domain-formula
+    *   (Linux) Reworks the pbis config states to make the logged output more
+        readable
+
+[332]: https://github.com/plus3it/watchmaker/pull/332
+[331]: https://github.com/plus3it/watchmaker/issues/331
+[330]: https://github.com/plus3it/watchmaker/pull/330
+[329]: https://github.com/plus3it/watchmaker/issues/329
+[324]: https://github.com/plus3it/watchmaker/pull/324
+[323]: https://github.com/plus3it/watchmaker/pull/323
+[322]: https://github.com/plus3it/watchmaker/issues/322
+[320]: https://github.com/plus3it/watchmaker/pull/320
+[316]: https://github.com/plus3it/watchmaker/issues/316
 
 0.4.4 (2017.05.30)
 
