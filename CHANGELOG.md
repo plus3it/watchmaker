@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (UNRELEASED)
+
+*   TBD
+
 0.5.0 (2017.06.27)
 
 *   [[Issue #331][331]][[PR #332][332]] Writes the `role` grain to the key
