@@ -28,6 +28,18 @@ def exception_hook(exc_type, exc_value, exc_traceback):
     )
 
 
+def make_log_dir(log_dir):
+    """
+    Create logging directory if it does not exist.
+
+    Args:
+        log_dir: (:obj:`str`)
+        Path to a directory.
+    """
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+
 def prepare_logging(log_dir, log_level):
     """
     Prepare the logger for handling messages to a file and/or to stdout.
@@ -63,8 +75,7 @@ def prepare_logging(log_dir, log_level):
             'Watchmaker will not be logging to a file!'
         )
     else:
-        if not os.path.exists(log_dir):
-            os.makedirs(log_dir)
+        make_log_dir(log_dir)
         log_filename = os.sep.join((log_dir, 'watchmaker.log'))
         hdlr = logging.FileHandler(log_filename)
         hdlr.setLevel(level)
