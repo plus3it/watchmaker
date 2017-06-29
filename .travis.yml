@@ -64,7 +64,7 @@ before_deploy:
   - python $TRAVIS_BUILD_DIR/ci/travis_set_build.py --skip "$TRAVIS_TAG"
 deploy:
   - provider: pypi
-    server: https://testpypi.python.org/pypi
+    server: https://test.pypi.org/legacy/
     distributions: sdist bdist_wheel
     user: plus3it
     password:
