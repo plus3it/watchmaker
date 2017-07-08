@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (UNRELEASED)
+
+*   TBD
+
 0.5.1 (2017.07.08)
 
 *   [[Issue #341][341]][[PR #342][342]] Manages selinux around salt state
