@@ -1,5 +1,17 @@
 # Changelog
 
+0.5.1 (2017.07.08)
+
+*   [[Issue #341][341]][[PR #342][342]] Manages selinux around salt state
+    execution. In some non-interactive execution scenarios, if selinux is
+    enforcing it can interfere with the execution of privileged commands (that
+    otherwise work fine when executed interactively). Watchmaker now detects if
+    selinux is enforcing and temporarily sets it to permissive for the duration
+    of the salt state execution
+
+[342]: https://github.com/plus3it/watchmaker/pull/342
+[341]: https://github.com/plus3it/watchmaker/issues/341
+
 0.5.0 (2017.06.27)
 
 *   [[Issue #331][331]][[PR #332][332]] Writes the `role` grain to the key

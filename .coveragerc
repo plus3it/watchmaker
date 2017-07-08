@@ -13,4 +13,7 @@ parallel = true
 [report]
 show_missing = true
 precision = 2
-omit = *migrations*
+omit =
+    *migrations*
+    src/watchmaker/__main__.py
+    */site-packages/watchmaker/__main__.py

@@ -588,6 +588,13 @@ class SaltLinux(SaltBase, LinuxManager):
         self.log.info('Setting grain `%s` ...', grain)
         super(SaltLinux, self)._set_grain(grain, value)
 
+    def _selinux_status(self):
+        selinux_getenforce = self.call_process(['getenforce'])
+        return selinux_getenforce['stdout'].strip().lower() == b'enforcing'
+
+    def _selinux_setenforce(self, state):
+        return self.call_process(['setenforce', state])
+
     def install(self):
         """Install salt and execute salt states."""
         self._configuration_validation()
@@ -612,7 +619,18 @@ class SaltLinux(SaltBase, LinuxManager):
                 self.log.error('Failed to restart %s service', salt_svc)
 
         self.process_grains()
-        self.process_states(self.salt_states)
+
+        selinux_enforcing = self._selinux_status()
+        if selinux_enforcing:
+            self.log.info('Making selinux permisive for salt execution')
+            self._selinux_setenforce('permissive')
+
+        try:
+            self.process_states(self.salt_states)
+        finally:
+            if selinux_enforcing:
+                self.log.info('Setting selinux back to enforcing mode')
+                self._selinux_setenforce('enforcing')
 
         if self.working_dir:
             self.cleanup()
