@@ -189,7 +189,7 @@ linux:
 windows:
   - salt:
       salt_debug_log: None
-      installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.2-AMD64-Setup.exe
+      installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.6-AMD64-Setup.exe
 ```
 
 [0]: http://www.yaml.org/spec/1.2/spec.html
