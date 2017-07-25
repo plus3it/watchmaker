@@ -1,8 +1,23 @@
 # Changelog
 
-x.x.x (UNRELEASED)
+0.6.0 (2017.07.25)
 
-*   TBD
+*   ash-linux-formula
+    *   Updates the EL7 stig baseline to manage the FIPS state. The state
+        defaults to `enabled` but can be overridden via a pillar or grain,
+        `ash-linux:lookup:fips-state`. The grain takes precedence over the
+        pillar. Valid values are `enabled` or `disabled`
+*   ash-windows-formula
+    *   Updates the STIG baselines for Windows Server 2016 member servers and
+        domain controllers with SCAP content from the DISA v1r1 SCAP benchmark
+        release
+*   join-domain-formula
+    *   Fixes an issue when joining Windows 2016 servers to a domain, where the
+        Set-DnsSearchSuffix.ps1 helper would fail because the builtin
+        PowerShell version does not work when `$null` is used in a ValidateSet.
+        The equivalent value must now be passed as the string, `"null"`
+*   scap-formula
+    *   Adds SCAP content for the Window Server 2016 SCAP v1r1 Benchmark
 
 0.5.1 (2017.07.08)
 
