@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (UNRELEASED)
+
+*   TBD
+
 0.6.0 (2017.07.25)
 
 *   ash-linux-formula
