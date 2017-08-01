@@ -1,5 +1,11 @@
 # Changelog
 
+0.6.1 (2017.08.01)
+
+*   ash-linux-formula
+    *   Modified the FIPS custom execution module to discover the boot
+        partition and add the `boot=` line to the grub configuration
+
 0.6.0 (2017.07.25)
 
 *   ash-linux-formula
