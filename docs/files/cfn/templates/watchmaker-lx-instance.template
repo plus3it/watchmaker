@@ -1023,7 +1023,7 @@
                         "# Get pip\n",
                         "curl --silent --show-error --retry 5 -L ",
                         { "Ref" : "CfnGetPipUrl" },
-                        " | python", "\n\n",
+                        " | python - --index-url=", { "Ref" : "PypiIndexUrl" }, "\n\n",
 
                         "# Add pip to path\n",
                         "hash pip 2> /dev/null || ",

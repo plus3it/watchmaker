@@ -1,5 +1,13 @@
 # Changelog
 
+0.6.2 (2017.08.07)
+
+*   ash-linux-formula
+    *   (el6) Improve the method of disabling the sysctl option `ip_forward`,
+        to account for the behavior of the `aws-vpc-nat` rpm
+*   scap-formula
+    *   (elX) Updates openscap security guide content to version 0.1.34-1
+
 0.6.1 (2017.08.01)
 
 *   ash-linux-formula
