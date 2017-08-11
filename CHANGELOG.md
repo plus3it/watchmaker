@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (UNRELEASED)
+
+*   (Placeholder)
+
 0.6.3 (2017.08.11)
 
 *   ash-linux-formula
