@@ -1,5 +1,12 @@
 # Changelog
 
+0.6.3 (2017.08.11)
+
+*   ash-linux-formula
+    *   (el7) Includes a "safety" state for firewalld that ensures SSH inbound
+        access will remain available, in the event the default zone is set to
+        "drop"
+
 0.6.2 (2017.08.07)
 
 *   ash-linux-formula
