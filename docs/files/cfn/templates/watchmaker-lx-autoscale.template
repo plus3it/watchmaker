@@ -650,7 +650,6 @@
                                   "pip install",
                                   " --index-url=\"$PYPI_URL\"",
                                   " --trusted-host=\"$PYPI_HOST\"",
-                                  " --allow-all-external",
                                   " --upgrade pip setuptools watchmaker\n\n"
                                 ]]},
                                 "mode" : "000700",
@@ -1059,7 +1058,6 @@
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
                         " --trusted-host=\"$PYPI_HOST\"",
-                        " --allow-all-external",
                         " --upgrade pip setuptools\n\n",
 
                         "# Fix python urllib3 warnings\n",
@@ -1067,14 +1065,12 @@
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
                         " --trusted-host=\"$PYPI_HOST\"",
-                        " --allow-all-external",
                         " --upgrade pyopenssl ndg-httpsclient pyasn1\n\n",
 
                         "# Get cfn utils\n",
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
                         " --trusted-host=\"$PYPI_HOST\"",
-                        " --allow-all-external",
                         " --upgrade ",
                         { "Ref" : "CfnBootstrapUtilsUrl" },
                         "\n\n",
