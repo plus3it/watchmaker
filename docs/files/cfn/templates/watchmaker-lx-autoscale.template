@@ -218,6 +218,12 @@
             "Type" : "String",
             "Default" : ""
         },
+        "WatchmakerAdminUsers" :
+        {
+            "Description" : "(Optional) Colon-separated list of domain users that should have admin permissions on the EC2 instance",
+            "Type" : "String",
+            "Default" : ""
+        },
         "CfnEndpointUrl" :
         {
             "Description" : "(Optional) URL to the CloudFormation Endpoint. e.g. https://cloudformation.us-east-1.amazonaws.com",
@@ -699,7 +705,7 @@
                                 { "Fn::Join" : [ "", [
                                     "watchmaker --log-level debug",
                                     " --log-dir /var/log/watchmaker",
-                                    " --noreboot",
+                                    " --no-reboot",
                                     {
                                         "Fn::If" :
                                         [
@@ -747,6 +753,18 @@
                                             ]]},
                                             ""
                                         ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseAdminUsers",
+                                            { "Fn::Join" : [ "", [
+                                                " --admin-users \"",
+                                                { "Ref" : "WatchmakerAdminUsers" },
+                                                "\""
+                                            ]]},
+                                            ""
+                                        ]
                                     }
                                 ]]}
                             }
@@ -762,8 +780,8 @@
                                 { "Fn::Join" : [ "", [
                                     "watchmaker --log-level debug",
                                     " --log-dir /var/log/watchmaker",
-                                    " --saltstates None",
-                                    " --noreboot",
+                                    " --salt-states None",
+                                    " --no-reboot",
                                     {
                                         "Fn::If" :
                                         [
@@ -793,7 +811,7 @@
                                         [
                                             "UseOuPath",
                                             { "Fn::Join" : [ "", [
-                                                " --oupath \"",
+                                                " --ou-path \"",
                                                 { "Ref" : "WatchmakerOuPath" },
                                                 "\""
                                             ]]},
@@ -807,6 +825,18 @@
                                             { "Fn::Join" : [ "", [
                                                 " --admin-groups \"",
                                                 { "Ref" : "WatchmakerAdminGroups" },
+                                                "\""
+                                            ]]},
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseAdminUsers",
+                                            { "Fn::Join" : [ "", [
+                                                " --admin-users \"",
+                                                { "Ref" : "WatchmakerAdminUsers" },
                                                 "\""
                                             ]]},
                                             ""
