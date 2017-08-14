@@ -38,10 +38,11 @@
         },
         "AppScriptUrl" :
         {
-            "Description" : "(Optional) URL to the application script. Leave blank to launch without an application script",
+            "Description" : "(Optional) Region-based HTTPS URL to the application script in an S3 bucket. If using FIPS-enabled AMI, script must be KMS-encrypted. Leave blank to launch without an application script. If specified, an appropriate \"InstanceRole\" is required",
             "Type" : "String",
             "Default" : "",
-            "AllowedPattern" : "^$|^http[s]?://.*$"
+            "AllowedPattern" : "^$|^https://s3-(.*)$",
+            "ConstraintDescription" : "Must use a region-based HTTPS S3 endpoint (starts with \"s3-\"), see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region"
         },
         "AppVolumeDevice" :
         {
@@ -432,6 +433,21 @@
             },
             "Metadata" : {
                 "ToggleCfnInitUpdate" : { "Ref" : "ToggleCfnInitUpdate" },
+                "AWS::CloudFormation::Authentication" :
+                {
+                    "Fn::If" :
+                    [
+                        "AssignInstanceRole",
+                        {
+                            "Ec2IamRole" :
+                            {
+                              "type" : "S3",
+                              "roleName" : { "Ref" : "InstanceRole" }
+                            }
+                        },
+                        { "Ref" : "AWS::NoValue" }
+                    ]
+                },
                 "AWS::CloudFormation::Init" :
                 {
                     "configSets" :
@@ -584,8 +600,7 @@
                                   "pip install",
                                   " --index-url=\"$PYPI_URL\"",
                                   " --trusted-host=\"$PYPI_HOST\"",
-                                  " --allow-all-external",
-                                  " --upgrade pip setuptools watchmaker\n\n",
+                                  " --upgrade pip setuptools watchmaker\n\n"
                                 ]]},
                                 "mode" : "000700",
                                 "owner" : "root",
@@ -639,7 +654,7 @@
                                 { "Fn::Join" : [ "", [
                                     "watchmaker --log-level debug",
                                     " --log-dir /var/log/watchmaker",
-                                    " --noreboot",
+                                    " --no-reboot",
                                     {
                                         "Fn::If" :
                                         [
@@ -726,8 +741,8 @@
                                 { "Fn::Join" : [ "", [
                                     "watchmaker --log-level debug",
                                     " --log-dir /var/log/watchmaker",
-                                    " --saltstates None",
-                                    " --noreboot",
+                                    " --salt-states None",
+                                    " --no-reboot",
                                     {
                                         "Fn::If" :
                                         [
@@ -813,7 +828,8 @@
                                 "source" : { "Ref" : "AppScriptUrl" },
                                 "mode" : "000700",
                                 "owner" : "root",
-                                "group" : "root"
+                                "group" : "root",
+                                "authentication" : "Ec2IamRole"
                             }
                         },
                         "commands" :
@@ -1035,7 +1051,6 @@
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
                         " --trusted-host=\"$PYPI_HOST\"",
-                        " --allow-all-external",
                         " --upgrade pip setuptools\n\n",
 
                         "# Fix python urllib3 warnings\n",
@@ -1043,14 +1058,12 @@
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
                         " --trusted-host=\"$PYPI_HOST\"",
-                        " --allow-all-external",
                         " --upgrade pyopenssl ndg-httpsclient pyasn1\n\n",
 
                         "# Get cfn utils\n",
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
                         " --trusted-host=\"$PYPI_HOST\"",
-                        " --allow-all-external",
                         " --upgrade ",
                         { "Ref" : "CfnBootstrapUtilsUrl" },
                         "\n\n",
