@@ -202,3 +202,14 @@ client.install()
     ``watchmaker.Arguments()`` object. For details on all arguments, see the
     :any:`API Reference <api>`.
 ```
+
+## Direct Downloads
+
+The following links can be used for directly fetching (e.g., via `curl`, `wget`, etc.) resources previously noted on this page:
+
+|Template Files|Parameter Files|
+|--------------|---------------|
+|[Linux AutoScale](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-lx-autoscale.template)|[Linux Autoscale](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-lx-autoscale.params.json)|
+|[Linux Instance](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-lx-instance.template)|[Linux Instance](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-lx-instance.params.json)|
+|[Windows Autoscale](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-win-autoscale.template)|[Windows Autoscale](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-autoscale.params.json)|
+|[Windows Instance](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-win-instance.template)|[Windows Instance](https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-instance.params.json)|
