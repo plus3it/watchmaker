@@ -1,2 +1,2 @@
-argparse
+argparse==1.4.0
 codecov==2.0.9
