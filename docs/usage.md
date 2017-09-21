@@ -149,16 +149,20 @@ create autoscaling groups, and that install and execute Watchmaker during the
 launch. These templates are intended as examples for you to modify and extend
 as you need.
 
-> Note that the links in this section are intended for viewing the templates in
-a web browser. See the [Direct Downloads](#direct-downloads) section for links
-to the raw files.
+```eval_rst
+.. note::
+
+    Note that the main links in this section are intended for viewing the
+    templates in a web browser. Use the [raw] links to download the files
+    directly.
+```
 
 ### Cloudformation templates
 
-*   [Linux Autoscale Group][lx-autoscale]
-*   [Linux Instance][lx-instance]
-*   [Windows Autoscale Group][win-autoscale]
-*   [Windows Instance][win-instance]
+*   [Linux Autoscale Group][lx-autoscale] [[raw][raw-lx-autoscale]]
+*   [Linux Instance][lx-instance] [[raw][raw-lx-instance]]
+*   [Windows Autoscale Group][win-autoscale] [[raw][raw-win-autoscale]]
+*   [Windows Instance][win-instance] [[raw][raw-win-instance]]
 
 ### Cloudformation parameter-maps
 
@@ -166,20 +170,30 @@ Sometimes it is helpful to define the parameters for a template in a file, and
 pass those to CloudFormation along with the template. We call those "parameter
 maps", and provide one for each of the templates above.
 
-*   [Linux Autoscale Params][lx-autoscale-params]
-*   [Linux Instance Params][lx-instance-params]
-*   [Windows Autoscale Params][win-autoscale-params]
-*   [Windows Instance Params][win-instance-params]
+*   [Linux Autoscale Params][lx-autoscale-params] [[raw][raw-lx-autoscale-params]]
+*   [Linux Instance Params][lx-instance-params] [[raw][raw-lx-instance-params]]
+*   [Windows Autoscale Params][win-autoscale-params] [[raw][raw-win-autoscale-params]]
+*   [Windows Instance Params][win-instance-params] [[raw][raw-win-instance-params]]
 
 [lx-autoscale]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-lx-autoscale.template
 [lx-instance]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-lx-instance.template
 [win-autoscale]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-win-autoscale.template
 [win-instance]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/templates/watchmaker-win-instance.template
 
+[raw-lx-autoscale]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-lx-autoscale.template
+[raw-lx-instance]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-lx-instance.template
+[raw-win-autoscale]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-win-autoscale.template
+[raw-win-instance]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-win-instance.template
+
 [lx-autoscale-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-lx-autoscale.params.json
 [lx-instance-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-lx-instance.params.json
 [win-autoscale-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-win-autoscale.params.json
 [win-instance-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-win-instance.params.json
+
+[raw-lx-autoscale-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-lx-autoscale.params.json
+[raw-lx-instance-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-lx-instance.params.json
+[raw-win-autoscale-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-autoscale.params.json
+[raw-win-instance-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-instance.params.json
 
 ## `watchmaker` as a library
 
@@ -206,24 +220,3 @@ client.install()
     ``watchmaker.Arguments()`` object. For details on all arguments, see the
     :any:`API Reference <api>`.
 ```
-
-## Direct Downloads
-
-The following links can be used for directly fetching (e.g., via `curl`, `wget`, etc.) resources previously noted on this page:
-
-|Template Files|Parameter Files|
-|--------------|---------------|
-|[Linux AutoScale][raw-lx-autoscale]|[Linux Autoscale][raw-lx-autoscale-params]|
-|[Linux Instance][raw-lx-instance]|[Linux Instance][raw-lx-instance-params]|
-|[Windows Autoscale][raw-win-autoscale]|[Windows Autoscale][raw-win-autoscale-params]|
-|[Windows Instance][raw-win-instance]|[Windows Instance][raw-win-instance-params]|
-
-[raw-lx-autoscale]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-lx-autoscale.template
-[raw-lx-instance]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-lx-instance.template
-[raw-win-autoscale]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-win-autoscale.template
-[raw-win-instance]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/templates/watchmaker-win-instance.template
-
-[raw-lx-autoscale-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-lx-autoscale.params.json
-[raw-lx-instance-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-lx-instance.params.json
-[raw-win-autoscale-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-autoscale.params.json
-[raw-win-instance-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-instance.params.json
