@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 import io
 import os
 import re
+import sys
 
 from setuptools import find_packages, setup
 
@@ -43,6 +44,16 @@ def parse_md_to_rst(file):
         # m2r may not be installed in user environment
         return(read(file))
 
+
+install_requires = [
+    "click",
+    "futures",
+    "six",
+    "PyYAML",
+]
+
+if sys.version_info[0:2] <= (2, 6):
+    install_requires += ["wheel<=0.29.0"]
 
 setup(
     name='watchmaker',
@@ -87,10 +98,5 @@ setup(
             'wam = watchmaker.cli:main',
         ]
     },
-    install_requires=[
-        "click",
-        "futures",
-        "six",
-        "PyYAML",
-    ]
+    install_requires=install_requires
 )
