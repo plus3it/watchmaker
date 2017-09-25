@@ -27,10 +27,11 @@
         },
         "AppScriptUrl" :
         {
-            "Description" : "(Optional) URL to the application script. Leave blank to launch without an application script",
+            "Description" : "(Optional) Region-based HTTPS URL to the application script in an S3 bucket. Leave blank to launch without an application script. If specified, an appropriate \"InstanceRole\" is required",
             "Type" : "String",
             "Default" : "",
-            "AllowedPattern" : "^$|^http[s]?://.*$"
+            "AllowedPattern" : "^$|^https://s3-(.*)$",
+            "ConstraintDescription" : "Must use a region-based HTTPS S3 endpoint (starts with \"s3-\"), see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region"
         },
         "AppVolumeDevice" :
         {
@@ -193,6 +194,12 @@
         "WatchmakerAdminGroups" :
         {
             "Description" : "(Optional) Colon-separated list of domain groups that should have admin permissions on the EC2 instance",
+            "Type" : "String",
+            "Default" : ""
+        },
+        "WatchmakerAdminUsers" :
+        {
+            "Description" : "(Optional) Colon-separated list of domain users that should have admin permissions on the EC2 instance",
             "Type" : "String",
             "Default" : ""
         },
@@ -391,6 +398,21 @@
             },
             "Metadata" : {
                 "ToggleCfnInitUpdate" : { "Ref" : "ToggleCfnInitUpdate" },
+                "AWS::CloudFormation::Authentication" :
+                {
+                    "Fn::If" :
+                    [
+                        "AssignInstanceRole",
+                        {
+                            "Ec2IamRole" :
+                            {
+                              "type" : "S3",
+                              "roleName" : { "Ref" : "InstanceRole" }
+                            }
+                        },
+                        { "Ref" : "AWS::NoValue" }
+                    ]
+                },
                 "AWS::CloudFormation::Init" :
                 {
                     "configSets" :
@@ -533,7 +555,7 @@
                                     "& \"$BootstrapFile\" -PythonUrl \"$PythonUrl\" -Verbose -ErrorAction Stop\n\n",
 
                                     "# Install watchmaker\n",
-                                    "pip install --index-url=\"$PypiUrl\" --trusted-host=\"$PypiHost\" --allow-all-external --upgrade pip setuptools watchmaker\n\n"
+                                    "pip install --index-url=\"$PypiUrl\" --trusted-host=\"$PypiHost\" --upgrade pip setuptools watchmaker\n\n"
                                 ]]}
                             }
                         },
@@ -634,6 +656,18 @@
                                             ""
                                         ]
                                     },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseAdminUsers",
+                                            { "Fn::Join" : [ "", [
+                                                " --admin-users \"",
+                                                { "Ref" : "WatchmakerAdminUsers" },
+                                                "\""
+                                            ]]},
+                                            ""
+                                        ]
+                                    },
                                     " }\""
                                 ]]}
                             }
@@ -720,6 +754,18 @@
                                             ""
                                         ]
                                     },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseAdminUsers",
+                                            { "Fn::Join" : [ "", [
+                                                " --admin-users \"",
+                                                { "Ref" : "WatchmakerAdminUsers" },
+                                                "\""
+                                            ]]},
+                                            ""
+                                        ]
+                                    },
                                     " }\""
                                 ]]}
                             }
@@ -731,7 +777,8 @@
                         {
                             "c:\\cfn\\scripts\\make-app" :
                             {
-                                "source" : { "Ref" : "AppScriptUrl" }
+                                "source" : { "Ref" : "AppScriptUrl" },
+                                "authentication" : "Ec2IamRole"
                             }
                         },
                         "commands" :
