@@ -16,17 +16,22 @@ Watchmaker works as a sort of task runner. It consists of "_managers_" and
 (Linux, Windows, etc). A _worker_ exposes functionality to a user that helps
 bootstrap and configure the system. _Managers_ are primarily internal
 constructs; _workers_ expose configuration artifacts to users. Watchmaker then
-uses a common [configuration file](configuration.md) to determine what
+uses a common :doc:`configuration file <configuration>` to determine what
  _workers_ to execute on each platform.
 
 ## Contents
 
-*   [Installation](installation.md)
-*   [Configuration](configuration.md)
-*   [Usage](usage.md)
-*   [Frequently Asked Questions](faq.md)
-*   [API Reference](api.md)
-*   [Contributing](contributing.rst)
+```eval_rst
+.. toctree::
+    :maxdepth: 1
+
+    installation.md
+    configuration.md
+    usage.md
+    faq.md
+    api.md
+    contributing.rst
+```
 
 ## Supported Operating Systems
 
