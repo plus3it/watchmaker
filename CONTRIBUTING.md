@@ -152,7 +152,7 @@ specify something like this for EC2 userdata:
     PYPI_URL=https://pypi.org/simple
 
     # Install pip
-    curl "$PIP_URL" | python - --index-url="$PYPI_URL"
+    curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
 
     # Install git
     yum -y install git
