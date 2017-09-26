@@ -26,6 +26,7 @@
     *   (el7) Includes a "safety" state for firewalld that ensures SSH inbound
         access will remain available, in the event the default zone is set to
         "drop"
+*   [Change from last release](https://github.com/eemperor/watchmaker/compare/0.6.2...0.6.3)
 
 0.6.2 (2017.08.07)
 
