@@ -6,7 +6,6 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import sys
 
-from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
 
 #
@@ -66,10 +65,6 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 source_suffix = ['.md', '.rst']
-
-source_parsers = {
-    '.md': CommonMarkParser,
-}
 
 # The encoding of source files.
 #

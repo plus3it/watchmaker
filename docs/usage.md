@@ -2,10 +2,11 @@
 
 ## `watchmaker` from the CLI
 
-Once watchmaker is [installed](installation.md) and a [configuration file](configuration.md)
-has been created (or you have decided to use the default configuration), using
-watchmaker as a CLI utility is as simple as executing `watchmaker`. Below is
-the output of `watchmaker --help`, showing the CLI options.
+Once watchmaker is :doc:`installed <installation>` and a
+:doc:`configuration file <configuration>` has been created (or you have decided
+to use the default configuration), using watchmaker as a CLI utility is as
+simple as executing `watchmaker`. Below is the output of `watchmaker --help`,
+showing the CLI options.
 
 ```shell
 # watchmaker --help
@@ -81,7 +82,7 @@ on the [CLI](#watchmaker-from-the-cli). Here is an example:
 
 ```shell
 #!/bin/sh
-PIP_URL=https://bootstrap.pypa.io/get-pip.py
+PIP_URL=https://bootstrap.pypa.io/get-pip.py wheel==0.29.0
 PYPI_URL=https://pypi.org/simple
 
 # Install pip
@@ -101,7 +102,7 @@ Alternatively, cloud-config directives can also be used on **Linux**:
 
 runcmd:
   - |
-    PIP_URL=https://bootstrap.pypa.io/get-pip.py
+    PIP_URL=https://bootstrap.pypa.io/get-pip.py wheel==0.29.0
     PYPI_URL=https://pypi.org/simple
 
     # Install pip
@@ -149,9 +150,13 @@ create autoscaling groups, and that install and execute Watchmaker during the
 launch. These templates are intended as examples for you to modify and extend
 as you need.
 
-> Note that the links in this section are intended for viewing the templates in
-a web browser. See the [Direct Downloads](#direct-downloads) section for links
-to the raw files.
+```eval_rst
+.. note::
+
+    Note that the links in this section are intended for viewing the templates
+    in a web browser. See the `Direct Downloads`_ section for links to the raw
+    files.
+```
 
 ### Cloudformation templates
 
@@ -207,9 +212,10 @@ client.install()
     :any:`API Reference <api>`.
 ```
 
-## Direct Downloads
+## Direct downloads
 
-The following links can be used for directly fetching (e.g., via `curl`, `wget`, etc.) resources previously noted on this page:
+The following links can be used for directly fetching (e.g., via `curl`,
+`wget`, etc.) resources previously noted on this page:
 
 |Template Files|Parameter Files|
 |--------------|---------------|

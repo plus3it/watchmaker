@@ -8,7 +8,7 @@ installed. Another option is to check `pip list | grep watchmaker`.
 
 ## What do I do if watchmaker failed to install?
 
-First, review the [installation](installation.md) document. Then double-check
+First, review the :doc:`installation <installation>` document. Then double-check
 the output of a failed installation. Usually, the output points pretty clearly
 at the source of the problem. Watchmaker can be re-installed over itself with
 no problem, so once the root cause is resolved, simply re-install watchmaker.

@@ -3,20 +3,20 @@
 ## From Python Package Index
 
 The preferred method to install `watchmaker` is from the Python Package Index
-(PyPi), using [`pip`][0]. Without any other options, this will always install
+(PyPi), using [pip][0]. Without any other options, this will always install
 the most recent stable release.
 
 ```bash
 pip install watchmaker
 ```
 
-If you do not have Python or [`pip`][0], this [Python installation guide][1]
+If you do not have Python or [pip][0], this [Python installation guide][1]
 can guide you through the process.
 
 ## From sources
 
 Watchmaker can also be built and installed from source, using `git` and `pip`.
-The sources for `watchmaker` are available from the [`GitHub repo`][2].
+The sources for `watchmaker` are available from the [GitHub repo][2].
 
 1.  First clone the public repository to pull the code to your local machine:
 
