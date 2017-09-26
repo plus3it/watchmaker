@@ -16,6 +16,7 @@
 
 *   [[PR #381][381]] Restricts `wheel` version on Python 2.6 to be less than or
     equal to 0.29.0, as `wheel` 0.30.0 removed support for py26.
+*   [Change from last release](https://github.com/eemperor/watchmaker/compare/0.6.3...0.6.4)
 
 [381]: https://github.com/plus3it/watchmaker/pull/381
 
