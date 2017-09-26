@@ -82,11 +82,11 @@ on the [CLI](#watchmaker-from-the-cli). Here is an example:
 
 ```shell
 #!/bin/sh
-PIP_URL=https://bootstrap.pypa.io/get-pip.py wheel==0.29.0
+PIP_URL=https://bootstrap.pypa.io/get-pip.py
 PYPI_URL=https://pypi.org/simple
 
 # Install pip
-curl "$PIP_URL" | python - --index-url="$PYPI_URL"
+curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
 
 # Install watchmaker
 pip install --index-url="$PYPI_URL" --upgrade pip setuptools watchmaker
@@ -102,11 +102,11 @@ Alternatively, cloud-config directives can also be used on **Linux**:
 
 runcmd:
   - |
-    PIP_URL=https://bootstrap.pypa.io/get-pip.py wheel==0.29.0
+    PIP_URL=https://bootstrap.pypa.io/get-pip.py
     PYPI_URL=https://pypi.org/simple
 
     # Install pip
-    curl "$PIP_URL" | python - --index-url="$PYPI_URL"
+    curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
 
     # Install watchmaker
     pip install --index-url="$PYPI_URL" --upgrade pip setuptools watchmaker
