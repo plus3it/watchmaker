@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (UNRELEASED)
+
+*   (PLACEHOLDER)
+
 0.6.4 (2017.09.22)
 
 *   [[PR #381][381]] Restricts `wheel` version on Python 2.6 to be less than or
