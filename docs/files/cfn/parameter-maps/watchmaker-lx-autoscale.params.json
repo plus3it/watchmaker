@@ -100,6 +100,10 @@
     "ParameterValue": "__WATCHMAKERADMINGROUPS__"
   },
   {
+    "ParameterKey": "WatchmakerS3Source",
+    "ParameterValue": "__WATCHMAKERS3SOURCE__"
+  },
+  {
     "ParameterKey": "CfnEndpointUrl",
     "ParameterValue": "__CFNENDPOINTURL__"
   },
