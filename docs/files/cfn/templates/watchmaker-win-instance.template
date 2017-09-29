@@ -203,6 +203,17 @@
             "Type" : "String",
             "Default" : ""
         },
+        "WatchmakerS3Source" :
+        {
+            "Description" : "Flag that tells watchmaker to use its instance role to retrieve watchmaker content from S3",
+            "Type" : "String",
+            "Default" : "false",
+            "AllowedValues" :
+            [
+                "false",
+                "true"
+            ]
+        },
         "CfnEndpointUrl" :
         {
             "Description" : "(Optional) URL to the CloudFormation Endpoint. e.g. https://cloudformation.us-east-1.amazonaws.com",
@@ -247,6 +258,14 @@
         "UseAdminGroups" :
         {
             "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerAdminGroups" }, "" ] } ]
+        },
+        "UseAdminUsers" :
+        {
+            "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerAdminUsers" }, "" ] } ]
+        },
+        "UseS3Source" :
+        {
+            "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerS3Source" }, "false" ] } ]
         },
         "UseEnvironment" :
         {
@@ -324,7 +343,9 @@
                         "WatchmakerEnvironment",
                         "WatchmakerOuPath",
                         "WatchmakerComputerName",
-                        "WatchmakerAdminGroups"
+                        "WatchmakerAdminGroups",
+                        "WatchmakerAdminUsers",
+                        "WatchmakerS3Source"
                     ]
                 },
                 {
@@ -555,7 +576,7 @@
                                     "& \"$BootstrapFile\" -PythonUrl \"$PythonUrl\" -Verbose -ErrorAction Stop\n\n",
 
                                     "# Install watchmaker\n",
-                                    "pip install --index-url=\"$PypiUrl\" --trusted-host=\"$PypiHost\" --upgrade pip setuptools watchmaker\n\n"
+                                    "pip install --index-url=\"$PypiUrl\" --trusted-host=\"$PypiHost\" --upgrade pip setuptools boto3 watchmaker\n\n"
                                 ]]}
                             }
                         },
@@ -668,6 +689,14 @@
                                             ""
                                         ]
                                     },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseS3Source",
+                                            " --s3-source",
+                                            ""
+                                        ]
+                                    },
                                     " }\""
                                 ]]}
                             }
@@ -763,6 +792,14 @@
                                                 { "Ref" : "WatchmakerAdminUsers" },
                                                 "\""
                                             ]]},
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseS3Source",
+                                            " --s3-source",
                                             ""
                                         ]
                                     },
