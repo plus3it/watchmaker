@@ -224,6 +224,17 @@
             "Type" : "String",
             "Default" : ""
         },
+        "WatchmakerS3Source" :
+        {
+            "Description" : "Flag that tells watchmaker to use its instance role to retrieve watchmaker content from S3",
+            "Type" : "String",
+            "Default" : "false",
+            "AllowedValues" :
+            [
+                "false",
+                "true"
+            ]
+        },
         "CfnEndpointUrl" :
         {
             "Description" : "(Optional) URL to the CloudFormation Endpoint. e.g. https://cloudformation.us-east-1.amazonaws.com",
@@ -289,6 +300,14 @@
         "UseAdminGroups" :
         {
             "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerAdminGroups" }, "" ] } ]
+        },
+        "UseAdminUsers" :
+        {
+            "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerAdminUsers" }, "" ] } ]
+        },
+        "UseS3Source" :
+        {
+            "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerS3Source" }, "false" ] } ]
         },
         "UseEnvironment" :
         {
@@ -359,7 +378,9 @@
                         "WatchmakerConfig",
                         "WatchmakerEnvironment",
                         "WatchmakerOuPath",
-                        "WatchmakerAdminGroups"
+                        "WatchmakerAdminGroups",
+                        "WatchmakerAdminUsers",
+                        "WatchmakerS3Source"
                     ]
                 },
                 {
@@ -645,12 +666,12 @@
                                   "#!/bin/bash\n\n",
 
                                   "PYPI_URL=", { "Ref" : "PypiIndexUrl" }, "\n",
-                                  "PYPI_HOST=$(echo $PYPI_URL |sed -e \"s/[^/]*\\/\\/\\([^@]*@\\)\\?\\([^:/]*\\).*/\\2/\")\n",
+
+                                  "pip install --index-url=\"$PYPI_URL\" wheel==0.29.0\n",
 
                                   "pip install",
                                   " --index-url=\"$PYPI_URL\"",
-                                  " --trusted-host=\"$PYPI_HOST\"",
-                                  " --upgrade pip setuptools watchmaker\n\n"
+                                  " --upgrade pip setuptools boto3 watchmaker\n\n"
                                 ]]},
                                 "mode" : "000700",
                                 "owner" : "root",
@@ -764,6 +785,14 @@
                                             ]]},
                                             ""
                                         ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseS3Source",
+                                            " --s3-source",
+                                            ""
+                                        ]
                                     }
                                 ]]}
                             }
@@ -838,6 +867,14 @@
                                                 { "Ref" : "WatchmakerAdminUsers" },
                                                 "\""
                                             ]]},
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseS3Source",
+                                            " --s3-source",
                                             ""
                                         ]
                                     }
@@ -1054,23 +1091,19 @@
 
                         "# Upgrade pip and setuptools\n",
                         "PYPI_URL=", { "Ref" : "PypiIndexUrl" }, "\n",
-                        "PYPI_HOST=$(echo $PYPI_URL |sed -e \"s/[^/]*\\/\\/\\([^@]*@\\)\\?\\([^:/]*\\).*/\\2/\")\n",
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
-                        " --trusted-host=\"$PYPI_HOST\"",
                         " --upgrade pip setuptools\n\n",
 
                         "# Fix python urllib3 warnings\n",
                         "yum -y install gcc python-devel libffi-devel openssl-devel\n",
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
-                        " --trusted-host=\"$PYPI_HOST\"",
                         " --upgrade pyopenssl ndg-httpsclient pyasn1\n\n",
 
                         "# Get cfn utils\n",
                         "pip install",
                         " --index-url=\"$PYPI_URL\"",
-                        " --trusted-host=\"$PYPI_HOST\"",
                         " --upgrade ",
                         { "Ref" : "CfnBootstrapUtilsUrl" },
                         "\n\n",

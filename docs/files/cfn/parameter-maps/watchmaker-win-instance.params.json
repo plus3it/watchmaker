@@ -72,6 +72,10 @@
     "ParameterValue": "__WATCHMAKERADMINGROUPS__"
   },
   {
+    "ParameterKey": "WatchmakerS3Source",
+    "ParameterValue": "__WATCHMAKERS3SOURCE__"
+  },
+  {
     "ParameterKey": "WatchmakerBootstrapper",
     "ParameterValue": "__WATCHMAKERBOOTSTRAPPER__"
   },
