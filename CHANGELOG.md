@@ -1,8 +1,16 @@
 # Changelog
 
-x.x.x (UNRELEASED)
+0.6.5 (2017.09.29)
 
-*   (PLACEHOLDER)
+*   [[PR #391][391]] Updates CloudFormation templates with a parameter that
+    exposes the option to use the S3 API and the instance role to retrieve the
+    Watchmaker content archive
+*   ash-linux-formula
+    *   (el7) Updates firewalld "safety" state so that firewalld remains in the
+        active state; the prior approach left firewalld dead/inactive, until
+        the service was restarted or the system was rebooted
+
+[391]: https://github.com/plus3it/watchmaker/pull/391
 
 0.6.4 (2017.09.22)
 
