@@ -1,4 +1,4 @@
-# Changelog
+## Changelog
 
 x.x.x (UNRELEASED)
 

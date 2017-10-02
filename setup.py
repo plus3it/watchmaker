@@ -35,14 +35,18 @@ def find_version(*file_paths):
     raise RuntimeError("Unable to find version string.")
 
 
-def parse_md_to_rst(file):
-    """Read Markdown file and convert to ReStructured Text."""
+def parse_md_to_rst(files):
+    """Read Markdown files and convert them to ReStructured Text."""
+    rst = []
     try:
         from m2r import parse_from_file
-        return(parse_from_file(file))
+        for name in files:
+            rst += [parse_from_file(name)]
     except ImportError:
         # m2r may not be installed in user environment
-        return(read(file))
+        for name in files:
+            rst += [read(name)]
+    return '\n'.join(rst)
 
 
 install_requires = [
@@ -62,7 +66,7 @@ setup(
     author='Plus3IT Maintainers of Watchmaker',
     author_email='projects@plus3it.com',
     description='Applied Configuration Management',
-    long_description=parse_md_to_rst('README.md'),
+    long_description=parse_md_to_rst(['README.md', 'CHANGELOG.md']),
     url='https://github.com/plus3it/watchmaker',
     packages=find_packages(str('src')),
     package_dir={'': str('src')},
