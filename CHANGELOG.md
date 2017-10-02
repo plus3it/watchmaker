@@ -1,5 +1,9 @@
 # Changelog
 
+x.x.x (UNRELEASED)
+
+*   PLACEHOLDER
+
 0.6.5 (2017.09.29)
 
 *   [[PR #391][391]] Updates CloudFormation templates with a parameter that
@@ -74,7 +78,7 @@
     otherwise work fine when executed interactively). Watchmaker now detects if
     selinux is enforcing and temporarily sets it to permissive for the duration
     of the salt state execution
-    
+
 *   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.5.0...0.5.1)*
 
 [342]: https://github.com/plus3it/watchmaker/pull/342
