@@ -9,6 +9,7 @@
     *   (el7) Updates firewalld "safety" state so that firewalld remains in the
         active state; the prior approach left firewalld dead/inactive, until
         the service was restarted or the system was rebooted
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.6.4...0.6.5)*
 
 [391]: https://github.com/plus3it/watchmaker/pull/391
 
@@ -16,7 +17,8 @@
 
 *   [[PR #381][381]] Restricts `wheel` version on Python 2.6 to be less than or
     equal to 0.29.0, as `wheel` 0.30.0 removed support for py26.
-*   [Change from last release](https://github.com/eemperor/watchmaker/compare/0.6.3...0.6.4)
+
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.6.3...0.6.4)*
 
 [381]: https://github.com/plus3it/watchmaker/pull/381
 
@@ -26,7 +28,7 @@
     *   (el7) Includes a "safety" state for firewalld that ensures SSH inbound
         access will remain available, in the event the default zone is set to
         "drop"
-*   [Change from last release](https://github.com/eemperor/watchmaker/compare/0.6.2...0.6.3)
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.6.2...0.6.3)*
 
 0.6.2 (2017.08.07)
 
@@ -35,12 +37,14 @@
         to account for the behavior of the `aws-vpc-nat` rpm
 *   scap-formula
     *   (elX) Updates openscap security guide content to version 0.1.34-1
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.6.1...0.6.2)*
 
 0.6.1 (2017.08.01)
 
 *   ash-linux-formula
     *   Modified the FIPS custom execution module to discover the boot
         partition and add the `boot=` line to the grub configuration
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.6.0...0.6.1)*
 
 0.6.0 (2017.07.25)
 
@@ -60,6 +64,7 @@
         The equivalent value must now be passed as the string, `"null"`
 *   scap-formula
     *   Adds SCAP content for the Window Server 2016 SCAP v1r1 Benchmark
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.5.1...0.6.0)*
 
 0.5.1 (2017.07.08)
 
@@ -69,6 +74,8 @@
     otherwise work fine when executed interactively). Watchmaker now detects if
     selinux is enforcing and temporarily sets it to permissive for the duration
     of the salt state execution
+    
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.5.0...0.5.1)*
 
 [342]: https://github.com/plus3it/watchmaker/pull/342
 [341]: https://github.com/plus3it/watchmaker/issues/341
@@ -90,6 +97,7 @@
 *   join-domain-formula
     *   (Linux) Reworks the pbis config states to make the logged output more
         readable
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.4.4...0.5.0)*
 
 [332]: https://github.com/plus3it/watchmaker/pull/332
 [331]: https://github.com/plus3it/watchmaker/issues/331
@@ -108,12 +116,14 @@
         will return exit code 5 when modifying the NssEnumerationEnabled
         setting, but still sets the requested value. This exit code is now
         ignored
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.4.3...0.4.4)*
 
 0.4.3 (2017.05.25)
 
 *   name-computer-formula
     *   (Linux) Uses an alternate method of working around a bad code-path in
         salt that does not handle quoted values in /etc/sysconfig/network.
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.4.2...0.4.3)*
 
 0.4.2 (2017.05.19)
 
@@ -137,6 +147,7 @@
 *   name-computer-formula
     *   (Linux) Does not attempt to retain network settings, to avoid a bug in
         salt; will be revisited when a patched salt version has been released
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.4.1...0.4.2)*
 
 [301]: https://github.com/plus3it/watchmaker/pull/301
 
@@ -157,6 +168,7 @@
 *   scap-formula
     *   Updates stig content with latest benchmark versions
     *   Adds openscap ds.xml content, used to support remediate actions
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.4.0...0.4.1)*
 
 0.4.0 (2017.05.06)
 
@@ -173,6 +185,7 @@
 *   pshelp-formula
     *   Attempts to address occasional stack overflow exception when updating
         powershell help
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.3.1...0.4.0)*
 
 [286]: https://github.com/plus3it/watchmaker/pull/286
 [284]: https://github.com/plus3it/watchmaker/pull/284
@@ -189,6 +202,7 @@
     *   (Windows) Sets the DNS search suffix when joining the domain, including
         a new pillar config option, `ec2config` to enable/disable the EC2Config
         option that also modifies the DNS suffix list.
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.3.0...0.3.1)*
 
 [280]: https://github.com/plus3it/watchmaker/pull/280
 
@@ -204,6 +218,7 @@
     *   Uses `-l|--log-level` instead of `-v|--verbose`
     *   `-v` and `-V` are now both used for `--version`
     *   `-d` is now used for `--log-dir`
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.2.4...0.3.0)*
 
 [271]: https://github.com/plus3it/watchmaker/pull/271
 [270]: https://github.com/plus3it/watchmaker/issues/270
@@ -211,6 +226,8 @@
 0.2.4 (2017.04.20)
 
 *   Fixes a bad version string
+
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.2.3...0.2.4)*
 
 0.2.3 (2017.04.20)
 
@@ -220,6 +237,7 @@
     service, before and after the install
 *   splunkforwarder-formula
     *   (Windows) Ignores false bad exits from Splunk clone-prep-clear-config
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.2.2...0.2.3)*
 
 [262]: https://github.com/plus3it/watchmaker/issues/262
 [261]: https://github.com/plus3it/watchmaker/issues/261
@@ -231,6 +249,7 @@
 *   join-domain-formula
     *   (Linux) Corrects tests that determine whether the instance is already
         joined to the domain
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.2.1...0.2.2)*
 
 [251]: https://github.com/plus3it/watchmaker/pull/251
 
@@ -241,6 +260,7 @@
     *   Removes notify script flagged by McAfee scans
 *   splunkforwarder-formula
     *   (Windows) Clears system name entries from local Splunk config files
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.2.0...0.2.1)*
 
 0.2.0 (2017.04.06)
 
@@ -273,6 +293,7 @@
 *   pshelp-formula
     *   New bundled salt formula. Installs updated PowerShell help content to
         Windows systems
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.7...0.2.0)*
 
 [242]: https://github.com/plus3it/watchmaker/pull/242
 [235]: https://github.com/plus3it/watchmaker/pull/235
@@ -294,6 +315,7 @@
     *   (Linux) Installs `ed` as a dependency of the McAfee VSEL agent
 *   scc-formula
     *   Retries scan up to 5 times if scc exits with an error
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.6...0.1.7)*
 
 [226]: https://github.com/plus3it/watchmaker/issues/226
 
@@ -301,6 +323,7 @@
 
 *   ash-linux-formula
     *   Provides same baseline states for both EL6 and EL7
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.5...0.1.6)*
 
 0.1.5 (2017.03.15)
 
@@ -316,10 +339,13 @@
     *   Skips verification of GPG key when install SCC RPM
 *   splunkforwarder-formula
     *   Uses firewalld on EL7 rather than iptables
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.4...0.1.5)*
 
 0.1.4 (2017.03.09)
 
 *   [[Issue #180][180]] Fixes bug where file_roots did not contain formula paths
+
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.3...0.1.4)*
 
 [180]: https://github.com/plus3it/watchmaker/issues/180
 
@@ -328,6 +354,8 @@
 *   [[Issue #164][164]] Aligns cli syntax for extra_arguments with other cli opts
 *   [[Issue #165][165]] Removes ash_role from default config file
 *   [[Issue #173][173]] Fixes exception when re-running watchmaker
+
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.2...0.1.3)*
 
 [173]: https://github.com/plus3it/watchmaker/issues/173
 [164]: https://github.com/plus3it/watchmaker/issues/164
@@ -347,10 +375,13 @@
     *   Adds support for Windows Server 2016
 *   emet-formula:
     *   Adds support for EMET 5.52
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.1...0.1.2)*
 
 0.1.1 (2017.02.28)
 
 *   Adds more logging messages when downloading files
+
+*   *[Change from last release](https://github.com/plus3it/watchmaker/compare/0.1.0...0.1.1)*
 
 0.1.0 (2017.02.22)
 
