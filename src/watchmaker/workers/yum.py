@@ -34,7 +34,7 @@ class Yum(LinuxManager):
         .format('|'.join(SUPPORTED_DISTS))
     )
 
-    def __init__(self, *args, **kwargs):  # noqa: D102
+    def __init__(self, *args, **kwargs):
         # Pop arguments used by Yum
         self.yumrepomap = kwargs.pop('repo_map', None) or []
 
