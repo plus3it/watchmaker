@@ -52,7 +52,7 @@ class ManagerBase(object):
     boto3 = None
     boto_client = None
 
-    def __init__(self, system_params, *args, **kwargs):  # noqa: D102
+    def __init__(self, system_params, *args, **kwargs):
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
@@ -418,7 +418,7 @@ class WorkersManagerBase(object):
 
     """
 
-    def __init__(self, system_params, workers, *args, **kwargs):  # noqa: D102
+    def __init__(self, system_params, workers, *args, **kwargs):
         self.system_params = system_params
         self.workers = workers
         args = args

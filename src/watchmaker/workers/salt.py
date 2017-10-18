@@ -84,7 +84,7 @@ class SaltBase(ManagerBase):
             (*Default*: ``''``)
     """
 
-    def __init__(self, *args, **kwargs):  # noqa: D102
+    def __init__(self, *args, **kwargs):
         # Init inherited classes
         super(SaltBase, self).__init__(*args, **kwargs)
 
@@ -498,7 +498,7 @@ class SaltLinux(SaltBase, LinuxManager):
             (*Default*: ``''``)
     """
 
-    def __init__(self, *args, **kwargs):  # noqa: D102
+    def __init__(self, *args, **kwargs):
         # Init inherited classes
         super(SaltLinux, self).__init__(*args, **kwargs)
 
@@ -651,7 +651,7 @@ class SaltWindows(SaltBase, WindowsManager):
             (*Default*: ``''``)
     """
 
-    def __init__(self, *args, **kwargs):  # noqa: D102
+    def __init__(self, *args, **kwargs):
         # Pop arguments used by SaltWindows
         self.installer_url = kwargs.pop('installer_url', None) or ''
         self.ash_role = kwargs.pop('ash_role', None) or ''

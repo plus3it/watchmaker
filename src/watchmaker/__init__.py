@@ -19,7 +19,7 @@ from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
-__version__ = '0.6.5'
+__version__ = '0.6.6'
 
 
 class Arguments(dict):
@@ -145,7 +145,7 @@ class Arguments(dict):
                 {'arg1': 'value1', 'arg2': 'value2'}
     """
 
-    def __init__(  # noqa: D102
+    def __init__(
         self,
         config_path=None,
         log_dir=None,
@@ -186,7 +186,7 @@ class Client(object):
             A dictionary of arguments. See :class:`watchmaker.Arguments`.
     """
 
-    def __init__(self, arguments):  # noqa: D102
+    def __init__(self, arguments):
         self.log = logging.getLogger(
             '{0}.{1}'.format(__name__, self.__class__.__name__)
         )
