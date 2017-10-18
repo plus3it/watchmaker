@@ -1,8 +1,16 @@
 ## Changelog
 
-x.x.x (UNRELEASED)
+0.6.6 (2017.10.18) - [Change from 0.6.5 release](https://github.com/plus3it/watchmaker/compare/0.6.5...0.6.6)
 
-*   PLACEHOLDER
+*   ash-linux-formula
+    *   (el7) Fixes typos in the firewalld "safety" scripts that resulted in a
+        failure when firewalld was reloaded
+*   mcafee-agent-formula
+    *   (el7) Adds required inbound ports to all firewalld zones, to support
+        the event where the default zone is modified from "public"
+*   splunkforwarder-formula
+    *   (el7) Adds required outbound ports to the OUTPUT chain; previously,
+        they were mistakenly being added as inbound rules
 
 0.6.5 (2017.09.29) - [Change from 0.6.4 release](https://github.com/plus3it/watchmaker/compare/0.6.4...0.6.5)
 
