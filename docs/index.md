@@ -17,7 +17,7 @@ Watchmaker works as a sort of task runner. It consists of "_managers_" and
 bootstrap and configure the system. _Managers_ are primarily internal
 constructs; _workers_ expose configuration artifacts to users. Watchmaker then
 uses a common :doc:`configuration file <configuration>` to determine what
- _workers_ to execute on each platform.
+_workers_ to execute on each platform.
 
 ## Contents
 
