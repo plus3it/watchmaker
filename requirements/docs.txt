@@ -1,4 +1,4 @@
 m2r==0.1.12
 git+https://github.com/rtfd/recommonmark.git
-sphinx==1.6.4
+sphinx==1.6.5
 sphinx-rtd-theme==0.2.4
