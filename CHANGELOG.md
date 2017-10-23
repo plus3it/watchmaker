@@ -1,5 +1,9 @@
 ## Changelog
 
+x.x.x (UNRELEASED)
+
+*   (PLACEHOLDER)
+
 0.6.6 (2017.10.18) - [Change from 0.6.5 release](https://github.com/plus3it/watchmaker/compare/0.6.5...0.6.6)
 
 *   ash-linux-formula
