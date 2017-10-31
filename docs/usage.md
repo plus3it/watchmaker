@@ -190,7 +190,7 @@ maps", and provide one for each of the templates above.
 
 Watchmaker can be integrated into a Terraform template as well. By wrapping
 the example CloudFormation templates within their respective Terraform template 
-they become deployable and manageable from within Terraform. These templates 
+they become deployable and manageable from within the Terraform cli. These templates 
 are intended as examples for you to modify and extend as you need.
 
 ```eval_rst
@@ -220,10 +220,10 @@ module "test-lx-instance" {
 
 ### Terraform templates
 
-*   [Linux Autoscale Group][raw-lx-autoscale-tf]
-*   [Linux Instance][raw-lx-instance-tf]
-*   [Windows Autoscale Group][raw-win-autoscale-tf]
-*   [Windows Instance][raw-win-instance-tf]
+*   [Linux Autoscale Group][dir-lx-autoscale-tf]
+*   [Linux Instance][dir-lx-instance-tf]
+*   [Windows Autoscale Group][dir-win-autoscale-tf]
+*   [Windows Instance][dir-win-instance-tf]
 
 
 ## `watchmaker` as a library
@@ -273,6 +273,11 @@ The following links can be used for directly fetching (e.g., via `curl`,
 [raw-lx-instance-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-lx-instance.params.json
 [raw-win-autoscale-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-autoscale.params.json
 [raw-win-instance-params]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/cfn/parameter-maps/watchmaker-win-instance.params.json
+
+[dir-lx-autoscale-tf]: https://raw.githubusercontent.com/plus3it/watchmaker/blob/develop/docs/files/templates/lx-autoscale/
+[dir-lx-instance-tf]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/lx-instance/
+[dir-win-autoscale-tf]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/win-autoscale/
+[dir-win-instance-tf]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/win-instance/
 
 [raw-lx-autoscale-tf]: https://raw.githubusercontent.com/plus3it/watchmaker/blob/develop/docs/files/templates/lx-autoscale/watchmaker-lx-autoscale.tf
 [raw-lx-instance-tf]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/lx-instance/watchmaker-lx-instance.tf
