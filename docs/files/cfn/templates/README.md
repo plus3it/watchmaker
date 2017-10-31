@@ -1,6 +1,6 @@
 # Templates Have Moved
 
-The cloud formation templates previously stored in this directory have moved their own respective directories under [files/templates](https://github.com/plus3it/watchmaker/tree/master/docs/files/templates) to support terraform
+The CloudFormation templates previously stored in this directory have moved their own respective directories under [files/templates](https://github.com/plus3it/watchmaker/tree/master/docs/files/templates) to support terraform
 
 * [lx-instance](https://github.com/plus3it/watchmaker/tree/develop/docs/files/templates/lx-instance) - Linux Instance
 * [lx-autoscale](https://github.com/plus3it/watchmaker/tree/develop/docs/files/templates/lx-autoscale) - Linux Autoscale
