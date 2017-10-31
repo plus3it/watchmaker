@@ -190,7 +190,7 @@ maps", and provide one for each of the templates above.
 
 Watchmaker can be integrated into a Terraform template as well. By wrapping
 the example CloudFormation templates within their respective Terraform template 
-they become deployable and manageable from within the Terraform cli. These templates 
+they become deployable and manageable from within the [Terraform cli](https://www.terraform.io/). These templates 
 are intended as examples for you to modify and extend as you need.
 
 ```eval_rst
