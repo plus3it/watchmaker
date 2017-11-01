@@ -264,7 +264,7 @@ The following links can be used for directly fetching (e.g., via `curl`,
 |[Windows Autoscale][raw-win-autoscale]|[Windows Autoscale][raw-win-autoscale-params]|[Windows Autoscale][raw-win-autoscale-tf]|
 |[Windows Instance][raw-win-instance]|[Windows Instance][raw-win-instance-params]|[Windows Instance][raw-win-instance-tf]|
 
-[raw-lx-autoscale]: https://raw.githubusercontent.com/plus3it/watchmaker/blob/develop/docs/files/templates/lx-autoscale/watchmaker-lx-autoscale.template
+[raw-lx-autoscale]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/lx-autoscale/watchmaker-lx-autoscale.template
 [raw-lx-instance]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/lx-instance/watchmaker-lx-instance.template
 [raw-win-autoscale]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/win-autoscale/watchmaker-win-autoscale.template
 [raw-win-instance]: https://raw.githubusercontent.com/plus3it/watchmaker/develop/docs/files/templates/win-instance/watchmaker-win-instance.template
