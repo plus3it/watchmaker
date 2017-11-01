@@ -210,7 +210,7 @@ lx-autoscale template is shown below.
 
 ```
 module "test-lx-instance" {
-  source = "github.com/plus3it/watchmaker//docs//files//templates//lx-instance"
+  source = "github.com/plus3it/watchmaker//docs/files/templates/lx-instance"
 
   Name      = "tf-watchmaker-lx-autoscale"
   AmiId     = "__AMIID__"
