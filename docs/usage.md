@@ -197,11 +197,11 @@ are intended as examples for you to modify and extend as you need.
 .. note::
 
    * These templates assume that the accompanying CloudFormation template
-    is in the same directory.
+     is in the same directory.
 
    * The links in this section are intended for viewing the templates
-    in a web browser. See the `Direct Downloads`_ section for links to the raw
-    files.
+     in a web browser. See the `Direct Downloads`_ section for links to the raw
+     files.
 ```
 
 Variable values can be input interactively via the terraform console or
