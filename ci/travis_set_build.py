@@ -13,7 +13,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     os.pardir)
 )
-VERSION_FILE_PATHS = ('src', 'watchmaker', '__init__.py')
+VERSION_FILE_PATHS = ['setup.cfg']
 VERSION_FILE = os.path.join(PROJECT_ROOT, *VERSION_FILE_PATHS)
 BUILD_NUMBER = os.environ.get('TRAVIS_BUILD_NUMBER', '')
 
@@ -36,8 +36,8 @@ def append_build(build, version_file):
     """Append a build number to a version string in a file."""
     # The version line must have the form
     # __version__ = 'ver'
-    pattern = r"^(__version__ = ['\"])([^'\"]*)(['\"])"
-    repl = r"\g<1>\g<2>{0}\g<3>".format(build)
+    pattern = r"^(version = )(.*)"
+    repl = r"\g<1>\g<2>{0}".format(build)
     log.info(
         'Updating version in version_file "%s" with build "%s"',
         version_file, build
