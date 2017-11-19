@@ -51,6 +51,10 @@ class SaltBase(ManagerBase):
             - ``none``: Do not apply any salt states.
             - ``highstate``: Apply the salt "highstate".
 
+        exclude_states: (:obj:`str`)
+            Comma-separated string of states to exclude from execution.
+            (*Default*: ``''``)
+
         user_formulas: (:obj:`dict`)
             Map of formula names and URLs to zip archives of salt formulas.
             These formulas will be downloaded, extracted, and added to the salt
