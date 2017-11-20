@@ -1,10 +1,22 @@
 ## Changelog
 
-x.x.x (UNRELEASED)
+### x.x.x
 
-*   (PLACEHOLDER)
+**Commit Delta**:
 
-0.6.6 (2017.10.18) - [Change from 0.6.5 release](https://github.com/plus3it/watchmaker/compare/0.6.5...0.6.6)
+**Released**: UNRELEASED
+
+**Summary**:
+
+*   PLACEHOLDER
+
+### 0.6.6
+
+**Commit Delta**: [Change from 0.6.5 release](https://github.com/plus3it/watchmaker/compare/0.6.5...0.6.6)
+
+**Released**: 2017.10.18
+
+**Summary**:
 
 *   ash-linux-formula
     *   (el7) Fixes typos in the firewalld "safety" scripts that resulted in a
@@ -16,7 +28,13 @@ x.x.x (UNRELEASED)
     *   (el7) Adds required outbound ports to the OUTPUT chain; previously,
         they were mistakenly being added as inbound rules
 
-0.6.5 (2017.09.29) - [Change from 0.6.4 release](https://github.com/plus3it/watchmaker/compare/0.6.4...0.6.5)
+### 0.6.5
+
+**Commit Delta**: [Change from 0.6.4 release](https://github.com/plus3it/watchmaker/compare/0.6.4...0.6.5)
+
+**Released**: 2017.09.29
+
+**Summary**:
 
 *   [[PR #391][391]] Updates CloudFormation templates with a parameter that
     exposes the option to use the S3 API and the instance role to retrieve the
@@ -28,21 +46,39 @@ x.x.x (UNRELEASED)
 
 [391]: https://github.com/plus3it/watchmaker/pull/391
 
-0.6.4 (2017.09.22) - [Change from 0.6.3 release](https://github.com/plus3it/watchmaker/compare/0.6.3...0.6.4)
+### 0.6.4
+
+**Commit Delta**: [Change from 0.6.3 release](https://github.com/plus3it/watchmaker/compare/0.6.3...0.6.4)
+
+**Released**: 2017.09.22
+
+**Summary**:
 
 *   [[PR #381][381]] Restricts `wheel` version on Python 2.6 to be less than or
     equal to 0.29.0, as `wheel` 0.30.0 removed support for py26.
 
 [381]: https://github.com/plus3it/watchmaker/pull/381
 
-0.6.3 (2017.08.11) - [Change from 0.6.2 release](https://github.com/plus3it/watchmaker/compare/0.6.2...0.6.3)
+### 0.6.3
+
+**Commit Delta**: [Change from 0.6.2 release](https://github.com/plus3it/watchmaker/compare/0.6.2...0.6.3)
+
+**Released**: 2017.08.11
+
+**Summary**:
 
 *   ash-linux-formula
     *   (el7) Includes a "safety" state for firewalld that ensures SSH inbound
         access will remain available, in the event the default zone is set to
         "drop"
 
-0.6.2 (2017.08.07) - [Change from 0.6.1 release](https://github.com/plus3it/watchmaker/compare/0.6.1...0.6.2)
+### 0.6.2
+
+**Commit Delta**: [Change from 0.6.1 release](https://github.com/plus3it/watchmaker/compare/0.6.1...0.6.2)
+
+**Released**: 2017.08.07
+
+**Summary**:
 
 *   ash-linux-formula
     *   (el6) Improve the method of disabling the sysctl option `ip_forward`,
@@ -50,13 +86,25 @@ x.x.x (UNRELEASED)
 *   scap-formula
     *   (elX) Updates openscap security guide content to version 0.1.34-1
 
-0.6.1 (2017.08.01) - [Change from 0.6.0 release](https://github.com/plus3it/watchmaker/compare/0.6.0...0.6.1)
+### 0.6.1
+
+**Commit Delta**: [Change from 0.6.0 release](https://github.com/plus3it/watchmaker/compare/0.6.0...0.6.1)
+
+**Released**: 2017.08.01
+
+**Summary**:
 
 *   ash-linux-formula
     *   Modified the FIPS custom execution module to discover the boot
         partition and add the `boot=` line to the grub configuration
 
-0.6.0 (2017.07.25) - [Change from 0.5.1 release](https://github.com/plus3it/watchmaker/compare/0.5.1...0.6.0)
+### 0.6.0
+
+**Commit Delta**: [Change from 0.5.1 release](https://github.com/plus3it/watchmaker/compare/0.5.1...0.6.0)
+
+**Released**: 2017.07.25
+
+**Summary**:
 
 *   ash-linux-formula
     *   Updates the EL7 stig baseline to manage the FIPS state. The state
@@ -75,7 +123,13 @@ x.x.x (UNRELEASED)
 *   scap-formula
     *   Adds SCAP content for the Window Server 2016 SCAP v1r1 Benchmark
 
-0.5.1 (2017.07.08) - [Change from 0.5.0 release](https://github.com/plus3it/watchmaker/compare/0.5.0...0.5.1)
+### 0.5.1
+
+**Commit Delta**: [Change from 0.5.0 release](https://github.com/plus3it/watchmaker/compare/0.5.0...0.5.1)
+
+**Released**: 2017.07.08
+
+**Summary**:
 
 *   [[Issue #341][341]][[PR #342][342]] Manages selinux around salt state
     execution. In some non-interactive execution scenarios, if selinux is
@@ -87,7 +141,13 @@ x.x.x (UNRELEASED)
 [342]: https://github.com/plus3it/watchmaker/pull/342
 [341]: https://github.com/plus3it/watchmaker/issues/341
 
-0.5.0 (2017.06.27) - [Change from 0.4.4 release](https://github.com/plus3it/watchmaker/compare/0.4.4...0.5.0)
+### 0.5.0
+
+**Commit Delta**: [Change from 0.4.4 release](https://github.com/plus3it/watchmaker/compare/0.4.4...0.5.0)
+
+**Released**: 2017.06.27
+
+**Summary**:
 
 *   [[Issue #331][331]][[PR #332][332]] Writes the `role` grain to the key
     expected by the ash-windows formula. Fixes usage of the `--ash-role` option
@@ -115,7 +175,13 @@ x.x.x (UNRELEASED)
 [320]: https://github.com/plus3it/watchmaker/pull/320
 [316]: https://github.com/plus3it/watchmaker/issues/316
 
-0.4.4 (2017.05.30) - [Change from 0.4.3 release](https://github.com/plus3it/watchmaker/compare/0.4.3...0.4.4)
+### 0.4.4
+
+**Commit Delta**: [Change from 0.4.3 release](https://github.com/plus3it/watchmaker/compare/0.4.3...0.4.4)
+
+**Released**: 2017.05.30
+
+**Summary**:
 
 *   join-domain-formula
     *   (Linux) Ignores a bad exit code from pbis config utility. The utility
@@ -123,13 +189,25 @@ x.x.x (UNRELEASED)
         setting, but still sets the requested value. This exit code is now
         ignored
 
-0.4.3 (2017.05.25) - [Change from 0.4.2 release](https://github.com/plus3it/watchmaker/compare/0.4.2...0.4.3)
+### 0.4.3
+
+**Commit Delta**: [Change from 0.4.2 release](https://github.com/plus3it/watchmaker/compare/0.4.2...0.4.3)
+
+**Released**: 2017.05.25
+
+**Summary**:
 
 *   name-computer-formula
     *   (Linux) Uses an alternate method of working around a bad code-path in
         salt that does not handle quoted values in /etc/sysconfig/network.
 
-0.4.2 (2017.05.19) - [Change from 0.4.1 release](https://github.com/plus3it/watchmaker/compare/0.4.1...0.4.2)
+### 0.4.2
+
+**Commit Delta**: [Change from 0.4.1 release](https://github.com/plus3it/watchmaker/compare/0.4.1...0.4.2)
+
+**Released**: 2017.05.19
+
+**Summary**:
 
 *   [[PR #301][301]] Sets the grains for admin_groups and admin_users so the
     keys are named as expected by the join-domain formula
@@ -154,7 +232,13 @@ x.x.x (UNRELEASED)
 
 [301]: https://github.com/plus3it/watchmaker/pull/301
 
-0.4.1 (2017.05.09) - [Change from 0.4.0 release](https://github.com/plus3it/watchmaker/compare/0.4.0...0.4.1)
+### 0.4.1
+
+**Commit Delta**: [Change from 0.4.0 release](https://github.com/plus3it/watchmaker/compare/0.4.0...0.4.1)
+
+**Released**: 2017.05.09
+
+**Summary**:
 
 *   (EL7) Running _watchmaker_ against EL7 systems will now pin the resulting
     configuration to the watchmaker version. See the updates to the two
@@ -172,7 +256,13 @@ x.x.x (UNRELEASED)
     *   Updates stig content with latest benchmark versions
     *   Adds openscap ds.xml content, used to support remediate actions
 
-0.4.0 (2017.05.06) - [Change from 0.3.1 release](https://github.com/plus3it/watchmaker/compare/0.3.1...0.4.0)
+### 0.4.0
+
+**Commit Delta**: [Change from 0.3.1 release](https://github.com/plus3it/watchmaker/compare/0.3.1...0.4.0)
+
+**Released**: 2017.05.06
+
+**Summary**:
 
 *   [[PR #286 ][286]] Sets the computername grain with the correct key expected
     by the formula
@@ -191,7 +281,13 @@ x.x.x (UNRELEASED)
 [286]: https://github.com/plus3it/watchmaker/pull/286
 [284]: https://github.com/plus3it/watchmaker/pull/284
 
-0.3.1 (2017.05.01) - [Change from 0.3.0 release](https://github.com/plus3it/watchmaker/compare/0.3.0...0.3.1)
+### 0.3.1
+
+**Commit Delta**: [Change from 0.3.0 release](https://github.com/plus3it/watchmaker/compare/0.3.0...0.3.1)
+
+**Released**: 2017.05.01
+
+**Summary**:
 
 *   [[PR #280][280]] Modifies the dynamic import of boto3 to use only absolute
     imports, as the previous approach (attempt absolute and relative import)
@@ -206,7 +302,13 @@ x.x.x (UNRELEASED)
 
 [280]: https://github.com/plus3it/watchmaker/pull/280
 
-0.3.0 (2017.04.24) - [Change from 0.2.4 release](https://github.com/plus3it/watchmaker/compare/0.2.4...0.3.0)
+### 0.3.0
+
+**Commit Delta**: [Change from 0.2.4 release](https://github.com/plus3it/watchmaker/compare/0.2.4...0.3.0)
+
+**Released**: 2017.04.24
+
+**Summary**:
 
 *   [[Issue #270][270]] Defaults to a platform-specific log directory when
     call from the CLI:
@@ -222,11 +324,23 @@ x.x.x (UNRELEASED)
 [271]: https://github.com/plus3it/watchmaker/pull/271
 [270]: https://github.com/plus3it/watchmaker/issues/270
 
-0.2.4 (2017.04.20) - [Change from 0.2.3 release](https://github.com/plus3it/watchmaker/compare/0.2.3...0.2.4)
+### 0.2.4
+
+**Commit Delta**: [Change from 0.2.3 release](https://github.com/plus3it/watchmaker/compare/0.2.3...0.2.4)
+
+**Released**: 2017.04.20
+
+**Summary**:
 
 *   Fixes a bad version string
 
-0.2.3 (2017.04.20) - [Change from 0.2.2 release](https://github.com/plus3it/watchmaker/compare/0.2.2...0.2.3)
+### 0.2.3
+
+**Commit Delta**: [Change from 0.2.2 release](https://github.com/plus3it/watchmaker/compare/0.2.2...0.2.3)
+
+**Released**: 2017.04.20
+
+**Summary**:
 
 *   [[Issue #262][262]] Merges lists in pillar files, rather than overwriting
     them
@@ -238,7 +352,13 @@ x.x.x (UNRELEASED)
 [262]: https://github.com/plus3it/watchmaker/issues/262
 [261]: https://github.com/plus3it/watchmaker/issues/261
 
-0.2.2 (2017.04.15) - [Change from 0.2.1 release](https://github.com/plus3it/watchmaker/compare/0.2.1...0.2.2)
+### 0.2.2
+
+**Commit Delta**: [Change from 0.2.1 release](https://github.com/plus3it/watchmaker/compare/0.2.1...0.2.2)
+
+**Released**: 2017.04.15
+
+**Summary**:
 
 *   [[PR #251][251]] Adds CloudFormation templates that integrate Watchmaker
     with an EC2 instance or Autoscale Group
@@ -248,7 +368,13 @@ x.x.x (UNRELEASED)
 
 [251]: https://github.com/plus3it/watchmaker/pull/251
 
-0.2.1 (2017.04.10) - [Change from 0.2.0 release](https://github.com/plus3it/watchmaker/compare/0.2.0...0.2.1)
+### 0.2.1
+
+**Commit Delta**: [Change from 0.2.0 release](https://github.com/plus3it/watchmaker/compare/0.2.0...0.2.1)
+
+**Released**: 2017.04.10
+
+**Summary**:
 
 *   ash-linux-formula
     *   Reduces spurious stderr output
@@ -256,7 +382,13 @@ x.x.x (UNRELEASED)
 *   splunkforwarder-formula
     *   (Windows) Clears system name entries from local Splunk config files
 
-0.2.0 (2017.04.06) - [Change from 0.1.7 release](https://github.com/plus3it/watchmaker/compare/0.1.7...0.2.0)
+### 0.2.0
+
+**Commit Delta**: [Change from 0.1.7 release](https://github.com/plus3it/watchmaker/compare/0.1.7...0.2.0)
+
+**Released**: 2017.04.06
+
+**Summary**:
 
 *   [[Issue #238][238]] Captures all unhandled exceptions and logs them
 *   [[Issue #234][234]] Stops the salt service prior to managing salt formulas,
@@ -295,7 +427,13 @@ x.x.x (UNRELEASED)
 [234]: https://github.com/plus3it/watchmaker/issues/234
 [238]: https://github.com/plus3it/watchmaker/issues/238
 
-0.1.7 (2017.03.23) - [Change from 0.1.6 release](https://github.com/plus3it/watchmaker/compare/0.1.6...0.1.7)
+### 0.1.7
+
+**Commit Delta**: [Change from 0.1.6 release](https://github.com/plus3it/watchmaker/compare/0.1.6...0.1.7)
+
+**Released**: 2017.03.23
+
+**Summary**:
 
 *   Uses threads to stream stdout and stderr to the watchmaker log when
     executing a command via subproces
@@ -311,12 +449,24 @@ x.x.x (UNRELEASED)
 
 [226]: https://github.com/plus3it/watchmaker/issues/226
 
-0.1.6 (2017.03.16) - [Change from 0.1.5 release](https://github.com/plus3it/watchmaker/compare/0.1.5...0.1.6)
+### 0.1.6
+
+**Commit Delta**: [Change from 0.1.5 release](https://github.com/plus3it/watchmaker/compare/0.1.5...0.1.6)
+
+**Released**: 2017.03.16
+
+**Summary**:
 
 *   ash-linux-formula
     *   Provides same baseline states for both EL6 and EL7
 
-0.1.5 (2017.03.15) - [Change from 0.1.4 release](https://github.com/plus3it/watchmaker/compare/0.1.4...0.1.5)
+### 0.1.5
+
+**Commit Delta**: [Change from 0.1.4 release](https://github.com/plus3it/watchmaker/compare/0.1.4...0.1.5)
+
+**Released**: 2017.03.15
+
+**Summary**:
 
 *   ash-linux-formula
     *   Adds policies to disable insecure Ciphers and MACs in sshd_config
@@ -331,13 +481,25 @@ x.x.x (UNRELEASED)
 *   splunkforwarder-formula
     *   Uses firewalld on EL7 rather than iptables
 
-0.1.4 (2017.03.09) - [Change from 0.1.3 release](https://github.com/plus3it/watchmaker/compare/0.1.3...0.1.4)
+### 0.1.4
+
+**Commit Delta**: [Change from 0.1.3 release](https://github.com/plus3it/watchmaker/compare/0.1.3...0.1.4)
+
+**Released**: 2017.03.09
+
+**Summary**:
 
 *   [[Issue #180][180]] Fixes bug where file_roots did not contain formula paths
 
 [180]: https://github.com/plus3it/watchmaker/issues/180
 
-0.1.3 (2017.03.08) - [Change from 0.1.2 release](https://github.com/plus3it/watchmaker/compare/0.1.2...0.1.3)
+### 0.1.3
+
+**Commit Delta**: [Change from 0.1.2 release](https://github.com/plus3it/watchmaker/compare/0.1.2...0.1.3)
+
+**Released**: 2017.03.08
+
+**Summary**:
 
 *   [[Issue #164][164]] Aligns cli syntax for extra_arguments with other cli opts
 *   [[Issue #165][165]] Removes ash_role from default config file
@@ -347,7 +509,13 @@ x.x.x (UNRELEASED)
 [164]: https://github.com/plus3it/watchmaker/issues/164
 [165]: https://github.com/plus3it/watchmaker/issues/165
 
-0.1.2 (2017.03.07) - [Change from 0.1.1 release](https://github.com/plus3it/watchmaker/compare/0.1.1...0.1.2)
+### 0.1.2
+
+**Commit Delta**: [Change from 0.1.1 release](https://github.com/plus3it/watchmaker/compare/0.1.1...0.1.2)
+
+**Released**: 2017.03.07
+
+**Summary**:
 
 *   Adds a FAQ page to the docs
 *   Moves salt formulas to the correct location on the local filesystem
@@ -362,10 +530,22 @@ x.x.x (UNRELEASED)
 *   emet-formula:
     *   Adds support for EMET 5.52
 
-0.1.1 (2017.02.28) - [Change from 0.1.0 release](https://github.com/plus3it/watchmaker/compare/0.1.0...0.1.1)
+### 0.1.1
+
+**Commit Delta**: [Change from 0.1.0 release](https://github.com/plus3it/watchmaker/compare/0.1.0...0.1.1)
+
+**Released**: 2017.02.28
+
+**Summary**:
 
 *   Adds more logging messages when downloading files
 
-0.1.0 (2017.02.22)
+### 0.1.0
+
+**Commit Delta**: N/A
+
+**Released**: 2017.02.22
+
+**Summary**:
 
 *   Initial release!
