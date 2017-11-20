@@ -160,7 +160,7 @@
         {
             "Description" : "URL to the Python Installer Executable",
             "Type" : "String",
-            "Default" : "https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe",
+            "Default" : "https://www.python.org/ftp/python/3.6.3/python-3.6.3-amd64.exe",
             "AllowedPattern" : "^http[s]?://.*\\.exe$"
         },
         "WatchmakerBootstrapper" :
