@@ -446,20 +446,21 @@ class SaltBase(ManagerBase):
         else:
             cmd = self.salt_state_args
 
-            exclude_arg = 'exclude=' + exclude if exclude else ''
-
             if states.lower() == 'highstate':
                 self.log.info(
                     'Applying the salt "highstate", states=%s',
                     states
                 )
-                cmd.extend(['state.highstate', exclude_arg])
+                cmd.extend(['state.highstate'])
             else:
                 self.log.info(
                     'Applying the user-defined list of states, states=%s',
                     states
                 )
-                cmd.extend(['state.sls', states, exclude_arg])
+                cmd.extend(['state.sls', states])
+
+            if exclude:
+                cmd.extend(['exclude={0}'.format(exclude)])
 
             ret = self.run_salt(cmd, log_pipe='stderr', raise_error=False)
 
