@@ -1,14 +1,34 @@
 ## Changelog
 
-### x.x.x
+### 0.7.0
 
-**Commit Delta**:
+**Commit Delta**: [Change from 0.6.6 release](https://github.com/plus3it/watchmaker/compare/0.6.6...0.7.0)
 
-**Released**: UNRELEASED
+**Released**: 2017.11.21
 
 **Summary**:
 
-*   PLACEHOLDER
+*   [[PR #409][409] Provides terraform modules that deploy the watchmaker
+    CloudFormation templates
+*   [[Issue #418][418]][[PR #419][419]] Adds an `exclude-states` argument to
+    the SaltWorker; specified states will be excluded from the salt state
+    execution
+*   ash-windows-formula
+    *   Incorporates security settings from the DISA October quarterly release
+*   join-domain-formula
+    *   (Windows) Adds WMI method to set DNS search suffix
+    *   (Windows) Tests for the EC2Config XML settings file before modifying it
+*   scap-formula
+    *   (Linux) Distributes scap content from SCAP Security Guide v0.1.36-1
+    *   Distributes scap content from the DISA October quarterly release
+*   splunkforwarder-formula
+    *   Supports configuration of splunk log sources from pillar and grains
+        inputs
+*
+
+[409]: https://github.com/plus3it/watchmaker/pull/409
+[419]: https://github.com/plus3it/watchmaker/pull/419
+[418]: https://github.com/plus3it/watchmaker/issues/418
 
 ### 0.6.6
 
