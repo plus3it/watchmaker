@@ -4,14 +4,15 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import logging
+import logging.handlers
 import os
 import shutil
 import sys
 
 import pytest
 
-from watchmaker.logger import (LOG_LEVELS, exception_hook, make_log_dir,
-                               prepare_logging)
+from watchmaker.logger import (HAS_PYWIN32, LOG_LEVELS, exception_hook,
+                               make_log_dir, prepare_logging)
 
 
 def test_log_level_dict():
@@ -54,9 +55,15 @@ def test_logger_handler():
     """
     prepare_logging('./logfiles', 'debug')
     logger = logging.getLogger()
-    log_hdlr = logger.handlers.pop()
+
+    log_hdlr = logger.handlers.pop(1)
     assert type(log_hdlr) == logging.FileHandler
     assert log_hdlr.level == logging.DEBUG
+
+    if HAS_PYWIN32:
+        log_hdlr = logger.handlers.pop(1)
+        assert type(log_hdlr) == logging.handlers.NTEventLogHandler
+        assert log_hdlr.level == logging.DEBUG
 
 
 def test_log_if_no_log_directory_given(caplog):
