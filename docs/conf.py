@@ -6,8 +6,6 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import sys
 
-import pkg_resources
-import setuptools
 from recommonmark.transform import AutoStructify
 
 #
@@ -366,24 +364,9 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 
-def _extract_version(package_name):
-    try:
-        return pkg_resources.get_distribution(package_name).version
-    except pkg_resources.DistributionNotFound:
-        _conf = setuptools.config.read_configuration(
-            os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                'setup.cfg'
-            )
-        )
-        return _conf['metadata']['version']
-
-
-__version__ = _extract_version('watchmaker')
-
 linkcheck_ignore = [
-    r'https://github.com/plus3it/watchmaker/compare/(\d\.){{3}}\.{{2}}{0}'
-    .format(__version__)
+    r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.\d){3}',
+    r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.x){3}'
 ]
 
 github_doc_root = 'https://github.com/plus3it/watchmaker/tree/develop/docs/'
