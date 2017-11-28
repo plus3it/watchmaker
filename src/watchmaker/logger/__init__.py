@@ -5,7 +5,15 @@ from __future__ import (absolute_import, division, print_function,
 
 import collections
 import logging
+import logging.handlers
 import os
+
+HAS_PYWIN32 = False
+try:
+    import win32evtlog  # noqa: F401
+    HAS_PYWIN32 = True
+except ImportError:
+    pass
 
 LOG_LEVELS = collections.defaultdict(
     lambda: logging.DEBUG,  # log level if key is not in this dict
@@ -81,3 +89,9 @@ def prepare_logging(log_dir, log_level):
         hdlr.setLevel(level)
         hdlr.setFormatter(logging.Formatter(logformat))
         logging.getLogger().addHandler(hdlr)
+
+    if HAS_PYWIN32:
+        ehdlr = logging.handlers.NTEventLogHandler('Watchmaker')
+        ehdlr.setLevel(level)
+        ehdlr.setFormatter(logging.Formatter(logformat))
+        logging.getLogger().addHandler(ehdlr)
