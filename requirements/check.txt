@@ -1,4 +1,4 @@
-check-manifest==0.35
+check-manifest==0.36
 flake8==3.5.0
 flake8-bugbear==17.4.0
 flake8-builtins==1.0
