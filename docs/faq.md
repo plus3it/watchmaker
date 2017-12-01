@@ -44,3 +44,12 @@ label may not be related to the error you are encountering.
 
 Watchmaker is supported on RedHat 7 and CentOS 7. However, there may be issues
 intermittently with the salt formulas as they are actively being developed.
+
+## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?
+
+Yes, indirectly. Because watchmaker implements most of its functionality via [SaltStack](https://saltstack.com) modules, you can directly-used the underlying SaltStack functionality to effect the dsired change. This is done from the commandline - as root - by executing:
+
+* Disable FIPS-mode: `salt-call --local ash.fips_disable`
+* Enable FIPS-mode: `salt-call --local ash.fips_enable`
+
+And then rebooting the system.
