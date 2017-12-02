@@ -11,6 +11,8 @@ import os
 import platform
 import subprocess
 
+import pkg_resources
+import setuptools
 import yaml
 from six.moves import urllib
 
@@ -19,7 +21,21 @@ from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 
-__version__ = '0.6.6'
+
+def _extract_version(package_name):
+    try:
+        return pkg_resources.get_distribution(package_name).version
+    except pkg_resources.DistributionNotFound:
+        _conf = setuptools.config.read_configuration(
+            os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                'setup.cfg'
+            )
+        )
+        return _conf['metadata']['version']
+
+
+__version__ = _extract_version('watchmaker')
 
 
 class Arguments(dict):

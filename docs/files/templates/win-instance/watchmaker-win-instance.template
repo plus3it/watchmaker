@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion" : "2010-09-09",
-    "Description" : "This template creates an Autoscaling Group and Launch Configuration that deploys Windows instances with Watchmaker, which applies the DISA STIG.",
+    "Description" : "This template deploys a Windows instance using Watchmaker, which applies the DISA STIG.",
     "Parameters" :
     {
         "AmiId" :
@@ -99,23 +99,11 @@
             "Type" : "String",
             "Default" : ""
         },
-        "MinCapacity" :
+        "PrivateIp" :
         {
-            "Description" : "Minimum number of instances in the Autoscaling Group",
-            "Type" : "Number",
-            "Default" : "1"
-        },
-        "MaxCapacity" :
-        {
-            "Description" : "Maximum number of instances in the Autoscaling Group",
-            "Type" : "Number",
-            "Default" : "2"
-        },
-        "DesiredCapacity" :
-        {
-            "Description" : "Desired number of instances in the Autoscaling Group",
-            "Type" : "Number",
-            "Default" : "1"
+            "Description" : "(Optional) Set a static, primary private IP. Leave blank to auto-select a free IP",
+            "Type" : "String",
+            "Default" : ""
         },
         "NoPublicIp" :
         {
@@ -144,10 +132,10 @@
             "Description" : "List of security groups to apply to the instance",
             "Type" : "List<AWS::EC2::SecurityGroup::Id>"
         },
-        "SubnetIds" :
+        "SubnetId" :
         {
-            "Type" : "List<AWS::EC2::Subnet::Id>",
-            "Description" : "List of subnets to associate to the Autoscaling Group"
+            "Type" : "AWS::EC2::Subnet::Id",
+            "Description" : "ID of the subnet to assign to the instance"
         },
         "PypiIndexUrl" :
         {
@@ -160,7 +148,7 @@
         {
             "Description" : "URL to the Python Installer Executable",
             "Type" : "String",
-            "Default" : "https://www.python.org/ftp/python/3.6.2/python-3.6.2-amd64.exe",
+            "Default" : "https://www.python.org/ftp/python/3.6.3/python-3.6.3-amd64.exe",
             "AllowedPattern" : "^http[s]?://.*\\.exe$"
         },
         "WatchmakerBootstrapper" :
@@ -197,9 +185,21 @@
             "Default" : "",
             "AllowedPattern" : "^$|^(OU=.+,)+(DC=.+)+$"
         },
+        "WatchmakerComputerName" :
+        {
+            "Description" : "(Optional) Sets the hostname/computername within the OS",
+            "Type" : "String",
+            "Default" : ""
+        },
         "WatchmakerAdminGroups" :
         {
             "Description" : "(Optional) Colon-separated list of domain groups that should have admin permissions on the EC2 instance",
+            "Type" : "String",
+            "Default" : ""
+        },
+        "WatchmakerAdminUsers" :
+        {
+            "Description" : "(Optional) Colon-separated list of domain users that should have admin permissions on the EC2 instance",
             "Type" : "String",
             "Default" : ""
         },
@@ -231,17 +231,6 @@
                 "A",
                 "B"
             ]
-        },
-        "ToggleNewInstances" :
-        {
-            "Description" : "A/B toggle that forces a change to instance userdata, triggering new instances via the Autoscale update policy",
-            "Type" : "String",
-            "Default" : "A",
-            "AllowedValues" :
-            [
-                "A",
-                "B"
-            ]
         }
     },
     "Conditions" :
@@ -262,9 +251,17 @@
         {
             "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerOuPath" }, "" ] } ]
         },
+        "UseComputerName" :
+        {
+            "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerComputerName" }, "" ] } ]
+        },
         "UseAdminGroups" :
         {
             "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerAdminGroups" }, "" ] } ]
+        },
+        "UseAdminUsers" :
+        {
+            "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "WatchmakerAdminUsers" }, "" ] } ]
         },
         "UseS3Source" :
         {
@@ -285,6 +282,10 @@
         "AssignInstanceRole" :
         {
             "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "InstanceRole" }, "" ] } ]
+        },
+        "AssignStaticPrivateIp" :
+        {
+            "Fn::Not" : [ { "Fn::Equals" : [ { "Ref" : "PrivateIp" }, "" ] } ]
         },
         "AssignPublicIp" :
         {
@@ -341,7 +342,9 @@
                         "WatchmakerConfig",
                         "WatchmakerEnvironment",
                         "WatchmakerOuPath",
+                        "WatchmakerComputerName",
                         "WatchmakerAdminGroups",
+                        "WatchmakerAdminUsers",
                         "WatchmakerS3Source"
                     ]
                 },
@@ -372,23 +375,12 @@
                 {
                     "Label" :
                     {
-                        "default" : "AutoScale Configuration"
-                    },
-                    "Parameters" :
-                    [
-                        "DesiredCapacity",
-                        "MinCapacity",
-                        "MaxCapacity"
-                    ]
-                },
-                {
-                    "Label" :
-                    {
                         "default" : "Network Configuration"
                     },
                     "Parameters" :
                     [
-                        "SubnetIds"
+                        "PrivateIp",
+                        "SubnetId"
                     ]
                 },
                 {
@@ -399,8 +391,7 @@
                     "Parameters" :
                     [
                         "CfnEndpointUrl",
-                        "ToggleCfnInitUpdate",
-                        "ToggleNewInstances"
+                        "ToggleCfnInitUpdate"
                     ]
                 }
             ],
@@ -409,58 +400,23 @@
                 "ToggleCfnInitUpdate" :
                 {
                     "default" : "Force Cfn Init Update"
-                },
-                "ToggleNewInstances" :
-                {
-                    "default" : "Force New Instances"
                 }
             }
         }
     },
     "Resources" :
     {
-        "WatchmakerAutoScalingGroup" :
+        "WatchmakerInstance" :
         {
-            "Type" : "AWS::AutoScaling::AutoScalingGroup",
-            "UpdatePolicy" : {
-                "AutoScalingRollingUpdate" : {
-                    "MinInstancesInService" : "1",
-                    "MaxBatchSize" : "2",
-                    "WaitOnResourceSignals" : "true",
-                    "PauseTime" : "PT60M"
-                }
-            },
+            "Type" : "AWS::EC2::Instance",
             "CreationPolicy" :
             {
                 "ResourceSignal" :
                 {
-                    "Count" : { "Ref" : "DesiredCapacity" },
+                    "Count" : "1",
                     "Timeout" : "PT60M"
                 }
             },
-            "Properties" :
-            {
-                "VPCZoneIdentifier" : { "Ref" : "SubnetIds" },
-                "LaunchConfigurationName" : { "Ref" : "WatchmakerLaunchConfig" },
-                "MinSize" : { "Ref" : "MinCapacity" },
-                "MaxSize" : { "Ref" : "MaxCapacity" },
-                "DesiredCapacity" : { "Ref" : "DesiredCapacity" },
-                "Tags" :
-                [
-                    {
-                        "Key" : "Name",
-                        "Value" :
-                        { "Fn::Join" : [ "", [
-                            { "Ref" : "AWS::StackName" }
-                        ] ] },
-                        "PropagateAtLaunch" : "true"
-                    }
-                ]
-            }
-        },
-        "WatchmakerLaunchConfig" :
-        {
-            "Type" : "AWS::AutoScaling::LaunchConfiguration",
             "Metadata" : {
                 "ToggleCfnInitUpdate" : { "Ref" : "ToggleCfnInitUpdate" },
                 "AWS::CloudFormation::Authentication" :
@@ -572,10 +528,10 @@
                                 { "Fn::Join" : ["", [
                                     "[cfn-auto-reloader-hook]\n",
                                     "triggers=post.update\n",
-                                    "path=Resources.WatchmakerLaunchConfig.Metadata\n",
+                                    "path=Resources.WatchmakerInstance.Metadata\n",
                                     "action=cfn-init.exe -v -c update",
                                     " --stack ", { "Ref" : "AWS::StackName" },
-                                    " --resource WatchmakerLaunchConfig",
+                                    " --resource WatchmakerInstance",
                                     {
                                         "Fn::If" :
                                         [
@@ -700,11 +656,35 @@
                                     {
                                         "Fn::If" :
                                         [
+                                            "UseComputerName",
+                                            { "Fn::Join" : [ "", [
+                                                " --computer-name \"",
+                                                { "Ref" : "WatchmakerComputerName" },
+                                                "\""
+                                            ]]},
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
                                             "UseAdminGroups",
                                             { "Fn::Join" : [ "", [
                                                 " --admin-groups \\\"",
                                                 { "Ref" : "WatchmakerAdminGroups" },
                                                 "\\\""
+                                            ]]},
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseAdminUsers",
+                                            { "Fn::Join" : [ "", [
+                                                " --admin-users \"",
+                                                { "Ref" : "WatchmakerAdminUsers" },
+                                                "\""
                                             ]]},
                                             ""
                                         ]
@@ -782,11 +762,35 @@
                                     {
                                         "Fn::If" :
                                         [
+                                            "UseComputerName",
+                                            { "Fn::Join" : [ "", [
+                                                " --computer-name \"",
+                                                { "Ref" : "WatchmakerComputerName" },
+                                                "\""
+                                            ]]},
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
                                             "UseAdminGroups",
                                             { "Fn::Join" : [ "", [
                                                 " --admin-groups \\\"",
                                                 { "Ref" : "WatchmakerAdminGroups" },
                                                 "\\\""
+                                            ]]},
+                                            ""
+                                        ]
+                                    },
+                                    {
+                                        "Fn::If" :
+                                        [
+                                            "UseAdminUsers",
+                                            { "Fn::Join" : [ "", [
+                                                " --admin-users \"",
+                                                { "Ref" : "WatchmakerAdminUsers" },
+                                                "\""
                                             ]]},
                                             ""
                                         ]
@@ -855,7 +859,7 @@
                                 { "Fn::Join" : [ "", [
                                     "cfn-signal.exe -e 0",
                                     " --stack ", { "Ref" : "AWS::StackName" },
-                                    " --resource WatchmakerAutoScalingGroup",
+                                    " --resource WatchmakerInstance",
                                     {
                                         "Fn::If" :
                                         [
@@ -900,7 +904,16 @@
                         { "Ref" : "AWS::NoValue" }
                     ]
                 },
-                "AssociatePublicIpAddress" : "true",
+                "Tags" :
+                [
+                    {
+                        "Key" : "Name",
+                        "Value" :
+                        { "Fn::Join" : [ "", [
+                            { "Ref" : "AWS::StackName" }
+                        ]]}
+                    }
+                ],
                 "BlockDeviceMappings" :
                 [
                     {
@@ -932,23 +945,41 @@
                 {
                     "Ref" : "KeyPairName"
                 },
-                "SecurityGroups" :
-                {
-                    "Ref" : "SecurityGroupIds"
-                },
+                "NetworkInterfaces":
+                [
+                    {
+                        "DeviceIndex" : "0",
+                        "AssociatePublicIpAddress" :
+                        {
+                            "Fn::If" :
+                            [
+                                "AssignPublicIp",
+                                "true",
+                                "false"
+                            ]
+                        },
+                        "PrivateIpAddress" :
+                        {
+                            "Fn::If" :
+                            [
+                                "AssignStaticPrivateIp",
+                                { "Ref" : "PrivateIp" },
+                                { "Ref" : "AWS::NoValue" }
+                            ]
+                        },
+                        "GroupSet" : { "Ref": "SecurityGroupIds" },
+                        "SubnetId": { "Ref" : "SubnetId" }
+                    }
+                ],
                 "UserData" :
                 {
                     "Fn::Base64" :
                     { "Fn::Join" : [ "", [
                         "<script>", "\n",
 
-                        "REM CFN LaunchConfig Update Toggle: ",
-                        { "Ref" : "ToggleNewInstances" },
-                        "\n\n",
-
                         "cfn-init.exe -v -c launch",
                         " --stack ", { "Ref" : "AWS::StackName" },
-                        " --resource WatchmakerLaunchConfig ",
+                        " --resource WatchmakerInstance ",
                         {
                             "Fn::If" :
                             [
@@ -976,13 +1007,13 @@
                         ":error\n",
                         "cfn-signal.exe -e 1",
                         " --stack ", { "Ref" : "AWS::StackName" },
-                        " --resource WatchmakerAutoScalingGroup ",
+                        " --resource WatchmakerInstance ",
                         {
                             "Fn::If" :
                             [
                                 "AssignInstanceRole",
                                 { "Fn::Join" : [ "", [
-                                    " --role ", { "Ref" : "InstanceRole" }
+                                    " --role ", { "Ref" : "InstanceRole"}
                                 ] ] },
                                 ""
                             ]
@@ -1007,6 +1038,14 @@
                     ] ] }
                 }
             }
+        }
+    },
+    "Outputs" :
+    {
+        "WatchmakerInstanceId" :
+        {
+            "Value" : { "Ref" : "WatchmakerInstance" },
+            "Description" : "Instance ID"
         }
     }
 }

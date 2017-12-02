@@ -51,6 +51,10 @@ class SaltBase(ManagerBase):
             - ``none``: Do not apply any salt states.
             - ``highstate``: Apply the salt "highstate".
 
+        exclude_states: (:obj:`str`)
+            Comma-separated string of states to exclude from execution.
+            (*Default*: ``''``)
+
         user_formulas: (:obj:`dict`)
             Map of formula names and URLs to zip archives of salt formulas.
             These formulas will be downloaded, extracted, and added to the salt
@@ -99,6 +103,7 @@ class SaltBase(ManagerBase):
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
         self.salt_states = kwargs.pop('salt_states', None) or ''
+        self.exclude_states = kwargs.pop('exclude_states', None) or ''
 
         # Init attributes used by SaltBase, overridden by inheriting classes
         self.salt_working_dir = None
@@ -418,9 +423,9 @@ class SaltBase(ManagerBase):
         self.log.info('Syncing custom salt modules...')
         self.run_salt('saltutil.sync_all')
 
-    def process_states(self, states):
+    def process_states(self, states, exclude):
         """
-        Apply salt states.
+        Apply salt states but exclude certain states.
 
         Args:
             states: (:obj:`str`)
@@ -430,6 +435,9 @@ class SaltBase(ManagerBase):
                 - ``none``: Do not apply any salt states.
                 - ``highstate``: Apply the salt "highstate".
 
+            exclude: (:obj:`str`)
+                Comma-separated string of states to exclude from execution.
+
         """
         if not states or states.lower() == 'none':
             self.log.info(
@@ -437,6 +445,7 @@ class SaltBase(ManagerBase):
             )
         else:
             cmd = self.salt_state_args
+
             if states.lower() == 'highstate':
                 self.log.info(
                     'Applying the salt "highstate", states=%s',
@@ -449,6 +458,9 @@ class SaltBase(ManagerBase):
                     states
                 )
                 cmd.extend(['state.sls', states])
+
+            if exclude:
+                cmd.extend(['exclude={0}'.format(exclude)])
 
             ret = self.run_salt(cmd, log_pipe='stderr', raise_error=False)
 
@@ -626,7 +638,7 @@ class SaltLinux(SaltBase, LinuxManager):
             self._selinux_setenforce('permissive')
 
         try:
-            self.process_states(self.salt_states)
+            self.process_states(self.salt_states, self.exclude_states)
         finally:
             if selinux_enforcing:
                 self.log.info('Setting selinux back to enforcing mode')
@@ -755,7 +767,7 @@ class SaltWindows(SaltBase, WindowsManager):
         self.log.info('Refreshing package database...')
         self.run_salt('pkg.refresh_db')
 
-        self.process_states(self.salt_states)
+        self.process_states(self.salt_states, self.exclude_states)
 
         if self.working_dir:
             self.cleanup()

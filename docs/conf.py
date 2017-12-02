@@ -363,6 +363,12 @@ texinfo_documents = [
 #
 # texinfo_no_detailmenu = False
 
+
+linkcheck_ignore = [
+    r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.\d){3}',
+    r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.x){3}'
+]
+
 github_doc_root = 'https://github.com/plus3it/watchmaker/tree/develop/docs/'
 
 
