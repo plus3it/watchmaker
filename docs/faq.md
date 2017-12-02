@@ -13,6 +13,10 @@ the output of a failed installation. Usually, the output points pretty clearly
 at the source of the problem. Watchmaker can be re-installed over itself with
 no problem, so once the root cause is resolved, simply re-install watchmaker.
 
+## Why does the watchmaker install fail if my system is FIPS enabled?
+
+This is primarily a question for Red Hat (and derived distributions). As of this writing, the `pip` utility in all Red Hat releases up through 7.4.1708, default to looking for pypi packages signed with MD5 signatures. If you've enabled FIPS (or are using a build that has FIPS pre-enabled), MD5 is disabled in the kernel (due to being a weak hashing-method). You can either disable FIPS (not recommended) or explicitly force `pip` to use a different signature-index. The latter is detailed in the Linux section of the :doc:`usage <usage>` document.
+
 ## How do I know if watchmaker has completed without errors?
 
 By default, watchmaker will reboot the system after a sucessful execution.
@@ -44,3 +48,12 @@ label may not be related to the error you are encountering.
 
 Watchmaker is supported on RedHat 7 and CentOS 7. However, there may be issues
 intermittently with the salt formulas as they are actively being developed.
+
+## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?
+
+Yes, indirectly. Because watchmaker implements most of its functionality via [SaltStack](https://saltstack.com) modules, you can directly-use the underlying SaltStack functionality to effect the desired change. This is done from the commandline - as root - by executing:
+
+* Disable FIPS-mode: `salt-call --local ash.fips_disable`
+* Enable FIPS-mode: `salt-call --local ash.fips_enable`
+
+And then rebooting the system.
