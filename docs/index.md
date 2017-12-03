@@ -31,6 +31,7 @@ _workers_ to execute on each platform.
     faq.md
     api.md
     contributing.rst
+    changelog.rst
 ```
 
 ## Supported Operating Systems
