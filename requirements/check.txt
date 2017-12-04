@@ -1,11 +1,11 @@
 check-manifest==0.35
-flake8==3.4.1
+flake8==3.5.0
 flake8-bugbear==17.4.0
 flake8-builtins==1.0
 flake8-docstrings==1.1.0
 flake8-isort==2.2.2
 flake8-future-import==0.4.3
-flake8-print==2.0.2
+flake8-print==3.0.1
 m2r==0.1.12
 pep8-naming==0.4.1
 pydocstyle==2.1.1

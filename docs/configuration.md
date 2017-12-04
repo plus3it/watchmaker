@@ -70,6 +70,9 @@ Parameters supported by the Salt Worker:
     salt_states: foo,bar
     ```
 
+-   `exclude_states` (_string, comma-separated_): States to exclude from
+    execution of salt states.
+
 -   `s3_source` (_boolean_): Use S3 utilities to retrieve content instead of
     http(s) utilities. For S3 utilities to work, the system must have boto
     credentials configured that allow access to the S3 bucket.
