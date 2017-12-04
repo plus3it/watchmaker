@@ -38,11 +38,11 @@
         },
         "AppScriptUrl" :
         {
-            "Description" : "(Optional) Region-based HTTPS URL to the application script in an S3 bucket. If using FIPS-enabled AMI, script must be KMS-encrypted. Leave blank to launch without an application script. If specified, an appropriate \"InstanceRole\" is required",
+            "Description" : "(Optional) S3 URL to the application script in an S3 bucket (s3://). Leave blank to launch without an application script. If specified, an appropriate \"InstanceRole\" is required",
             "Type" : "String",
             "Default" : "",
-            "AllowedPattern" : "^$|^https://s3-(.*)$",
-            "ConstraintDescription" : "Must use a region-based HTTPS S3 endpoint (starts with \"s3-\"), see http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region"
+            "AllowedPattern" : "^$|^s3://(.*)$",
+            "ConstraintDescription" : "Must use an S3 URL (starts with \"s3://\")"
         },
         "AppVolumeDevice" :
         {
@@ -449,21 +449,6 @@
             },
             "Metadata" : {
                 "ToggleCfnInitUpdate" : { "Ref" : "ToggleCfnInitUpdate" },
-                "AWS::CloudFormation::Authentication" :
-                {
-                    "Fn::If" :
-                    [
-                        "AssignInstanceRole",
-                        {
-                            "Ec2IamRole" :
-                            {
-                              "type" : "S3",
-                              "roleName" : { "Ref" : "InstanceRole" }
-                            }
-                        },
-                        { "Ref" : "AWS::NoValue" }
-                    ]
-                },
                 "AWS::CloudFormation::Init" :
                 {
                     "configSets" :
@@ -853,19 +838,22 @@
                     },
                     "make-app" :
                     {
-                        "files" :
-                        {
-                            "/etc/cfn/scripts/make-app" :
-                            {
-                                "source" : { "Ref" : "AppScriptUrl" },
-                                "mode" : "000700",
-                                "owner" : "root",
-                                "group" : "root",
-                                "authentication" : "Ec2IamRole"
-                            }
-                        },
                         "commands" :
                         {
+                            "05-get-appscript" :
+                            {
+                                "command" :
+                                { "Fn::Join" : [ "", [
+                                    "mkdir -p /etc/cfn/scripts &&",
+                                    " aws s3 cp ",
+                                    { "Ref" : "AppScriptUrl" },
+                                    " /etc/cfn/scripts/make-app",
+                                    " --region ",
+                                    { "Ref" : "AWS::Region" }, " &&",
+                                    " chown root:root /etc/cfn/scripts/make-app &&",
+                                    " chmod 700 /etc/cfn/scripts/make-app"
+                                ]]}
+                            },
                             "10-make-app" :
                             {
                                 "command" :

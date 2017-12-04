@@ -17,15 +17,9 @@ variable "AppScriptParams" {
   default     = ""
 }
 
-variable "AppScriptShell" {
-  type        = "string"
-  description = "Shell with which to execute the application script. Ignored if AppScriptUrl is blank"
-  default     = "powershell"
-}
-
 variable "AppScriptUrl" {
   type        = "string"
-  description = "#(Optional) Region-based HTTPS URL to the application script in an S3 bucket. Leave blank to launch without an application script. If specified, an appropriate InstanceRole is required"
+  description = "(Optional) S3 URL to the .ps1 or .bat application script in an S3 bucket (s3://). Leave blank to launch without an application script. If specified, an appropriate InstanceRole is required"
   default     = ""
 }
 
