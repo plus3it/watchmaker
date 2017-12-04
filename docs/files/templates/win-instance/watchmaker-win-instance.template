@@ -14,24 +14,13 @@
             "Description" : "Parameter string to pass to the application script. Ignored if \"AppScriptUrl\" is blank",
             "Type" : "String"
         },
-        "AppScriptShell" :
-        {
-            "Description" : "Shell with which to execute the application script. Ignored if \"AppScriptUrl\" is blank",
-            "Type" : "String",
-            "Default" : "powershell",
-            "AllowedValues" :
-            [
-                "cmd",
-                "powershell"
-            ]
-        },
         "AppScriptUrl" :
         {
-            "Description" : "(Optional) S3 URL to the application script in an S3 bucket (s3://). Leave blank to launch without an application script. If specified, an appropriate \"InstanceRole\" is required",
+            "Description" : "(Optional) S3 URL to the .ps1 or .bat application script in an S3 bucket (s3://). Leave blank to launch without an application script. If specified, an appropriate \"InstanceRole\" is required",
             "Type" : "String",
             "Default" : "",
-            "AllowedPattern" : "^$|^s3://(.*)$",
-            "ConstraintDescription" : "Must use an S3 URL (starts with \"s3://\")"
+            "AllowedPattern" : "^$|^s3://(.*)/(.*)\\.(bat|ps1)$",
+            "ConstraintDescription" : "Must use an S3 URL (starts with \"s3://\") to a .bat or .ps1 file"
         },
         "AppVolumeDevice" :
         {
@@ -797,7 +786,7 @@
                     {
                         "commands" :
                         {
-                            "05-get-appscript" :
+                            "10-make-app" :
                             {
                                 "command" :
                                 { "Fn::Join" : [ "", [
@@ -810,28 +799,16 @@
                                     },
                                     " \"& { ",
                                     "$AppScriptUri = [System.Uri]'", { "Ref" : "AppScriptUrl" }, "'; ",
-                                    "$Null = New-Item c:\\cfn\\scripts -Type Directory -Force; ",
+                                    "$AppScriptDir = 'c:\\cfn\\scripts'; ",
+                                    "$AppScript = Join-Path $AppScriptDir $AppScriptUri.Segments[($AppScriptUri.Segments.Length-1)]; ",
+                                    "$Null = New-Item $AppScriptDir -Type Directory -Force; ",
                                     "Read-S3Object",
                                     " -BucketName $AppScriptUri.Host",
-                                    " -Key ($AppScriptUri.Segments[1..($AppScriptUri.Length+1)] -Join '')",
-                                    " -File c:\\cfn\\scripts\\make-app",
-                                    " -Region ", { "Ref" : "AWS::Region" },
-                                    " }\""
-                                ]]}
-                            },
-                            "10-make-app" :
-                            {
-                                "command" :
-                                { "Fn::Join" : [ "", [
-                                    { "Fn::FindInMap" :
-                                        [
-                                            "ShellCommandMap",
-                                            { "Ref" : "AppScriptShell" },
-                                            "command"
-                                        ]
-                                    },
-                                    " c:\\cfn\\scripts\\make-app ",
-                                    { "Ref" : "AppScriptParams" }
+                                    " -Key ($AppScriptUri.Segments[1..($AppScriptUri.Segments.Length-1)] -Join '')",
+                                    " -File $AppScript",
+                                    " -Region ", { "Ref" : "AWS::Region" }, "; ",
+                                    "iex $AppScript; ",
+                                    "}\""
                                 ]]},
                                 "waitAfterCompletion" : "0"
                             }
