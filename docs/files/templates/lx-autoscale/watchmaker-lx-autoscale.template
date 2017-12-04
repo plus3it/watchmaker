@@ -875,11 +875,14 @@
                             {
                                 "command" :
                                 { "Fn::Join" : [ "", [
-                                    "mkdir -p /etc/cfn/scripts && aws s3 cp ",
+                                    "mkdir -p /etc/cfn/scripts &&",
+                                    " aws s3 cp ",
                                     { "Ref" : "AppScriptUrl" },
                                     " /etc/cfn/scripts/make-app",
                                     " --region ",
-                                    { "Ref" : "AWS::Region" }
+                                    { "Ref" : "AWS::Region" }, " &&",
+                                    " chown root:root /etc/cfn/scripts/make-app &&",
+                                    " chmod 700 /etc/cfn/scripts/make-app"
                                 ]]}
                             },
                             "10-make-app" :
