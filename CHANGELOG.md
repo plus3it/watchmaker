@@ -1,5 +1,15 @@
 ## Changelog
 
+### x.x.x
+
+**Commit Delta**: [Change from 0.7.1 release](https://github.com/plus3it/watchmaker/compare/0.7.1...x.x.x)
+
+**Released**: TBD
+
+**Summary**:
+
+*   TBD
+
 ### 0.7.1
 
 **Commit Delta**: [Change from 0.7.0 release](https://github.com/plus3it/watchmaker/compare/0.7.0...0.7.1)
