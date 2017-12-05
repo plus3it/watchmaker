@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.7.1
+
+**Commit Delta**: [Change from 0.7.0 release](https://github.com/plus3it/watchmaker/compare/0.7.0...0.7.1)
+
+**Released**: 2017.12.04
+
+**Summary**:
+
+*   Fixes readthedocs build -- no functional changes
+
 ### 0.7.0
 
 **Commit Delta**: [Change from 0.6.6 release](https://github.com/plus3it/watchmaker/compare/0.6.6...0.7.0)
@@ -24,7 +34,6 @@
 *   splunkforwarder-formula
     *   Supports configuration of splunk log sources from pillar and grains
         inputs
-*
 
 [409]: https://github.com/plus3it/watchmaker/pull/409
 [419]: https://github.com/plus3it/watchmaker/pull/419
