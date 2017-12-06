@@ -74,7 +74,7 @@ def test_log_if_no_log_directory_given(caplog):
     produce a logging message.
     """
     prepare_logging(None, 'info')
-    assert 'Watchmaker will not be logging to a file!' in caplog.text()
+    assert 'Watchmaker will not be logging to a file!' in caplog.text
 
 
 def test_exception_hook(caplog):
@@ -84,4 +84,4 @@ def test_exception_hook(caplog):
     record = caplog.records()[0]
     assert record.levelname == 'CRITICAL'
     assert record.name == 'watchmaker'
-    assert 'RuntimeError: Test Error' in caplog.text()
+    assert 'RuntimeError: Test Error' in caplog.text
