@@ -66,6 +66,7 @@ before_deploy:
     then
       (set -x; python $TRAVIS_BUILD_DIR/ci/travis_set_build.py --skip "$TRAVIS_TAG")
     elif [ "$TRAVIS_BRANCH" = "master" ]
+    then
       VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
       (set -x; git tag -a $VERSION -m $VERSION)
     fi
