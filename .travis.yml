@@ -61,7 +61,14 @@ notifications:
 # finish PyPI deployment setup
 before_deploy:
   - pip install m2r
-  - python $TRAVIS_BUILD_DIR/ci/travis_set_build.py --skip "$TRAVIS_TAG"
+  - |
+    if [ "$TRAVIS_BRANCH" = "develop" ]
+    then
+      (set -x; python $TRAVIS_BUILD_DIR/ci/travis_set_build.py --skip "$TRAVIS_TAG")
+    elif [ "$TRAVIS_BRANCH" = "master" ]
+      VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
+      (set -x; git tag -a $VERSION -m $VERSION)
+    fi
 deploy:
   - provider: pypi
     server: https://test.pypi.org/legacy/
@@ -73,7 +80,6 @@ deploy:
     skip_upload_docs: true
     on:
       branch: develop
-      tags: false
       repo: plus3it/watchmaker
       condition: '"$TOXENV" == *"py27"*'
   - provider: pypi
@@ -84,5 +90,14 @@ deploy:
     skip_upload_docs: true
     on:
       tags: true
+      repo: plus3it/watchmaker
+      condition: '"$TOXENV" == *"py27"*'
+  - provider: releases
+    draft: true
+    skip_cleanup: true
+    api_key:
+      secure: NZQua4PHfAugtez+Kkp+TZxxg8sgFPuTnEmJmQ/BBazUTWy5IGcMJFcQxI6y+YVmiiMshwV36B53sQaY9lLwZEaPARjPMNprBCRuGR436s5UrkmDSAl2uH7kbpEkbsIA2L4V++85v0q2PVSacgWW8abGs0mHydA6chHKewlvKiyI5PqlEhgABPx5LDIF2Wmrg/YfdPxtmMb9IHP0LN1sj5x59dxe727fbY6/kUpb4mrQ306EHBYSMi4E2mpP2zIlrt21KUuU8iFHNaRKUzSlq5Lva4JeoKlh3RT7G3YA4u+7dH5eJUxnHFFhFnLBIz1d2wDY1tVaEGX1CDAKW6lSCBBOarnLnDkvtLDD23NVUNXC81+7OLObaw63rtubfC3syZ1Kp517R4vgIZwRhBrvvJDr2IO5X/YtHVETBwkhDb8Ol8djXrwRbOeEgGWwkU66BbgX2HlcoggQqDhDWZWBosu7iz01pXvAFKiylNHbPULNV2gOM9HzY0kmxq3/zzwdBfLxJH8delSCK1uvQpZlmaBW6SA0/l7yuoxDN8KrXSRgwuE9A3XuMe6ZhbU5AZSqWA7vMdnwCg05xK2zo3Xohi7QE4AxY1jZW2ficBWWWFcdUTZpG+TRKC8LzQWBmZ61s9lNn+HfFC5yqYkJopLPeRYzfyeUJN79rr9leC04sVI=
+    on:
+      branch: master
       repo: plus3it/watchmaker
       condition: '"$TOXENV" == *"py27"*'
