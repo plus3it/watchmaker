@@ -56,14 +56,14 @@ def test_logger_handler():
     prepare_logging('./logfiles', 'debug')
     logger = logging.getLogger()
 
-    log_hdlr = logger.handlers.pop(1)
-    assert type(log_hdlr) == logging.FileHandler
-    assert log_hdlr.level == logging.DEBUG
-
     if HAS_PYWIN32:
-        log_hdlr = logger.handlers.pop(1)
+        log_hdlr = logger.handlers.pop()
         assert type(log_hdlr) == logging.handlers.NTEventLogHandler
         assert log_hdlr.level == logging.DEBUG
+
+    log_hdlr = logger.handlers.pop()
+    assert type(log_hdlr) == logging.FileHandler
+    assert log_hdlr.level == logging.DEBUG
 
 
 def test_log_if_no_log_directory_given(caplog):
@@ -81,7 +81,7 @@ def test_exception_hook(caplog):
     """Tests that exception_hook() will produce a logging message."""
     rte = RuntimeError('Test Error')
     exception_hook(type(rte), rte, None)
-    record = caplog.records()[0]
+    record = caplog.records[0]
     assert record.levelname == 'CRITICAL'
     assert record.name == 'watchmaker'
     assert 'RuntimeError: Test Error' in caplog.text
