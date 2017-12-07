@@ -6,6 +6,8 @@ flake8-docstrings==1.1.0
 flake8-isort==2.2.2
 flake8-future-import==0.4.3
 flake8-print==3.0.1
+# The html5lib pin can be removed once https://github.com/mozilla/bleach/issues/337 is resolved
+html5lib==1.0b10  # pyup: ==1.0b10
 m2r==0.1.12
 pep8-naming==0.4.1
 pydocstyle==2.1.1
