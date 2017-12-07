@@ -46,5 +46,5 @@ _workers_ to execute on each platform.
 
 ## Supported Python Versions
 
-*   Python 3.3 and later
+*   Python 3.4 and later
 *   Python 2.6 and later
