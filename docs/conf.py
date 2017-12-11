@@ -6,8 +6,6 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import sys
 
-from recommonmark.transform import AutoStructify
-
 #
 # Created by sphinx-quickstart on Thu Jun 30 20:11:36 2016.
 #
@@ -368,17 +366,3 @@ linkcheck_ignore = [
     r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.\d){3}',
     r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.x){3}'
 ]
-
-github_doc_root = 'https://github.com/plus3it/watchmaker/tree/develop/docs/'
-
-
-def setup(app):
-    """Configure sphinx setup."""
-    app.add_config_value(
-        'recommonmark_config',
-        {
-            'url_resolver': lambda url: github_doc_root + url,
-        },
-        True
-    )
-    app.add_transform(AutoStructify)
