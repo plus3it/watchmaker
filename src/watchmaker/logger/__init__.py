@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import collections
+import errno
 import io
 import json
 import logging
@@ -140,17 +141,25 @@ def prepare_logging(log_dir, log_level):
         try:
             _enable_ec2_config_event_log()
             _configure_ec2_config_event_log()
-        except FileNotFoundError:
-            # EC2_CONFIG or EC2_LOG_CONFIG do not exist
-            pass
+        except (IOError, OSError) as exc:
+            if exc.errno == errno.ENOENT:
+                # PY2/PY3-compatible check for FileNotFoundError
+                # EC2_CONFIG or EC2_LOG_CONFIG do not exist
+                pass
+            else:
+                raise
 
     if HAS_PYWIN32 and EC2_LAUNCH_DEPS:
         try:
             _configure_ec2_launch_event_log()
             _schedule_ec2_launch_event_log()
-        except FileNotFoundError:
-            # EC2_LAUNCH_LOG_CONFIG or 'powershell.exe' do not exist
-            pass
+        except (IOError, OSError) as exc:
+            if exc.errno == errno.ENOENT:
+                # PY2/PY3-compatible check for FileNotFoundError
+                # EC2_LAUNCH_LOG_CONFIG or 'powershell.exe' do not exist
+                pass
+            else:
+                raise
         except subprocess.CalledProcessError:
             # EC2_LAUNCH_SEND_EVENTS does not exist
             pass
@@ -267,7 +276,7 @@ def _configure_ec2_launch_event_log():
             'logName': 'Application',
             'source': 'Watchmaker',
             'level': msg_type,
-            'numEntries': '999999'
+            'numEntries': '999'
         }
         events += [event]
 
