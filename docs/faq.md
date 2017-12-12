@@ -8,7 +8,7 @@ installed. Another option is to check `pip list | grep watchmaker`.
 
 ## What do I do if watchmaker failed to install?
 
-First, review the :doc:`installation <installation>` document. Then double-check
+First, review the [installation](installation.html) document. Then double-check
 the output of a failed installation. Usually, the output points pretty clearly
 at the source of the problem. Watchmaker can be re-installed over itself with
 no problem, so once the root cause is resolved, simply re-install watchmaker.
@@ -21,7 +21,7 @@ to looking for pypi packages signed with MD5 signatures. If you've enabled FIPS
 (or are using a build that has FIPS pre-enabled), MD5 is disabled in the kernel
 (due to being a weak hashing-method). You can either disable FIPS (not
 recommended) or explicitly force `pip` to use a different signature-index. The
-latter is detailed in the Linux section of the :doc:`usage <usage>` document.
+latter is detailed in the Linux section of the [usage] (usage.html) document.
 
 ## How do I know if watchmaker has completed without errors?
 
@@ -52,7 +52,7 @@ label may not be related to the error you are encountering.
 
 ## Does watchmaker support Enterprise Linux 7?
 
-Watchmaker is supported on RedHat 7 and CentOS 7. See the :doc:`index <index>`
+Watchmaker is supported on RedHat 7 and CentOS 7. See the [index] (index.html)
 page for a list of all supported operating systems.
 
 ## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?

@@ -2,8 +2,8 @@
 
 ## `watchmaker` from the CLI
 
-Once watchmaker is :doc:`installed <installation>` and a
-:doc:`configuration file <configuration>` has been created (or you have decided
+Once watchmaker is [installed](installation.html) and a
+[configuration file](configuration.html) has been created (or you have decided
 to use the default configuration), using watchmaker as a CLI utility is as
 simple as executing `watchmaker`. Below is the output of `watchmaker --help`,
 showing the CLI options.
@@ -65,14 +65,12 @@ first, as part of the userdata. Since the userdata syntax and dependency
 installation differ a bit on Linux and Windows, we provide methods for each as
 examples.
 
-```eval_rst
 .. note::
 
     The ``pip`` commands in the examples are a bit more complex than
     necessarily needed, depending on your use case. In these examples, we are
     taking into account limitations in FIPS support in the default PyPi repo.
     This way the same ``pip`` command works for all platforms.
-```
 
 ### Linux
 
@@ -150,13 +148,11 @@ create autoscaling groups, and that install and execute Watchmaker during the
 launch. These templates are intended as examples for you to modify and extend
 as you need.
 
-```eval_rst
 .. note::
 
     Note that the links in this section are intended for viewing the templates
     in a web browser. See the `Direct Downloads`_ section for links to the raw
     files.
-```
 
 ### Cloudformation templates
 
@@ -193,7 +189,6 @@ the example CloudFormation templates within their respective Terraform template
 they become deployable and manageable from within the [Terraform cli](https://www.terraform.io/). These templates
 are intended as examples for you to modify and extend as you need.
 
-```eval_rst
 .. note::
 
    * These templates assume that the accompanying CloudFormation template
@@ -202,7 +197,6 @@ are intended as examples for you to modify and extend as you need.
    * The links in this section are intended for viewing the templates
      in a web browser. See the `Direct Downloads`_ section for links to the raw
      files.
-```
 
 Variable values can be input interactively via the terraform console or
 via a Terraform module. An example Terraform module that calls the
@@ -244,13 +238,11 @@ client = watchhmaker.Client(arguments)
 client.install()
 ```
 
-```eval_rst
 .. note::
 
     This demonstrates only a few of the arguments that are available for the
     ``watchmaker.Arguments()`` object. For details on all arguments, see the
     :any:`API Reference <api>`.
-```
 
 ## Direct downloads
 
