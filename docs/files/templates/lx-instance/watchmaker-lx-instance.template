@@ -641,7 +641,13 @@
                         {
                             "10-watchmaker-install" :
                             {
-                                "command" : "bash -xe /etc/cfn/scripts/watchmaker-install.sh"
+                                "command" : "bash -xe /etc/cfn/scripts/watchmaker-install.sh",
+                                "env" :
+                                {
+                                  "AWS_DEFAULT_REGION" : { "Ref" : "AWS::Region" },
+                                  "AWS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt",
+                                  "REQUESTS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt"
+                                }
                             }
                         }
                     },
@@ -832,7 +838,13 @@
                                             ""
                                         ]
                                     }
-                                ]]}
+                                ]]},
+                                "env" :
+                                {
+                                  "AWS_DEFAULT_REGION" : { "Ref" : "AWS::Region" },
+                                  "AWS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt",
+                                  "REQUESTS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt"
+                                }
                             }
                         }
                     },
@@ -852,7 +864,14 @@
                                     { "Ref" : "AWS::Region" }, " &&",
                                     " chown root:root /etc/cfn/scripts/make-app &&",
                                     " chmod 700 /etc/cfn/scripts/make-app"
-                                ]]}
+                                ]]},
+                                "env" :
+                                {
+                                  "AWS_DEFAULT_REGION" : { "Ref" : "AWS::Region" },
+                                  "AWS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt",
+                                  "REQUESTS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt"
+                                }
+
                             },
                             "10-make-app" :
                             {
