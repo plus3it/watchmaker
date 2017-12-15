@@ -2,13 +2,23 @@
 
 ### x.x.x
 
-**Commit Delta**: [Change from 0.7.1 release](https://github.com/plus3it/watchmaker/compare/0.7.1...x.x.x)
+**Commit Delta**: [Change from 0.7.2 release](https://github.com/plus3it/watchmaker/compare/0.7.2...x.x.x)
 
 **Released**: TBD
 
 **Summary**:
 
 *   TBD
+
+### 0.7.2
+
+**Commit Delta**: [Change from 0.7.1 release](https://github.com/plus3it/watchmaker/compare/0.7.1...0.7.2)
+
+**Released**: 2017.12.13
+
+**Summary**:
+
+*   Installs `futures` only on Python 2 -- no functional changes
 
 ### 0.7.1
 

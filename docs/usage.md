@@ -57,7 +57,9 @@ Options:
   --help                          Show this message and exit.
 ```
 
-## `watchmaker` as EC2 userdata
+## `watchmaker` in AWS
+
+### `watchmaker` as EC2 userdata
 
 Calling watchmaker via EC2 userdata is a variation on using it as a CLI
 utility. The main difference is that you must account for installing watchmaker
@@ -72,7 +74,7 @@ examples.
     taking into account limitations in FIPS support in the default PyPi repo.
     This way the same ``pip`` command works for all platforms.
 
-### Linux
+#### Linux
 
 For **Linux**, you must ensure `pip` is installed, and then you can install
 `watchmaker` from PyPi. After that, run `watchmaker` using any option available
@@ -113,7 +115,7 @@ runcmd:
     watchmaker --log-level debug --log-dir=/var/log/watchmaker
 ```
 
-### Windows
+#### Windows
 
 For **Windows**, the first step is to install Python. `Watchmaker` provides a
 simple bootstrap script to do that for you. After installing Python, install
@@ -140,7 +142,7 @@ watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs
 </powershell>
 ```
 
-## `watchmaker` as a CloudFormation template
+### `watchmaker` as a CloudFormation template
 
 Watchmaker can be integrated into a CloudFormation template as well. This
 project provides a handful of CloudFormation templates that launch instances or
@@ -154,14 +156,14 @@ as you need.
     in a web browser. See the `Direct Downloads`_ section for links to the raw
     files.
 
-### Cloudformation templates
+#### Cloudformation templates
 
 *   [Linux Autoscale Group][lx-autoscale]
 *   [Linux Instance][lx-instance]
 *   [Windows Autoscale Group][win-autoscale]
 *   [Windows Instance][win-instance]
 
-### Cloudformation parameter-maps
+#### Cloudformation parameter-maps
 
 Sometimes it is helpful to define the parameters for a template in a file, and
 pass those to CloudFormation along with the template. We call those "parameter
@@ -182,7 +184,7 @@ maps", and provide one for each of the templates above.
 [win-autoscale-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-win-autoscale.params.json
 [win-instance-params]: https://github.com/plus3it/watchmaker/blob/develop/docs/files/cfn/parameter-maps/watchmaker-win-instance.params.json
 
-## `watchmaker` as a Terraform template
+### `watchmaker` as a Terraform template
 
 Watchmaker can be integrated into a Terraform template as well. By wrapping
 the example CloudFormation templates within their respective Terraform template
@@ -212,13 +214,41 @@ module "test-lx-instance" {
 }
 ```
 
-### Terraform templates
+#### Terraform templates
 
 *   [Linux Autoscale Group][dir-lx-autoscale-tf]
 *   [Linux Instance][dir-lx-instance-tf]
 *   [Windows Autoscale Group][dir-win-autoscale-tf]
 *   [Windows Instance][dir-win-instance-tf]
 
+## `watchmaker` in Azure
+
+### `watchmaker` as Custom Script Extension
+
+Custom Script Extension downloads and executes scripts on Azure virtual machines.
+For Linux, you run the bash script shown in the section on [Linux](#linux). You can
+store the bash script in Azure Storage or a publicly available url (such as with S3).
+Then you execute the stored script with a command. For example, a JSON string could contain
+```json
+{
+  "fileUris": ["https://path-to-bash-script/run_watchmaker.sh"],
+  "commandToExecute": "./run_watchmaker.sh"
+}
+```
+These parameters can be passed in via Azure CLI or within a Resource Management Template.
+For more in-depth information, see Microsoft's
+[documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/extensions-customscript).
+
+For Windows, you would execute a PowerShell script in a similar manner as for [Windows](#windows)
+(but without the powershell tags). Then you would have the following parameters:
+```json
+{
+  "fileUris": ["https://path-to-bash-script/run_watchmaker.ps1"],
+  "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File run_watchmaker.ps1"
+}
+```
+For more in-depth information on using Custom Script Extension for Windows, see Microsoft's
+[documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/extensions-customscript).
 
 ## `watchmaker` as a library
 
