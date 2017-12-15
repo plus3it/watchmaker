@@ -696,7 +696,13 @@
                         {
                             "10-watchmaker-install" :
                             {
-                                "command" : "bash -xe /etc/cfn/scripts/watchmaker-install.sh"
+                                "command" : "bash -xe /etc/cfn/scripts/watchmaker-install.sh",
+                                "env" :
+                                {
+                                  "AWS_DEFAULT_REGION" : { "Ref" : "AWS::Region" },
+                                  "AWS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt",
+                                  "REQUESTS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt"
+                                }
                             }
                         }
                     },
@@ -892,7 +898,13 @@
                                     { "Ref" : "AppScriptShell" },
                                     " /etc/cfn/scripts/make-app ",
                                     { "Ref" : "AppScriptParams" }
-                                ]]}
+                                ]]},
+                                "env" :
+                                {
+                                  "AWS_DEFAULT_REGION" : { "Ref" : "AWS::Region" },
+                                  "AWS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt",
+                                  "REQUESTS_CA_BUNDLE" : "/etc/pki/tls/certs/ca-bundle.crt"
+                                }
                             }
                         }
                     },
