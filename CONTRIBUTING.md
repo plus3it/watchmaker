@@ -19,7 +19,7 @@ Watchmaker docs, in docstrings, or even on the web in blog posts, articles, and
 such. The official documentation is maintained within this project in
 docstrings or in the [docs][3] directory. Contributions are
 welcome, and are made the same way as any other code. See
-[Development](#development).
+[Development](#development-guide) guide.
 
 ## Feature Requests and Feedback
 
@@ -32,7 +32,7 @@ If you are proposing a feature:
 *   Remember that this is a community-driven, open-source project, and that
     code contributions are welcome. :)
 
-## Development
+## Development Guide
 
 To set up `watchmaker` for local development:
 
