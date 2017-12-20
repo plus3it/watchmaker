@@ -39,10 +39,10 @@ systems.
 Watchmaker includes the _workers_ listed below. See the corresponding sections
 for details on their configuration parameters.
 
-*   [salt](#salt)
-*   [yum (Linux-only)](#yum-linux-only)
+*   [salt](#salt-worker)
+*   [yum (linux-only)](#yum-worker-linux-only)
 
-### salt
+### salt worker
 
 Parameters supported by the Salt Worker:
 
@@ -109,7 +109,7 @@ Parameters supported by the Salt Worker:
     `installer_url` (_string_): (Windows-only) URL to the Salt Minion installer
     for Windows.
 
-### yum (linux-only)
+### yum worker (linux-only)
 
 Parameters supported by the Yum Worker:
 
