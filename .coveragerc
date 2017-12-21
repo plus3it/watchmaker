@@ -7,7 +7,6 @@ source =
 branch = True
 source =
     watchmaker
-    tests
 parallel = true
 
 [report]
