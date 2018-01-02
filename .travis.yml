@@ -65,8 +65,9 @@ before_deploy:
       (set -x; python $TRAVIS_BUILD_DIR/ci/travis_set_build.py --skip "$TRAVIS_TAG")
     elif [ "$TRAVIS_BRANCH" = "master" ]
     then
-      VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
-      (set -x; git tag -a $VERSION -m $VERSION)
+      WAM_VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
+      export WAM_VERSION
+      (set -x; git tag -a $WAM_VERSION -m $WAM_VERSION)
     fi
 deploy:
   - provider: pypi
@@ -92,6 +93,7 @@ deploy:
       repo: plus3it/watchmaker
       condition: '"$TOXENV" == *"py27"*'
   - provider: releases
+    tag_name: $WAM_VERSION
     draft: true
     skip_cleanup: true
     api_key:
