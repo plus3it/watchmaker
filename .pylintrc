@@ -69,6 +69,7 @@ confidence=
 disable=
     anomalous-backslash-in-string,
     bad-continuation,
+    keyword-arg-before-vararg,
     missing-docstring,
     too-few-public-methods,
     too-many-branches,

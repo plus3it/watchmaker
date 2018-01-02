@@ -1,5 +1,33 @@
 ## Changelog
 
+### 0.8.0
+
+**Commit Delta**: [Change from 0.7.2 release](https://github.com/plus3it/watchmaker/compare/0.7.2...0.8.0)
+
+**Released**: 2018.01.02
+
+**Summary**:
+
+*   [[Issue #415][415]][[PR #458][458]] Forwards watchmaker log entries from the
+    Windows Event Log to the EC2 System Log (Windows-only)
+*   [[PR #425][425]] Adds a log handler that writes watchmaker log entries to
+    the Windows Event Log (Windows-only)
+*   [[Issue #434][434]][[PR #457][457]] Updates doc build to replace
+    `recommonmark` functionality entirely with `m2r`
+*   [[PR #437][437]] Modfies CloudFormation templates to use aws cli utility to
+    retrieve the appscript rather than use the functionality built-in to the
+    cfn bootstrap
+*   [[PR #467][467]] Sets environment variables for aws cli when executing the
+    appscript option in the watchmaker CloudFormation templates
+
+[415]: https://github.com/plus3it/watchmaker/issues/415
+[434]: https://github.com/plus3it/watchmaker/issues/434
+[425]: https://github.com/plus3it/watchmaker/pull/425
+[437]: https://github.com/plus3it/watchmaker/pull/437
+[457]: https://github.com/plus3it/watchmaker/pull/457
+[458]: https://github.com/plus3it/watchmaker/pull/458
+[467]: https://github.com/plus3it/watchmaker/pull/467
+
 ### 0.7.2
 
 **Commit Delta**: [Change from 0.7.1 release](https://github.com/plus3it/watchmaker/compare/0.7.1...0.7.2)
@@ -28,7 +56,7 @@
 
 **Summary**:
 
-*   [[PR #409][409] Provides terraform modules that deploy the watchmaker
+*   [[PR #409][409]] Provides terraform modules that deploy the watchmaker
     CloudFormation templates
 *   [[Issue #418][418]][[PR #419][419]] Adds an `exclude-states` argument to
     the SaltWorker; specified states will be excluded from the salt state
