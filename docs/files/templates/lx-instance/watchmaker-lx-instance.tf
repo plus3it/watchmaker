@@ -30,13 +30,13 @@ variable "AppScriptShell" {
 
 variable "AppScriptUrl" {
   type        = "string"
-  description = "#(Optional) Region-based HTTPS URL to the application script in an S3 bucket. Leave blank to launch without an application script. If specified, an appropriate InstanceRole is required"
+  description = "(Optional) S3 URL to the application script in an S3 bucket (s3://). Leave blank to launch without an application script. If specified, an appropriate InstanceRole is required"
   default     = ""
 }
 
 variable "AppVolumeDevice" {
   type        = "string"
-  description = "#(Optional) Device to mount an extra EBS volume. Leave blank to launch without an extra application volume"
+  description = "(Optional) Device to mount an extra EBS volume. Leave blank to launch without an extra application volume"
   default     = ""
 }
 

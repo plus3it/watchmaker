@@ -16,12 +16,11 @@ Watchmaker works as a sort of task runner. It consists of "_managers_" and
 (Linux, Windows, etc). A _worker_ exposes functionality to a user that helps
 bootstrap and configure the system. _Managers_ are primarily internal
 constructs; _workers_ expose configuration artifacts to users. Watchmaker then
-uses a common :doc:`configuration file <configuration>` to determine what
+uses a common [configuration file](configuration.html) to determine what
 _workers_ to execute on each platform.
 
 ## Contents
 
-```eval_rst
 .. toctree::
     :maxdepth: 1
 
@@ -30,9 +29,8 @@ _workers_ to execute on each platform.
     usage.md
     faq.md
     api.md
-    contributing.rst
-    changelog.rst
-```
+    contributing.md
+    changelog.md
 
 ## Supported Operating Systems
 
@@ -46,5 +44,5 @@ _workers_ to execute on each platform.
 
 ## Supported Python Versions
 
-*   Python 3.3 and later
+*   Python 3.4 and later
 *   Python 2.6 and later
