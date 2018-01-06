@@ -36,12 +36,12 @@ class SaltBase(ManagerBase):
 
         salt_content: (:obj:`str`)
             URL to a salt content archive (zip file) that will be uncompressed
-            in the salt "srv" directory. This typically is used to create a
-            top.sls file and to populate salt's file_roots.
+            in the watchmaker salt "srv" directory. This typically is used to
+            create a top.sls file and to populate salt's file_roots.
             (*Default*: ``''``)
 
-            - *Linux*: ``/srv/salt``
-            - *Windows*: ``C:\Salt\srv``
+            - *Linux*: ``/srv/watchmaker/salt``
+            - *Windows*: ``C:\Watchmaker\Salt\srv``
 
         salt_states: (:obj:`str`)
             Comma-separated string of salt states to execute. Accepts two
@@ -152,7 +152,8 @@ class SaltBase(ManagerBase):
 
         for salt_dir in [
             self.salt_base_env,
-            self.salt_formula_root
+            self.salt_formula_root,
+            self.salt_conf_path
         ]:
             try:
                 os.makedirs(salt_dir)
@@ -284,7 +285,9 @@ class SaltBase(ManagerBase):
             self.salt_call,
             '--local',
             '--retcode-passthrough',
-            '--no-color'
+            '--no-color',
+            '--config-dir',
+            self.salt_conf_path
         ]
         if isinstance(command, list):
             cmd.extend(command)
@@ -530,9 +533,8 @@ class SaltLinux(SaltBase, LinuxManager):
 
         # Set up variables for paths to Salt directories and applications.
         self.salt_call = '/usr/bin/salt-call'
-        self.salt_conf_path = '/etc/salt'
-        self.salt_min_path = '/etc/salt/minion'
-        self.salt_srv = '/srv/salt'
+        self.salt_conf_path = '/opt/watchmaker/salt'
+        self.salt_srv = '/srv/watchmaker/salt'
         self.salt_log_dir = self.system_params['logdir']
         self.salt_working_dir = self.system_params['workingdir']
         self.salt_working_dir_prefix = 'salt-'
@@ -591,7 +593,8 @@ class SaltLinux(SaltBase, LinuxManager):
             'hash_type': 'sha512',
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
-            'pillar_merge_lists': True
+            'pillar_merge_lists': True,
+            'conf_dir': self.salt_conf_path
         }
 
         super(SaltLinux, self)._build_salt_formula(extract_dir)
@@ -678,9 +681,11 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_root = os.sep.join((sys_drive, 'Salt'))
 
         self.salt_call = os.sep.join((self.salt_root, 'salt-call.bat'))
-        self.salt_conf_path = os.sep.join((self.salt_root, 'conf'))
-        self.salt_min_path = os.sep.join((self.salt_root, 'minion'))
-        self.salt_srv = os.sep.join((self.salt_root, 'srv'))
+        self.salt_wam_root = os.sep.join((
+            self.system_params['prepdir'],
+            'Salt'))
+        self.salt_conf_path = os.sep.join((self.salt_wam_root, 'conf'))
+        self.salt_srv = os.sep.join((self.salt_wam_root, 'srv'))
         self.salt_win_repo = os.sep.join((self.salt_srv, 'winrepo'))
         self.salt_log_dir = self.system_params['logdir']
         self.salt_working_dir = self.system_params['workingdir']
@@ -724,6 +729,7 @@ class SaltWindows(SaltBase, WindowsManager):
             'file_roots': {'base': file_roots},
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
             'pillar_merge_lists': True,
+            'conf_dir': self.salt_conf_path,
             'winrepo_source_dir': 'salt://winrepo',
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
