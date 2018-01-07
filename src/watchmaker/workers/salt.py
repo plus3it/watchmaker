@@ -114,6 +114,7 @@ class SaltBase(ManagerBase):
         self.salt_call = None
         self.salt_base_env = None
         self.salt_formula_root = None
+        self.salt_file_roots = None
         self.salt_state_args = None
         self.salt_debug_logfile = None
 
@@ -162,6 +163,13 @@ class SaltBase(ManagerBase):
                     msg = ('Unable create directory - {0}'.format(salt_dir))
                     self.log.error(msg)
                     raise SystemError(msg)
+
+        with codecs.open(
+            os.path.join(self.salt_conf_path, 'minion'),
+            'w',
+            encoding="utf-8"
+        ) as fh_:
+            yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
 
     def _get_formulas_conf(self):
 
@@ -232,15 +240,15 @@ class SaltBase(ManagerBase):
                 to_directory=extract_dir
             )
 
-        if not os.path.exists(os.path.join(self.salt_conf_path, 'minion.d')):
-            os.mkdir(os.path.join(self.salt_conf_path, 'minion.d'))
-
         with codecs.open(
-            os.path.join(self.salt_conf_path, 'minion.d', 'watchmaker.conf'),
-            'w',
+            os.path.join(self.salt_conf_path, 'minion'),
+            'r+',
             encoding="utf-8"
         ) as fh_:
-            yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
+            salt_conf = yaml.safe_load(fh_)
+            salt_conf.update(self.salt_file_roots)
+            fh_.seek(0)
+            yaml.safe_dump(salt_conf, fh_, default_flow_style=False)
 
     def _set_grain(self, grain, value):
         cmd = [
@@ -544,6 +552,15 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_formula_root = salt_dirs[1]
         self.salt_pillar_root = salt_dirs[2]
 
+        # Set up the salt config
+        self.salt_conf = {
+            'file_client': 'local',
+            'hash_type': 'sha512',
+            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True,
+            'conf_dir': self.salt_conf_path
+        }
+
     def _configuration_validation(self):
         if self.install_method.lower() == 'git':
             if not self.bootstrap_source:
@@ -588,14 +605,7 @@ class SaltLinux(SaltBase, LinuxManager):
         file_roots = [str(self.salt_base_env)]
         file_roots += [str(x) for x in formulas_conf]
 
-        self.salt_conf = {
-            'file_client': 'local',
-            'hash_type': 'sha512',
-            'file_roots': {'base': file_roots},
-            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
-            'pillar_merge_lists': True,
-            'conf_dir': self.salt_conf_path
-        }
+        self.salt_file_roots = {'file_roots': {'base': file_roots}}
 
         super(SaltLinux, self)._build_salt_formula(extract_dir)
 
@@ -696,6 +706,17 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_formula_root = salt_dirs[1]
         self.salt_pillar_root = salt_dirs[2]
 
+        # Set up the salt config
+        self.salt_conf = {
+            'file_client': 'local',
+            'hash_type': 'sha512',
+            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True,
+            'conf_dir': self.salt_conf_path,
+            'winrepo_source_dir': 'salt://winrepo',
+            'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
+        }
+
     def _install_package(self):
         installer_name = os.sep.join(
             (self.working_dir, self.installer_url.split('/')[-1])
@@ -723,16 +744,7 @@ class SaltWindows(SaltBase, WindowsManager):
         file_roots = [str(self.salt_base_env), str(self.salt_win_repo)]
         file_roots += [str(x) for x in formulas_conf]
 
-        self.salt_conf = {
-            'file_client': 'local',
-            'hash_type': 'sha512',
-            'file_roots': {'base': file_roots},
-            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
-            'pillar_merge_lists': True,
-            'conf_dir': self.salt_conf_path,
-            'winrepo_source_dir': 'salt://winrepo',
-            'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
-        }
+        self.salt_file_roots = {'file_roots': {'base': file_roots}}
 
         super(SaltWindows, self)._build_salt_formula(extract_dir)
 
