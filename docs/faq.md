@@ -55,6 +55,21 @@ label may not be related to the error you are encountering.
 Watchmaker is supported on RedHat 7 and CentOS 7. See the [index](index.html)
 page for a list of all supported operating systems.
 
+## Can I use the underlying salt functionality directly?
+
+Yes, by passing watchmaker's salt configuration directory to the salt command,
+using the `-c|--config-dir` argument:
+
+*   Linux: `/opt/watchmaker/salt`
+*   Windows: `C:\Watchmaker\salt\conf`
+
+For example:
+
+```
+# -c|--config-dir
+salt-call -c /opt/watchmaker/salt state.show_top
+```
+
 ## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?
 
 Yes, indirectly. Because watchmaker implements most of its functionality via
@@ -62,7 +77,7 @@ Yes, indirectly. Because watchmaker implements most of its functionality via
 SaltStack functionality to effect the desired change. This is done from the
 commandline - as root - by executing:
 
-*   Disable FIPS-mode: `salt-call --local ash.fips_disable`
-*   Enable FIPS-mode: `salt-call --local ash.fips_enable`
+*   Disable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_disable`
+*   Enable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_enable`
 
 And then rebooting the system.
