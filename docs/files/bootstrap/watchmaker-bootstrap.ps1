@@ -143,4 +143,9 @@ if( ${GitUrl} ) {
 Reset-EnvironmentVariables
 Write-Verbose "Reset the PATH environment for this shell"
 
+if ("$Env:TEMP".TrimEnd("\") -eq "${Env:windir}\System32\config\systemprofile\AppData\Local\Temp") {
+  $Env:TEMP, $Env:TMP = "${Env:windir}\Temp", "${Env:windir}\Temp"
+  Write-Verbose "Forced TEMP envs to ${Env:windir}\Temp"
+}
+
 Write-Verbose "${__ScriptName} complete!"
