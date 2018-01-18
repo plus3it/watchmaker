@@ -31,6 +31,34 @@
         { "Fn::Equals": [ { "Ref": "NoUpdates" }, "true" ] }
       ]
     },
+    "NotGenFive": {
+      "Fn::Not": [
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                { "Fn::Select": [
+                    "0",
+                    { "Fn::Split": [ ".", { "Ref": "InstanceType" } ] }
+                  ]
+                },
+                "c5"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                { "Fn::Select": [
+                    "0",
+                    { "Fn::Split": [ ".", { "Ref": "InstanceType" } ] }
+                  ]
+                },
+                "m5"
+              ]
+            }
+          ]
+        }
+      ]
+    },
     "Reboot": {
       "Fn::Not": [
         { "Fn::Equals": [ { "Ref": "NoReboot" }, "true" ] }
@@ -283,10 +311,15 @@
         "t2.small",
         "t2.medium",
         "t2.large",
-        "c4.large",
-        "c4.xlarge",
+        "t2.xlarge",
+        "m5.large",
+        "m5.xlarge",
+        "c5.large",
+        "c5.xlarge",
         "m4.large",
-        "m4.xlarge"
+        "m4.xlarge",
+        "c4.large",
+        "c4.xlarge"
       ],
       "Default": "t2.micro",
       "Description": "Amazon EC2 instance type",
