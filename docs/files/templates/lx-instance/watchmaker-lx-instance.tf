@@ -36,8 +36,8 @@ variable "AppScriptUrl" {
 
 variable "AppVolumeDevice" {
   type        = "string"
-  description = "(Optional) Device to mount an extra EBS volume. Leave blank to launch without an extra application volume"
-  default     = ""
+  description = "Whether to mount an extra EBS volume. Leave as default (\"false\") to launch without an extra application volume"
+  default     = "false"
 }
 
 variable "AppVolumeMountPath" {
