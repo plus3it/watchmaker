@@ -214,7 +214,7 @@ directly to the Terraform module. An example Terraform file that calls the
 lx-autoscale module is shown below.
 
 ```
-provide "aws" {}
+provider "aws" {}
 
 module "test-lx-instance" {
   source = "git::https://github.com/plus3it/terraform-aws-watchmaker//modules/lx-instance/"
