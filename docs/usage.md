@@ -203,7 +203,7 @@ they become deployable and manageable from within the Terraform cli.
 .. note::
 
    * Each corresponding Terraform template and the CloudFormation template are grouped together
-     in the same directory .
+     in the same directory.
 
    * The links in this section are intended for viewing the templates
      in a web browser. See the `Direct Downloads`_ section for links to the raw
@@ -214,9 +214,7 @@ directly to the Terraform module. An example Terraform file that calls the
 lx-autoscale module is shown below.
 
 ```
-provider "aws" {
-  profile = "default"
-}
+provide "aws" {}
 
 module "test-lx-instance" {
   source = "git::https://github.com/plus3it/terraform-aws-watchmaker//modules/lx-instance/"
