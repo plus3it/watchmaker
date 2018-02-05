@@ -19,7 +19,8 @@ except ImportError:
 class BufferedIOS3Key(io.BufferedIOBase):
     """Add a read method to S3 key object."""
 
-    def __init__(self, key):
+    def __init__(self, key, *args, **kwargs):
+        super(BufferedIOS3Key, self).__init__(*args, **kwargs)
         self.read = key.get()['Body'].read
 
 
@@ -28,7 +29,7 @@ class S3Handler(urllib.request.BaseHandler):
 
     def s3_open(self, req):
         """Open S3 objects."""
-        # Credit: <https://github.com/ActiveState/code/tree/master/recipes/Python/578957_Urllib_handler_AmazS3>  # noqa: E501
+        # Credit: <https://github.com/ActiveState/code/tree/master/recipes/Python/578957_Urllib_handler_AmazS3>  # noqa: E501, pylint: disable=line-too-long
 
         # The implementation was inspired mainly by the code behind
         # urllib.request.FileHandler.file_open().
@@ -49,11 +50,12 @@ class S3Handler(urllib.request.BaseHandler):
             )
 
         try:
-            s3 = self._s3
+            s3_conn = self.s3_conn
         except AttributeError:
-            s3 = self._s3 = boto3.resource("s3")
+            # pylint: disable=attribute-defined-outside-init
+            s3_conn = self.s3_conn = boto3.resource("s3")
 
-        key = s3.Object(bucket_name=bucket_name, key=key_name)
+        key = s3_conn.Object(bucket_name=bucket_name, key=key_name)
 
         origurl = 's3://{}/{}'.format(bucket_name, key_name)
 
@@ -82,7 +84,8 @@ class S3Handler(urllib.request.BaseHandler):
 
 
 if HAS_BOTO3:
+    # pylint: disable=invalid-name
     s3_opener = urllib.request.build_opener(S3Handler)
     urllib.request.install_opener(s3_opener)
 
-urlopen = urllib.request.urlopen
+urlopen = urllib.request.urlopen  # pylint: disable=invalid-name
