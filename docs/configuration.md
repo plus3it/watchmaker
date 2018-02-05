@@ -73,10 +73,6 @@ Parameters supported by the Salt Worker:
 -   `exclude_states` (_string, comma-separated_): States to exclude from
     execution of salt states.
 
--   `s3_source` (_boolean_): Use S3 utilities to retrieve content instead of
-    http(s) utilities. For S3 utilities to work, the system must have boto
-    credentials configured that allow access to the S3 bucket.
-
 -   `user_formulas` (_dict_): Map of formula names and URLs to zip archives of
     salt formulas. These formulas will be downloaded, extracted, and added to
     the salt file roots. The zip archive must contain a top-level directory
@@ -152,7 +148,6 @@ all:
       ou_path: None
       salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
       salt_states: Highstate
-      s3_source: False
       user_formulas:
         # To add extra formulas, specify them as a map of
         #    <formula_name>: <archive_url>

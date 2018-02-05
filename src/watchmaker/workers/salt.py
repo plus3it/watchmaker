@@ -27,13 +27,6 @@ class SaltBase(ManagerBase):
             log directory.
             (*Default*: ``''``)
 
-        s3_source: (:obj:`bool`)
-            Use S3 utilities to download salt content and user formulas from
-            an S3 bucket. If ``True``, you must also install ``boto3`` and
-            ``botocore``. Those dependencies will not be installed by
-            Watchmaker.
-            (*Default*: ``False``)
-
         salt_content: (:obj:`str`)
             URL to a salt content archive (zip file) that will be uncompressed
             in the watchmaker salt "srv" directory. This typically is used to
@@ -96,7 +89,6 @@ class SaltBase(ManagerBase):
         self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.computer_name = kwargs.pop('computer_name', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
-        self.s3_source = kwargs.pop('s3_source', None) or False
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
         self.salt_content = kwargs.pop('salt_content', None) or ''
         self.ou_path = kwargs.pop('ou_path', None) or ''
@@ -189,7 +181,7 @@ class SaltBase(ManagerBase):
             file_loc = os.sep.join((self.working_dir, filename))
 
             # Download the formula
-            self.download_file(formula_url, file_loc)
+            self.retrieve_file(formula_url, file_loc)
 
             # Extract the formula
             formula_working_dir = self.create_working_dir(
@@ -230,11 +222,7 @@ class SaltBase(ManagerBase):
                 self.working_dir,
                 salt_content_filename
             ))
-            self.download_file(
-                self.salt_content,
-                salt_content_file,
-                self.s3_source
-            )
+            self.retrieve_file(self.salt_content, salt_content_file)
             self.extract_contents(
                 filepath=salt_content_file,
                 to_directory=extract_dir
@@ -582,10 +570,7 @@ class SaltLinux(SaltBase, LinuxManager):
                 self.working_dir,
                 self.bootstrap_source.split('/')[-1]
             ))
-            self.download_file(
-                self.bootstrap_source,
-                salt_bootstrap_filename
-            )
+            self.retrieve_file(self.bootstrap_source, salt_bootstrap_filename)
             bootstrap_cmd = [
                 'sh',
                 salt_bootstrap_filename,
@@ -721,11 +706,7 @@ class SaltWindows(SaltBase, WindowsManager):
         installer_name = os.sep.join(
             (self.working_dir, self.installer_url.split('/')[-1])
         )
-        self.download_file(
-            self.installer_url,
-            installer_name,
-            self.s3_source
-        )
+        self.retrieve_file(self.installer_url, installer_name)
         install_cmd = [installer_name, '/S']
         self.call_process(install_cmd)
 
