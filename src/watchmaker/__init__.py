@@ -15,11 +15,12 @@ import setuptools
 import yaml
 from six.moves import urllib
 
+import watchmaker.utils
+import watchmaker.utils.urllib
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
-from watchmaker.utils.urllib import urlopen
 
 
 def _extract_version(package_name):
@@ -257,10 +258,13 @@ class Client(object):
         else:
             self.log.info('User supplied config being used.')
 
+        # Convert a local config path to a URI
+        self.config_path = watchmaker.utils.path_to_uri(self.config_path)
+
         # Get the raw config data
         data = ''
         try:
-            data = urlopen(self.config_path).read()
+            data = watchmaker.utils.urllib.urlopen(self.config_path).read()
         except (ValueError, urllib.error.URLError):
             msg = (
                 'Could not read the config from {0}! Please make sure your '
