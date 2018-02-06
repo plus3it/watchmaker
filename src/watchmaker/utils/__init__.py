@@ -5,7 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import os
 
-from six.moves.urllib import parse, request  # pylint: disable=import-error
+from watchmaker.utils.urllib import parse, request
 
 
 def path_to_uri(filepath):

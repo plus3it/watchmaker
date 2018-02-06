@@ -13,14 +13,13 @@ import subprocess
 import pkg_resources
 import setuptools
 import yaml
-from six.moves import urllib
 
 import watchmaker.utils
-import watchmaker.utils.urllib
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
+from watchmaker.utils import urllib
 
 
 def _extract_version(package_name):
@@ -264,7 +263,7 @@ class Client(object):
         # Get the raw config data
         data = ''
         try:
-            data = watchmaker.utils.urllib.urlopen(self.config_path).read()
+            data = urllib.request.urlopen(self.config_path).read()
         except (ValueError, urllib.error.URLError):
             msg = (
                 'Could not read the config from {0}! Please make sure your '

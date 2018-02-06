@@ -14,11 +14,10 @@ import tempfile
 import zipfile
 
 from six import add_metaclass
-from six.moves import urllib
 
 import watchmaker.utils
-import watchmaker.utils.urllib
 from watchmaker.exceptions import WatchmakerException
+from watchmaker.utils import urllib
 
 
 class ManagerBase(object):
@@ -83,7 +82,7 @@ class ManagerBase(object):
 
         try:
             self.log.debug('Establishing connection to the host, %s', url)
-            response = watchmaker.utils.urllib.urlopen(url)
+            response = urllib.request.urlopen(url)
             self.log.debug('Opening the file handle, %s', filename)
             with open(filename, 'wb') as outfile:
                 self.log.debug('Saving file to local filesystem...')
