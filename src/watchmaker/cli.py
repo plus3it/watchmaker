@@ -47,11 +47,6 @@ LOG_LOCATIONS = {
                   'Comma-separated string of salt states to apply. A value of '
                   '\'None\' will not apply any salt states. A value of '
                   '\'Highstate\' will apply the salt highstate.'))
-@click.option('--s3-source', 's3_source', flag_value=True, default=None,
-              help=(
-                  'Use S3 utilities to retrieve content instead of http/s '
-                  'utilities. Boto3 must be installed, and boto3 credentials '
-                  'must be configured that allow access to the S3 bucket.'))
 @click.option('-A', '--admin-groups', default=None,
               help=(
                   'Set a salt grain that specifies the domain groups that '

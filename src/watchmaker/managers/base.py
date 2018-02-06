@@ -14,9 +14,10 @@ import tempfile
 import zipfile
 
 from six import add_metaclass
-from six.moves import urllib
 
+import watchmaker.utils
 from watchmaker.exceptions import WatchmakerException
+from watchmaker.utils import urllib
 
 
 class ManagerBase(object):
@@ -61,48 +62,11 @@ class ManagerBase(object):
         args = args
         kwargs = kwargs
 
-    def _import_boto3(self):
-        if self.boto3:
-            return
-
-        self.log.info("Dynamically importing boto3 ...")
-        try:
-            self.boto3 = __import__("boto3")
-            self.boto_client = __import__(
-                "botocore.client",
-                globals(),
-                locals(),
-                ["ClientError"],
-                0
-            )
-        except ImportError:
-            msg = 'Unable to import boto3 module.'
-            self.log.critical(msg)
-            raise
-
-    def _get_s3_file(self, url, bucket_name, key_name, destination):
-        self._import_boto3()
-
-        try:
-            s3_ = self.boto3.resource("s3")
-            s3_.meta.client.head_bucket(Bucket=bucket_name)
-            s3_.Object(bucket_name, key_name).download_file(destination)
-        except self.boto_client.ClientError:
-            msg = 'Bucket does not exist.  bucket = {0}.'.format(bucket_name)
-            self.log.critical(msg)
-            raise
-        except Exception:
-            msg = (
-                'Unable to download file from S3 bucket. url = {0}. '
-                'bucket = {1}. key = {2}. file = {3}.'
-                .format(url, bucket_name, key_name, destination)
-            )
-            self.log.critical(msg)
-            raise
-
-    def download_file(self, url, filename, sourceiss3bucket=False):
+    def retrieve_file(self, url, filename):
         """
-        Download a file from a web server or S3 bucket.
+        Retrieve a file from a provided URL.
+
+        Supports all :obj:`urllib.request` handlers, as well as S3 buckets.
 
         Args:
             url: (:obj:`str`)
@@ -110,77 +74,29 @@ class ManagerBase(object):
 
             filename: (:obj:`str`)
                 Path where the file will be saved.
-
-            sourceiss3bucket: (:obj:`bool`)
-                Switch to indicate that the download should use boto3 to
-                download the file from an S3 bucket.
-                (*Default*: ``False``)
         """
+        # Convert a local path to a URI
+        url = watchmaker.utils.path_to_uri(url)
         self.log.debug('Downloading: %s', url)
         self.log.debug('Destination: %s', filename)
-        self.log.debug('S3: %s', sourceiss3bucket)
 
-        if sourceiss3bucket:
-            self._import_boto3()
-
-            bucket_name = url.split('/')[3]
-            key_name = '/'.join(url.split('/')[4:])
-
-            self.log.debug('Bucket Name: %s', bucket_name)
-            self.log.debug('key_name: %s', key_name)
-
-            try:
-                s3_ = self.boto3.resource('s3')
-                s3_.meta.client.head_bucket(Bucket=bucket_name)
-                s3_.Object(bucket_name, key_name).download_file(filename)
-            except (NameError, self.boto_client.ClientError):
-                self.log.error('NameError: %s', self.boto_client.ClientError)
-                try:
-                    bucket_name = url.split('/')[2].split('.')[0]
-                    key_name = '/'.join(url.split('/')[3:])
-                    s3_ = self.boto3.resource("s3")
-                    s3_.meta.client.head_bucket(Bucket=bucket_name)
-                    s3_.Object(bucket_name, key_name).download_file(filename)
-                except Exception:
-                    msg = (
-                        'Unable to download file from S3 bucket. url = {0}. '
-                        'bucket = {1}. key = {2}. file = {3}.'
-                        .format(url, bucket_name, key_name, filename)
-                    )
-                    self.log.critical(msg)
-                    raise
-            except Exception:
-                msg = (
-                    'Unable to download file from S3 bucket. url = {0}. '
-                    'bucket = {1}. key = {2}. file = {3}.'
-                    .format(url, bucket_name, key_name, filename)
-                )
-                self.log.critical(msg)
-                raise
-            self.log.info(
-                'Downloaded file from S3 bucket. url=%s. filename=%s',
+        try:
+            self.log.debug('Establishing connection to the host, %s', url)
+            response = urllib.request.urlopen(url)
+            self.log.debug('Opening the file handle, %s', filename)
+            with open(filename, 'wb') as outfile:
+                self.log.debug('Saving file to local filesystem...')
+                shutil.copyfileobj(response, outfile)
+        except (ValueError, urllib.error.URLError):
+            self.log.critical(
+                'Failed to retrieve the file. url = %s. filename = %s',
                 url, filename
             )
-        else:
-            try:
-                self.log.debug('Opening connection to web server, %s', url)
-                response = urllib.request.urlopen(url)
-                self.log.debug('Opening the file handle, %s', filename)
-                with open(filename, 'wb') as outfile:
-                    self.log.debug('Saving file to local filesystem...')
-                    shutil.copyfileobj(response, outfile)
-            except Exception:
-                msg = (
-                    'Unable to download file from web server. url = {0}. '
-                    'filename = {1}.'
-                    .format(url, filename)
-                )
-                self.log.critical(msg)
-                raise
-            self.log.info(
-                'Downloaded file from web server. url=%s. filename=%s',
-                url, filename
-            )
+            raise
+        self.log.info(
+            'Retrieved the file successfully. url=%s. filename=%s',
+            url, filename
+        )
 
     def create_working_dir(self, basedir, prefix):
         """

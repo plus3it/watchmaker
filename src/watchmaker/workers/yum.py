@@ -146,7 +146,7 @@ class Yum(LinuxManager):
                 url = repo['url']
                 repofile = '/etc/yum.repos.d/{0}'.format(
                     url.split('/')[-1])
-                self.download_file(url, repofile)
+                self.retrieve_file(url, repofile)
             else:
                 self.log.debug(
                     'Skipped repo because it is not valid for this system: '

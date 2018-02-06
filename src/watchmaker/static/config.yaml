@@ -7,7 +7,6 @@ all:
       ou_path: None
       salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
       salt_states: Highstate
-      s3_source: False
       user_formulas:
         # To add extra formulas, specify them as a map of
         #    <formula_name>: <archive_url>
