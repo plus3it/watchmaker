@@ -17,6 +17,7 @@ import yaml
 import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
+from watchmaker.logger import log_system_details
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
 from watchmaker.utils import urllib
@@ -215,11 +216,12 @@ class Client(object):
         self.log_dir = arguments.pop('log_dir')
         self.log_level = arguments.pop('log_level')
 
+        log_system_details(self.log)
+
         # Get the system params
         self.system = platform.system().lower()
         self._set_system_params()
 
-        self.log.debug('System Type: %s', self.system)
         self.log.debug('System Parameters: %s', self.system_params)
 
         # All remaining arguments are worker_args
