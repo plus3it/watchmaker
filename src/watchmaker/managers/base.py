@@ -82,7 +82,7 @@ class ManagerBase(object):
 
         try:
             self.log.debug('Establishing connection to the host, %s', url)
-            response = urllib.request.urlopen(url)
+            response = watchmaker.utils.urlopen_retry(url)
             self.log.debug('Opening the file handle, %s', filename)
             with open(filename, 'wb') as outfile:
                 self.log.debug('Saving file to local filesystem...')
