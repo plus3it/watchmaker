@@ -263,7 +263,7 @@ class Client(object):
         # Get the raw config data
         data = ''
         try:
-            data = urllib.request.urlopen(self.config_path).read()
+            data = watchmaker.utils.urlopen_retry(self.config_path).read()
         except (ValueError, urllib.error.URLError):
             msg = (
                 'Could not read the config from {0}! Please make sure your '
