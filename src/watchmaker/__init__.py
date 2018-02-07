@@ -258,7 +258,7 @@ class Client(object):
             self.log.info('User supplied config being used.')
 
         # Convert a local config path to a URI
-        self.config_path = watchmaker.utils.path_to_uri(self.config_path)
+        self.config_path = watchmaker.utils.uri_from_filepath(self.config_path)
 
         # Get the raw config data
         data = ''

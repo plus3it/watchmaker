@@ -76,7 +76,7 @@ class ManagerBase(object):
                 Path where the file will be saved.
         """
         # Convert a local path to a URI
-        url = watchmaker.utils.path_to_uri(url)
+        url = watchmaker.utils.uri_from_filepath(url)
         self.log.debug('Downloading: %s', url)
         self.log.debug('Destination: %s', filename)
 

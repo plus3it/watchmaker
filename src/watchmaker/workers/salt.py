@@ -11,6 +11,7 @@ import shutil
 
 import yaml
 
+import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
@@ -217,7 +218,9 @@ class SaltBase(ManagerBase):
 
     def _build_salt_formula(self, extract_dir):
         if self.salt_content:
-            salt_content_filename = self.salt_content.split('/')[-1]
+            salt_content_filename = watchmaker.utils.basename_from_uri(
+                self.salt_content
+            )
             salt_content_file = os.sep.join((
                 self.working_dir,
                 salt_content_filename
@@ -568,7 +571,7 @@ class SaltLinux(SaltBase, LinuxManager):
         elif self.install_method.lower() == 'git':
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
-                self.bootstrap_source.split('/')[-1]
+                watchmaker.utils.basename_from_uri(self.bootstrap_source)
             ))
             self.retrieve_file(self.bootstrap_source, salt_bootstrap_filename)
             bootstrap_cmd = [
@@ -703,9 +706,10 @@ class SaltWindows(SaltBase, WindowsManager):
         }
 
     def _install_package(self):
-        installer_name = os.sep.join(
-            (self.working_dir, self.installer_url.split('/')[-1])
-        )
+        installer_name = os.sep.join((
+            self.working_dir,
+            watchmaker.utils.basename_from_uri(self.installer_url)
+        ))
         self.retrieve_file(self.installer_url, installer_name)
         install_cmd = [installer_name, '/S']
         self.call_process(install_cmd)

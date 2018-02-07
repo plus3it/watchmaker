@@ -7,6 +7,7 @@ import re
 
 import six
 
+import watchmaker.utils
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager
 
@@ -145,7 +146,7 @@ class Yum(LinuxManager):
                 self.log.info('Installing repo: %s', repo['url'])
                 url = repo['url']
                 repofile = '/etc/yum.repos.d/{0}'.format(
-                    url.split('/')[-1])
+                    watchmaker.utils.basename_from_uri(url))
                 self.retrieve_file(url, repofile)
             else:
                 self.log.debug(
