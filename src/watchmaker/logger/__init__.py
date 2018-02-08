@@ -89,6 +89,18 @@ def make_log_dir(log_dir):
         os.makedirs(log_dir)
 
 
+def log_system_details(log):
+    """Log details about the system Watchmaker is running on."""
+    log.info('System OS: %s', platform.system())
+    log.info('System Architecture: %s', platform.architecture())
+    log.info('System''s Release: %s', platform.release())
+    log.info('System''s Release Version: %s', platform.version())
+    log.info('Machine Type: %s', platform.machine())
+    log.info('Network Name: %s', platform.node())
+    log.info('Processor Name: %s', platform.processor())
+    log.info('Python Version: %s', platform.python_version())
+
+
 def prepare_logging(log_dir, log_level):
     """
     Prepare the logger for handling messages to a file and/or to stdout.
