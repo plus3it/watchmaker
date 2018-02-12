@@ -1,14 +1,44 @@
 ## Changelog
 
-### x.x.x
+### 0.9.0
 
-**Commit Delta**: [Change from 0.8.0 release](https://github.com/plus3it/watchmaker/compare/0.8.0...x.x.x)
+**Commit Delta**: [Change from 0.8.0 release](https://github.com/plus3it/watchmaker/compare/0.8.0...0.9.0)
 
-**Released**: TBD
+**Released**: 2018.02.12
 
 **Summary**:
 
-*   TBD
+*   [[Issue #499][499]][[PR #513][513]] Includes additional details about the
+    platform and python version in the watchmaker log
+*   [[Issue #500][500]][[PR #512][512]] Retries file retrieval up to 5 times
+*   [[Issue #501][501]][[PR #507][507]] Uses urllib handlers to retrieve all
+    files
+    -   Deprecates the argument `--s3-source`; to retrieve a file from an S3
+        bucket use the syntax: `s3://<bucket>/<key>`
+    -   Local files may be specified as absolute or relative paths, and may or
+        may not be prefixed with `file://`
+*   [[PR #496][496]] Moves CloudFormation and Terraform templates to their own
+    project, [terraform-aws-watchmaker][terraform-aws-watchmaker]
+*   [[PR #491][491]] Improves compatibility of the watchmaker bootstrap.ps1
+    script when executed by an Azure custom script extension
+*   [[Issue #430][430]][[PR #487][487]] Writes watchmaker salt config to a
+    custom path:
+    -   Windows: `C:\Watchmaker\Salt\conf`
+    -   Linux: `/opt/watchmaker/salt`
+*   scap-formula
+    -   Incorporates content from OpenSCAP Security Guide v0.1.37-1
+
+[430]: https://github.com/plus3it/watchmaker/issues/430
+[499]: https://github.com/plus3it/watchmaker/issues/499
+[500]: https://github.com/plus3it/watchmaker/issues/500
+[501]: https://github.com/plus3it/watchmaker/issues/501
+[487]: https://github.com/plus3it/watchmaker/pull/487
+[491]: https://github.com/plus3it/watchmaker/pull/491
+[496]: https://github.com/plus3it/watchmaker/pull/496
+[507]: https://github.com/plus3it/watchmaker/pull/507
+[512]: https://github.com/plus3it/watchmaker/pull/512
+[513]: https://github.com/plus3it/watchmaker/pull/513
+[terraform-aws-watchmaker]: https://github.com/plus3it/terraform-aws-watchmaker
 
 ### 0.8.0
 
