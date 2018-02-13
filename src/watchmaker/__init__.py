@@ -3,7 +3,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-import codecs
 import collections
 import datetime
 import logging
@@ -14,12 +13,14 @@ import subprocess
 import pkg_resources
 import setuptools
 import yaml
-from six.moves import urllib
 
+import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
+from watchmaker.logger import log_system_details
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
+from watchmaker.utils import urllib
 
 
 def _extract_version(package_name):
@@ -130,13 +131,6 @@ class Arguments(dict):
             of ``'Highstate'`` will apply the salt highstate.
             (*Default*: ``None``)
 
-        s3_source: (:obj:`bool`)
-            Use S3 utilities to retrieve content instead of http/s utilities.
-            For S3 utilities to work, ``boto3`` must be installed, and the
-            system must have boto credentials configured that allow access to
-            the S3 bucket.
-            (*Default*: ``None``)
-
         ou_path: (:obj:`str`)
             Set a salt grain that specifies the full DN of the OU where the
             computer account will be created when joining a domain.
@@ -180,7 +174,6 @@ class Arguments(dict):
         self.computer_name = kwargs.pop('computer_name', None)
         self.environment = kwargs.pop('environment', None)
         self.salt_states = kwargs.pop('salt_states', None)
-        self.s3_source = kwargs.pop('s3_source', None)
         self.ou_path = kwargs.pop('ou_path', None)
         self.extra_arguments = kwargs.pop('extra_arguments', None) or []
 
@@ -223,11 +216,12 @@ class Client(object):
         self.log_dir = arguments.pop('log_dir')
         self.log_level = arguments.pop('log_level')
 
+        log_system_details(self.log)
+
         # Get the system params
         self.system = platform.system().lower()
         self._set_system_params()
 
-        self.log.debug('System Type: %s', self.system)
         self.log.debug('System Parameters: %s', self.system_params)
 
         # All remaining arguments are worker_args
@@ -247,10 +241,6 @@ class Client(object):
 
         self.config = self._get_config()
 
-    @staticmethod
-    def _validate_url(url):
-        return urllib.parse.urlparse(url).scheme in ['http', 'https']
-
     def _get_config(self):
         """
         Read and validate configuration data for installation.
@@ -269,29 +259,20 @@ class Client(object):
         else:
             self.log.info('User supplied config being used.')
 
+        # Convert a local config path to a URI
+        self.config_path = watchmaker.utils.uri_from_filepath(self.config_path)
+
         # Get the raw config data
         data = ''
-        if self._validate_url(self.config_path):
-            try:
-                data = urllib.request.urlopen(self.config_path).read()
-            except urllib.error.URLError:
-                msg = (
-                    'The URL used to get the user config.yaml file did not '
-                    'work! Please make sure your config is available.'
-                )
-                self.log.critical(msg)
-                raise
-        elif self.config_path and not os.path.exists(self.config_path):
+        try:
+            data = watchmaker.utils.urlopen_retry(self.config_path).read()
+        except (ValueError, urllib.error.URLError):
             msg = (
-                'User supplied config {0} does not exist. Please '
-                'double-check your config path or use the default config '
-                'path.'.format(self.config_path)
+                'Could not read the config from {0}! Please make sure your '
+                'config is available.'.format(self.config_path)
             )
             self.log.critical(msg)
-            raise WatchmakerException(msg)
-        else:
-            with codecs.open(self.config_path, encoding="utf-8") as fh_:
-                data = fh_.read()
+            raise
 
         config_full = yaml.safe_load(data)
         try:

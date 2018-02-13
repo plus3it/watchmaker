@@ -1,2 +1,2 @@
 argparse==1.4.0
-codecov==2.0.10
+codecov==2.0.15

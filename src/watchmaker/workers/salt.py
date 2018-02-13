@@ -11,6 +11,7 @@ import shutil
 
 import yaml
 
+import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
@@ -27,21 +28,14 @@ class SaltBase(ManagerBase):
             log directory.
             (*Default*: ``''``)
 
-        s3_source: (:obj:`bool`)
-            Use S3 utilities to download salt content and user formulas from
-            an S3 bucket. If ``True``, you must also install ``boto3`` and
-            ``botocore``. Those dependencies will not be installed by
-            Watchmaker.
-            (*Default*: ``False``)
-
         salt_content: (:obj:`str`)
             URL to a salt content archive (zip file) that will be uncompressed
-            in the salt "srv" directory. This typically is used to create a
-            top.sls file and to populate salt's file_roots.
+            in the watchmaker salt "srv" directory. This typically is used to
+            create a top.sls file and to populate salt's file_roots.
             (*Default*: ``''``)
 
-            - *Linux*: ``/srv/salt``
-            - *Windows*: ``C:\Salt\srv``
+            - *Linux*: ``/srv/watchmaker/salt``
+            - *Windows*: ``C:\Watchmaker\Salt\srv``
 
         salt_states: (:obj:`str`)
             Comma-separated string of salt states to execute. Accepts two
@@ -96,7 +90,6 @@ class SaltBase(ManagerBase):
         self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.computer_name = kwargs.pop('computer_name', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
-        self.s3_source = kwargs.pop('s3_source', None) or False
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
         self.salt_content = kwargs.pop('salt_content', None) or ''
         self.ou_path = kwargs.pop('ou_path', None) or ''
@@ -114,6 +107,7 @@ class SaltBase(ManagerBase):
         self.salt_call = None
         self.salt_base_env = None
         self.salt_formula_root = None
+        self.salt_file_roots = None
         self.salt_state_args = None
         self.salt_debug_logfile = None
 
@@ -152,7 +146,8 @@ class SaltBase(ManagerBase):
 
         for salt_dir in [
             self.salt_base_env,
-            self.salt_formula_root
+            self.salt_formula_root,
+            self.salt_conf_path
         ]:
             try:
                 os.makedirs(salt_dir)
@@ -161,6 +156,13 @@ class SaltBase(ManagerBase):
                     msg = ('Unable create directory - {0}'.format(salt_dir))
                     self.log.error(msg)
                     raise SystemError(msg)
+
+        with codecs.open(
+            os.path.join(self.salt_conf_path, 'minion'),
+            'w',
+            encoding="utf-8"
+        ) as fh_:
+            yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
 
     def _get_formulas_conf(self):
 
@@ -180,7 +182,7 @@ class SaltBase(ManagerBase):
             file_loc = os.sep.join((self.working_dir, filename))
 
             # Download the formula
-            self.download_file(formula_url, file_loc)
+            self.retrieve_file(formula_url, file_loc)
 
             # Extract the formula
             formula_working_dir = self.create_working_dir(
@@ -216,30 +218,28 @@ class SaltBase(ManagerBase):
 
     def _build_salt_formula(self, extract_dir):
         if self.salt_content:
-            salt_content_filename = self.salt_content.split('/')[-1]
+            salt_content_filename = watchmaker.utils.basename_from_uri(
+                self.salt_content
+            )
             salt_content_file = os.sep.join((
                 self.working_dir,
                 salt_content_filename
             ))
-            self.download_file(
-                self.salt_content,
-                salt_content_file,
-                self.s3_source
-            )
+            self.retrieve_file(self.salt_content, salt_content_file)
             self.extract_contents(
                 filepath=salt_content_file,
                 to_directory=extract_dir
             )
 
-        if not os.path.exists(os.path.join(self.salt_conf_path, 'minion.d')):
-            os.mkdir(os.path.join(self.salt_conf_path, 'minion.d'))
-
         with codecs.open(
-            os.path.join(self.salt_conf_path, 'minion.d', 'watchmaker.conf'),
-            'w',
+            os.path.join(self.salt_conf_path, 'minion'),
+            'r+',
             encoding="utf-8"
         ) as fh_:
-            yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
+            salt_conf = yaml.safe_load(fh_)
+            salt_conf.update(self.salt_file_roots)
+            fh_.seek(0)
+            yaml.safe_dump(salt_conf, fh_, default_flow_style=False)
 
     def _set_grain(self, grain, value):
         cmd = [
@@ -284,7 +284,9 @@ class SaltBase(ManagerBase):
             self.salt_call,
             '--local',
             '--retcode-passthrough',
-            '--no-color'
+            '--no-color',
+            '--config-dir',
+            self.salt_conf_path
         ]
         if isinstance(command, list):
             cmd.extend(command)
@@ -530,9 +532,8 @@ class SaltLinux(SaltBase, LinuxManager):
 
         # Set up variables for paths to Salt directories and applications.
         self.salt_call = '/usr/bin/salt-call'
-        self.salt_conf_path = '/etc/salt'
-        self.salt_min_path = '/etc/salt/minion'
-        self.salt_srv = '/srv/salt'
+        self.salt_conf_path = '/opt/watchmaker/salt'
+        self.salt_srv = '/srv/watchmaker/salt'
         self.salt_log_dir = self.system_params['logdir']
         self.salt_working_dir = self.system_params['workingdir']
         self.salt_working_dir_prefix = 'salt-'
@@ -541,6 +542,15 @@ class SaltLinux(SaltBase, LinuxManager):
         self.salt_base_env = salt_dirs[0]
         self.salt_formula_root = salt_dirs[1]
         self.salt_pillar_root = salt_dirs[2]
+
+        # Set up the salt config
+        self.salt_conf = {
+            'file_client': 'local',
+            'hash_type': 'sha512',
+            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True,
+            'conf_dir': self.salt_conf_path
+        }
 
     def _configuration_validation(self):
         if self.install_method.lower() == 'git':
@@ -561,12 +571,9 @@ class SaltLinux(SaltBase, LinuxManager):
         elif self.install_method.lower() == 'git':
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
-                self.bootstrap_source.split('/')[-1]
+                watchmaker.utils.basename_from_uri(self.bootstrap_source)
             ))
-            self.download_file(
-                self.bootstrap_source,
-                salt_bootstrap_filename
-            )
+            self.retrieve_file(self.bootstrap_source, salt_bootstrap_filename)
             bootstrap_cmd = [
                 'sh',
                 salt_bootstrap_filename,
@@ -586,13 +593,7 @@ class SaltLinux(SaltBase, LinuxManager):
         file_roots = [str(self.salt_base_env)]
         file_roots += [str(x) for x in formulas_conf]
 
-        self.salt_conf = {
-            'file_client': 'local',
-            'hash_type': 'sha512',
-            'file_roots': {'base': file_roots},
-            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
-            'pillar_merge_lists': True
-        }
+        self.salt_file_roots = {'file_roots': {'base': file_roots}}
 
         super(SaltLinux, self)._build_salt_formula(extract_dir)
 
@@ -678,9 +679,11 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_root = os.sep.join((sys_drive, 'Salt'))
 
         self.salt_call = os.sep.join((self.salt_root, 'salt-call.bat'))
-        self.salt_conf_path = os.sep.join((self.salt_root, 'conf'))
-        self.salt_min_path = os.sep.join((self.salt_root, 'minion'))
-        self.salt_srv = os.sep.join((self.salt_root, 'srv'))
+        self.salt_wam_root = os.sep.join((
+            self.system_params['prepdir'],
+            'Salt'))
+        self.salt_conf_path = os.sep.join((self.salt_wam_root, 'conf'))
+        self.salt_srv = os.sep.join((self.salt_wam_root, 'srv'))
         self.salt_win_repo = os.sep.join((self.salt_srv, 'winrepo'))
         self.salt_log_dir = self.system_params['logdir']
         self.salt_working_dir = self.system_params['workingdir']
@@ -691,15 +694,23 @@ class SaltWindows(SaltBase, WindowsManager):
         self.salt_formula_root = salt_dirs[1]
         self.salt_pillar_root = salt_dirs[2]
 
+        # Set up the salt config
+        self.salt_conf = {
+            'file_client': 'local',
+            'hash_type': 'sha512',
+            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
+            'pillar_merge_lists': True,
+            'conf_dir': self.salt_conf_path,
+            'winrepo_source_dir': 'salt://winrepo',
+            'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
+        }
+
     def _install_package(self):
-        installer_name = os.sep.join(
-            (self.working_dir, self.installer_url.split('/')[-1])
-        )
-        self.download_file(
-            self.installer_url,
-            installer_name,
-            self.s3_source
-        )
+        installer_name = os.sep.join((
+            self.working_dir,
+            watchmaker.utils.basename_from_uri(self.installer_url)
+        ))
+        self.retrieve_file(self.installer_url, installer_name)
         install_cmd = [installer_name, '/S']
         self.call_process(install_cmd)
 
@@ -718,15 +729,7 @@ class SaltWindows(SaltBase, WindowsManager):
         file_roots = [str(self.salt_base_env), str(self.salt_win_repo)]
         file_roots += [str(x) for x in formulas_conf]
 
-        self.salt_conf = {
-            'file_client': 'local',
-            'hash_type': 'sha512',
-            'file_roots': {'base': file_roots},
-            'pillar_roots': {'base': [str(self.salt_pillar_root)]},
-            'pillar_merge_lists': True,
-            'winrepo_source_dir': 'salt://winrepo',
-            'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
-        }
+        self.salt_file_roots = {'file_roots': {'base': file_roots}}
 
         super(SaltWindows, self)._build_salt_formula(extract_dir)
 

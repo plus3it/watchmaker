@@ -55,6 +55,40 @@ label may not be related to the error you are encountering.
 Watchmaker is supported on RedHat 7 and CentOS 7. See the [index](index.html)
 page for a list of all supported operating systems.
 
+## How can I exclude salt states when executing watchmaker?
+
+The Salt worker in Watchmaker supports an `exclude_states` argument. When
+present, the value is passed directly to the `exclude` option of the
+[salt highstate execution module](https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.state.html#salt.modules.state.highstate).
+To use this option with watchmaker from the command line, pass the argument
+`--exclude-states <sls_glob>`. For example:
+
+```
+# Exclude the state "foo" with an exact match
+watchmaker --exclude-states foo
+
+# Exclude all state names that begin with "foo"
+watchmaker --exclude-states foo*
+
+# Exclude multiple states "foo" and "bar" with an exact match
+watchmaker --exclude-states foo,bar
+```
+
+## Can I use the underlying salt functionality directly?
+
+Yes, by passing watchmaker's salt configuration directory to the salt command,
+using the `-c|--config-dir` argument:
+
+*   Linux: `/opt/watchmaker/salt`
+*   Windows: `C:\Watchmaker\salt\conf`
+
+For example:
+
+```
+# -c|--config-dir
+salt-call -c /opt/watchmaker/salt state.show_top
+```
+
 ## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?
 
 Yes, indirectly. Because watchmaker implements most of its functionality via
@@ -62,7 +96,7 @@ Yes, indirectly. Because watchmaker implements most of its functionality via
 SaltStack functionality to effect the desired change. This is done from the
 commandline - as root - by executing:
 
-*   Disable FIPS-mode: `salt-call --local ash.fips_disable`
-*   Enable FIPS-mode: `salt-call --local ash.fips_enable`
+*   Disable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_disable`
+*   Enable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_enable`
 
 And then rebooting the system.
