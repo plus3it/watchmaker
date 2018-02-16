@@ -1,14 +1,15 @@
 ## Changelog
 
-### x.x.x
+### 0.9.1
 
-**Commit Delta**: [Change from 0.9.0 release](https://github.com/plus3it/watchmaker/compare/0.9.0...x.x.x)
+**Commit Delta**: [Change from 0.9.0 release](https://github.com/plus3it/watchmaker/compare/0.9.0...0.9.1)
 
-**Released**: PLACEHOLDER
+**Released**: 2018.02.17
 
 **Summary**:
 
-*   PLACEHOLDER
+*   dotnet4-formula
+    -   Passes version correctly to module.run
 
 ### 0.9.0
 
