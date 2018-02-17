@@ -4,6 +4,7 @@ graft requirements
 graft src
 graft tests
 
+include .bumpversion.cfg
 include .coveragerc
 include .editorconfig
 include .gitmodules

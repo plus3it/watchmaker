@@ -66,7 +66,8 @@ before_deploy:
     elif [ "$TRAVIS_BRANCH" = "master" ]
     then
       WAM_VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
-      export WAM_VERSION
+      WAM_BODY = "* [Watchmaker v$WAM_VERSION CHANGELOG](https://github.com/plus3it/watchmaker/blob/$WAM_VERSION/CHANGELOG.md)"
+      export WAM_VERSION WAM_BODY
       (set -x; git tag -a $WAM_VERSION -m $WAM_VERSION)
     fi
 deploy:
@@ -93,7 +94,9 @@ deploy:
       repo: plus3it/watchmaker
       condition: '"$TOXENV" == *"py27"*'
   - provider: releases
+    name: $WAM_VERSION
     tag_name: $WAM_VERSION
+    body: $WAM_BODY
     draft: true
     skip_cleanup: true
     api_key:
