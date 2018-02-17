@@ -66,7 +66,7 @@ before_deploy:
     elif [ "$TRAVIS_BRANCH" = "master" ]
     then
       WAM_VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
-      WAM_BODY = "* [Watchmaker v$WAM_VERSION CHANGELOG](https://github.com/plus3it/watchmaker/blob/$WAM_VERSION/CHANGELOG.md)"
+      WAM_BODY="* [Watchmaker v$WAM_VERSION CHANGELOG](https://github.com/plus3it/watchmaker/blob/$WAM_VERSION/CHANGELOG.md)"
       export WAM_VERSION WAM_BODY
       (set -x; git tag -a $WAM_VERSION -m $WAM_VERSION)
     fi
