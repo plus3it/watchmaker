@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.9.2
+
+**Commit Delta**: [Change from 0.9.1 release](https://github.com/plus3it/watchmaker/compare/0.9.1...0.9.2)
+
+**Released**: 2018.02.20
+
+**Summary**:
+
+*   dotnet4-formula
+    -   Passes version correctly to module.run
+
 ### 0.9.1
 
 **Commit Delta**: [Change from 0.9.0 release](https://github.com/plus3it/watchmaker/compare/0.9.0...0.9.1)
@@ -8,8 +19,10 @@
 
 **Summary**:
 
-*   dotnet4-formula
-    -   Passes version correctly to module.run
+*   This version was effectively a no-op, as the submodule was not updated as
+    intended
+*   ~dotnet4-formula~
+    -   ~Passes version correctly to module.run~
 
 ### 0.9.0
 
