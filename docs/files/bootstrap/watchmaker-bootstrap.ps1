@@ -31,6 +31,15 @@ function Download-File {
   Param( [string]$Url, [string]$SavePath )
   # Download a file, if it doesn't already exist.
   if( !(Test-Path ${SavePath} -PathType Leaf) ) {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::SystemDefault
+    $SecurityProtocolTypes = @([Net.SecurityProtocolType].GetEnumNames())
+    if ("Tls11" -in $SecurityProtocolTypes) {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls11
+    }
+    if ("Tls12" -in $SecurityProtocolTypes) {
+        [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+    }
+
     (New-Object System.Net.WebClient).DownloadFile(${Url}, ${SavePath})
     Write-Verbose "Downloaded ${Url} to ${SavePath}"
   }
