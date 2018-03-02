@@ -1,14 +1,30 @@
 ## Changelog
 
-### 0.9.3.dev
+### 0.9.3
 
-**Commit Delta**: [Change from 0.9.2 release](https://github.com/plus3it/watchmaker/compare/0.9.2...0.9.3.dev)
+**Commit Delta**: [Change from 0.9.2 release](https://github.com/plus3it/watchmaker/compare/0.9.2...0.9.3)
 
-**Released**: TBD
+**Released**: 2017.03.08
 
 **Summary**:
 
-*   TBD
+*   scap-formula
+    -   Incorporates content from OpenSCAP Security Guide v0.1.38-1
+    -   Incorporates content from latest DISA SCAP benchmarks
+        -   Microsoft Internet Explorer 11 STIG Benchmark - Ver 1, Rel 11
+        -   Microsoft Windows 10 STIG Benchmark - Ver 1, Rel 10
+        -   Microsoft Windows 2008 R2 DC STIG Benchmark - Ver 1, Rel 27
+        -   Microsoft Windows 2008 R2 MS STIG Benchmark - Ver 1, Rel 28
+        -   Microsoft Windows 2012 and 2012 R2 DC STIG Benchmark - Ver 2, Rel 11
+        -   Microsoft Windows 2012 and 2012 R2 MS STIG Benchmark - Ver 2, Rel 11
+        -   Microsoft Windows 8/8.1 STIG Benchmark - Ver 1, Rel 21
+        -   Microsoft Windows Server 2016 STIG Benchmark - Ver 1, Rel 4
+        -   Red Hat 6 STIG Benchmark - Ver 1, Rel 18
+        -   Red Hat 7 STIG Benchmark - Ver 1, Rel 2
+*   dotnet4-formula
+    -   Skips dotnet4 hotfix install if a newer version is already installed
+    -   Creates per-OS maps for hotfix updates, since the hotfix id varies per
+        OS
 
 ### 0.9.2
 
