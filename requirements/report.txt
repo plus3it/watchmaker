@@ -1,2 +1,2 @@
 argparse==1.4.0
-codecov==2.0.15
+codecov==2.0.5  # pyup: ==2.0.5 # see https://github.com/codecov/support/issues/402

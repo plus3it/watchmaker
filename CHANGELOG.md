@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.9.4
+
+**Commit Delta**: [Change from 0.9.3 release](https://github.com/plus3it/watchmaker/compare/0.9.3...0.9.4)
+
+**Released**: 2018.04.09
+
+**Summary**:
+
+*   ash-windows-formula
+    -   Updates STIG baselines to address all findings in latest SCAP
+        benchmarks
+
 ### 0.9.3
 
 **Commit Delta**: [Change from 0.9.2 release](https://github.com/plus3it/watchmaker/compare/0.9.2...0.9.3)
