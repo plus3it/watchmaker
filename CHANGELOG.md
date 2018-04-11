@@ -1,5 +1,22 @@
 ## Changelog
 
+### 0.9.5
+
+**Commit Delta**: [Change from 0.9.4 release](https://github.com/plus3it/watchmaker/compare/0.9.4...0.9.5)
+
+**Released**: 2018.04.11
+
+**Summary**:
+
+*   [[PR #574][574]] Updates Windows userdata example to execute pip using
+    `python -m` when upgrading pip
+*   windows-update-agent
+    -   Uses newer arguments for reg state, `vname` and `vdata`
+    -   Reduces duplication in windows update data model
+    -   Nests the windows update pillar options under the standard `lookup` key
+
+[574]: https://github.com/plus3it/watchmaker/pull/574
+
 ### 0.9.4
 
 **Commit Delta**: [Change from 0.9.3 release](https://github.com/plus3it/watchmaker/compare/0.9.3...0.9.4)

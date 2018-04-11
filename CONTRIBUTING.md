@@ -196,7 +196,7 @@ specify something like this for EC2 userdata:
         -Verbose -ErrorAction Stop
 
     # Upgrade pip and setuptools
-    pip install --index-url="$PypiUrl" --upgrade pip setuptools
+    python -m pip install --index-url="$PypiUrl" --upgrade pip setuptools
 
     # Clone watchmaker
     git clone "$GitRepo" --branch "$GitBranch" --recursive
