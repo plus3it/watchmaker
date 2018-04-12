@@ -68,7 +68,9 @@ before_deploy:
       WAM_VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
       WAM_BODY="* [Watchmaker v$WAM_VERSION CHANGELOG](https://github.com/plus3it/watchmaker/blob/$WAM_VERSION/CHANGELOG.md)"
       export WAM_VERSION WAM_BODY
-      (set -x; git tag -a $WAM_VERSION -m $WAM_VERSION)
+      echo "WAM_VERSION=$WAM_VERSION"
+      echo "WAM_BODY=$WAM_BODY"
+      echo "TRAVIS_COMMIT=$TRAVIS_COMMIT"
     fi
 deploy:
   - provider: pypi
@@ -96,6 +98,7 @@ deploy:
   - provider: releases
     name: $WAM_VERSION
     tag_name: $WAM_VERSION
+    target_commitish: $TRAVIS_COMMIT
     body: $WAM_BODY
     draft: false
     skip_cleanup: true
