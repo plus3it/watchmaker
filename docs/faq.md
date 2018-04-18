@@ -100,3 +100,32 @@ commandline - as root - by executing:
 *   Enable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_enable`
 
 And then rebooting the system.
+
+## How do I install watchmaker when I am using Python 2.6?
+
+The trouble here is that a lot of the Python ecosystem has begun deprecating
+support for Python 2.6. Watchmaker still supports Python 2.6, and does control
+its dependency versions based on the Python version. However, there are three
+python "setup" packages needed just to install ``watchmaker``, and these
+packages cannot be platform-restricted within the ``watchmaker`` package
+specification.
+
+Below is the list of packages in question, and the versions that no longer
+support Python 2.6:
+
+*   ``pip>=10``
+*   ``wheel>=0.30.0``
+*   ``setuptools>=37``
+
+In order to install pip in Python 2.6, you can get it from:
+
+*   <https://bootstrap.pypa.io/2.6/get-pip.py>
+
+Once a Python 2.6-compatible ``pip`` version is installed, you can install
+compatible versions of the other packages like this:
+
+```
+pip install --upgrade "pip<10" "wheel<0.30.0" "setuptools<37"
+```
+
+You can then [install watchmaker](installation.html) normally.
