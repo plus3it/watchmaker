@@ -157,68 +157,41 @@ create autoscaling groups, and that install and execute Watchmaker during the
 launch. These templates are intended as examples for you to modify and extend
 as you need.
 
-.. note::
-
-    Note that the links in this section are intended for viewing the templates
-    in a web browser. See the `Direct Downloads`_ section for links to the raw
-    files.
+Sometimes it is helpful to define the parameters for a template in a file, and
+pass those to CloudFormation along with the template. We call those "parameter
+maps", and provide one for each of the CFN templates.
 
 #### Cloudformation templates
 
-*   [Linux Autoscale Group][lx-autoscale]
-*   [Linux Instance][lx-instance]
-*   [Windows Autoscale Group][win-autoscale]
-*   [Windows Instance][win-instance]
+*   [Linux Autoscale Group][dir-lx-autoscale]
+*   [Linux Instance][dir-lx-instance]
+*   [Windows Autoscale Group][dir-win-autoscale]
+*   [Windows Instance][dir-win-instance]
 
-#### Cloudformation parameter-maps
+### `watchmaker` in a Terraform module
 
-Sometimes it is helpful to define the parameters for a template in a file, and
-pass those to CloudFormation along with the template. We call those "parameter
-maps", and provide one for each of the templates above.
-
-*   [Linux Autoscale Params][lx-autoscale-params]
-*   [Linux Instance Params][lx-instance-params]
-*   [Windows Autoscale Params][win-autoscale-params]
-*   [Windows Instance Params][win-instance-params]
-
-[lx-autoscale]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/lx-autoscale/watchmaker-lx-autoscale.cfn.json
-[lx-instance]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/lx-instance/watchmaker-lx-instance.cfn.json
-[win-autoscale]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/win-autoscale/watchmaker-win-autoscale.cfn.json
-[win-instance]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/win-instance/watchmaker-win-instance.cfn.json
-
-[lx-autoscale-params]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/lx-autoscale/watchmaker-lx-autoscale.params.cfn.json
-[lx-instance-params]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/lx-instance/watchmaker-lx-instance.params.cfn.json
-[win-autoscale-params]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/win-autoscale/watchmaker-win-autoscale.params.cfn.json
-[win-instance-params]: https://github.com/plus3it/terraform-aws-watchmaker/blob/master/modules/win-instance/watchmaker-win-instance.params.cfn.json
-
-### `watchmaker` in Terraform
-
-Watchmaker can also be integrated into a [Terraform framework](https://www.terraform.io/) by directly utilizing the
-[Watchmaker AWS Terraform modules](https://github.com/plus3it/terraform-aws-watchmaker) and
-passing the required parameters.
+Watchmaker can also be used with [Terraform](https://www.terraform.io/) by
+utilizing the [Watchmaker AWS Terraform modules](https://github.com/plus3it/terraform-aws-watchmaker)
+and passing the required parameters.
 
 #### Terraform Modules
 
-*   [Linux Autoscale Group][dir-lx-autoscale-tf]
-*   [Linux Instance][dir-lx-instance-tf]
-*   [Windows Autoscale Group][dir-win-autoscale-tf]
-*   [Windows Instance][dir-win-instance-tf]
-
-The modules incorporate the CloudFormation templates within their respective Terraform templates so
-they become deployable and manageable from within the Terraform cli.
+*   [Linux Autoscale Group][dir-lx-autoscale]
+*   [Linux Instance][dir-lx-instance]
+*   [Windows Autoscale Group][dir-win-autoscale]
+*   [Windows Instance][dir-win-instance]
 
 .. note::
 
-   * Each corresponding Terraform template and the CloudFormation template are grouped together
-     in the same directory.
+   Each corresponding Terraform module and CloudFormation template are
+   grouped together in the same directory.
 
-   * The links in this section are intended for viewing the templates
-     in a web browser. See the `Direct Downloads`_ section for links to the raw
-     files.
+The CloudFormation templates are integrated within their respective Terraform
+module, so they become deployable and manageable from within the Terraform cli.
 
-Variables can be input interactively via the Terraform console or
-directly to the Terraform module. An example Terraform file that calls the
-lx-autoscale module is shown below.
+Variables can be input interactively via the Terraform console or directly to
+the Terraform module. An example Terraform file that calls the `lx-autoscale`
+module is shown below.
 
 ```
 provider "aws" {}
@@ -231,41 +204,53 @@ module "test-lx-instance" {
   AmiDistro = "__AMIDISTRO__"
 }
 ```
+
 #### Additional Watchmaker Terraform examples
 
-*   [Linux Autoscale Group](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/lx-autoscale)
-*   [Linux Instance](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/lx-instance)
-*   [Windows Autoscale Group](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/win-autoscale)
-*   [Windows Instance](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/win-instance)
+*   [Linux Autoscale Example](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/lx-autoscale)
+*   [Linux Instance Example](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/lx-instance)
+*   [Windows Autoscale Example](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/win-autoscale)
+*   [Windows Instance Example](https://github.com/plus3it/terraform-aws-watchmaker/tree/master/examples/win-instance)
+
+[dir-lx-autoscale]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/lx-autoscale
+[dir-lx-instance]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/lx-instance
+[dir-win-autoscale]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/win-autoscale
+[dir-win-instance]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/win-instance
 
 ## `watchmaker` in Azure
 
 ### `watchmaker` as Custom Script Extension
 
-Custom Script Extension downloads and executes scripts on Azure virtual machines.
-For Linux, you run the bash script shown in the section on [Linux](#linux). You can
-store the bash script in Azure Storage or a publicly available url (such as with S3).
-Then you execute the stored script with a command. For example, a JSON string could contain
+Custom Script Extension downloads and executes scripts on Azure virtual
+machines. For Linux, you run the bash script shown in the section on
+[Linux](#linux). You can store the bash script in Azure Storage or a publicly
+available url (such as with S3). Then you execute the stored script with a
+command. For example, a JSON string could contain
+
 ```json
 {
   "fileUris": ["https://path-to-bash-script/run_watchmaker.sh"],
   "commandToExecute": "./run_watchmaker.sh"
 }
 ```
-These parameters can be passed in via Azure CLI or within a Resource Management Template.
-For more in-depth information, see Microsoft's
-[documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/extensions-customscript).
 
-For Windows, you would execute a PowerShell script in a similar manner as for [Windows](#windows)
-(but without the powershell tags). Then you would have the following parameters:
+These parameters can be passed in via Azure CLI or within a Resource Management
+Template. For more in-depth information, see Microsoft's
+[documentation on Linux](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/extensions-customscript).
+
+For Windows, you would execute a PowerShell script in a similar manner as for
+[Windows](#windows) (but without the powershell tags). Then you would have the
+following parameters:
+
 ```json
 {
   "fileUris": ["https://path-to-bash-script/run_watchmaker.ps1"],
   "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File run_watchmaker.ps1"
 }
 ```
-For more in-depth information on using Custom Script Extension for Windows, see Microsoft's
-[documentation](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/extensions-customscript).
+
+For more in-depth information on using Custom Script Extension for Windows, see
+Microsoft's [documentation on Windows](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/extensions-customscript).
 
 ## `watchmaker` as a library
 
@@ -287,59 +272,6 @@ client.install()
 
 .. note::
 
-    This demonstrates only a few of the arguments that are available for the
-    ``watchmaker.Arguments()`` object. For details on all arguments, see the
-    :any:`API Reference <api>`.
-
-## Direct downloads
-
-The following links can be used for directly fetching (e.g., via `curl`,
-`wget`, etc.) resources previously noted on this page:
-
-### Cloudformation Files
-
-|CFN Template Files|CFN Parameter Files|
-|--------------|---------------|
-|[Linux AutoScale][raw-lx-autoscale]|[Linux Autoscale][raw-lx-autoscale-params]|
-|[Linux Instance][raw-lx-instance]|[Linux Instance][raw-lx-instance-params]|
-|[Windows Autoscale][raw-win-autoscale]|[Windows Autoscale][raw-win-autoscale-params]|
-|[Windows Instance][raw-win-instance]|[Windows Instance][raw-win-instance-params]|
-
-[raw-lx-autoscale]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-autoscale/watchmaker-lx-autoscale.cfn.json
-[raw-lx-instance]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-instance/watchmaker-lx-instance.cfn.json
-[raw-win-autoscale]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-autoscale/watchmaker-win-autoscale.cfn.json
-[raw-win-instance]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-instance/watchmaker-win-instance.cfn.json
-
-[raw-lx-autoscale-params]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-autoscale/watchmaker-lx-autoscale.params.cfn.json
-[raw-lx-instance-params]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-instance/watchmaker-lx-instance.params.cfn.json
-[raw-win-autoscale-params]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-autoscale/watchmaker-win-autoscale.params.cfn.json
-[raw-win-instance-params]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-instance/watchmaker-win-instance.params.cfn.json
-
-[dir-lx-autoscale-tf]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/lx-autoscale
-[dir-lx-instance-tf]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/lx-instance
-[dir-win-autoscale-tf]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/win-autoscale
-[dir-win-instance-tf]: https://github.com/plus3it/terraform-aws-watchmaker/tree/master/modules/win-instance
-
-### Terraform Files
-
-|TF Main Files|TF Variables Files|TF Outputs Files|
-|--------------|---------------|---------------|
-|[Linux AutoScale][raw-lx-autoscale-tf]|[Linux AutoScale][raw-var-lx-autoscale-tf]|[Linux AutoScale][raw-out-lx-autoscale-tf]|
-|[Linux Instance][raw-lx-instance-tf]|[Linux Instance][raw-var-lx-instance-tf]|[Linux Instance][raw-out-lx-instance-tf]|
-|[Windows Autoscale][raw-win-autoscale-tf]|[Windows Autoscale][raw-var-win-autoscale-tf]|[Windows Autoscale][raw-out-win-autoscale-tf]|
-|[Windows Instance][raw-win-instance-tf]|[Windows Instance][raw-var-win-instance-tf]|[Windows Instance][raw-out-win-instance-tf]|
-
-[raw-lx-autoscale-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-autoscale/main.tf
-[raw-lx-instance-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-instance/main.tf
-[raw-win-autoscale-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-autoscale/main.tf
-[raw-win-instance-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-instance/main.tf
-
-[raw-var-lx-autoscale-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-autoscale/variables.tf
-[raw-var-lx-instance-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-instance/variables.tf
-[raw-var-win-autoscale-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-autoscale/variables.tf
-[raw-var-win-instance-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-instance/variables.tf
-
-[raw-out-lx-autoscale-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-autoscale/outputs.tf
-[raw-out-lx-instance-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/lx-instance/outputs.tf
-[raw-out-win-autoscale-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-autoscale/outputs.tf
-[raw-out-win-instance-tf]: https://raw.githubusercontent.com/plus3it/terraform-aws-watchmaker/master/modules/win-instance/outputs.tf
+   This demonstrates only a few of the arguments that are available for the
+   ``watchmaker.Arguments()`` object. For details on all arguments, see the
+   :any:`API Reference <api>`.
