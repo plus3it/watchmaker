@@ -46,3 +46,6 @@ _workers_ to execute on each platform.
 
 *   Python 3.4 and later
 *   Python 2.6 and later
+
+NOTE: See relevant [FAQ](faq.html) for details on running ``watchmaker`` in
+Python 2.6.
