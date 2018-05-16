@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.9.7.dev
+
+**Commit Delta**: [Change from 0.9.6 release](https://github.com/plus3it/watchmaker/compare/0.9.6...0.9.7.dev)
+
+**Released**: PLACEHOLDER
+
+**Summary**:
+
+*   PLACEHOLDER
+
 ### 0.9.6
 
 **Commit Delta**: [Change from 0.9.5 release](https://github.com/plus3it/watchmaker/compare/0.9.5...0.9.6)
