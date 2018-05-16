@@ -13,6 +13,14 @@ pip install watchmaker
 If you do not have Python or [pip][0], this [Python installation guide][1]
 can guide you through the process.
 
+.. note::
+
+    Versions 10 and later of ``pip`` do not support Python 2.6. On CentOS 6 and
+    RHEL 6, Python 2.6 is the system version of Python. If you are using Python
+    2.6 with ``watchmaker``, you will need to restrict the ``pip`` install such
+    that a version earlier than 10 is installed. See the relevant question in
+    the [FAQ](faq.html) for more details.
+
 ## From sources
 
 Watchmaker can also be built and installed from source, using `git` and `pip`.
