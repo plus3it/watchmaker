@@ -11,4 +11,4 @@ pep8-naming==0.7.0
 pydocstyle==2.1.1
 pygments==2.2.0
 pylint==1.9.1
-readme-renderer==20.0
+readme-renderer==21.0
