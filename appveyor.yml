@@ -1,5 +1,6 @@
 version: '{branch}-{build}'
 build: off
+image: Visual Studio 2013
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
 matrix:
@@ -37,7 +38,6 @@ environment:
       PYTHON_HOME: C:\Python36-x64
       PYTHON_VERSION: 3.6
       PYTHON_ARCH: 64
-
 init:
   - ps: echo $env:TOXENV
   - ps: echo "Python $env:PYTHON_VERSION (${env:PYTHON_ARCH}bit) from $env:PYTHON_HOME"
@@ -58,6 +58,44 @@ on_failure:
 artifacts:
   - path: dist\*
 
+before_deploy:
+  # virtual env
+  - mkdir C:\venv
+  - C:\Python36-x64\Scripts\virtualenv C:\venv
+  - C:\venv\Scripts\activate
+  - python --version
+  - pip install -r requirements/deploy.txt
+  - pip install --editable .      # install wam, as needed by GB
+  # create standalone application
+  - gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose
+  # prepare deployment envs
+  - .gravitybee\gravitybee-environs.bat
+  - set SATS_TAG=%GB_ENV_APP_VERSION%
+  - set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
+  - set SATS_REL_NAME=Release v%GB_ENV_APP_VERSION%
+  - SET # see all envs
+  # add artifacts
+  - ps: $root = Resolve-Path $Env:GB_ENV_STAGING_DIR; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
+  - ps: ls
+  # deploy to github releases
+  - ps: >-
+      if($env:APPVEYOR_REPO_BRANCH -eq "master") {
+        satsuki --verbose
+      }
+# deploy to s3
+deploy:
+  - provider: Environment
+    name: wam-s3-dev
+    on:
+      branch: develop
+      toxenv: py36,codecov
+      python_arch: 64
+  - provider: Environment
+    name: wam-s3-releases
+    on:
+      branch: master
+      toxenv: py36,codecov
+      python_arch: 64
 ### To enable remote debugging uncomment this (also, see: http://www.appveyor.com/docs/how-to/rdp-to-build-worker):
 # on_finish:
 #   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

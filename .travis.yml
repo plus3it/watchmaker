@@ -1,30 +1,24 @@
 language: python
-sudo: false
+stages:
+  - check
+  - docs
+  - test
+  - deploy
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
-
-matrix:
-  include:
-    - env: TOXENV=check
-      python: 3.6
-    - env: TOXENV=docs
-      python: 3.6
-    - env: TOXENV=py26,codecov
-      python: 2.6
-    - env: TOXENV=py27,codecov
-      python: 2.7
-    - env: TOXENV=py34,codecov
-      python: 3.4
-    - env: TOXENV=py35,codecov
-      python: 3.5
-    - env: TOXENV=py36,codecov
-      python: 3.6
-    - env: TOXENV=pypy,codecov
-      python: pypy
-
+python:
+  - 2.6
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+  - pypy
+stage: test
 before_install:
+  - export TOXENV=$TRAVIS_PYTHON_VERSION,codecov
+  - echo $TOXENV
   - python --version
   - uname -a
   - lsb_release -a
@@ -43,7 +37,7 @@ before_cache:
   - rm -rf $HOME/.cache/pip/log
 cache:
   directories:
-    - $HOME/.cache/pip
+    - "$HOME/.cache/pip"
 notifications:
   email:
     on_success: never
@@ -53,58 +47,95 @@ notifications:
       - secure: nsbTI19SAiog6V6OnN1diYU2V3RIwtmY+IqV4uAvki87dQZteWU22/kQ0wI0OZAOzvEG3lLrc7ZGnbKh+IiH3QJkAwwHgtgC2zdzy6EGkjyEQpeAFUujaEHcRKEIpeAdtNpSUTrPsywdbnT6sO4XN/S7ZhSxS3TRmL2Wi399i36/D0T7gt/GAcPdxrFKwZ20PN20By+5j54FO6/X7y0IVcoUgKdYIvP5NGILRyo+tlWP6dJKFeuxT7lU3FV6W7J7DQs/2yjwH1naBmulxWp22+wNopJ1loW9PHtsJzlN0kUp1Up/+pwHvr7bVbZBzXSZZ5V7j+Xi7uh0de8GYckg0ATJTvrB5c1KZaG9p2unhyMlVAyDfNez3LtgUERnd7S1YXxz8JwbyWlEodzKO/dcnA1PkzcPECEbeXQJtxdhXuz+8pVqIAkDejCv4bhZVUtC4beeQFjxTrqKewxMNpTKKCacIWEBLrCUzr4y15qy7ziRU8CPvFkaUYBkPSWIOp2Xv7FOBwlEhR8d5P6P2eJ7P1vbYVB1vvrYgo0Z4pQkaM02E2/YgSoEfpWsgrSNS+9W0aQtAxcIg6ilY4ZcY83xAmwa8W7uILygqqK0Q7m+UiirIePMWXJ3r9MNkpHHlEr+WebFQYYNhOqVDJ5oX1+KKZY91bJl0ozqUvy4KSlBPO8=
     on_success: never
     on_failure: always
-
-# After you create the Github repo and add it to Travis, run the
-# ci/travis_pypi_setup.py script and set the secure passwords to
-# finish PyPI deployment setup
-before_deploy:
-  - pip install m2r
-  - |
-    if [ "$TRAVIS_BRANCH" = "develop" ]
-    then
-      (set -x; python $TRAVIS_BUILD_DIR/ci/travis_set_build.py --skip "$TRAVIS_TAG")
-    elif [ "$TRAVIS_BRANCH" = "master" ]
-    then
-      WAM_VERSION=$(grep "version = " $TRAVIS_BUILD_DIR/setup.cfg | sed "s/version = //")
-      WAM_BODY="* [Watchmaker v$WAM_VERSION CHANGELOG](https://github.com/plus3it/watchmaker/blob/$WAM_VERSION/CHANGELOG.md)"
-      export WAM_VERSION WAM_BODY
-      echo "WAM_VERSION=$WAM_VERSION"
-      echo "WAM_BODY=$WAM_BODY"
-      echo "TRAVIS_COMMIT=$TRAVIS_COMMIT"
-    fi
-deploy:
-  - provider: pypi
-    server: https://test.pypi.org/legacy/
-    distributions: sdist bdist_wheel
-    user: plus3it
-    password:
-      secure: o1r3jJSHXoh+QjgYi0FCP3GAOJtEsgGdnW/oKYLCPfW9CQoSHXTZtH5MAYmyOT5c9TQLqKxMtQHu8rRx5ZQoAe5WOmdhzc85c01qMcbC0DW1LaSibGM3oqqDtPFEipoFry3CpJLVIURE2lRV56DJtfTv43DIrUpgwrGU1+ijtCWZdcEzQUizvNKpX+K5jGHty9zyUHnaMx/OiM16loVDeue1Ukh++aTEEW0dqk2eAhN8ihZc0uAhls4DcQgN6R+bLXoR7oBk84QzQtxJlNS6CQcVltmtWA2ARxVV6CUpEr/JegufdNI7/Vdg4THg0g/iu0TatfJy1m2MDopUWSGrUOz8BQRCw1reRwWfPjhvuU0Ny+EINl3cnER2CJ67njo9PRjH0bDFcJQe6umPU7lf3dUOvbXGWeEAYaF1BOn490K9XNpOqw4XcGtjnm3c4YBTSuCp95APji7G8HlWtN54K1UWFZN48IkvKW3WbZX95BgLB3131yITwBdnNaPHm7sgI1OS7V3+/T8eNr5EDXTvunVt0olPuWzcWuLVmRq6/qVwdrko9MHOsmgMSFJi/QNGF23XjfT+9Aa0MP8iGpEZF5b8ZeB0qHdeugw0uMDSZ87msR9wCbgcTCbub89/ZmNCbyqIUTWyarCTtXJ9ARrVqwjrAsTSP78wfizthAqHUt4=
-    skip_cleanup: true
-    skip_upload_docs: true
-    on:
-      branch: develop
-      repo: plus3it/watchmaker
-      condition: '"$TOXENV" == *"py27"*'
-  - provider: pypi
-    distributions: sdist bdist_wheel
-    user: plus3it
-    password:
-      secure: QBRj35p/WVBbfXWsOGaQfZ5LxLo2h/44iJRKaGkqAc/l7fNPubUcvKTvsuvFKDS68wdacnvSPifhVjJB8B/UwDyk3WqWmm/e7MBpWAJhZUina9qceeB7IPO53zSnfD8xAJMBe7iWRnMAQaKpPerSOKPpGn5qkdvfQXWhYHLe1X70RWVSkJlr35kkpBDvcqkKvKCi9EGrkJMbS+px/97n+b86wGKO0T8s2+YKAUh3EN9IHo6r9pG36uME2SCXqfhu9MH9aSlBLirOKvbvH+eVpOtAF+AfSsstMYFD2MbWEDYnXDrav4dqielk9o+Z2jaWvHAwBhCPp3aKYEx+xKrVsgu+9wE5e9i0T1CUPZSpeYkc+qPIjTZLmUpR9S32M19QmyewwyWPXHLD5TlFeHgU+/n0Y+dWJwBUESK58THvAXSewsTOhePEs+zuQfKXUFHHYYM+uJ020X3lv/R5SziSl93eD7nWuulBHwzBF3FEPiQnfrv1Ns0E28zdrkDJ6IxYES0tfHOHdFQZlSwGe8JJgzoXm2jtClJB/wkn/TwwInX7CvlgrVNrNDcHTGBiUoncb/yy6aIIR2DsCjYxd1WMN12DpaY+4OonDik/Ot4DcLiE1CA7b+1TKsbAv3G2YuFBp4QUBellnAU/L8wBxhgmhLTCntAQmPYuWezztRwEyG8=
-    skip_upload_docs: true
-    on:
-      tags: true
-      repo: plus3it/watchmaker
-      condition: '"$TOXENV" == *"py27"*'
-  - provider: releases
-    name: $WAM_VERSION
-    tag_name: $WAM_VERSION
-    target_commitish: $TRAVIS_COMMIT
-    body: $WAM_BODY
-    draft: false
-    skip_cleanup: true
-    api_key:
-      secure: NZQua4PHfAugtez+Kkp+TZxxg8sgFPuTnEmJmQ/BBazUTWy5IGcMJFcQxI6y+YVmiiMshwV36B53sQaY9lLwZEaPARjPMNprBCRuGR436s5UrkmDSAl2uH7kbpEkbsIA2L4V++85v0q2PVSacgWW8abGs0mHydA6chHKewlvKiyI5PqlEhgABPx5LDIF2Wmrg/YfdPxtmMb9IHP0LN1sj5x59dxe727fbY6/kUpb4mrQ306EHBYSMi4E2mpP2zIlrt21KUuU8iFHNaRKUzSlq5Lva4JeoKlh3RT7G3YA4u+7dH5eJUxnHFFhFnLBIz1d2wDY1tVaEGX1CDAKW6lSCBBOarnLnDkvtLDD23NVUNXC81+7OLObaw63rtubfC3syZ1Kp517R4vgIZwRhBrvvJDr2IO5X/YtHVETBwkhDb8Ol8djXrwRbOeEgGWwkU66BbgX2HlcoggQqDhDWZWBosu7iz01pXvAFKiylNHbPULNV2gOM9HzY0kmxq3/zzwdBfLxJH8delSCK1uvQpZlmaBW6SA0/l7yuoxDN8KrXSRgwuE9A3XuMe6ZhbU5AZSqWA7vMdnwCg05xK2zo3Xohi7QE4AxY1jZW2ficBWWWFcdUTZpG+TRKC8LzQWBmZ61s9lNn+HfFC5yqYkJopLPeRYzfyeUJN79rr9leC04sVI=
-    on:
-      branch: master
-      repo: plus3it/watchmaker
-      condition: '"$TOXENV" == *"py27"*'
+jobs:
+  include:
+    - stage: check
+      python: 3.6
+      env:
+        - TOXENV=check
+      install:
+        - pip install --upgrade tox setuptools virtualenv wheel
+      script:
+        - tox -v
+      after_failure:
+        - more .tox/log/* | cat
+        - more .tox/*/log/* | cat
+    - stage: docs
+      python: 3.6
+      env:
+        - TOXENV=docs
+      install:
+        - pip install --upgrade tox setuptools virtualenv wheel
+      script:
+        - tox -v
+      after_failure:
+        - more .tox/log/* | cat
+        - more .tox/*/log/* | cat
+    - stage: deploy
+      if: branch in (master, develop)
+      python: 2.7
+      install: pip install m2r
+      script: echo "Deploying to PyPI ..."
+      before_deploy:
+        - |
+          if [ "$TRAVIS_BRANCH" = "develop" ]; then
+            sed -i -E "s/^(version = )(.*)/\1\2.$TRAVIS_BUILD_NUMBER/" $TRAVIS_BUILD_DIR/setup.cfg
+          fi
+      deploy:
+      - provider: pypi
+        server: https://test.pypi.org/legacy/
+        distributions: sdist bdist_wheel
+        user: plus3it
+        password: $PYPI_TEST_PASSWORD
+        skip_cleanup: true
+        skip_upload_docs: true
+        on:
+          branch: develop
+      - provider: pypi
+        distributions: sdist bdist_wheel
+        user: plus3it
+        password: $PYPI_PASSWORD
+        skip_cleanup: true
+        skip_upload_docs: true
+        on:
+          tags: true
+    - stage: deploy
+      if: branch in (master, develop)
+      python: 3.6
+      install:
+        - pip install -r requirements/deploy.txt
+        - pip install --editable . # install wam, as needed by GB
+      script:
+        # create standalone application
+        - gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose
+      before_deploy:
+        # prepare deployment envs
+        - source .gravitybee/gravitybee-environs.sh
+        - export SATS_TAG=$GB_ENV_APP_VERSION
+        - export SATS_BODY="* [$GB_ENV_APP_NAME v$GB_ENV_APP_VERSION CHANGELOG](https://github.com/plus3it/$GB_ENV_APP_NAME/blob/$GB_ENV_APP_VERSION/CHANGELOG.md)"
+        - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
+      deploy:
+        - provider: script
+          # deploy to github releases
+          script: satsuki --verbose
+          skip_cleanup: true
+          on:
+            branch: master
+        - provider: s3
+          access_key_id: $AWS_ACCESS_KEY
+          secret_access_key: $AWS_SECRET_ACCESS_KEY
+          bucket: $RELEASE_BUCKET
+          upload-dir: $S3_KEYFIX
+          local-dir: $GB_ENV_STAGING_DIR
+          skip_cleanup: true
+          on:
+            branch: master
+        - provider: s3
+          access_key_id: $AWS_ACCESS_KEY
+          secret_access_key: $AWS_SECRET_ACCESS_KEY
+          bucket: $DEV_BUCKET
+          upload-dir: $S3_KEYFIX
+          local-dir: $GB_ENV_STAGING_DIR
+          skip_cleanup: true
+          on:
+            branch: develop
