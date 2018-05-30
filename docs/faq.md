@@ -129,3 +129,9 @@ pip install --upgrade "pip<10" "wheel<0.30.0" "setuptools<37"
 ```
 
 You can then [install watchmaker](installation.html) normally.
+
+## How do I get Watchmaker release/project notifications?
+
+Users can subscribe to the Watchmaker RSS feed which provides release and project notifications.  The Watchmaker RSS feed is <https://github.com/plus3it/watchmaker/releases.atom>
+
+Users can also subscribe to receive github email notifications to receive Pull Activity and Issue Activity. 
