@@ -132,6 +132,8 @@ You can then [install watchmaker](installation.html) normally.
 
 ## How do I get Watchmaker release/project notifications?
 
-Users can subscribe to the Watchmaker RSS feed which provides release and project notifications.  The Watchmaker RSS feed is <https://github.com/plus3it/watchmaker/releases.atom>
+Users may use an RSS reader of their choice to subscribe to the Watchmaker Release feed to get notifications on Watchmaker releases. The Watchmaker RSS release feed is https://github.com/plus3it/watchmaker/releases.atom.
 
-Users can also subscribe to receive github email notifications to receive Pull Activity and Issue Activity. 
+Users can also "watch" the GitHub project to receive notifications on all project activity, https://github.com/plus3it/watchmaker/subscription.
+
+
