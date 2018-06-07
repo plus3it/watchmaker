@@ -53,29 +53,15 @@ jobs:
       python: 3.6
       env:
         - TOXENV=check
-      install:
-        - pip install --upgrade tox setuptools virtualenv wheel
-      script:
-        - tox -v
-      after_failure:
-        - more .tox/log/* | cat
-        - more .tox/*/log/* | cat
     - stage: docs
       python: 3.6
       env:
         - TOXENV=docs
-      install:
-        - pip install --upgrade tox setuptools virtualenv wheel
-      script:
-        - tox -v
-      after_failure:
-        - more .tox/log/* | cat
-        - more .tox/*/log/* | cat
     - stage: deploy
       if: branch in (master, develop)
       python: 2.7
       install: pip install m2r
-      script: echo "Deploying to PyPI ..."
+      script: echo "Deploying..."
       before_deploy:
         - |
           if [ "$TRAVIS_BRANCH" = "develop" ]; then
@@ -122,17 +108,13 @@ jobs:
           on:
             branch: master
         - provider: s3
-          access_key_id: $AWS_ACCESS_KEY
-          secret_access_key: $AWS_SECRET_ACCESS_KEY
           bucket: $RELEASE_BUCKET
           upload-dir: $S3_KEYFIX
           local-dir: $GB_ENV_STAGING_DIR
           skip_cleanup: true
           on:
-            branch: master
+            tags: true
         - provider: s3
-          access_key_id: $AWS_ACCESS_KEY
-          secret_access_key: $AWS_SECRET_ACCESS_KEY
           bucket: $DEV_BUCKET
           upload-dir: $S3_KEYFIX
           local-dir: $GB_ENV_STAGING_DIR

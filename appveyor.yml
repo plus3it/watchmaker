@@ -19,22 +19,22 @@ environment:
       PYTHON_VERSION: 3.6
       PYTHON_ARCH: 64
 
-    - TOXENV: 'py27,codecov'
+    - TOXENV: '2.7,codecov'
       PYTHON_HOME: C:\Python27
       PYTHON_VERSION: 2.7
       PYTHON_ARCH: 32
 
-    - TOXENV: 'py27,codecov'
+    - TOXENV: '2.7,codecov'
       PYTHON_HOME: C:\Python27-x64
       PYTHON_VERSION: 2.7
       PYTHON_ARCH: 64
 
-    - TOXENV: 'py36,codecov'
+    - TOXENV: '3.6,codecov'
       PYTHON_HOME: C:\Python36
       PYTHON_VERSION: 3.6
       PYTHON_ARCH: 32
 
-    - TOXENV: 'py36,codecov'
+    - TOXENV: '3.6,codecov'
       PYTHON_HOME: C:\Python36-x64
       PYTHON_VERSION: 3.6
       PYTHON_ARCH: 64
@@ -81,21 +81,31 @@ before_deploy:
   - ps: >-
       if($env:APPVEYOR_REPO_BRANCH -eq "master") {
         satsuki --verbose
-      }
+      }      
 # deploy to s3
 deploy:
-  - provider: Environment
-    name: wam-s3-dev
+  - provider: S3
+    bucket: $(DEV_BUCKET)
+    folder: $(S3_KEYFIX)
+    access_key_id: $(AWS_ACCESS_KEY_ID)
+    secret_access_key: $(AWS_SECRET_ACCESS_KEY)
+    max_error_retry: 3
     on:
       branch: develop
-      toxenv: py36,codecov
+      toxenv: 3.6,codecov
       python_arch: 64
-  - provider: Environment
-    name: wam-s3-releases
+  - provider: S3
+    bucket: $(RELEASE_BUCKET)
+    folder: $(S3_KEYFIX)
+    access_key_id: $(AWS_ACCESS_KEY_ID)
+    secret_access_key: $(AWS_SECRET_ACCESS_KEY)    
+    max_error_retry: 3
     on:
-      branch: master
-      toxenv: py36,codecov
+      APPVEYOR_REPO_TAG: true
+      toxenv: 3.6,codecov
       python_arch: 64
+
+
 ### To enable remote debugging uncomment this (also, see: http://www.appveyor.com/docs/how-to/rdp-to-build-worker):
 # on_finish:
 #   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
