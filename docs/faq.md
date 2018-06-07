@@ -1,7 +1,10 @@
 <p align="right">
-
-![alt text](/images/cropped-plus3it-logo-cmyk.png "Plus3 IT Systems")
+<b>Powered by:</b>
+<a href="https://plus3it.com">
+<img src="images/cropped-plus3it-logo-cmyk.png" >
+</a>
 </p>
+
 # Frequently Asked Questions
 
 ## How do I know if watchmaker has installed?
