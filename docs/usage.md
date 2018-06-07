@@ -1,3 +1,10 @@
+<p align="right">
+<b>Powered by:</b><br>
+<a href="https://plus3it.com">
+<img src="images/cropped-plus3it-logo-cmyk.png" width="140">
+</a>
+</p>
+
 # Usage
 
 ## `watchmaker` from the CLI

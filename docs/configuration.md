@@ -1,3 +1,10 @@
+<p align="right">
+<b>Powered by:</b><br>
+<a href="https://plus3it.com">
+<img src="images/cropped-plus3it-logo-cmyk.png" width="140">
+</a>
+</p>
+
 # Configuration
 
 Watchmaker is configured using a [YAML][0] file. Watchmaker's default
