@@ -1,3 +1,7 @@
+<p align="right">
+
+![alt text](/images/cropped-plus3it-logo-cmyk.png "Plus3 IT Systems")
+</p>
 # Frequently Asked Questions
 
 ## How do I know if watchmaker has installed?
@@ -135,5 +139,3 @@ You can then [install watchmaker](installation.html) normally.
 Users may use an RSS reader of their choice to subscribe to the Watchmaker Release feed to get notifications on Watchmaker releases. The Watchmaker RSS release feed is https://github.com/plus3it/watchmaker/releases.atom.
 
 Users can also "watch" the GitHub project to receive notifications on all project activity, https://github.com/plus3it/watchmaker/subscription.
-
-
