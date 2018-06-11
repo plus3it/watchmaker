@@ -1,9 +1,12 @@
 <p align="right">
-<b>Powered by:</b><br>
-<a href="https://plus3it.com">
-<img src="images/cropped-plus3it-logo-cmyk.png" width="140">
-</a>
-</p>
+<b>Powered by:</b>
+
+.. image:: images/cropped-plus3it-logo-cmyk.png
+   :width: 140px
+   :alt: Powered by Plus3 IT Systems
+   :align: right
+   :target: https://plus3it.com
+<br>
 
 # Installation
 
