@@ -1,6 +1,3 @@
-<<p align="right">
-<b>Powered by:</b>
-
 .. image:: images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
