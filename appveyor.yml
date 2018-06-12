@@ -65,6 +65,12 @@ before_deploy:
   - C:\venv\Scripts\activate
   - python --version
   - pip install -r requirements/deploy.txt
+  - ps: >-  
+      if($env:APPVEYOR_REPO_BRANCH -eq "develop") {
+        # whether setup.cfg version has "dev" or not, it is added but not duplicated
+        $sha = ($env:APPVEYOR_REPO_COMMIT).Substring(0,7)
+        (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $sha) | Set-Content setup.cfg
+      }
   - pip install --editable .      # install wam, as needed by GB
   # create standalone application
   - gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose
@@ -73,7 +79,6 @@ before_deploy:
   - set SATS_TAG=%GB_ENV_APP_VERSION%
   - set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
   - set SATS_REL_NAME=Release v%GB_ENV_APP_VERSION%
-  - SET # see all envs
   # add artifacts
   - ps: $root = Resolve-Path $Env:GB_ENV_STAGING_DIR; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
   - ps: ls
