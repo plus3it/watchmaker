@@ -30,6 +30,13 @@ install:
   - tox --version
 script:
   - tox -v
+before_script:
+  - |
+    if [ "$TRAVIS_BRANCH" = "develop" ]; then
+      # whether setup.cfg version has "dev" or not, it is added but not duplicated
+      sha=${TRAVIS_COMMIT:0:7} 
+      sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$sha/" setup.cfg
+    fi  
 after_failure:
   - more .tox/log/* | cat
   - more .tox/*/log/* | cat
@@ -62,11 +69,6 @@ jobs:
       python: 2.7
       install: pip install m2r
       script: echo "Deploying..."
-      before_deploy:
-        - |
-          if [ "$TRAVIS_BRANCH" = "develop" ]; then
-            sed -i -E "s/^(version = )(.*)/\1\2.$TRAVIS_BUILD_NUMBER/" $TRAVIS_BUILD_DIR/setup.cfg
-          fi
       deploy:
       - provider: pypi
         server: https://test.pypi.org/legacy/
@@ -100,6 +102,7 @@ jobs:
         - export SATS_TAG=$GB_ENV_APP_VERSION
         - export SATS_BODY="* [$GB_ENV_APP_NAME v$GB_ENV_APP_VERSION CHANGELOG](https://github.com/plus3it/$GB_ENV_APP_NAME/blob/$GB_ENV_APP_VERSION/CHANGELOG.md)"
         - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
+        - echo Tag name is $SATS_TAG
       deploy:
         - provider: script
           # deploy to github releases
