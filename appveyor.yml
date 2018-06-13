@@ -68,8 +68,8 @@ before_deploy:
   - ps: >-  
       if($env:APPVEYOR_REPO_BRANCH -eq "develop") {
         # whether setup.cfg version has "dev" or not, it is added but not duplicated
-        $sha = ($env:APPVEYOR_REPO_COMMIT).Substring(0,7)
-        (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $sha) | Set-Content setup.cfg
+        $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
+        (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg
       }
   - pip install --editable .      # install wam, as needed by GB
   # create standalone application

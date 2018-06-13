@@ -34,9 +34,9 @@ before_script:
   - |
     if [ "$TRAVIS_BRANCH" = "develop" ]; then
       # whether setup.cfg version has "dev" or not, it is added but not duplicated
-      sha=${TRAVIS_COMMIT:0:7} 
-      sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$sha/" setup.cfg
-    fi  
+      ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
+      sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
+    fi
 after_failure:
   - more .tox/log/* | cat
   - more .tox/*/log/* | cat
