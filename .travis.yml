@@ -1,7 +1,5 @@
 language: python
 stages:
-  - check
-  - docs
   - test
   - deploy
 env:
@@ -17,7 +15,8 @@ python:
   - pypy
 stage: test
 before_install:
-  - export TOXENV=$TRAVIS_PYTHON_VERSION,codecov
+  # don't overwrite env if it's already set (otherwise check, docs won't work properly)
+  - export TOXENV="${TOXENV:-$TRAVIS_PYTHON_VERSION,codecov}"
   - echo $TOXENV
   - python --version
   - uname -a
@@ -56,11 +55,11 @@ notifications:
     on_failure: always
 jobs:
   include:
-    - stage: check
+    - stage: test
       python: 3.6
       env:
         - TOXENV=check
-    - stage: docs
+    - stage: test
       python: 3.6
       env:
         - TOXENV=docs
