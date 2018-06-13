@@ -90,14 +90,8 @@ test_script:
   - set TOXENV=2.7,codecov
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
-on_failure:
-  - ps: dir "env:"
-  - ps: echo $env:path
-  - ps: get-content .tox\*\log\*
-artifacts:
-  - path: dist\*
-
-before_deploy:
+  # ----- build the standalone binary
+  # here so build will fail during test if bin build fails (gravitybee) rather than in deploy
   # virtual env
   - mkdir C:\venv
   - C:\Python36-x64\Scripts\virtualenv C:\venv
@@ -113,17 +107,27 @@ before_deploy:
   - pip install --editable .      # install wam, as needed by GB
   # create standalone application
   - gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose
+
+on_failure:
+  - ps: dir "env:"
+  - ps: echo $env:path
+  - ps: get-content .tox\*\log\*
+artifacts:
+  - path: dist\*
+
+before_deploy:
   # prepare deployment envs
   - .gravitybee\gravitybee-environs.bat
+  # add artifacts for s3 deployments
+  - ps: $root = Resolve-Path $Env:GB_ENV_STAGING_DIR; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
+  # get satsuki envs ready
   - set SATS_TAG=%GB_ENV_APP_VERSION%
   - set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
   - set SATS_REL_NAME=Release v%GB_ENV_APP_VERSION%
-  # add artifacts
-  - ps: $root = Resolve-Path $Env:GB_ENV_STAGING_DIR; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
-  - ps: ls
-  # deploy to github releases
+  # deploy to github releases with satsuki
   - ps: >-
       if($env:APPVEYOR_REPO_BRANCH -eq "master") {
+        # if deploy_script is used, s3 deploy providers are skipped
         satsuki --verbose
       }
 # deploy to s3
