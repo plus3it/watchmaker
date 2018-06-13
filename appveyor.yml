@@ -136,8 +136,6 @@ deploy:
     max_error_retry: 3
     on:
       branch: develop
-      toxenv: 3.6,codecov
-      python_arch: 64
   - provider: S3
     bucket: $(RELEASE_BUCKET)
     folder: $(S3_KEYFIX)
@@ -146,8 +144,6 @@ deploy:
     max_error_retry: 3
     on:
       APPVEYOR_REPO_TAG: true
-      toxenv: 3.6,codecov
-      python_arch: 64
 
 
 ### To enable remote debugging uncomment this (also, see: http://www.appveyor.com/docs/how-to/rdp-to-build-worker):
