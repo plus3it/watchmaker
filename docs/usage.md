@@ -9,9 +9,9 @@
 
 ## `watchmaker` from the CLI
 
-Once watchmaker is [installed](installation.html) and a
+Once Watchmaker is [installed](installation.html) and a
 [configuration file](configuration.html) has been created (or you have decided
-to use the default configuration), using watchmaker as a CLI utility is as
+to use the default configuration), using Watchmaker as a CLI utility is as
 simple as executing `watchmaker`. Below is the output of `watchmaker --help`,
 showing the CLI options.
 
@@ -64,12 +64,35 @@ Options:
   --help                          Show this message and exit.
 ```
 
+
+## `watchmaker` as a standalone package
+
+Once a Watchmaker standalone executable has been
+[downloaded](installation.html) and a
+[configuration file](configuration.html) has been created (or you have decided
+to use the default configuration), using Watchmaker is the same as
+using Watchmaker as a CLI utility except that you run the downloaded file.
+
+For example, on Linux, you can view the CLI options (shown above) using
+the same flag as above.
+
+```shell
+# ./watchmaker-latest-standalone-linux-x86_64 --help
+```
+
+From Windows, execute Watchmaker by double-clicking on the
+downloaded file or by running it from the command line:
+
+```powershell
+PS C:\wam> watchmaker-latest-standalone-windows-amd64.exe
+```
+
 ## `watchmaker` in AWS
 
 ### `watchmaker` as EC2 userdata
 
-Calling watchmaker via EC2 userdata is a variation on using it as a CLI
-utility. The main difference is that you must account for installing watchmaker
+Calling Watchmaker via EC2 userdata is a variation on using it as a CLI
+utility. The main difference is that you must account for installing Watchmaker
 first, as part of the userdata. Since the userdata syntax and dependency
 installation differ a bit on Linux and Windows, we provide methods for each as
 examples.
@@ -98,10 +121,10 @@ curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
 # Install setup dependencies
 pip install --index-url="$PYPI_URL" --upgrade 'pip<10' 'setuptools<37'
 
-# Install watchmaker
+# Install Watchmaker
 pip install --index-url="$PYPI_URL" --upgrade watchmaker
 
-# Run watchmaker
+# Run Watchmaker
 watchmaker --log-level debug --log-dir=/var/log/watchmaker
 ```
 
@@ -121,10 +144,10 @@ runcmd:
     # Install setup dependencies
     pip install --index-url="$PYPI_URL" --upgrade 'pip<10' 'setuptools<37'
 
-    # Install watchmaker
+    # Install Watchmaker
     pip install --index-url="$PYPI_URL" --upgrade watchmaker
 
-    # Run watchmaker
+    # Run Watchmaker
     watchmaker --log-level debug --log-dir=/var/log/watchmaker
 ```
 
@@ -147,11 +170,11 @@ $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 # Install python
 & "$BootstrapFile" -PythonUrl "$PythonUrl" -Verbose -ErrorAction Stop
 
-# Install watchmaker
+# Install Watchmaker
 python -m pip install --index-url="$PypiUrl" --upgrade pip setuptools
 pip install --index-url="$PypiUrl" --upgrade watchmaker
 
-# Run watchmaker
+# Run Watchmaker
 watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs
 </powershell>
 ```
