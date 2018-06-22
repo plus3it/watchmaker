@@ -70,21 +70,20 @@ Options:
 Once a Watchmaker standalone executable has been
 [downloaded](installation.html) and a
 [configuration file](configuration.html) has been created (or you have decided
-to use the default configuration), using Watchmaker is the same as
-using Watchmaker as a CLI utility except that you run the downloaded file.
+to use the default configuration), use Watchmaker similarly to the CLI
+utility.
 
 For example, on Linux, you can view the CLI options (shown above) using
-the same flag as above.
+the same flag.
 
 ```shell
-# ./watchmaker-latest-standalone-linux-x86_64 --help
+# ./watchmaker --help
 ```
 
-From Windows, execute Watchmaker by double-clicking on the
-downloaded file or by running it from the command line:
+From Windows, similarly, execute Watchmaker by running it from the command line:
 
 ```powershell
-PS C:\wam> watchmaker-latest-standalone-windows-amd64.exe
+PS C:\wam> watchmaker.exe --help
 ```
 
 ## `watchmaker` in AWS

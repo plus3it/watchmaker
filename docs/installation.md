@@ -67,40 +67,45 @@ package containing Watchmaker's dependencies, such as Python and
 necessary Python packages.  Packages are available for Windows and
 Linux.
 
-1.  Download the standalone package for your desired platform.
+1.  Download the Watchmaker standalone package for your desired platform from
+    GitHub Releases or AWS S3.
 
-    *   The Windows package is called
-        `watchmaker-latest-standalone-windows-amd64.exe`. The
-        corresponding SHA256 hash is called
-        `watchmaker-latest-sha256-windows-amd64.json`.
+    *   [GitHub Releases][3] shows the available
+        Watchmaker versions and includes links to the
+        Windows and Linux packages, and SHA256 hashes.
+        The [latest release][4] can also be directly accessed on GitHub.
+    *   The AWS S3 bucket also contains versioned Watchmaker packages
+        and corresponding SHA256 hashes. To access versions on S3, construct a
+        URL using these examples for version 0.9.7:
 
-        From PowerShell, the Windows package can be downloaded
+        *   https://s3.amazonaws.com/watchmaker/releases/0.9.7/watchmaker-0.9.7-standalone-linux-x86_64
+        *   https://s3.amazonaws.com/watchmaker/releases/0.9.7/watchmaker-0.9.7-standalone-windows-amd64.exe
+
+    *   Links to the latest versions of Watchmaker and SHA hashes on S3 are:
+
+        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-linux-x86_64
+        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-sha256-linux-x86_64.json
+        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-windows-amd64.exe
+        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-sha256-windows-amd64.json
+
+    *   From PowerShell, the Windows package can be downloaded
         as follows:
 
         ```powershell
         PS C:\wam> $url = "https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-windows-amd64.exe"
-        PS C:\wam> (New-Object System.Net.WebClient).DownloadFile($url, "watchmaker-latest-standalone-windows-amd64.exe")
+        PS C:\wam> (New-Object System.Net.WebClient).DownloadFile($url, "watchmaker.exe")
         ```
 
-    *   The Linux package is called
-        `watchmaker-latest-standalone-linux-x86_64`. The
-        corresponding SHA256 hash is called
-        `watchmaker-latest-sha256-linux-x86_64.json`.
-
-        From the command line, the Linux package can be downloaded
+    *   From the command line, the Linux package can be downloaded
         as follows:
 
         ```shell
-        # curl -sO https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-linux-x86_64
+        # curl -so watchmaker https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-linux-x86_64
         ```
 
-    *   Watchmaker's [GitHub Releases][3] page includes links to the
-        Windows and Linux packages, and SHA256 hashes.
-    *   The packages and SHA256 hashes are also available in 
-        Watchmaker's [S3 bucket][4].
-    *   The version of Watchmaker can be determined by viewing the
-        contents of the SHA256 hash file or by executing the package
-        with the `--version` flag.
+    *   For the latest package, the version of Watchmaker can be determined by
+        viewing the contents of the SHA256 hash file or by executing the
+        package with the `--version` flag.
 
 2.  Verify the integrity of the standalone package.
 
@@ -108,7 +113,7 @@ Linux.
     a hash you compute for the package.
 
     For Linux, execute this command to compute the SHA256 hash:
-      
+
     ```shell
     # shasum -a 256 watchmaker-latest-standalone-linux-x86_64
     ```
@@ -123,7 +128,7 @@ Linux.
 
     For Linux, you will need to set the access permissions to allow the
     standalone executable to run. Below is an example:
-    
+
     ```shell
     # chmod +x watchmaker-latest-standalone-linux-x86_64
     ```
@@ -132,5 +137,5 @@ Linux.
 [0]: https://pip.pypa.io/en/stable/
 [1]: https://python-guide.readthedocs.io/en/latest/starting/installation/
 [2]: https://github.com/plus3it/watchmaker
-[3]: https://github.com/plus3it/watchmaker/releases/latest
-[4]: https://s3.console.aws.amazon.com/s3/buckets/watchmaker/releases/latest/
+[3]: https://github.com/plus3it/watchmaker/releases/
+[4]: https://github.com/plus3it/watchmaker/releases/latest/
