@@ -60,7 +60,10 @@ The sources for `watchmaker` are available from the [GitHub repo][2].
     pip install .
     ```
 
-## From standalone executable package
+## From standalone executable package (Beta feature)
+
+*Standalone packages are a beta feature and may not function in all
+environments.*
 
 Watchmaker can also be downloaded and executed in an all-in-one
 package containing Watchmaker's dependencies, such as Python and

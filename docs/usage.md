@@ -65,7 +65,10 @@ Options:
 ```
 
 
-## `watchmaker` as a standalone package
+## `watchmaker` as a standalone package (Beta feature)
+
+*Standalone packages are a beta feature and may not function in all
+environments.*
 
 Once a Watchmaker standalone executable has been
 [downloaded](installation.html) and a
