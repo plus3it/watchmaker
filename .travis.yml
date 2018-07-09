@@ -90,11 +90,19 @@ jobs:
       if: branch in (master, develop)
       python: 3.6
       install:
-        - pip install -r requirements/deploy.txt
-        - pip install --editable . # install wam, as needed by GB
+        - sudo docker pull ${DOCKER_SLUG}:latest
       script:
-        # create standalone application
-        - gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose
+        - echo "DOCKER_INSTANCE_NAME:${DOCKER_INSTANCE_NAME}"
+        - echo "DOCKER_SLUG:${DOCKER_SLUG}"
+        - |
+          sudo docker run --detach --privileged \
+            --volume="${TRAVIS_BUILD_DIR}":"${TRAVIS_BUILD_DIR}" \
+            --workdir "${TRAVIS_BUILD_DIR}" \
+            --name ${DOCKER_INSTANCE_NAME} \
+            ${DOCKER_SLUG}:latest \
+            init
+        - sudo docker exec ${DOCKER_INSTANCE_NAME} chmod +x ci/deploy.sh
+        - sudo docker exec ${DOCKER_INSTANCE_NAME} ci/deploy.sh
       before_deploy:
         # prepare deployment envs
         - source .gravitybee/gravitybee-environs.sh
@@ -102,6 +110,8 @@ jobs:
         - export SATS_BODY="* [$GB_ENV_APP_NAME v$GB_ENV_APP_VERSION CHANGELOG](https://github.com/plus3it/$GB_ENV_APP_NAME/blob/$GB_ENV_APP_VERSION/CHANGELOG.md)"
         - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
         - echo Tag name is $SATS_TAG
+      after_script:
+        - sudo docker stop ${DOCKER_INSTANCE_NAME}
       deploy:
         - provider: script
           # deploy to github releases
