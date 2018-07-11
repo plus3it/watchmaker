@@ -12,5 +12,5 @@ echo "-----------------------------------------------------------------------"
 pip install -r requirements/deploy.txt
 pip install --editable .
 
-# creates standalone 
-gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose
+# creates standalone
+gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose --extra-pkgs boto3 --extra-modules boto3
