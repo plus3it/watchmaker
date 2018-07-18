@@ -369,16 +369,16 @@ class WorkersManagerBase(object):
 
     @abc.abstractmethod
     def _worker_execution(self):
-        return
+        pass
 
     @abc.abstractmethod
     def _worker_validation(self):
-        return
+        pass
 
     @abc.abstractmethod
     def worker_cadence(self):  # noqa: D102
-        return
+        pass
 
     @abc.abstractmethod
     def cleanup(self):  # noqa: D102
-        return
+        pass
