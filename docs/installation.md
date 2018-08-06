@@ -94,7 +94,7 @@ Linux.
     *   From PowerShell, the Windows package can be downloaded
         as follows:
 
-        ```powershell
+        ```ps1con
         PS C:\wam> $url = "https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-windows-amd64.exe"
         PS C:\wam> (New-Object System.Net.WebClient).DownloadFile($url, "watchmaker.exe")
         ```
@@ -102,7 +102,7 @@ Linux.
     *   From the command line, the Linux package can be downloaded
         as follows:
 
-        ```shell
+        ```console
         # curl -so watchmaker https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-linux-x86_64
         ```
 
@@ -117,13 +117,13 @@ Linux.
 
     For Linux, execute this command to compute the SHA256 hash:
 
-    ```shell
+    ```console
     # shasum -a 256 watchmaker-latest-standalone-linux-x86_64
     ```
 
     For Windows, execute this command to compute the SHA256 hash:
 
-    ```powershell
+    ```ps1con
     PS C:\wam> Get-FileHash watchmaker-latest-standalone-windows-amd64.exe | Format-List
     ```
 
@@ -132,7 +132,7 @@ Linux.
     For Linux, you will need to set the access permissions to allow the
     standalone executable to run. Below is an example:
 
-    ```shell
+    ```console
     # chmod +x watchmaker-latest-standalone-linux-x86_64
     ```
 
