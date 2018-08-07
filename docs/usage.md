@@ -15,7 +15,7 @@ to use the default configuration), using Watchmaker as a CLI utility is as
 simple as executing `watchmaker`. Below is the output of `watchmaker --help`,
 showing the CLI options.
 
-```shell
+```console
 # watchmaker --help
 Usage: watchmaker [OPTIONS]
 
@@ -79,13 +79,13 @@ utility.
 For example, on Linux, you can view the CLI options (shown above) using
 the same flag.
 
-```shell
+```console
 # ./watchmaker --help
 ```
 
 From Windows, similarly, execute Watchmaker by running it from the command line:
 
-```powershell
+```ps1con
 PS C:\wam> watchmaker.exe --help
 ```
 
