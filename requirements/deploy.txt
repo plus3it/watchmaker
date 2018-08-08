@@ -1,2 +1,2 @@
 satsuki==0.1.11
-gravitybee==0.1.19
+gravitybee==0.1.20
