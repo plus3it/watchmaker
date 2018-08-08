@@ -363,6 +363,7 @@ texinfo_documents = [
 
 
 linkcheck_ignore = [
-    r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.\d){3}',
-    r'https://github.com/plus3it/watchmaker/compare/(\d\.){3}\.(\.x){3}'
+    r'https://github.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.\d+){3}',
+    r'https://github.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.x){3}',
+    r'https://s3.amazonaws.com/watchmaker/releases/(.*)$'
 ]

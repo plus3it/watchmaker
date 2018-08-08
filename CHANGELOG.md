@@ -1,5 +1,26 @@
 ## Changelog
 
+### 0.10.0
+
+**Commit Delta**: [Change from 0.9.6 release](https://github.com/plus3it/watchmaker/compare/0.9.6...0.10.0)
+
+**Released**: 2018.08.08
+
+**Summary**:
+
+*   Provides standalone packages that bundle the Python runtime together with
+    Watchmaker and its dependencies
+    - See <https://watchmaker.readthedocs.io/en/stable/installation.html>
+*   ash-linux-formula
+    -   (el7) Ensures packages are up-to-date
+    -   (el7) Ensures firewalld is installed and running
+*   splunk-forwarder-formula
+    -   (linux) Uses a symlink to ensure logs are in the /var/log partition
+*   dotnet4-formula
+    -   Adds support for .NET 4.7.2
+*   nessus-agent-formula
+    -   New salt formula distributed with Watchmaker
+
 ### 0.9.6
 
 **Commit Delta**: [Change from 0.9.5 release](https://github.com/plus3it/watchmaker/compare/0.9.5...0.9.6)

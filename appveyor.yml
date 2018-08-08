@@ -1,42 +1,11 @@
 version: '{branch}-{build}'
 build: off
+image: Visual Studio 2013
 cache:
   - '%LOCALAPPDATA%\pip\Cache'
-matrix:
-  fast_finish: true
 environment:
   global:
     WITH_ENV: 'cmd /E:ON /V:ON /C .\ci\run_with_env.cmd'
-  matrix:
-    - TOXENV: check
-      PYTHON_HOME: C:\Python36-x64
-      PYTHON_VERSION: 3.6
-      PYTHON_ARCH: 64
-
-    - TOXENV: docs
-      PYTHON_HOME: C:\Python36-x64
-      PYTHON_VERSION: 3.6
-      PYTHON_ARCH: 64
-
-    - TOXENV: 'py27,codecov'
-      PYTHON_HOME: C:\Python27
-      PYTHON_VERSION: 2.7
-      PYTHON_ARCH: 32
-
-    - TOXENV: 'py27,codecov'
-      PYTHON_HOME: C:\Python27-x64
-      PYTHON_VERSION: 2.7
-      PYTHON_ARCH: 64
-
-    - TOXENV: 'py36,codecov'
-      PYTHON_HOME: C:\Python36
-      PYTHON_VERSION: 3.6
-      PYTHON_ARCH: 32
-
-    - TOXENV: 'py36,codecov'
-      PYTHON_HOME: C:\Python36-x64
-      PYTHON_VERSION: 3.6
-      PYTHON_ARCH: 64
 
 init:
   - ps: echo $env:TOXENV
@@ -44,12 +13,100 @@ init:
   - ps: ls C:\Python*
 install:
   - git submodule update --init --recursive
-  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
-  - '%PYTHON_HOME%\Scripts\virtualenv --version'
-  - '%PYTHON_HOME%\Scripts\pip --version'
-  - '%PYTHON_HOME%\Scripts\tox --version'
 test_script:
+  # ----- python 3.6, x64
+  # python envs
+  - set PYTHON_HOME=C:\Python36-x64
+  - set PYTHON_VERSION=3.6
+  - set PYTHON_ARCH=64
+
+  # install
+  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+
+  # versions
+  - '%PYTHON_HOME%\Scripts\virtualenv --version'
+  - '%PYTHON_HOME%\Scripts\tox --version'
+  - '%PYTHON_HOME%\Scripts\pip --version'
+
+  # tests
+  - set TOXENV=check
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
+  - set TOXENV=docs
+  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
+  - set TOXENV=3.6,codecov
+  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
+  # ----- python 3.6, x32
+  # python envs
+  - set PYTHON_HOME=C:\Python36
+  - set PYTHON_ARCH=32
+
+  # install
+  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+
+    # versions
+  - '%PYTHON_HOME%\Scripts\virtualenv --version'
+  - '%PYTHON_HOME%\Scripts\tox --version'
+  - '%PYTHON_HOME%\Scripts\pip --version'
+
+  # test
+  - set TOXENV=3.6,codecov
+  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
+  # ----- python 2.7, x32
+  # python envs
+  - set PYTHON_HOME=C:\Python27
+  - set PYTHON_VERSION=2.7
+  - set PYTHON_ARCH=32
+
+  # install
+  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+
+  # versions
+  - '%PYTHON_HOME%\Scripts\virtualenv --version'
+  - '%PYTHON_HOME%\Scripts\tox --version'
+  - '%PYTHON_HOME%\Scripts\pip --version'
+
+  # test
+  - set TOXENV=2.7,codecov
+  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
+  # ----- python 2.7, x64
+  # python envs
+  - set PYTHON_HOME=C:\Python27-x64
+  - set PYTHON_ARCH=64
+
+  # install
+  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+
+  # versions
+  - '%PYTHON_HOME%\Scripts\virtualenv --version'
+  - '%PYTHON_HOME%\Scripts\tox --version'
+  - '%PYTHON_HOME%\Scripts\pip --version'
+
+  # test
+  - set TOXENV=2.7,codecov
+  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
+  # ----- build the standalone binary
+  # here so build will fail during test if bin build fails (gravitybee) rather than in deploy
+  # virtual env
+  - mkdir C:\venv
+  - C:\Python36-x64\Scripts\virtualenv C:\venv
+  - C:\venv\Scripts\activate
+  - python --version
+  - pip install -r requirements/deploy.txt
+  - ps: >-
+      if($env:APPVEYOR_REPO_BRANCH -eq "develop") {
+        # whether setup.cfg version has "dev" or not, it is added but not duplicated
+        $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
+        (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg
+      }
+  - pip install --editable .      # install wam, as needed by GB
+  # create standalone application
+  - gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose --extra-pkgs boto3 --extra-modules boto3
 
 on_failure:
   - ps: dir "env:"
@@ -57,6 +114,41 @@ on_failure:
   - ps: get-content .tox\*\log\*
 artifacts:
   - path: dist\*
+
+before_deploy:
+  # prepare deployment envs
+  - .gravitybee\gravitybee-environs.bat
+  # add artifacts for s3 deployments
+  - ps: $root = Resolve-Path $Env:GB_ENV_STAGING_DIR; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName to-publish }
+  # get satsuki envs ready
+  - set SATS_TAG=%GB_ENV_APP_VERSION%
+  - set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
+  - set SATS_REL_NAME=Release v%GB_ENV_APP_VERSION%
+  # deploy to github releases with satsuki
+  - ps: >-
+      if($env:APPVEYOR_REPO_BRANCH -eq "master") {
+        # if deploy_script is used, s3 deploy providers are skipped
+        satsuki --verbose
+      }
+# deploy to s3
+deploy:
+  - provider: S3
+    bucket: $(DEV_BUCKET)
+    folder: $(S3_KEYFIX)
+    access_key_id: $(AWS_ACCESS_KEY_ID)
+    secret_access_key: $(AWS_SECRET_ACCESS_KEY)
+    max_error_retry: 3
+    on:
+      branch: develop
+  - provider: S3
+    bucket: $(RELEASE_BUCKET)
+    folder: $(S3_KEYFIX)
+    access_key_id: $(AWS_ACCESS_KEY_ID)
+    secret_access_key: $(AWS_SECRET_ACCESS_KEY)
+    max_error_retry: 3
+    on:
+      APPVEYOR_REPO_TAG: true
+
 
 ### To enable remote debugging uncomment this (also, see: http://www.appveyor.com/docs/how-to/rdp-to-build-worker):
 # on_finish:

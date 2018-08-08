@@ -21,6 +21,9 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 
+# These files are binary and should be left untouched
+*.png binary
+
 #===============
 #Personal git attribute settings
 #===============

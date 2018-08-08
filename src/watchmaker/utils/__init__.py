@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import os
+import ssl
 
 import backoff
 
@@ -45,4 +46,15 @@ def basename_from_uri(uri):
 @backoff.on_exception(backoff.expo, urllib.error.URLError, max_tries=5)
 def urlopen_retry(uri):
     """Retry urlopen on exception."""
-    return urllib.request.urlopen(uri)
+    kwargs = {}
+    try:
+        # trust the system's default CA certificates
+        # proper way for 2.7.9+ on Linux
+        if uri.startswith("https://"):
+            kwargs['context'] = ssl.create_default_context(
+                ssl.Purpose.CLIENT_AUTH
+            )
+    except AttributeError:
+        pass
+
+    return urllib.request.urlopen(uri, **kwargs)
