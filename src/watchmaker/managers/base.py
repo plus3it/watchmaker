@@ -174,10 +174,37 @@ class ManagerBase(object):
             raise WatchmakerException(msg)
 
         self.log.debug('Command: %s', ' '.join(cmd))
+
+        # If running as a standalone, PyInstaller will have modified the
+        # LD_LIBRARY_PATH to point to standalone libraries. If there were a
+        # value at runtime, PyInstaller will create LD_LIBRARY_PATH_ORIG. In
+        # order for salt to run correctly, LD_LIBRARY_PATH has to be fixed.
+        kwargs = {}
+        env = dict(os.environ)
+        lib_path_key = 'LD_LIBRARY_PATH'
+
+        if env.get(lib_path_key) is not None:
+
+            lib_path_orig_value = env.get(lib_path_key + '_ORIG')
+            if lib_path_orig_value is None:
+
+                # you can have lib_path and no orig, if:
+                # 1. none was set and pyinstaller set one, or
+                # 2. one was set and we're not in standalone package
+                env.pop(lib_path_key, None)
+
+            else:
+
+                # put original lib_path back
+                env[lib_path_key] = lib_path_orig_value
+
+            kwargs['env'] = env
+
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stderr=subprocess.PIPE,
+            **kwargs
         )
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
@@ -342,16 +369,16 @@ class WorkersManagerBase(object):
 
     @abc.abstractmethod
     def _worker_execution(self):
-        return
+        pass
 
     @abc.abstractmethod
     def _worker_validation(self):
-        return
+        pass
 
     @abc.abstractmethod
     def worker_cadence(self):  # noqa: D102
-        return
+        pass
 
     @abc.abstractmethod
     def cleanup(self):  # noqa: D102
-        return
+        pass
