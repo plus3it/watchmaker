@@ -64,7 +64,7 @@ jobs:
       env:
         - TOXENV=docs
     - stage: deploy
-      if: branch in (master, develop)
+      if: branch = develop OR tag is present
       python: 2.7
       install: pip install m2r
       script: echo "Deploying..."
