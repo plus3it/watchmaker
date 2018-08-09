@@ -64,7 +64,7 @@ jobs:
       env:
         - TOXENV=docs
     - stage: deploy
-      if: branch in (master, develop)
+      if: branch = develop OR tag is present
       python: 2.7
       install: pip install m2r
       script: echo "Deploying..."
@@ -87,7 +87,7 @@ jobs:
         on:
           tags: true
     - stage: deploy
-      if: branch in (master, develop)
+      if: branch in (env(RELEASE_BRANCH), develop) OR tag is present
       python: 3.6
       install:
         - echo "Install"
@@ -100,13 +100,14 @@ jobs:
         - export SATS_BODY="* [$GB_ENV_APP_NAME v$GB_ENV_APP_VERSION CHANGELOG](https://github.com/plus3it/$GB_ENV_APP_NAME/blob/$GB_ENV_APP_VERSION/CHANGELOG.md)"
         - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
         - echo Tag name is $SATS_TAG
+        - pip install -r requirements/deploy.txt
       deploy:
         - provider: script
           # deploy to github releases
           script: satsuki --verbose
           skip_cleanup: true
           on:
-            branch: master
+            branch: $RELEASE_BRANCH
         - provider: s3
           bucket: $RELEASE_BUCKET
           upload-dir: $S3_KEYFIX

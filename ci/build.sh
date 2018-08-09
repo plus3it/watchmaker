@@ -9,7 +9,7 @@ echo "-----------------------------------------------------------------------"
 python --version
 pip --version
 echo "-----------------------------------------------------------------------"
-pip install -r requirements/deploy.txt
+pip install -r requirements/build.txt
 pip install --editable .
 
 # creates standalone

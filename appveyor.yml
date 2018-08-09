@@ -97,7 +97,7 @@ test_script:
   - C:\Python36-x64\Scripts\virtualenv C:\venv
   - C:\venv\Scripts\activate
   - python --version
-  - pip install -r requirements/deploy.txt
+  - pip install -r requirements/build.txt
   - ps: >-
       if($env:APPVEYOR_REPO_BRANCH -eq "develop") {
         # whether setup.cfg version has "dev" or not, it is added but not duplicated
@@ -124,9 +124,10 @@ before_deploy:
   - set SATS_TAG=%GB_ENV_APP_VERSION%
   - set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
   - set SATS_REL_NAME=Release v%GB_ENV_APP_VERSION%
+  - pip install -r requirements/deploy.txt
   # deploy to github releases with satsuki
   - ps: >-
-      if($env:APPVEYOR_REPO_BRANCH -eq "master") {
+      if($env:APPVEYOR_REPO_TAG -eq "true") {
         # if deploy_script is used, s3 deploy providers are skipped
         satsuki --verbose
       }
