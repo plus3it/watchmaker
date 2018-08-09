@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.10.1
+
+**Commit Delta**: [Change from 0.10.0 release](https://github.com/plus3it/watchmaker/compare/0.10.0...0.10.1)
+
+**Released**: 2018.08.09
+
+**Summary**:
+
+*   No functional changes; just patches the CI/release configuration
+
 ### 0.10.0
 
 **Commit Delta**: [Change from 0.9.6 release](https://github.com/plus3it/watchmaker/compare/0.9.6...0.10.0)
