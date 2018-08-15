@@ -1,0 +1,17 @@
+image: ${IMAGE}
+
+before_script:
+  - sudo yum -y install python34 python34-pip python34-libs python34-setuptools
+  - sudo python3 -m pip install --upgrade pip
+  - sudo pip3 install --upgrade -r requirements/docs.txt
+  - sudo pip3 install -e .
+
+pages:
+  stage: deploy
+  script:
+    - sphinx-build -a -E -b html docs public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
