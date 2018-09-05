@@ -84,6 +84,7 @@ logfiles/
 tests/logfiles/
 
 # Unit test / coverage reports
+.pytest_cache
 .cache
 .coverage
 .tox
