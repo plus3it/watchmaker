@@ -49,6 +49,9 @@ Temporary Items
 #pycharm dirs
 .idea
 
+#vscode dirs
+.vscode/
+
 # mkdocs documentation
 site/
 
