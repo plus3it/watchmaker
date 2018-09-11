@@ -407,6 +407,7 @@ class SaltBase(ManagerBase):
         """Set salt grains."""
         ent_env = {'enterprise_environment': str(self.ent_env)}
         self._set_grain('systemprep', ent_env)
+        self._set_grain('watchmaker', ent_env)
 
         grain = {}
         if self.ou_path and self.ou_path != 'None':
