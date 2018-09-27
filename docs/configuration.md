@@ -174,16 +174,16 @@ linux:
             - redhat
             - centos
           el_version: 6
-          url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el6.repo
+          url: https://s3.amazonaws.com/watchmaker/yum.defs/saltstack/salt/2016.11.9/salt-reposync-el6.repo
         - dist: amazon
           el_version: 6
-          url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-amzn.repo
+          url: https://s3.amazonaws.com/watchmaker/yum.defs/saltstack/salt/2016.11.9/salt-reposync-amzn.repo
         #SaltEL7:
         - dist:
             - redhat
             - centos
           el_version: 7
-          url: https://s3.amazonaws.com/systemprep-repo/linux/saltstack/salt/yum.repos/salt-reposync-el7.repo
+          url: https://s3.amazonaws.com/watchmaker/yum.defs/saltstack/salt/2016.11.9/salt-reposync-el7.repo
   - salt:
       salt_debug_log: None
       install_method: yum
@@ -194,7 +194,7 @@ linux:
 windows:
   - salt:
       salt_debug_log: None
-      installer_url: https://s3.amazonaws.com/systemprep-repo/windows/salt/Salt-Minion-2016.11.6-AMD64-Setup.exe
+      installer_url: https://s3.amazonaws.com/watchmaker/repo/saltstack/salt/windows/Salt-Minion-2016.11.6-AMD64-Setup.exe
 ```
 
 [0]: http://www.yaml.org/spec/1.2/spec.html

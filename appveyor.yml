@@ -35,7 +35,7 @@ test_script:
   - set TOXENV=docs
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
-  - set TOXENV=3.6,codecov
+  - set TOXENV=3.6-codecov
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
   # ----- python 3.6, x32
@@ -52,7 +52,7 @@ test_script:
   - '%PYTHON_HOME%\Scripts\pip --version'
 
   # test
-  - set TOXENV=3.6,codecov
+  - set TOXENV=3.6-codecov
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
   # ----- python 2.7, x32
@@ -70,7 +70,7 @@ test_script:
   - '%PYTHON_HOME%\Scripts\pip --version'
 
   # test
-  - set TOXENV=2.7,codecov
+  - set TOXENV=2.7-codecov
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
   # ----- python 2.7, x64
@@ -87,7 +87,7 @@ test_script:
   - '%PYTHON_HOME%\Scripts\pip --version'
 
   # test
-  - set TOXENV=2.7,codecov
+  - set TOXENV=2.7-codecov
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
   # ----- build the standalone binary
