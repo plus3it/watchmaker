@@ -1,5 +1,21 @@
 ## Changelog
 
+### 0.10.2
+
+**Commit Delta**: [Change from 0.10.1 release](https://github.com/plus3it/watchmaker/compare/0.10.1...0.10.2)
+
+**Released**: 2018.09.27
+
+**Summary**:
+
+*   Adds a gitlab-ci pages config to build Watchmaker docs
+*   Uses new hosting location to retrieve Salt packages
+*   Restricts click version on py2.6
+*   ash-windows-forumula
+    -   New hosting location being used for all packages
+*   pshelp-formula
+    -   Removed byte-order-mark unicode character at beginning of init.sls file
+
 ### 0.10.1
 
 **Commit Delta**: [Change from 0.10.0 release](https://github.com/plus3it/watchmaker/compare/0.10.0...0.10.1)
@@ -78,7 +94,7 @@
 
 **Commit Delta**: [Change from 0.9.2 release](https://github.com/plus3it/watchmaker/compare/0.9.2...0.9.3)
 
-**Released**: 2017.03.08
+**Released**: 2018.03.08
 
 **Summary**:
 
