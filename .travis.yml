@@ -16,7 +16,7 @@ python:
 stage: test
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
-  - export TOXENV="${TOXENV:-$TRAVIS_PYTHON_VERSION,codecov}"
+  - export TOXENV="${TOXENV:-$TRAVIS_PYTHON_VERSION-codecov}"
   - echo $TOXENV
   - python --version
   - uname -a
