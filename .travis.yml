@@ -12,7 +12,6 @@ python:
   - 3.4
   - 3.5
   - 3.6
-  - pypy
 stage: test
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
