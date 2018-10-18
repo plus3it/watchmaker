@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.10.3
+
+**Commit Delta**: [Change from 0.10.2 release](https://github.com/plus3it/watchmaker/compare/0.10.2...0.10.3)
+
+**Released**: 2018.10.18
+
+**Summary**:
+
+*   ash-windows-formula
+    -   Updates Formula to Support Salt 2017.7.x and 2018.3.x
+    -   Removed admin account rename from delta state
+
 ### 0.10.2
 
 **Commit Delta**: [Change from 0.10.1 release](https://github.com/plus3it/watchmaker/compare/0.10.1...0.10.2)
