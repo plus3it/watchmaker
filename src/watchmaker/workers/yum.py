@@ -30,7 +30,7 @@ class Yum(LinuxManager):
     DIST_PATTERN = re.compile(
         r"^({0})"
         "(?:[^0-9]+)"
-        "([\d]+[.][\d]+)"
+        r"([\d]+[.][\d]+)"
         "(?:.*)"
         .format('|'.join(SUPPORTED_DISTS))
     )
