@@ -114,14 +114,18 @@ on the [CLI](#watchmaker-from-the-cli). Here is an example:
 
 ```shell
 #!/bin/sh
-PIP_URL=https://bootstrap.pypa.io/2.6/get-pip.py
+PIP_URL=https://bootstrap.pypa.io/get-pip.py
 PYPI_URL=https://pypi.org/simple
 
+# Setup terminal support for UTF-8
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
 # Install pip
-curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
+curl "$PIP_URL" | python3 - --index-url="$PYPI_URL"
 
 # Install setup dependencies
-pip install --index-url="$PYPI_URL" --upgrade 'pip<10' 'setuptools<37'
+pip install --index-url="$PYPI_URL" --upgrade pip setuptools
 
 # Install Watchmaker
 pip install --index-url="$PYPI_URL" --upgrade watchmaker
@@ -137,14 +141,18 @@ Alternatively, cloud-config directives can also be used on **Linux**:
 
 runcmd:
   - |
-    PIP_URL=https://bootstrap.pypa.io/2.6/get-pip.py
+    PIP_URL=https://bootstrap.pypa.io/get-pip.py
     PYPI_URL=https://pypi.org/simple
 
+    # Setup terminal support for UTF-8
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+
     # Install pip
-    curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
+    curl "$PIP_URL" | python3 - --index-url="$PYPI_URL"
 
     # Install setup dependencies
-    pip install --index-url="$PYPI_URL" --upgrade 'pip<10' 'setuptools<37'
+    pip install --index-url="$PYPI_URL" --upgrade pip setuptools
 
     # Install Watchmaker
     pip install --index-url="$PYPI_URL" --upgrade watchmaker
