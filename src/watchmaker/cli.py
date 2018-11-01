@@ -21,10 +21,19 @@ LOG_LOCATIONS = {
 }
 
 
+def _print_version(ctx, _param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    click.echo(watchmaker.VERSION_INFO)
+    ctx.exit()
+
+
 @click.command(context_settings=dict(
     ignore_unknown_options=True,
 ))
-@click.version_option(version=watchmaker.__version__)
+@click.option(
+    '--version', is_flag=True, callback=_print_version, expose_value=False,
+    is_eager=True)
 @click.option(
     '-c', '--config', 'config_path', default=None, show_default=True,
     help=(
