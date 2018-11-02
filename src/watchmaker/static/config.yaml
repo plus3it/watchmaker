@@ -46,4 +46,4 @@ linux:
 windows:
   - salt:
       salt_debug_log: None
-      installer_url: https://s3.amazonaws.com/watchmaker/repo/saltstack/salt/windows/Salt-Minion-2018.3.3-Py3-AMD64-Setup.exe
+      installer_url: https://s3.amazonaws.com/watchmaker/repo/saltstack/salt/windows/Salt-Minion-2018.3.3-Py2-AMD64-Setup.exe
