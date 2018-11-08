@@ -524,6 +524,9 @@ class SaltLinux(SaltBase, LinuxManager):
         self.git_repo = kwargs.pop('git_repo', None) or ''
         self.salt_version = kwargs.pop('salt_version', None) or ''
 
+        # Enforce lowercase and replace spaces with ^ in Linux
+        self.admin_groups = self.admin_groups.lower().replace(' ', '^')
+
         # Extra variables needed for SaltLinux.
         self.yum_pkgs = [
             'policycoreutils-python',

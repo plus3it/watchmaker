@@ -36,7 +36,17 @@ def _extract_version(package_name):
         return _conf['metadata']['version']
 
 
+def _version_info(app_name, version):
+    return '{0}/{1} Python/{2} {3}/{4}'.format(
+        app_name,
+        version,
+        platform.python_version(),
+        platform.system(),
+        platform.release())
+
+
 __version__ = _extract_version('watchmaker')
+VERSION_INFO = _version_info('Watchmaker', __version__)
 
 
 class Arguments(dict):
