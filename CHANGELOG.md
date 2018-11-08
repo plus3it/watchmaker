@@ -1,5 +1,25 @@
 ## Changelog
 
+### 0.11.0
+
+**Commit Delta**: [Change from 0.10.3 release](https://github.com/plus3it/watchmaker/compare/0.10.3...0.11.0)
+
+**Released**: 2018.11.08
+
+**Summary**:
+
+*   Adds enhancement to ensure `--admin-groups` parameters are lowercase on Linux systems
+*   Adds additional information to the `--version` flag
+*   Default values are now shown in help output
+*   scap-formula
+    -   Incorporates content from latest DISA SCAP benchmarks
+        -   Microsoft .Net Framework 4 STIG Benchmark - Ver 1, Rel 5
+        -   Microsoft Windows 2008 R2 DC STIG Benchmark - Ver 1, Rel 5
+        -   Microsoft Windows 2008 R2 MS STIG Benchmark - Ver 1, Rel 30
+        -   Microsoft Windows Server 2016 STIG Benchmark - Ver 1, Rel 31
+        -   Red Hat 6 STIG Benchmark - Ver 1, Rel 21
+        -   Red Hat 7 STIG Benchmark - Ver 2, Rel 1
+
 ### 0.10.3
 
 **Commit Delta**: [Change from 0.10.2 release](https://github.com/plus3it/watchmaker/compare/0.10.2...0.10.3)
