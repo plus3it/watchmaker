@@ -86,6 +86,10 @@ tests/*.log
 logfiles/
 tests/logfiles/
 
+# Environment files
+Pipfile
+Pipfile.lock
+
 # Unit test / coverage reports
 .pytest_cache
 .cache
