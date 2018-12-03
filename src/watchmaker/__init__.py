@@ -256,7 +256,8 @@ class Client(object):
             salt = self.config['salt']['config']
             if 'valid_environments' in salt:
                 # Convert all valid environment options to lowercase
-                valid_envs = [str(x).lower() for x in salt['valid_environments']]
+                valid_envs = [str(x).lower() for x in
+                    salt['valid_environments']]
 
                 if 'environment' in salt:
                     # Convert environment to lowercase
