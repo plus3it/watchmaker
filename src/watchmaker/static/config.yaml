@@ -3,7 +3,12 @@ all:
       admin_groups: None
       admin_users: None
       computer_name: None
-      environment: False
+      environment:
+      valid_environments:
+          - 
+          - dev
+          - test
+          - prod
       ou_path: None
       salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
       salt_states: Highstate

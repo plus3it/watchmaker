@@ -16,7 +16,7 @@ import yaml
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import WatchmakerException
+from watchmaker.exceptions import WatchmakerException, InvalidValue
 from watchmaker.logger import log_system_details
 from watchmaker.managers.workers import (LinuxWorkersManager,
                                          WindowsWorkersManager)
@@ -250,6 +250,24 @@ class Client(object):
         )
 
         self.config = self._get_config()
+
+        # Ensure a valid environment type was selected
+        if 'salt' in self.config:
+            salt = self.config['salt']['config']
+            if 'valid_environments' in salt:
+                # Convert all valid environment options to lowercase
+                valid_envs = [str(x).lower() for x in salt['valid_environments']]
+
+                if 'environment' in salt:
+                    # Convert environment to lowercase
+                    env = str(salt['environment']).lower()
+                    if env not in valid_envs:
+                        msg = (
+                            'Selected environment ({}) is not one of the valid'
+                            ' environment types: {}'.format(env, valid_envs)
+                        )
+                        self.log.critical(msg)
+                        raise InvalidValue(msg)
 
     def _get_config(self):
         """
