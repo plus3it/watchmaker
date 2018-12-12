@@ -11,28 +11,16 @@ from watchmaker.workers.yum import Yum
 class LinuxWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Linux systems."""
 
+    WORKERS = {
+        'yum': Yum,
+        'salt': SaltLinux
+    }
+
     def _worker_execution(self):
         pass
 
     def _worker_validation(self):
         pass
-
-    def worker_cadence(self):
-        """Manage worker cadence."""
-        for worker in self.workers:
-            configuration = self.workers[worker]['config']
-            if 'yum' in worker:
-                yum = Yum(
-                    system_params=self.system_params,
-                    **configuration
-                )
-                yum.install()
-            elif 'salt' in worker:
-                salt = SaltLinux(
-                    system_params=self.system_params,
-                    **configuration
-                )
-                salt.install()
 
     def cleanup(self):
         """Execute cleanup function."""
@@ -42,22 +30,15 @@ class LinuxWorkersManager(WorkersManagerBase):
 class WindowsWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Windows systems."""
 
+    WORKERS = {
+        'salt': SaltWindows
+    }
+
     def _worker_execution(self):
         pass
 
     def _worker_validation(self):
         pass
-
-    def worker_cadence(self):
-        """Manage worker cadence."""
-        for worker in self.workers:
-            configuration = self.workers[worker]['config']
-            if 'salt' in worker:
-                salt = SaltWindows(
-                    system_params=self.system_params,
-                    **configuration
-                )
-                salt.install()
 
     def cleanup(self):
         """Execute cleanup function."""

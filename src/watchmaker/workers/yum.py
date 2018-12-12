@@ -136,6 +136,10 @@ class Yum(LinuxManager):
         # return True if all checks pass, otherwise False
         return check_dist and check_el_version
 
+    def before_install(self):
+        """Validate configuration before starting install."""
+        pass
+
     def install(self):
         """Install yum repos defined in config file."""
         self._validate_config()

@@ -63,6 +63,9 @@ Parameters supported by the Salt Worker:
 -   `environment` (_string_): Set for the environment in which the system is
     being built.
 
+-   `valid_environments` (_list_): The list of environments considered valid
+    for the environment parameter
+
 -   `ou_path` (_string_): Specifies the full DN of the OU where the computer
     account will be created when joining a domain.
 
@@ -151,7 +154,7 @@ all:
       admin_groups: None
       admin_users: None
       computer_name: None
-      environment: False
+      environment: None
       ou_path: None
       salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
       salt_states: Highstate
