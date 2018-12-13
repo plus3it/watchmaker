@@ -13,7 +13,7 @@ import yaml
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import WatchmakerException
+from watchmaker.exceptions import InvalidValue, WatchmakerException
 from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
 
 
@@ -90,6 +90,7 @@ class SaltBase(ManagerBase):
         self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.computer_name = kwargs.pop('computer_name', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
+        self.valid_envs = kwargs.pop('valid_environments', []) or []
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
         self.salt_content = kwargs.pop('salt_content', None) or ''
         self.ou_path = kwargs.pop('ou_path', None) or ''
@@ -110,6 +111,22 @@ class SaltBase(ManagerBase):
         self.salt_file_roots = None
         self.salt_state_args = None
         self.salt_debug_logfile = None
+
+    def before_install(self):
+        """Validate configuration before starting install."""
+        # Convert environment to lowercase
+        env = str(self.ent_env).lower()
+
+        # Convert all valid environment to lowercase
+        valid_envs = [str(x).lower() for x in self.valid_envs]
+
+        if valid_envs and env not in valid_envs:
+            msg = (
+                'Selected environment ({0}) is not one of the valid'
+                ' environment types: {1}'.format(env, valid_envs)
+            )
+            self.log.critical(msg)
+            raise InvalidValue(msg)
 
     @staticmethod
     def _get_salt_dirs(srv):

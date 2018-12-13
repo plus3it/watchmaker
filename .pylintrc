@@ -75,6 +75,7 @@ disable=
     too-many-branches,
     too-many-instance-attributes,
     too-many-statements,
+    unnecessary-pass,
     useless-object-inheritance
 
 [REPORTS]
