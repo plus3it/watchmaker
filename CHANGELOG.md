@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.12.0
+
+**Commit Delta**: [Change from 0.11.0 release](https://github.com/plus3it/watchmaker/compare/0.11.0...0.12.0)
+
+**Released**: 2018.12.13
+
+**Summary**:
+
+*   Adds `valid_environments` option to config to allow for the restriction of environment selection
+
 ### 0.11.0
 
 **Commit Delta**: [Change from 0.10.3 release](https://github.com/plus3it/watchmaker/compare/0.10.3...0.11.0)
