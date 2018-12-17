@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.12.1
+
+**Commit Delta**: [Change from 0.12.0 release](https://github.com/plus3it/watchmaker/compare/0.12.0...0.12.1)
+
+**Released**: 2018.12.17
+
+**Summary**:
+
+*   ash-windows-formula
+    -   Corrects yaml syntax error in win2016 DC baseline
+
 ### 0.12.0
 
 **Commit Delta**: [Change from 0.11.0 release](https://github.com/plus3it/watchmaker/compare/0.11.0...0.12.0)
