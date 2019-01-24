@@ -5,6 +5,7 @@ export VIRTUAL_ENV_DIR=venv
 virtualenv $VIRTUAL_ENV_DIR
 source $VIRTUAL_ENV_DIR/bin/activate
 
+pip install -r requirements/pip.txt
 echo "-----------------------------------------------------------------------"
 python --version
 pip --version
