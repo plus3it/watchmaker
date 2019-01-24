@@ -8,6 +8,7 @@ source $VIRTUAL_ENV_DIR/bin/activate
 echo "-----------------------------------------------------------------------"
 python --version
 pip --version
+python -m pip install --upgrade pip==18.1
 echo "-----------------------------------------------------------------------"
 pip install -r requirements/build.txt
 pip install --editable .

@@ -1,1 +1,3 @@
-gravitybee==0.1.21
+pip==18.1
+gravitybee==0.1.22
+wheel==0.32.3
