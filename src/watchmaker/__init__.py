@@ -18,8 +18,8 @@ import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerException
 from watchmaker.logger import log_system_details
-from watchmaker.managers.workers import (LinuxWorkersManager,
-                                         WindowsWorkersManager)
+from watchmaker.managers.worker_manager import (LinuxWorkersManager,
+                                                WindowsWorkersManager)
 from watchmaker.utils import urllib
 
 

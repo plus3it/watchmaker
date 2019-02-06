@@ -103,7 +103,7 @@ jobs:
       deploy:
         - provider: script
           # deploy to github releases
-          script: satsuki --verbose
+          script: satsuki
           skip_cleanup: true
           on:
             branch: $RELEASE_BRANCH

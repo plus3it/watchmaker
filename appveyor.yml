@@ -97,6 +97,7 @@ test_script:
   - C:\Python36-x64\Scripts\virtualenv C:\venv
   - C:\venv\Scripts\activate
   - python --version
+  - python -m pip install -r requirements/pip.txt
   - pip install -r requirements/build.txt
   - ps: >-
       if($env:APPVEYOR_REPO_BRANCH -eq "develop") {
@@ -106,7 +107,7 @@ test_script:
       }
   - pip install --editable .      # install wam, as needed by GB
   # create standalone application
-  - gravitybee --src-dir src --sha file --with-latest --extra-data static --verbose --extra-pkgs boto3 --extra-modules boto3
+  - gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-pkgs boto3 --extra-modules boto3
 
 on_failure:
   - ps: dir "env:"
@@ -129,7 +130,7 @@ before_deploy:
   - ps: >-
       if($env:APPVEYOR_REPO_TAG -eq "true") {
         # if deploy_script is used, s3 deploy providers are skipped
-        satsuki --verbose
+        satsuki
       }
 # deploy to s3
 deploy:
