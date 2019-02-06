@@ -1,5 +1,26 @@
 ## Changelog
 
+### 0.13.0
+
+**Commit Delta**: [Change from 0.13.0 release](https://github.com/plus3it/watchmaker/compare/0.12.1...0.13.0)
+
+**Released**: 2018.01.29
+
+**Summary**:
+
+*   amazon-inspector-formula
+    - New salt formula distributed with watchmaker
+    - Installs amazon-inspector agent
+*   Refactor watchmaker
+    - Change naming mechanism from LinuxManager to LinuxPlatformManager
+    - Change naming mechanism from WindowsManager to WindowsPlatformManager
+    - Change naming mechanism from Manager to PlatformManager
+    - Added abstract class WorkerBase for Workers to inherit from
+*   ash-linux-formula
+    - Change ipv6 check to use if_inet6 file
+    - Import correct source of fopen function
+    - Configure Postfix to only use ipv4 when ipv6 is disabled
+
 ### 0.12.1
 
 **Commit Delta**: [Change from 0.12.0 release](https://github.com/plus3it/watchmaker/compare/0.12.0...0.12.1)
