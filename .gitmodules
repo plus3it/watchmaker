@@ -40,3 +40,6 @@
 [submodule "src/watchmaker/static/salt/formulas/nessus-agent-formula"]
 	path = src/watchmaker/static/salt/formulas/nessus-agent-formula
 	url = https://github.com/plus3it/nessus-agent-formula.git
+[submodule "src/watchmaker/static/salt/formulas/amazon-inspector-formula"]
+	path = src/watchmaker/static/salt/formulas/amazon-inspector-formula
+	url = https://github.com/plus3it/amazon-inspector-formula.git

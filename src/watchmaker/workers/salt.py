@@ -14,10 +14,13 @@ import yaml
 import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import InvalidValue, WatchmakerException
-from watchmaker.managers.base import LinuxManager, ManagerBase, WindowsManager
+from watchmaker.managers.platform import (LinuxPlatformManager,
+                                          PlatformManagerBase,
+                                          WindowsPlatformManager)
+from watchmaker.workers.base import WorkerBase
 
 
-class SaltBase(ManagerBase):
+class SaltBase(WorkerBase, PlatformManagerBase):
     r"""
     Cross-platform worker for running salt.
 
@@ -127,6 +130,10 @@ class SaltBase(ManagerBase):
             )
             self.log.critical(msg)
             raise InvalidValue(msg)
+
+    def install(self):
+        """Install Salt."""
+        pass
 
     @staticmethod
     def _get_salt_dirs(srv):
@@ -502,7 +509,7 @@ class SaltBase(ManagerBase):
             self.log.info('Salt states all applied successfully!')
 
 
-class SaltLinux(SaltBase, LinuxManager):
+class SaltLinux(SaltBase, LinuxPlatformManager):
     """
     Run salt on Linux.
 
@@ -670,7 +677,7 @@ class SaltLinux(SaltBase, LinuxManager):
             self.cleanup()
 
 
-class SaltWindows(SaltBase, WindowsManager):
+class SaltWindows(SaltBase, WindowsPlatformManager):
     """
     Run salt on Windows.
 
