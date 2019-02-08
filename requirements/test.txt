@@ -7,4 +7,4 @@ pytest-cov==2.5.1;python_version=="2.6"  # pyup: ==2.5.1
 pytest-cov==2.6.1;python_version>="2.7"
 pytest-mock==1.6.3;python_version=="2.6"  # pyup: ==1.6.3
 pytest-mock==1.10.1;python_version>="2.7"
-wheel==0.32.3;python_version=="2.6"  # pyup: ==0.29.0
+wheel==0.29.0;python_version<="2.6"  # pyup: ==0.29.0
