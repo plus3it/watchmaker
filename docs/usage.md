@@ -2,7 +2,7 @@
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
-   :target: https://plus3it.com
+   :target: https://www.plus3it.com
 <br>
 
 # Usage
@@ -276,7 +276,7 @@ command. For example, a JSON string could contain
 
 These parameters can be passed in via Azure CLI or within a Resource Management
 Template. For more in-depth information, see Microsoft's
-[documentation on Linux](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/extensions-customscript).
+[documentation on Linux](https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-linux).
 
 For Windows, you would execute a PowerShell script in a similar manner as for
 [Windows](#windows) (but without the powershell tags). Then you would have the
@@ -290,7 +290,7 @@ following parameters:
 ```
 
 For more in-depth information on using Custom Script Extension for Windows, see
-Microsoft's [documentation on Windows](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/extensions-customscript).
+Microsoft's [documentation on Windows](https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows).
 
 ## `watchmaker` as a library
 
