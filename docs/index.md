@@ -35,6 +35,7 @@ _workers_ to execute on each platform.
     configuration.md
     usage.md
     faq.md
+    common_findings-EL7.md
     api.md
     contributing.md
     changelog.md
