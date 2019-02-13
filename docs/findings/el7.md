@@ -7,10 +7,6 @@
 .. |sshdconfig| replace:: ``sshd_config (5)``
 .. _sshdconfig: https://linux.die.net/man/5/sshd_config
 
-# Common Scan Findings for Enterprise Linux 7
-
-There are frequently more than one way to achieve a given hardening-recommendation. As such, generic security scanners may produce alerts/findings that are at odds with the actual system state implemented by Watchmaker. The following are frequently-cited findings and explanations for why a given scanner may incorrectly alert on the Watchmaker-managed configuration-state.
-
 ## `LogLevel` Parameter's value not set to `INFO` in `/etc/ssh/sshd_config`
 
 The "stock" `/etc/ssh/sshd_config` file typically contains a commented-out line for the `LogLevel` parameter similar to the following:
