@@ -1,4 +1,4 @@
-.. image:: images/cropped-plus3it-logo-cmyk.png
+.. image:: ../images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
@@ -7,7 +7,7 @@
 .. |sshdconfig| replace:: ``sshd_config (5)``
 .. _sshdconfig: https://linux.die.net/man/5/sshd_config
 
-# Common Scanner Findings for Enterprise Linux 7
+# Common Scan Findings for Enterprise Linux 7
 
 There are frequently more than one way to achieve a given hardening-recommendation. As such, generic security scanners may produce alerts/findings that are at odds with the actual system state implemented by Watchmaker. The following are frequently-cited findings and explanations for why a given scanner may incorrectly alert on the Watchmaker-managed configuration-state.
 
@@ -192,4 +192,4 @@ Already implemented in the `/etc/audit/audit.rules` and `/etc/audit/rules.d/priv
 
 System (re)partitioning is outside the scope of Watchmaker: altering system's partitioning-scheme is not part of Watchmaker's functionality.
 
-This configuration item is not part of baseline STIGs, thus not typically implemented within standardized builds/templates (see discussions in any of the above _Missing Option for `/var/tmp` Filesystem_ sections). 
+This configuration item is not part of baseline STIGs, thus not typically implemented within standardized builds/templates (see discussions in any of the above _Missing Option for `/var/tmp` Filesystem_ sections).
