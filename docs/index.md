@@ -34,6 +34,7 @@ _workers_ to execute on each platform.
     installation.md
     configuration.md
     usage.md
+    findings/index
     faq.md
     api.md
     contributing.md
