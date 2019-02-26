@@ -278,8 +278,8 @@ class Client(object):
             data = watchmaker.utils.urlopen_retry(self.config_path).read()
         except (ValueError, urllib.error.URLError):
             msg = (
-                'Could not read the config from {0}! Please make sure your '
-                'config is available.'.format(self.config_path)
+                'Could not read the config file from the provided value {0}! Please'
+                ' check that the config is available.'.format(self.config_path)
             )
             self.log.critical(msg)
             raise
