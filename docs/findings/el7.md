@@ -7,7 +7,9 @@
 .. |sshdconfig| replace:: ``sshd_config (5)``
 .. _sshdconfig: https://linux.die.net/man/5/sshd_config
 
-## `LogLevel` Parameter's value not set to `INFO` in `/etc/ssh/sshd_config`
+## `sshd_config` Parameter Values
+
+### `LogLevel` Parameter's Value Not Set to `INFO` in `/etc/ssh/sshd_config`
 
 The "stock" `/etc/ssh/sshd_config` file typically contains a commented-out line for the `LogLevel` parameter similar to the following:
 
@@ -36,6 +38,18 @@ When the vendor includes a commented-out parameter-value in the configuration-fi
 ~~~
 
 Note: _If it is desired to alter from the default_, it is typically recommended to change to `VERBOSE` — particularly if key-based logins are in use. This setting will cause the SSH daemon to record the fingerprints of presented-keys.
+
+### `MACs` Parameter Values Not Compliant
+
+The watchmaker-initiated remediation sets a STIG-valid value for the `MACs` parameter, however, the `oscap` utility's validity-regex incorrectly flags the set value as incorrect.
+
+A bug for a prior faulty regex was opened with the vendor in 2017 and closed in September of 2018. However, even with the fixed content, the regex is still incorrectly flagging the set value as incorrect. A new [bug](https://bugzilla.redhat.com/show_bug.cgi?id=1684086) has been opened with vendor. Until it is resolved, this finding should be considered spurious.
+
+### `Ciphers` Parameter Values Not Compliant
+
+The watchmaker-initiated remediation sets a STIG-valid value for the `Ciphers` parameter, however, the `oscap` utility's validity-regex incorrectly flags the set value as incorrect.
+
+A bug for a prior faulty regex was opened with the vendor, remediated in the upstream project and the vendor-bug closed. However even with the fixed content, the regex is still incorrectly flagging the set value as incorrect. A new [bug](https://bugzilla.redhat.com/show_bug.cgi?id=1684086) has been opened with vendor. Until it is resolved, this finding should be considered spurious.
 
 ## System Login Banner Is Missing or Incorrect
 
