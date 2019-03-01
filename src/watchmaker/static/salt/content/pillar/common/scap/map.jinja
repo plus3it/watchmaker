@@ -1,0 +1,86 @@
+{%- from  'map.jinja' import env with context %}
+
+{%- set family = grains['os_family'] |lower %}
+
+{%- set scap = {} %}
+
+{%- if family == 'windows' %}
+
+    {#- Determine the scap guide to apply to the OS #}
+    {%- set role_path_map = {
+        '2' : '-ms',
+        '3' : '-ms',
+        '4' : '-dc',
+        '5' : '-dc'
+    } %}
+
+    {%- set role = salt['cmd.shell'](
+        'wmic ComputerSystem get DomainRole /format:list').split('=')[1] %}
+
+    {%- set guide_map = salt.grains.filter_by({
+        '2016Server' : {
+            'os' : 'ws2016',
+            'role' : ''
+        },
+        '2012ServerR2' : {
+            'os' : 'ws2012',
+            'role' : role_path_map[role]
+        },
+        '2008ServerR2' : {
+            'os' : 'ws2008r2',
+            'role' : role_path_map[role]
+        },
+        '8.1' : {
+            'os' : 'win8',
+            'role' : ''
+        },
+        '10' : {
+            'os' : 'win10',
+            'role' : ''
+        }
+    }, grain='osrelease') %}
+
+    {%- do scap.update({
+        'output_dir': env.systemdrive ~ '\\Watchmaker\\SCAP',
+        'local_dir': env.systemdrive ~ '\\Watchmaker\\SCAP\\Content',
+        'guide_patterns': [
+            'disa/stig-dotnet4',
+            'disa/stig-ie' ~ env.ie_ver,
+            'disa/stig-' ~ guide_map.os ~ guide_map.role
+        ]
+    }) %}
+
+{%- elif family == 'redhat' %}
+
+    {%- set os = salt.grains.filter_by({
+        'RedHat': 'rhel',
+        'CentOS': 'centos'
+    }, grain='os') %}
+
+    {%- do scap.update(salt.grains.filter_by({
+        '6': {
+            'guide_patterns': [
+                'disa/stig-el' ~ grains['osmajorrelease']
+            ],
+            'oscap': {
+                'xccdf': 'disa/stig-el6.xml',
+                'cpe': 'disa/stig-el6-cpe-dictionary.xml',
+                'profile': 'xccdf_mil.disa.stig_profile_MAC-1_Classified',
+                'scap1_2': 'true'
+            },
+            'scc_source': 'https://path/to/your/scc/scc-4.2.rhel.x86_64.rpm'
+        },
+        '7': {
+            'guide_patterns': [
+                'disa/stig-el' ~ grains['osmajorrelease']
+            ],
+            'oscap': {
+                'xccdf': 'openscap/ssg-' ~ os ~ '7-xccdf.xml',
+                'cpe': 'openscap/ssg-rhel7-cpe-dictionary.xml',
+                'profile': 'C2S'
+            },
+            'scc_source': 'https://path/to/your/scc/scc-4.2.rhel_7.x86_64.rpm'
+        }
+    }, grain='osmajorrelease')) %}
+
+{%- endif %}

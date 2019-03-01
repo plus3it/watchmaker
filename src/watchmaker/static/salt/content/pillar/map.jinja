@@ -1,0 +1,40 @@
+{%- set family = grains['os_family'] |lower %}
+
+{%- set env = {} %}
+
+{%- if family == 'windows' %}
+
+{#- For Windows, get the SYSTEMROOT, SYSTEMDRIVE, and IE version. See link for
+    SYSTEMDRIVE logic:
+        http://msdn.microsoft.com/en-us/library/cc231436.aspx.
+#}
+
+{%- set systemroot = salt.reg.read_value(
+    'HKEY_LOCAL_MACHINE',
+    'SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+    'SystemRoot').vdata
+%}
+
+{#- Get the IE version from the registry for IE 10 and 11 #}
+{%- set ie_ver = salt.reg.read_value(
+    'HKEY_LOCAL_MACHINE',
+    'SOFTWARE\Microsoft\Internet Explorer',
+    'svcVersion').vdata
+%}
+
+{#- Get the IE version from the registry for IE 8 and 9 #}
+{%- if not ie_ver or ie_ver == '(value not set)' %}
+    {% set ie_ver = salt.reg.read_value(
+        'HKEY_LOCAL_MACHINE',
+        'SOFTWARE\Microsoft\Internet Explorer',
+        'Version').vdata
+    %}
+{%- endif %}
+
+{%- do env.update({
+    'ie_ver': ie_ver.split('.')[0],
+    'systemroot': systemroot,
+    'systemdrive': systemroot | truncate(2, True, '')
+}) %}
+
+{%- endif %}

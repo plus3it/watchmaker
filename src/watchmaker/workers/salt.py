@@ -241,7 +241,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
-        if self.salt_content:
+        if self.salt_content and self.salt_content != 'None':
             salt_content_filename = watchmaker.utils.basename_from_uri(
                 self.salt_content
             )
@@ -254,6 +254,16 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 filepath=salt_content_file,
                 to_directory=extract_dir
             )
+        else:
+            local_content = os.sep.join((
+                static.__path__[0], 'salt', 'content'))
+            if os.path.exists(local_content):
+                if os.path.exists(extract_dir):
+                    self.log.debug(
+                        'Removing content destination: %s', extract_dir)
+                    shutil.rmtree(extract_dir)
+                self.log.info('Using integrated content: %s', local_content)
+                shutil.copytree(local_content, extract_dir)
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),
