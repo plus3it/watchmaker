@@ -241,7 +241,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
-        if self.salt_content:
+        if self.salt_content and self.salt_content != 'None':
             salt_content_filename = watchmaker.utils.basename_from_uri(
                 self.salt_content
             )
