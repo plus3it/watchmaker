@@ -13,13 +13,12 @@ sudo apt-get -y remove docker docker-engine docker.io || true
 echo "Install new docker..."
 # https://docs.docker.com/install/linux/docker-ce/ubuntu/
 sudo apt-get update
-sudo apt-get -y install --no-install-recommends \
-  apt-transport-https \
-  ca-certificates \
-  curl \
-  software-properties-common \
-  linux-image-extra-"$(uname -r)" \
-  linux-image-extra-virtual
+sudo apt-get -y install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo apt-key fingerprint 0EBFCD88
@@ -29,7 +28,7 @@ sudo add-apt-repository \
    $(lsb_release -cs) \
    stable"
 sudo apt-get update
-sudo apt-get -y install docker-ce
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io
 
 if [ -n "${DOCKER_SLUG}" ]; then
 

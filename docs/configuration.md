@@ -2,7 +2,7 @@
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
-   :target: https://plus3it.com
+   :target: https://www.plus3it.com
 <br>
 
 # Configuration
@@ -200,5 +200,5 @@ windows:
       installer_url: https://s3.amazonaws.com/watchmaker/repo/saltstack/salt/windows/Salt-Minion-2016.11.6-AMD64-Setup.exe
 ```
 
-[0]: http://www.yaml.org/spec/1.2/spec.html
+[0]: https://yaml.org/spec/1.2/spec.html
 [1]: https://github.com/plus3it/watchmaker/blob/develop/src/watchmaker/static/config.yaml

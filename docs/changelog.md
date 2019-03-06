@@ -2,7 +2,7 @@
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
-   :target: https://plus3it.com
+   :target: https://www.plus3it.com
 <br>
 
 .. mdinclude:: ../CHANGELOG.md
