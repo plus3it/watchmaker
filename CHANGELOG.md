@@ -1,10 +1,28 @@
 ## Changelog
 
+### 0.14.0
+
+**Commit Delta**: [Change from 0.13.0 release](https://github.com/plus3it/watchmaker/compare/0.13.0...0.14.0)
+
+**Released**: 2019.03.06
+
+**Summary**:
+
+*   Adds additional documentation to answer common EL7 security scan findings
+*   ash-linux-formula
+    -   Implements additional Salt states to address security scan issues
+        -   Capability to manage GRUB password configuration
+        -   IgnoreRhosts setting in SSH daemon configuration
+        -   CIS remediation handlers ( CIS 5.2.3, CIS 5.2.5)
+    -   Adds Salt state to update audit-rule changes without a system reboot
+*   scap-formula
+    -   Updates SCAP Security Guide content to v0.1.41
+
 ### 0.13.0
 
-**Commit Delta**: [Change from 0.13.0 release](https://github.com/plus3it/watchmaker/compare/0.12.1...0.13.0)
+**Commit Delta**: [Change from 0.12.1 release](https://github.com/plus3it/watchmaker/compare/0.12.1...0.13.0)
 
-**Released**: 2018.01.29
+**Released**: 2019.01.29
 
 **Summary**:
 

@@ -2,7 +2,7 @@
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
-   :target: https://plus3it.com
+   :target: https://www.plus3it.com
 <br>
 
 # API Reference
@@ -15,17 +15,21 @@
 
 .. automodule:: watchmaker.managers
 
-#### watchmaker.managers.base
+#### watchmaker.managers.platform
 
-.. automodule:: watchmaker.managers.base
+.. automodule:: watchmaker.managers.platform
 
-#### watchmaker.managers.workers
+#### watchmaker.managers.worker_manager
 
-.. automodule:: watchmaker.managers.workers
+.. automodule:: watchmaker.managers.worker_manager
 
 ### watchmaker.workers
 
 .. automodule:: watchmaker.workers
+
+#### watchmaker.workers.base
+
+.. automodule:: watchmaker.workers.base
 
 #### watchmaker.workers.salt
 
