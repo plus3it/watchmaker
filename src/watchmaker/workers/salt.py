@@ -177,7 +177,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 os.makedirs(salt_dir)
             except OSError:
                 if not os.path.isdir(salt_dir):
-                    msg = ('Unable create directory - {0}'.format(salt_dir))
+                    msg = ('Unable to create directory - {0}'.format(salt_dir))
                     self.log.error(msg)
                     raise SystemError(msg)
 
@@ -194,11 +194,11 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
         for formula in os.listdir(formulas_path):
             formula_path = os.path.join(self.salt_formula_root, '', formula)
-            if os.path.exists(formula_path):
-                shutil.rmtree(formula_path)
-            shutil.copytree(
+            watchmaker.utils.copytree(
                 os.sep.join((formulas_path, formula)),
-                formula_path)
+                formula_path,
+                force=True
+            )
 
         # Obtain & extract any Salt formulas specified in user_formulas.
         for formula_name, formula_url in self.user_formulas.items():
@@ -254,6 +254,18 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 filepath=salt_content_file,
                 to_directory=extract_dir
             )
+        else:
+            local_content = os.sep.join(
+                (static.__path__[0], 'salt', 'content')
+            )
+            if os.path.exists(local_content):
+                self.log.info('Using local content from %s', local_content)
+                for subdir in next(os.walk(local_content))[1]:
+                    watchmaker.utils.copytree(
+                        os.sep.join((local_content, subdir)),
+                        os.sep.join((extract_dir, subdir)),
+                        force=True
+                    )
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),
