@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import os
+import shutil
 import ssl
 
 import backoff
@@ -58,3 +59,10 @@ def urlopen_retry(uri):
         pass
 
     return urllib.request.urlopen(uri, **kwargs)
+
+
+def copytree(src, dst, force=False, **kwargs):
+    """Copy directory tree with option to override."""
+    if force and os.path.exists(dst):
+        shutil.rmtree(dst)
+    shutil.copytree(src, dst, **kwargs)
