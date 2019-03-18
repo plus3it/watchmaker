@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.14.1
+
+**Commit Delta**: [Change from 0.14.0 release](https://github.com/plus3it/watchmaker/compare/0.14.0...0.14.1)
+
+**Released**: 2019.03.18
+
+**Summary**:
+
+*   Fixes Python 2.6 incompatibility introduced by new version of PyYAML
+*   join-domain-formula
+    -   Fixes issue adding admin groups/users in Watchmaker
+
 ### 0.14.0
 
 **Commit Delta**: [Change from 0.13.0 release](https://github.com/plus3it/watchmaker/compare/0.13.0...0.14.0)
