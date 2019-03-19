@@ -10,7 +10,7 @@
 
 *   Fixes Python 2.6 incompatibility introduced by new version of PyYAML
 *   join-domain-formula
-    -   Fixes issue adding admin groups/users in Watchmaker
+    -   Fixes issue adding admin groups/users to Windows systems with recent versions of Salt
 
 ### 0.14.0
 
