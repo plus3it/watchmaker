@@ -32,8 +32,10 @@ test_script:
   - set TOXENV=check
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
-  - set TOXENV=docs
-  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+  # Skips docs build on appveyor due to some (transient?) issue pulling pages from github
+  # Example failure: <https://ci.appveyor.com/project/plus3it/watchmaker#L273>
+  #- set TOXENV=docs
+  #- '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
 
   - set TOXENV=3.6-codecov
   - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
