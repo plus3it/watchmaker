@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.14.2
+
+**Commit Delta**: [Change from 0.14.1 release](https://github.com/plus3it/watchmaker/compare/0.14.1...0.14.2)
+
+**Released**: 2019.03.26
+
+**Summary**:
+
+*   join-domain-formula
+    -   Corrects regression on Windows to support adding admin groups that have
+        spaces in the name
+
 ### 0.14.1
 
 **Commit Delta**: [Change from 0.14.0 release](https://github.com/plus3it/watchmaker/compare/0.14.0...0.14.1)
