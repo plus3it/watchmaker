@@ -168,7 +168,7 @@ simple bootstrap script to do that for you. After installing Python, install
 ```shell
 <powershell>
 $BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/master/docs/files/bootstrap/watchmaker-bootstrap.ps1"
-$PythonUrl = "https://www.python.org/ftp/python/3.6.4/python-3.6.4-amd64.exe"
+$PythonUrl = "https://www.python.org/ftp/python/3.6.8/python-3.6.8-amd64.exe"
 $PypiUrl = "https://pypi.org/simple"
 
 # Download bootstrap file
