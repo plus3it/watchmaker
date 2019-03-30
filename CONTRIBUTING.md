@@ -148,11 +148,10 @@ specify something like this for EC2 userdata:
     GIT_REPO=https://github.com/<your-github-username>/watchmaker.git
     GIT_BRANCH=<your-branch>
 
-    PIP_URL=https://bootstrap.pypa.io/get-pip.py
     PYPI_URL=https://pypi.org/simple
 
     # Install pip
-    curl "$PIP_URL" | python - --index-url="$PYPI_URL" wheel==0.29.0
+    python3 -m ensurepip --upgrade --default-pip
 
     # Install git
     yum -y install git
