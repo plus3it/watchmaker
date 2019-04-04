@@ -114,7 +114,6 @@ on the [CLI](#watchmaker-from-the-cli). Here is an example:
 
 ```shell
 #!/bin/sh
-PIP_URL=https://bootstrap.pypa.io/get-pip.py
 PYPI_URL=https://pypi.org/simple
 
 # Setup terminal support for UTF-8
@@ -122,7 +121,7 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # Install pip
-curl "$PIP_URL" | python3 - --index-url="$PYPI_URL"
+python3 -m ensurepip --upgrade --default-pip
 
 # Install setup dependencies
 pip install --index-url="$PYPI_URL" --upgrade pip setuptools
@@ -141,7 +140,6 @@ Alternatively, cloud-config directives can also be used on **Linux**:
 
 runcmd:
   - |
-    PIP_URL=https://bootstrap.pypa.io/get-pip.py
     PYPI_URL=https://pypi.org/simple
 
     # Setup terminal support for UTF-8
@@ -149,7 +147,7 @@ runcmd:
     export LANG=en_US.UTF-8
 
     # Install pip
-    curl "$PIP_URL" | python3 - --index-url="$PYPI_URL"
+    python3 -m ensurepip --upgrade --default-pip
 
     # Install setup dependencies
     pip install --index-url="$PYPI_URL" --upgrade pip setuptools
@@ -170,7 +168,7 @@ simple bootstrap script to do that for you. After installing Python, install
 ```shell
 <powershell>
 $BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/master/docs/files/bootstrap/watchmaker-bootstrap.ps1"
-$PythonUrl = "https://www.python.org/ftp/python/3.6.4/python-3.6.4-amd64.exe"
+$PythonUrl = "https://www.python.org/ftp/python/3.6.8/python-3.6.8-amd64.exe"
 $PypiUrl = "https://pypi.org/simple"
 
 # Download bootstrap file
