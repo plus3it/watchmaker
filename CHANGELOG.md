@@ -1,5 +1,21 @@
 ## Changelog
 
+### 0.15.0
+
+**Commit Delta**: [Change from 0.14.2 release](https://github.com/plus3it/watchmaker/compare/0.14.2...0.15.0)
+
+**Released**: 2019.04.04
+
+**Summary**:
+
+*   Updates documentation to install pip using `ensurepip` module instead of external
+    `get-pip.py`
+*   ash-linux-formula
+    -   Adds pillar option to set content for `/etc/issue` login banner
+*   join-domain-formula
+    -   (Linux) Adds pillar option to pass a list of domains to add to the trust
+        list
+
 ### 0.14.2
 
 **Commit Delta**: [Change from 0.14.1 release](https://github.com/plus3it/watchmaker/compare/0.14.1...0.14.2)
