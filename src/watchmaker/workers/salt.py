@@ -169,7 +169,6 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
         for salt_dir in [
-            self.salt_base_env,
             self.salt_formula_root,
             self.salt_conf_path
         ]:
@@ -241,7 +240,11 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
+        force_copy_bundled_content = True
+
         if self.salt_content and self.salt_content != 'None':
+            force_copy_bundled_content = False
+
             salt_content_filename = watchmaker.utils.basename_from_uri(
                 self.salt_content
             )
@@ -254,18 +257,21 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 filepath=salt_content_file,
                 to_directory=extract_dir
             )
-        else:
-            local_content = os.sep.join(
-                (static.__path__[0], 'salt', 'content')
-            )
-            if os.path.exists(local_content):
-                self.log.info('Using local content from %s', local_content)
-                for subdir in next(os.walk(local_content))[1]:
-                    watchmaker.utils.copytree(
-                        os.sep.join((local_content, subdir)),
-                        os.sep.join((extract_dir, subdir)),
-                        force=True
-                    )
+
+        bundled_content = os.sep.join(
+            (static.__path__[0], 'salt', 'content')
+        )
+        for subdir in next(os.walk(bundled_content))[1]:
+            if not subdir.startswith('.'):
+                watchmaker.utils.copytree(
+                    os.sep.join((bundled_content, subdir)),
+                    os.sep.join((extract_dir, subdir)),
+                    force=force_copy_bundled_content
+                )
+                self.log.info(
+                    'Using bundled content from %s',
+                    os.sep.join((bundled_content, subdir))
+                )
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),
