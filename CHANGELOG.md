@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.15.1
+
+**Commit Delta**: [Change from 0.15.0 release](https://github.com/plus3it/watchmaker/compare/0.15.0...0.15.1)
+
+**Released**: 2019.04.05
+
+**Summary**:
+
+*   join-domain-formula
+    -   (Linux) Avoids `unique` jinja filter to preserve compatibility for older
+        versions of salt
+
 ### 0.15.0
 
 **Commit Delta**: [Change from 0.14.2 release](https://github.com/plus3it/watchmaker/compare/0.14.2...0.15.0)
