@@ -62,7 +62,29 @@ def urlopen_retry(uri):
 
 
 def copytree(src, dst, force=False, **kwargs):
-    """Copy directory tree with option to override."""
+    r"""
+    Copy OS directory trees from source to destination.
+
+    Args:
+        src: (:obj:`str`)
+            Source directory tree to be copied.
+            (*Default*: None)
+
+        dst: (:obj:`str`)
+            Destination where directory tree is to be copied.
+            (*Default*: None)
+
+        force: (:obj:`bool`)
+            Whether to delete destination prior to copy.
+            (*Default*: ``False``)
+
+        Returns:
+            :obj:`bool`:
+                ``True`` if the copy was attempted. ``False`` if not.
+
+    """
     if force and os.path.exists(dst):
         shutil.rmtree(dst)
+
     shutil.copytree(src, dst, **kwargs)
+    return True
