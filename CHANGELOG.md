@@ -1,5 +1,18 @@
 ## Changelog
 
+### 0.15.2
+
+**Commit Delta**: [Change from 0.15.1 release](https://github.com/plus3it/watchmaker/compare/0.15.1...0.15.2)
+
+**Released**: 2019.04.12
+
+**Summary**:
+
+*   ash-linux-formula
+    -   Removes outdated and conflicting states to allow setting of custom banner text
+*   join-domain-formula
+    -   Fixes issue with improper handling of admin names with spaces in Windows
+
 ### 0.15.1
 
 **Commit Delta**: [Change from 0.15.0 release](https://github.com/plus3it/watchmaker/compare/0.15.0...0.15.1)
