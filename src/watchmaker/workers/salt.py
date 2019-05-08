@@ -240,11 +240,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
-        force_copy_bundled_content = True
-
         if self.salt_content and self.salt_content != 'None':
-            force_copy_bundled_content = False
-
             salt_content_filename = watchmaker.utils.basename_from_uri(
                 self.salt_content
             )
@@ -262,11 +258,13 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             (static.__path__[0], 'salt', 'content')
         )
         for subdir in next(os.walk(bundled_content))[1]:
-            if not subdir.startswith('.'):
+            if (
+                not subdir.startswith('.') and
+                not os.path.exists(os.sep.join((extract_dir, subdir)))
+            ):
                 watchmaker.utils.copytree(
                     os.sep.join((bundled_content, subdir)),
-                    os.sep.join((extract_dir, subdir)),
-                    force=force_copy_bundled_content
+                    os.sep.join((extract_dir, subdir))
                 )
                 self.log.info(
                     'Using bundled content from %s',
