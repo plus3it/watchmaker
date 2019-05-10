@@ -169,7 +169,6 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
         for salt_dir in [
-            self.salt_base_env,
             self.salt_formula_root,
             self.salt_conf_path
         ]:
@@ -177,7 +176,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 os.makedirs(salt_dir)
             except OSError:
                 if not os.path.isdir(salt_dir):
-                    msg = ('Unable create directory - {0}'.format(salt_dir))
+                    msg = ('Unable to create directory - {0}'.format(salt_dir))
                     self.log.error(msg)
                     raise SystemError(msg)
 
@@ -194,11 +193,11 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
         for formula in os.listdir(formulas_path):
             formula_path = os.path.join(self.salt_formula_root, '', formula)
-            if os.path.exists(formula_path):
-                shutil.rmtree(formula_path)
-            shutil.copytree(
+            watchmaker.utils.copytree(
                 os.sep.join((formulas_path, formula)),
-                formula_path)
+                formula_path,
+                force=True
+            )
 
         # Obtain & extract any Salt formulas specified in user_formulas.
         for formula_name, formula_url in self.user_formulas.items():
@@ -241,7 +240,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
-        if self.salt_content:
+        if self.salt_content and self.salt_content != 'None':
             salt_content_filename = watchmaker.utils.basename_from_uri(
                 self.salt_content
             )
@@ -254,6 +253,23 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 filepath=salt_content_file,
                 to_directory=extract_dir
             )
+
+        bundled_content = os.sep.join(
+            (static.__path__[0], 'salt', 'content')
+        )
+        for subdir in next(os.walk(bundled_content))[1]:
+            if (
+                not subdir.startswith('.') and
+                not os.path.exists(os.sep.join((extract_dir, subdir)))
+            ):
+                watchmaker.utils.copytree(
+                    os.sep.join((bundled_content, subdir)),
+                    os.sep.join((extract_dir, subdir))
+                )
+                self.log.info(
+                    'Using bundled content from %s',
+                    os.sep.join((bundled_content, subdir))
+                )
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),

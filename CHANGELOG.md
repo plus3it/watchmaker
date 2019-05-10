@@ -1,5 +1,19 @@
 ## Changelog
 
+### 0.16.0
+
+**Commit Delta**: [Change from 0.15.2 release](https://github.com/plus3it/watchmaker/compare/0.15.2...0.16.0)
+
+**Released**: 2019.05.10
+
+**Summary**:
+
+*   Adds salt content locally as a submodule to better support Watchmaker standalone packages
+*   dotnet4-formula
+    -   Updates formula to support the use of Python3 versions of Salt
+*   join-domain-formula
+    -   Adds additional enhancements and logic to better handle the domin-join process in Linux
+
 ### 0.15.2
 
 **Commit Delta**: [Change from 0.15.1 release](https://github.com/plus3it/watchmaker/compare/0.15.1...0.15.2)
