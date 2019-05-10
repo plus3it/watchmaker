@@ -14,6 +14,41 @@ init:
 install:
   - git submodule update --init --recursive
 test_script:
+  # ----- python 3.7, x64
+  # python envs
+  - set PYTHON_HOME=C:\Python37-x64
+  - set PYTHON_VERSION=3.7
+  - set PYTHON_ARCH=64
+
+  # install
+  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+
+    # versions
+  - '%PYTHON_HOME%\Scripts\virtualenv --version'
+  - '%PYTHON_HOME%\Scripts\tox --version'
+  - '%PYTHON_HOME%\Scripts\pip --version'
+
+  # test
+  - set TOXENV=3.7-codecov
+  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
+  # ----- python 3.7, x32
+  # python envs
+  - set PYTHON_HOME=C:\Python37
+  - set PYTHON_ARCH=32
+
+  # install
+  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+
+    # versions
+  - '%PYTHON_HOME%\Scripts\virtualenv --version'
+  - '%PYTHON_HOME%\Scripts\tox --version'
+  - '%PYTHON_HOME%\Scripts\pip --version'
+
+  # test
+  - set TOXENV=3.7-codecov
+  - '%WITH_ENV% %PYTHON_HOME%\Scripts\tox -v'
+
   # ----- python 3.6, x64
   # python envs
   - set PYTHON_HOME=C:\Python36-x64

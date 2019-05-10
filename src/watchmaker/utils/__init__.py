@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import os
+import shutil
 import ssl
 
 import backoff
@@ -58,3 +59,26 @@ def urlopen_retry(uri):
         pass
 
     return urllib.request.urlopen(uri, **kwargs)
+
+
+def copytree(src, dst, force=False, **kwargs):
+    r"""
+    Copy OS directory trees from source to destination.
+
+    Args:
+        src: (:obj:`str`)
+            Source directory tree to be copied.
+            (*Default*: None)
+
+        dst: (:obj:`str`)
+            Destination where directory tree is to be copied.
+            (*Default*: None)
+
+        force: (:obj:`bool`)
+            Whether to delete destination prior to copy.
+            (*Default*: ``False``)
+    """
+    if force and os.path.exists(dst):
+        shutil.rmtree(dst)
+
+    shutil.copytree(src, dst, **kwargs)

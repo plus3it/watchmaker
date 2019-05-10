@@ -5,7 +5,7 @@ all:
       computer_name: None
       environment: None
       ou_path: None
-      salt_content: https://s3.amazonaws.com/watchmaker/salt-content.zip
+      salt_content: None
       salt_states: Highstate
       user_formulas:
         # To add extra formulas, specify them as a map of
