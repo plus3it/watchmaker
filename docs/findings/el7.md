@@ -64,7 +64,7 @@ Some scanners implement an "intentional fail" for this audit-item. This is desig
 
 This automation has the underlying assumption that all RPM-managed SUID files — be it by the OS vendor or the provider of the software _hosted by_ the OS — is implicitly authorized. A  way to quickly-verify compliance with this assumption is to execute:
 
-~~~
+~~~bash
 for SUID in $( find / -user root -perm -4000 -print 2> /dev/null )
 do
    printf "%s: " "${SUID}"

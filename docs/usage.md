@@ -231,7 +231,7 @@ Variables can be input interactively via the Terraform console or directly to
 the Terraform module. An example Terraform file that calls the `lx-autoscale`
 module is shown below.
 
-```
+```terraform
 provider "aws" {}
 
 module "test-lx-instance" {
