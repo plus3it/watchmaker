@@ -2,6 +2,7 @@
 [![Travis CI Build Status](https://travis-ci.org/plus3it/watchmaker.svg?branch=develop)](https://travis-ci.org/plus3it/watchmaker)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/plus3it/watchmaker?branch=develop&svg=true)](https://ci.appveyor.com/project/plus3it/watchmaker)
 [![Latest Version](https://img.shields.io/pypi/v/watchmaker.svg?label=version)](https://pypi.python.org/pypi/watchmaker)
+[![pullreminders](https://pullreminders.com/badge.svg)](https://pullreminders.com?ref=badge)
 
 # Watchmaker
 
