@@ -52,7 +52,7 @@ intersphinx_mapping = {
 
 autoclass_content = 'class'
 autodoc_member_order = 'bysource'
-autodoc_default_flags = ['members', 'show-inheritance']
+autodoc_default_options = {'members': True, 'show-inheritance': True}
 
 napoleon_use_param = False
 

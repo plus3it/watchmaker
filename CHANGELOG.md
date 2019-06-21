@@ -1,5 +1,21 @@
 ## Changelog
 
+### 0.16.1
+
+**Commit Delta**: [Change from 0.16.0 release](https://github.com/plus3it/watchmaker/compare/0.16.0...0.16.1)
+
+**Released**: 2019.06.21
+
+**Summary**:
+
+*   join-domain-formula
+    -   Updates find-collision.sh ldap search to include uppercase and lowercase versions of provided hostname
+*   scap-formula
+    -   Adds script to build OSCAP content with 'stig' profile included for CentOS
+    -   Updates OSCAP content to v0.1.44
+*   watchmaker-salt-content
+    -   Switches Linux scap profile pillar settings to 'stig'
+
 ### 0.16.0
 
 **Commit Delta**: [Change from 0.15.2 release](https://github.com/plus3it/watchmaker/compare/0.15.2...0.16.0)
