@@ -1,5 +1,23 @@
 ## Changelog
 
+### 0.16.2
+
+**Commit Delta**: [Change from 0.16.1 release](https://github.com/plus3it/watchmaker/compare/0.16.1...0.16.2)
+
+**Released**: 2019.07.11
+
+**Summary**:
+
+*   join-domain-formula
+    -   Fixes detection of running system's join state, searches for shortname, and retries joins
+    -   Improves compatibility with strict Bash
+    -   Adds option to skip GPG check
+*   amazon-inspector-formula
+    -   Adds option to skip GPG check
+*   splunkforwarder-formula
+    -   Redirects splunk log folder with symlink
+    -   Adds option to skip GPG check
+
 ### 0.16.1
 
 **Commit Delta**: [Change from 0.16.0 release](https://github.com/plus3it/watchmaker/compare/0.16.0...0.16.1)
