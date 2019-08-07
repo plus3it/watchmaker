@@ -1,5 +1,24 @@
 ## Changelog
 
+### 0.16.3
+
+**Commit Delta**: [Change from 0.16.2 release](https://github.com/plus3it/watchmaker/compare/0.16.2...0.16.3)
+
+**Released**: 2019.08.7
+
+**Summary**:
+
+*   join-domain-formula
+    -   (Linux) Modifies method used to retrieve hostname to avoid issues with `hostname -f`
+    -   (Linux) Improves error messaging if tooling dependencies are not installed
+    -   (Linux) Modifies domain controller search mechanism to preserve compatibility with EL6
+    -   (Linux) Logs the computer name in the domain-join output
+*   mcafee-agent-formula
+    -   (Linux) Adds a pillar option to pass args to the mcafee agent installer
+    -   (Linux) Fixes match on OS version to ensure firewall ports are opened
+*   name-computer-formula
+    -   (Linux) Updates /etc/hosts with hostname fqdn, when the domain name is provided
+
 ### 0.16.2
 
 **Commit Delta**: [Change from 0.16.1 release](https://github.com/plus3it/watchmaker/compare/0.16.1...0.16.2)
