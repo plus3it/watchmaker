@@ -1,3 +1,4 @@
+dist: xenial
 language: python
 stages:
   - test
@@ -7,11 +8,11 @@ env:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
 python:
-  - 2.6
   - 2.7
   - 3.4
   - 3.5
   - 3.6
+  - 3.7
 stage: test
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
@@ -55,8 +56,8 @@ notifications:
 jobs:
   include:
     - stage: test
-      python: 3.7
-      dist: xenial
+      python: 2.6
+      dist: trusty
     - stage: test
       python: 3.6
       env:
@@ -91,7 +92,6 @@ jobs:
     - stage: deploy
       if: branch in (env(RELEASE_BRANCH), develop) OR tag is present
       python: 3.6
-      dist: xenial
       install:
         - echo "Install"
       script:
