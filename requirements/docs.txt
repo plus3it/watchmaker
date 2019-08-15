@@ -1,4 +1,4 @@
 m2r==0.2.1
-setuptools==41.1.0
+setuptools==41.1.0.post1
 sphinx==2.1.2
 sphinx-rtd-theme==0.4.3
