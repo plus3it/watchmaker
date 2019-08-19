@@ -71,6 +71,7 @@ class PlatformManagerBase(object):
 
             filename: (:obj:`str`)
                 Path where the file will be saved.
+
         """
         # Convert a local path to a URI
         url = watchmaker.utils.uri_from_filepath(url)
@@ -268,6 +269,7 @@ class PlatformManagerBase(object):
                 Switch to control the creation of a subdirectory within
                 ``to_directory`` named for the filename of the compressed file.
                 (*Default*: ``False``)
+
         """
         if filepath.endswith('.zip'):
             self.log.debug('File Type: zip')
