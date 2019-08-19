@@ -163,6 +163,7 @@ class Arguments(dict):
                 # This list would be converted to the following dict and merged
                 # into the parameters passed to the worker configurations:
                 {'arg1': 'value1', 'arg2': 'value2'}
+
     """
 
     def __init__(
@@ -203,6 +204,7 @@ class Client(object):
     Keyword Arguments:
         arguments: (:obj:`Arguments`)
             A dictionary of arguments. See :class:`watchmaker.Arguments`.
+
     """
 
     def __init__(self, arguments):

@@ -21,6 +21,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
         repo_map: (:obj:`list`)
             List of dictionaries containing a map of yum repo files to systems.
             (*Default*: ``[]``)
+
     """
 
     SUPPORTED_DISTS = ('amazon', 'centos', 'red hat')

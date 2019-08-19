@@ -84,6 +84,7 @@ def make_log_dir(log_dir):
     Args:
         log_dir: (:obj:`str`)
         Path to a directory.
+
     """
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -123,6 +124,7 @@ def prepare_logging(log_dir, log_level):
             - ``warning``
             - ``info``
             - ``debug``
+
     """
     logformat = (
         '%(asctime)s [%(name)s][%(levelname)-5s][%(process)s]: %(message)s'
