@@ -14,7 +14,7 @@ The preferred method to install `watchmaker` is from the Python Package Index
 the most recent stable release.
 
 ```bash
-pip install watchmaker
+python3 -m pip install watchmaker
 ```
 
 If you do not have Python or [pip][0], this [Python installation guide][1]
@@ -57,7 +57,7 @@ The sources for `watchmaker` are available from the [GitHub repo][2].
 3.  Then you can install Watchmaker:
 
     ```bash
-    pip install .
+    python3 -m pip install .
     ```
 
 ## From standalone executable package (Beta feature)
