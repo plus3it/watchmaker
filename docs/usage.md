@@ -121,13 +121,13 @@ export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
 
 # Install pip
-python3 -m ensurepip --upgrade --default-pip
+python3 -m ensurepip
 
 # Install setup dependencies
-pip install --index-url="$PYPI_URL" --upgrade pip setuptools
+python3 -m pip install --index-url="$PYPI_URL" --upgrade pip setuptools
 
 # Install Watchmaker
-pip install --index-url="$PYPI_URL" --upgrade watchmaker
+python3 -m pip install --index-url="$PYPI_URL" --upgrade watchmaker
 
 # Run Watchmaker
 watchmaker --log-level debug --log-dir=/var/log/watchmaker
@@ -147,13 +147,13 @@ runcmd:
     export LANG=en_US.UTF-8
 
     # Install pip
-    python3 -m ensurepip --upgrade --default-pip
+    python3 -m ensurepip
 
     # Install setup dependencies
-    pip install --index-url="$PYPI_URL" --upgrade pip setuptools
+    python3 -m pip install --index-url="$PYPI_URL" --upgrade pip setuptools
 
     # Install Watchmaker
-    pip install --index-url="$PYPI_URL" --upgrade watchmaker
+    python3 -m pip install --index-url="$PYPI_URL" --upgrade watchmaker
 
     # Run Watchmaker
     watchmaker --log-level debug --log-dir=/var/log/watchmaker

@@ -151,20 +151,20 @@ specify something like this for EC2 userdata:
     PYPI_URL=https://pypi.org/simple
 
     # Install pip
-    python3 -m ensurepip --upgrade --default-pip
+    python3 -m ensurepip
 
     # Install git
     yum -y install git
 
     # Upgrade pip and setuptools
-    pip install --index-url="$PYPI_URL" --upgrade pip setuptools
+    python3 -m pip install --index-url="$PYPI_URL" --upgrade pip setuptools
 
     # Clone watchmaker
     git clone "$GIT_REPO" --branch "$GIT_BRANCH" --recursive
 
     # Install watchmaker
     cd watchmaker
-    pip install --index-url "$PYPI_URL" --editable .
+    python3 -m pip install --index-url "$PYPI_URL" --editable .
 
     # Run watchmaker
     watchmaker --log-level debug --log-dir=/var/log/watchmaker

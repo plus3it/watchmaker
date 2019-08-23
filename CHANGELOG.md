@@ -1,5 +1,23 @@
 ## Changelog
 
+### 0.16.4
+
+**Commit Delta**: [Change from 0.16.3 release](https://github.com/plus3it/watchmaker/compare/0.16.3...0.16.4)
+
+**Released**: 2019.08.23
+
+**Summary**:
+
+*   Updates documentation on pip usage in Linux to always use `python3 -m pip...`
+*   dotnet4-formula
+    -   Adds .NET Framework 4.8 version and associated KB to lookup tables
+*   fup-formula
+    -   New salt formula to install packages via URL
+*   scap-formula
+    -   (Windows) Adds configuration to allow scan results to be generated when using SCC v5.0.2 and higher
+*   watchmaker-salt-content
+    -   (Windows) Adds .NET Framework 4.8 info to dotnet winrepo package content
+
 ### 0.16.3
 
 **Commit Delta**: [Change from 0.16.2 release](https://github.com/plus3it/watchmaker/compare/0.16.2...0.16.3)
