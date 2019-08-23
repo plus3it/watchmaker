@@ -83,6 +83,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             computer account will be created when joining a domain.
             E.g. ``"OU=SuperCoolApp,DC=example,DC=com"``
             (*Default*: ``''``)
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -319,6 +320,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
                 do not specify those options in the command.
+
         """
         cmd = [
             self.salt_call,
@@ -551,6 +553,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
             A git reference present in ``git_repo``, such as a commit or a tag.
             If not specified, the HEAD of the default branch is used.
             (*Default*: ``''``)
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -706,6 +709,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             salt formula. E.g. ``"MemberServer"``, ``"DomainController"``, or
             ``"Workstation"``
             (*Default*: ``''``)
+
     """
 
     def __init__(self, *args, **kwargs):

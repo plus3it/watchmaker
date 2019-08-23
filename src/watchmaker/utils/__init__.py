@@ -77,6 +77,7 @@ def copytree(src, dst, force=False, **kwargs):
         force: (:obj:`bool`)
             Whether to delete destination prior to copy.
             (*Default*: ``False``)
+
     """
     if force and os.path.exists(dst):
         shutil.rmtree(dst)

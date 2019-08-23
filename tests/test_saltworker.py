@@ -32,6 +32,7 @@ def test_default_valid_environments(saltworker_client):
 
     Args:
         saltworker_client: (:obj:`src.workers.SaltBase`)
+
     """
     # test that the defaults work
     assert saltworker_client.before_install() is None
@@ -43,6 +44,7 @@ def test_bogus_environment(saltworker_client):
 
     Args:
         saltworker_client: (:obj:`src.workers.SaltBase`)
+
     """
     # ensure InvalidValue is raised when a bogus environment type is selected
     with pytest.raises(InvalidValue):
@@ -57,6 +59,7 @@ def test_valid_environment(saltworker_client):
 
     Args:
         saltworker_client: (:obj:`src.workers.SaltBase`)
+
     """
     saltworker_client.ent_env = 'dev'
     saltworker_client.valid_envs = [None, 'dev', 'test', 'prod']

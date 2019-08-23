@@ -46,3 +46,6 @@
 [submodule "src/watchmaker/static/salt/content"]
 	path = src/watchmaker/static/salt/content
 	url = https://github.com/plus3it/watchmaker-salt-content.git
+[submodule "src/watchmaker/static/salt/formulas/fup-formula"]
+	path = src/watchmaker/static/salt/formulas/fup-formula
+	url = https://github.com/plus3it/fup-formula.git
