@@ -1,0 +1,67 @@
+# inspired by https://github.com/tox-dev/azure-pipelines-template
+
+parameters:
+  jobs: []
+  tox_version: 'tox'
+  dependsOn: []
+
+jobs:
+- ${{ each job in parameters.jobs }}:
+  - job: ${{ coalesce(job.value.name, job.key) }}
+    dependsOn: ${{ coalesce(job.value.dependsOn, parameters.dependsOn) }}
+    strategy:
+      matrix:
+        ${{ if job.value.image }}:
+          ${{ each image in job.value.image }}:
+            ${{ image }}:
+              ${{ if eq(image, 'win16') }}:
+                image: 'vs2017-win2016'
+                image_name: 'win16'
+              ${{ if eq(image, 'win19') }}:
+                image: 'windows-2019'
+                image_name: 'win19'
+              ${{ if eq(image, 'win12') }}:
+                image: 'vs2015-win2012r2'
+                image_name: 'win12'
+
+    displayName: ${{ format('test python {0} ({1})', job.value.py, job.value.architecture) }}
+
+    pool:
+      vmImage: $[ variables['image'] ]
+
+    variables:
+      TMPDIR: $(Build.BinariesDirectory)
+      PIP_NO_WARN_SCRIPT_LOCATION: '0'
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+      PYTHONWARNINGS: 'ignore:::pip._internal.cli.base_command'
+      TOX_TESTENV_PASSENV: TOXENV CODECOV_TOKEN PYTHON_ARCH
+      CODECOV_TOKEN: cc6013eb-b956-4e07-a1a6-e407d8f66d06
+
+    steps:
+    - checkout: self
+      displayName: checkout source code (with submodules)
+      submodules: true
+
+    # acquire target test Python
+    - task: UsePythonVersion@0
+      displayName: ${{ format('provision target test python {0} ({1})', coalesce(job.value.py, '3.7'), coalesce(job.value.architecture, 'x64')) }}
+      inputs:
+        versionSpec: ${{ coalesce(job.value.py, '3.7') }}
+        architecture: ${{ coalesce(job.value.architecture, 'x64') }}
+      name: testPython
+    - script: "$(testPython.pythonLocation)/python -c \"import sys; print(sys.version); print(sys.executable)\""
+      displayName: show python information
+    - script: |
+        $(testPython.pythonLocation)/python -m pip install --upgrade tox setuptools virtualenv wheel
+        $(testPython.pythonLocation)\python -m tox --version
+      displayName: installing tox, setuptools, virtualenv, wheel
+    # run tests
+    - script: $(testPython.pythonLocation)\python -m tox -v
+      displayName: run tox test environment
+      env:
+        TOXENV: ${{ coalesce(job.value.py, '3.7') }}-codecov
+        PYTHON_HOME: $(testPython.pythonLocation)
+        ${{ if eq(coalesce(job.value.architecture, 'x64'), 'x64') }}:
+          PYTHON_ARCH: 64
+        ${{ if eq(job.value.architecture, 'x86') }}:
+          PYTHON_ARCH: 32
