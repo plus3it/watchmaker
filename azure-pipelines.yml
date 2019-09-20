@@ -70,7 +70,7 @@ jobs:
       mkdir $(venv)
       $(buildPython.pythonLocation)\python -m virtualenv $(venv)
     displayName: setup virtual environment
-  - ${{ if eq(variables.System.PullRequest.TargetBranch, 'develop') }}:
+  - ${{ if eq(variables['build.sourceBranch'], 'refs/heads/develop') }}:
     - powershell: |
         $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
         (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg
@@ -126,7 +126,7 @@ jobs:
             targetFolder: $(keyPrefix)
             #regionName: 'us-east-1' # should come from creds
             bucketName: $(devBucket)
-            sourceFolder: $(deployStage)
+            sourceFolder: $(deployStage)\standalone\dist\
         - task: S3Upload@1
           displayName: upload standalone binaries to s3 (release)
           condition: eq(variables['build.sourceBranch'], 'refs/tags/*')
@@ -135,7 +135,7 @@ jobs:
             targetFolder: $(keyPrefix)
             #regionName: 'us-east-1' # should come from creds
             bucketName: $(releaseBucket)
-            sourceFolder: $(deployStage)
+            sourceFolder: $(deployStage)\standalone\dist\
         - script: |
             call $(deployStage)\$(deployArtifactName)\gravitybee-environs.bat
             set SATS_TAG=TESTING--%GB_ENV_APP_VERSION%
