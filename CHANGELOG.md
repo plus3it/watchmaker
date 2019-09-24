@@ -1,5 +1,25 @@
 ## Changelog
 
+### 0.16.5
+
+**Commit Delta**: [Change from 0.16.4 release](https://github.com/plus3it/watchmaker/compare/0.16.4...0.16.5)
+
+**Released**: 2019.09.23
+
+**Summary**:
+
+*   join-domain-formula
+    -   Add support for restricting Active Directory sites that will be consulted if the `ad_site_name` key-value is set in the pillar
+*   ash-linux-formula
+    -   Fix issue with log spamming by `systemd` related to file permissions
+*   ash-windows-formula
+    -   Update STIG baselines for 2019-07 SCAP content
+*   scap-formula
+    -   Rename DISA content files to reflect SCAP version
+    -   Update DISA SCAP content to July 2019 release
+*   salt-content
+    -   Update SCAP pillar to match filename changes in SCAP formula
+
 ### 0.16.4
 
 **Commit Delta**: [Change from 0.16.3 release](https://github.com/plus3it/watchmaker/compare/0.16.3...0.16.4)
