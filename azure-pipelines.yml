@@ -1,0 +1,148 @@
+name: $(BuildDefinitionName)_$(Date:yyyyMMdd)$(Rev:.rr)
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - master
+    - develop
+    - refs/tags/*
+pr:
+  branches:
+    include:
+    - master
+    - develop
+
+variables:
+  deployStageDir: deploy_stage
+  deployArtifactName: standalone
+
+jobs:
+- template: ci/azure-pipelines-template.yml
+  parameters:
+    tox_version: ''
+    jobs:
+      py37_64:
+        image: [win16, win19]
+        architecture: x64
+        py: "3.7"
+      py37_32:
+        image: [win16, win19]
+        architecture: x86
+        py: "3.7"
+      py36_64:
+        image: [win16, win19]
+        architecture: x64
+        py: "3.6"
+      py27_64:
+        image: [win16, win19]
+        architecture: x64
+        py: "2.7"
+
+- job: build
+  displayName: build standalone
+  dependsOn:
+  - py37_64
+  - py37_32
+  - py36_64
+  - py27_64
+  condition: succeeded()
+  pool:
+    vmImage: 'vs2017-win2016'
+  variables:
+    py: "3.7"
+    architecture: "x64"
+    venv: $(System.DefaultWorkingDirectory)\venv
+    deployStage: $(System.DefaultWorkingDirectory)\$(deployStageDir)
+  steps:
+  - checkout: self
+    displayName: checkout source code (with submodules)
+    submodules: true
+  - task: UsePythonVersion@0
+    displayName: ${{ format('provision build python {0} ({1})', variables.py, variables.architecture) }}
+    inputs:
+      versionSpec: $(py)
+      architecture: $(architecture)
+    name: buildPython
+  - script: $(buildPython.pythonLocation)\python -m pip install --upgrade setuptools virtualenv wheel
+    displayName: install python basics
+  - script: |
+      mkdir $(venv)
+      $(buildPython.pythonLocation)\python -m virtualenv $(venv)
+    displayName: setup virtual environment
+  - ${{ if eq(variables['build.sourceBranch'], 'refs/heads/develop') }}:
+    - powershell: |
+        $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
+        (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg
+      displayName: mark the version as development
+  - script: |
+      call $(venv)\Scripts\activate.bat
+      python -m pip install -r requirements\pip.txt
+      python -m pip install -r requirements\build.txt
+      pip install --editable .
+      gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-pkgs boto3 --extra-modules boto3
+    displayName: create standalone application
+  - script: |
+      call .gravitybee\gravitybee-environs.bat
+      mkdir $(deployStage)
+      move %GB_ENV_STAGING_DIR% $(deployStage)
+      move .gravitybee\gravitybee-environs.bat $(deployStage)
+      move requirements\deploy.txt $(deployStage)
+    displayName: prepare deploy
+  - script: dir $(deployStage)
+    displayName: see directory
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: $(deployStage)
+      artifactName: $(deployArtifactName)
+    displayName: publish standalone artifacts
+
+- deployment: deploy
+  displayName: deploy standalone to github and s3
+  dependsOn: build
+  condition: succeeded()
+  pool:
+    vmImage: 'vs2017-win2016'
+  environment: 'standalone'
+  variables: # alternate synatx needed when using a group
+  - group: wam-windows-ci
+  - name: deployStage
+    value: $(System.DefaultWorkingDirectory)\$(deployStageDir)
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: none
+        - task: DownloadBuildArtifacts@0
+          displayName: download build artifacts
+          inputs:
+            artifactName: $(deployArtifactName)
+            downloadPath: $(deployStage)
+        - task: S3Upload@1
+          displayName: upload dev standalone binaries to s3 (dev)
+          condition: eq(variables['build.sourceBranch'], 'refs/heads/develop')
+          inputs:
+            awsCredentials: dev-lab
+            targetFolder: $(keyPrefix)
+            #regionName: 'us-east-1' # should come from creds
+            bucketName: $(devBucket)
+            sourceFolder: $(deployStage)\standalone\dist\
+        - task: S3Upload@1
+          displayName: upload standalone binaries to s3 (release)
+          condition: eq(variables['build.sourceBranch'], 'refs/tags/*')
+          inputs:
+            awsCredentials: dev-lab
+            targetFolder: $(keyPrefix)
+            #regionName: 'us-east-1' # should come from creds
+            bucketName: $(releaseBucket)
+            sourceFolder: $(deployStage)\standalone\dist\
+        - script: |
+            call $(deployStage)\$(deployArtifactName)\gravitybee-environs.bat
+            set SATS_TAG=TESTING--%GB_ENV_APP_VERSION%
+            set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
+            set SATS_REL_NAME=Test Release v%GB_ENV_APP_VERSION%
+            set
+            python -m pip install -r $(deployStage)\$(deployArtifactName)\deploy.txt
+            satsuki
+          displayName: deploy to github with satsuki
+          condition: eq(variables['build.sourceBranch'], 'refs/tags/*')
