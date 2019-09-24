@@ -129,7 +129,7 @@ jobs:
             sourceFolder: $(deployStage)\standalone\dist\
         - task: S3Upload@1
           displayName: upload standalone binaries to s3 (release)
-          condition: eq(variables['build.sourceBranch'], 'refs/tags/*')
+          condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
           inputs:
             awsCredentials: dev-lab
             targetFolder: $(keyPrefix)
@@ -145,4 +145,4 @@ jobs:
             python -m pip install -r $(deployStage)\$(deployArtifactName)\deploy.txt
             satsuki
           displayName: deploy to github with satsuki
-          condition: eq(variables['build.sourceBranch'], 'refs/tags/*')
+          condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
