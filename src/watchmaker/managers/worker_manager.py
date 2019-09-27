@@ -31,8 +31,8 @@ class WorkersManagerBase(object):
     def __init__(self, system_params, workers, *args, **kwargs):
         self.system_params = system_params
         self.workers = workers
-        args = args
-        kwargs = kwargs
+        WorkersManagerBase.args = args
+        WorkersManagerBase.kwargs = kwargs
 
     @abc.abstractmethod
     def _worker_execution(self):

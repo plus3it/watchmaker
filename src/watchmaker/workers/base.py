@@ -16,8 +16,8 @@ class WorkerBase(object):
         )
 
         self.system_params = system_params
-        args = args
-        kwargs = kwargs
+        WorkerBase.args = args
+        WorkerBase.kwargs = kwargs
 
     @abc.abstractmethod
     def before_install(self):
