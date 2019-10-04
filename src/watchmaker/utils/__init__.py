@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import shutil
 import ssl
+import warnings
 
 import backoff
 
@@ -83,3 +84,29 @@ def copytree(src, dst, force=False, **kwargs):
         shutil.rmtree(dst)
 
     shutil.copytree(src, dst, **kwargs)
+
+
+def config_none_deprecate(check_value, log):
+    r"""
+    Check whether a variable is the string 'None' rather than Pythonic `None`.
+
+    If it is the string 'None', this warns and returns Pythonic `None`.
+    Otherwise, the variable is returned unchanged.
+
+    Args:
+        check_value: (:obj:`str`)
+            Variable to be checked for string 'None' (case-insenstive).
+
+        log: (:obj:`logging.Logger`)
+            Logger where deprecation warning will be made.
+
+    """
+    if check_value and check_value.lower() == 'none':
+        deprecate_msg = (
+            'Use of "None" (string) as a config value is deprecated. Use '
+            '`null` instead.')
+        log.warn(deprecate_msg)
+        warnings.warn(deprecate_msg, DeprecationWarning)
+        return None
+
+    return check_value

@@ -138,8 +138,8 @@ class Arguments(dict):
 
         salt_states: (:obj:`str`)
             Comma-separated string of salt states to apply. A value of
-            ``'None'`` (the string) will not apply any salt states. A value
-            of ``'Highstate'`` will apply the salt highstate.
+            ``None`` will not apply any salt states. A value of ``'Highstate'``
+            will apply the salt highstate.
             (*Default*: ``None``)
 
         ou_path: (:obj:`str`)

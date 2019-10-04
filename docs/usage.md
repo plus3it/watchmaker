@@ -301,7 +301,7 @@ import watchmaker
 arguments = watchmaker.Arguments()
 arguments.config_path = None
 arguments.no_reboot = False
-arguments.salt_states = 'None'
+arguments.salt_states = None
 arguments.s3_source = False
 
 client = watchhmaker.Client(arguments)

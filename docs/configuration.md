@@ -172,12 +172,12 @@ Parameters supported by the Yum Worker:
 watchmaker_version: "~= 0.17.0"
 all:
   - salt:
-      admin_groups: None
-      admin_users: None
-      computer_name: None
-      environment: None
-      ou_path: None
-      salt_content: None
+      admin_groups: null
+      admin_users: null
+      computer_name: null
+      environment: null
+      ou_path: null
+      salt_content: null
       salt_states: Highstate
       user_formulas:
         # To add extra formulas, specify them as a map of
@@ -209,15 +209,15 @@ linux:
           el_version: 7
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2016.11.9/salt-reposync-el7.repo
   - salt:
-      salt_debug_log: None
+      salt_debug_log: null
       install_method: yum
-      bootstrap_source: None
-      git_repo: None
-      salt_version: None
+      bootstrap_source: null
+      git_repo: null
+      salt_version: null
 
 windows:
   - salt:
-      salt_debug_log: None
+      salt_debug_log: null
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-2016.11.6-AMD64-Setup.exe
 ```
 
