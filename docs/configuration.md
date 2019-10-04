@@ -23,7 +23,27 @@ You can create a file using the above format with your own set of standard
 values and use that file for Watchmaker. Pass the CLI parameter `--config` to
 point to that file.
 
-## Config.yaml Parent Nodes
+## config.yaml Parent Nodes
+
+### watchmaker_version
+
+If used, this optional node constrains the version of Watchmaker that can be used with the configuration. The `watchmaker_version` node is recommended for all configurations used with versions of Watchmaker 0.17+.
+
+This is an example of using the `watchmaker_version` node:
+
+```yaml
+watchmaker_version: "== 0.17.0"
+```
+
+Any [PEP440-compatible version specifier](https://www.python.org/dev/peps/pep-0440/#version-specifiers) can be used in the `watchmaker_version` node. Each version clause should include a comparison operator, such as `~=`, `==`, `!=`, `<=`, `>=`, `<`, `>`, or `===`. Multiple clauses can be included, separated by commas. Below are examples of version specifiers.
+
+```yaml
+watchmaker_version: "~= 0.17.0"
+watchmaker_version: "> 0.16.5"
+watchmaker_version: ">= 0.17.0, <= 0.18.9, != 0.17.2"
+```
+
+Attempting to use a configuration with an incompatible version of Watchmaker will result in an error.
 
 ### all
 
@@ -149,6 +169,7 @@ Parameters supported by the Yum Worker:
 ## Example config.yaml
 
 ```yaml
+watchmaker_version: "~= 0.17.0"
 all:
   - salt:
       admin_groups: None

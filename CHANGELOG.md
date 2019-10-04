@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.17.0
+
+**Commit Delta**: [Change from 0.16.7 release](https://github.com/plus3it/watchmaker/compare/0.16.7...0.17.0)
+
+**Released**: (Unreleased)
+
+**Summary**:
+
+*   Use native markdown processing for PyPI long description
+*   Deprecate use of 'None' (string) in `config.yaml`
+*   Add optional `watchmaker_version` node to configuration
+
 ### 0.16.7
 
 **Commit Delta**: [Change from 0.16.6 release](https://github.com/plus3it/watchmaker/compare/0.16.6...0.16.7)
