@@ -1,0 +1,40 @@
+pull_request_rules:
+  - name: automatic approve dependabot pull requests
+    conditions:
+      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
+      - status-success=continuous-integration/travis-ci/pr
+      - status-success=continuous-integration/appveyor/pr
+      - status-success=codecov/project
+      - status-success=codecov/patch
+    actions:
+      review:
+        type: APPROVE
+  # For salt-formula updates, trigger codebuild, merge on codebuild status
+  - name: write issue comment to start codebuild job
+    conditions:
+      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
+      - label=submodules
+      - "#approved-reviews-by>=1"
+    actions:
+      comment:
+        message: go codebuild go
+
+  - name: automatic merge for dependabot pull requests
+    conditions:
+      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
+      - label=submodules
+      - status-success=codebuild/pr
+      - "#approved-reviews-by>=1"
+    actions:
+      merge:
+        method: merge
+
+  # For regular dependabot pr, automatically merge on approve
+  - name: automatic merge for dependabot pull requests
+    conditions:
+      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
+      - "#approved-reviews-by>=1"
+      - label!=submodules
+    actions:
+      merge:
+        method: merge
