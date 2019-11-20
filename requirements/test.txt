@@ -8,5 +8,5 @@ pytest-catchlog==1.2.2;python_version<"2.7"
 pytest-cov==2.5.1;python_version<"2.7"  # pyup: ==2.5.1
 pytest-cov==2.8.1;python_version>="2.7"
 pytest-mock==1.6.3;python_version<"2.7"  # pyup: ==1.6.3
-pytest-mock==1.12.0;python_version>="2.7"
+pytest-mock==1.12.1;python_version>="2.7"
 wheel==0.29.0;python_version<="2.6"  # pyup: ==0.29.0
