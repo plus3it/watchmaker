@@ -298,7 +298,7 @@
 
 *   Provides standalone packages that bundle the Python runtime together with
     Watchmaker and its dependencies
-    - See <https://watchmaker.readthedocs.io/en/stable/installation.html>
+    - See <https://watchmaker.cloudarmor.io/en/stable/installation.html>
 *   ash-linux-formula
     -   (el7) Ensures packages are up-to-date
     -   (el7) Ensures firewalld is installed and running
