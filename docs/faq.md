@@ -70,7 +70,7 @@ present, the value is passed directly to the `exclude` option of the
 To use this option with watchmaker from the command line, pass the argument
 `--exclude-states <sls_glob>`. For example:
 
-```
+```shell
 # Exclude the state "foo" with an exact match
 watchmaker --exclude-states foo
 
@@ -91,7 +91,7 @@ using the `-c|--config-dir` argument:
 
 For example:
 
-```
+```shell
 # -c|--config-dir
 salt-call -c /opt/watchmaker/salt state.show_top
 ```
@@ -131,7 +131,7 @@ In order to install pip in Python 2.6, you can get it from:
 Once a Python 2.6-compatible ``pip`` version is installed, you can install
 compatible versions of the other packages like this:
 
-```
+```shell
 pip install --upgrade "pip<10" "wheel<0.30.0" "setuptools<37"
 ```
 
