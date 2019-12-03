@@ -13,7 +13,7 @@
 
 The "stock" `/etc/ssh/sshd_config` file typically contains a commented-out line for the `LogLevel` parameter similar to the following:
 
-~~~
+```shell
 [...elided...]
 
 #SyslogFacility AUTH
@@ -23,11 +23,11 @@ SyslogFacility AUTHPRIV
 # Authentication:
 
 [...elided...]
-~~~
+```
 
 When the vendor includes a commented-out parameter-value in the configuration-file, it signifies that the paramter is set to the value shown on the commented out line. This can be further confirmed by consulting the associated manual page (see: |sshdconfig|_):
 
-~~~
+```shell
      LogLevel
              Gives the verbosity level that is used when logging messages from
              sshd(8).  The possible values are: QUIET, FATAL, ERROR, INFO,
@@ -35,7 +35,7 @@ When the vendor includes a commented-out parameter-value in the configuration-fi
              DEBUG and DEBUG1 are equivalent.  DEBUG2 and DEBUG3 each specify
              higher levels of debugging output.  Logging with a DEBUG level
              violates the privacy of users and is not recommended.
-~~~
+```
 
 Note: _If it is desired to alter from the default_, it is typically recommended to change to `VERBOSE` — particularly if key-based logins are in use. This setting will cause the SSH daemon to record the fingerprints of presented-keys.
 
@@ -64,17 +64,17 @@ Some scanners implement an "intentional fail" for this audit-item. This is desig
 
 This automation has the underlying assumption that all RPM-managed SUID files — be it by the OS vendor or the provider of the software _hosted by_ the OS — is implicitly authorized. A  way to quickly-verify compliance with this assumption is to execute:
 
-~~~bash
+```bash
 for SUID in $( find / -user root -perm -4000 -print 2> /dev/null )
 do
    printf "%s: " "${SUID}"
    rpm --qf '%{name}\t%{vendor}\n' -qf "$SUID"
 done | awk '{printf("%-40s\t%-12s\t%s\n",$1,$2,$3)}'
-~~~
+```
 
 Executing the above will output a list similar to:
 
-~~~
+```bash
 /usr/bin/passwd:                                passwd          CentOS
 /usr/bin/pkexec:                                polkit          CentOS
 /usr/bin/crontab:                               cronie          CentOS
@@ -92,7 +92,7 @@ Executing the above will output a list similar to:
 /usr/sbin/unix_chkpwd:                          pam             CentOS
 /usr/lib/polkit-1/polkit-agent-helper-1:        polkit          CentOS
 /usr/libexec/dbus-1/dbus-daemon-launch-helper:  dbus            CentOS
-~~~
+```
 
 If any listed files are not displayed as being from the OS-vendor (typically "CentOS" or "RedHat") or the vendor of the hosted application, investigate further to determine if the file meets site-specific authorization-criteria.
 
@@ -106,10 +106,10 @@ Third-party security scanners will frequently call out missing filesystem mount 
 
 This is a scan error — most likely due to an improperly-formatted search-expression. The watchmaker utilities set the `noexec` Option for `/dev/shm` Pseudo-Filesystem in the `/etc/fstab` configuration file. This can be verified with the following commands.
 
-~~~
+```bash
 grep -E '\s\/dev\/shm\s.*noexec' /proc/mounts
 grep -E '\s\/dev\/shm\s.*noexec' /etc/fstab
-~~~
+```
 
 The above verifies that the mounted `/dev/shm` has the desired mount-option set and that the setting will persist after a reboot.
 
@@ -121,10 +121,10 @@ Because scanners typically assume that `/tmp` will be a standard, disk-based fil
 
 To properly verify that Watchmaker has applied the required mount-option to the systemd-managed `/tmp` mount:
 
-~~~
+```bash
 grep -E '\s\/tmp\s.*nodev' /proc/mounts
 grep nodev /etc/systemd/system/tmp.mount.d/options.conf
-~~~
+```
 
 The above verifies that the mounted `/tmp` has the desired mount-option set and that the setting will persist after a reboot.
 
@@ -136,10 +136,10 @@ Because scanners typically assume that `/tmp` will be a standard, disk-based fil
 
 To properly verify that Watchmaker has applied the required mount-option to the systemd-managed `/tmp` mount:
 
-~~~
+```bash
 grep -E '\s\/tmp\s.*noexec' /proc/mounts
 grep noexec /etc/systemd/system/tmp.mount.d/options.conf
-~~~
+```
 
 The above verifies that the mounted `/tmp` has the desired mount-option set and that the setting will persist after a reboot.
 
@@ -151,10 +151,10 @@ Because scanners typically assume that `/tmp` will be a standard, disk-based fil
 
 To properly verify that Watchmaker has applied the required mount-option to the systemd-managed `/tmp` mount:
 
-~~~
+```bash
 grep -E '\s\/tmp\s.*nosuid' /proc/mounts
 grep nosuid /etc/systemd/system/tmp.mount.d/options.conf
-~~~
+```
 
 The above verifies that the mounted `/tmp` has the desired mount-option set and that the setting will persist after a reboot.
 
