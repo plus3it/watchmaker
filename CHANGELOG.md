@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.16.6
+
+**Commit Delta**: [Change from 0.16.5 release](https://github.com/plus3it/watchmaker/compare/0.16.5...0.16.6)
+
+**Released**: 2019.12.04
+
+**Summary**:
+
+*   Uses CDN URLs for watchmaker config and content, instead of direct S3 URLs
+*   Pins `backoff` dependency when running on Python 3.4 or earlier
+
 ### 0.16.5
 
 **Commit Delta**: [Change from 0.16.4 release](https://github.com/plus3it/watchmaker/compare/0.16.4...0.16.5)
