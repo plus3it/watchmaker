@@ -23,4 +23,4 @@ services.
 ## Documentation
 
 For more information on installing and using Watchmaker, go to
-<https://watchmaker.readthedocs.io>.
+<https://watchmaker.cloudarmor.io>.

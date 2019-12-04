@@ -39,11 +39,6 @@ before_script:
 after_failure:
   - more .tox/log/* | cat
   - more .tox/*/log/* | cat
-before_cache:
-  - rm -rf $HOME/.cache/pip/log
-cache:
-  directories:
-    - "$HOME/.cache/pip"
 notifications:
   email:
     on_success: never
@@ -67,7 +62,7 @@ jobs:
       env:
         - TOXENV=docs
     - stage: deploy
-      if: branch = develop OR tag is present
+      if: type != pull_request AND (branch = develop OR tag is present)
       python: 2.7
       install: pip install m2r
       script: echo "Deploying..."
@@ -90,7 +85,7 @@ jobs:
         on:
           tags: true
     - stage: deploy
-      if: branch in (env(RELEASE_BRANCH), develop) OR tag is present
+      if: type != pull_request AND (branch in (master, develop) OR tag is present)
       python: 3.6
       install:
         - echo "Install"
@@ -110,7 +105,7 @@ jobs:
           script: satsuki
           skip_cleanup: true
           on:
-            branch: $RELEASE_BRANCH
+            branch: master
         - provider: s3
           bucket: $RELEASE_BUCKET
           upload-dir: $S3_KEYFIX

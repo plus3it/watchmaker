@@ -56,8 +56,8 @@ class PlatformManagerBase(object):
         )
         self.system_params = system_params
         self.working_dir = None
-        args = args
-        kwargs = kwargs
+        PlatformManagerBase.args = args
+        PlatformManagerBase.kwargs = kwargs
 
     def retrieve_file(self, url, filename):
         """
