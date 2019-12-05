@@ -81,21 +81,21 @@ Linux.
         and corresponding SHA256 hashes. To access versions on S3, construct a
         URL using these examples for version 0.9.7:
 
-        *   https://s3.amazonaws.com/watchmaker/releases/0.9.7/watchmaker-0.9.7-standalone-linux-x86_64
-        *   https://s3.amazonaws.com/watchmaker/releases/0.9.7/watchmaker-0.9.7-standalone-windows-amd64.exe
+        *   https://watchmaker.cloudarmor.io/releases/0.9.7/watchmaker-0.9.7-standalone-linux-x86_64
+        *   https://watchmaker.cloudarmor.io/releases/0.9.7/watchmaker-0.9.7-standalone-windows-amd64.exe
 
     *   Links to the latest versions of Watchmaker and SHA hashes on S3 are:
 
-        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-linux-x86_64
-        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-sha256-linux-x86_64.json
-        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-windows-amd64.exe
-        *   https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-sha256-windows-amd64.json
+        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-linux-x86_64
+        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-sha256-linux-x86_64.json
+        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-windows-amd64.exe
+        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-sha256-windows-amd64.json
 
     *   From PowerShell, the Windows package can be downloaded
         as follows:
 
         ```ps1con
-        PS C:\wam> $url = "https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-windows-amd64.exe"
+        PS C:\wam> $url = "https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-windows-amd64.exe"
         PS C:\wam> (New-Object System.Net.WebClient).DownloadFile($url, "watchmaker.exe")
         ```
 
@@ -103,7 +103,7 @@ Linux.
         as follows:
 
         ```console
-        # curl -so watchmaker https://s3.amazonaws.com/watchmaker/releases/latest/watchmaker-latest-standalone-linux-x86_64
+        # curl -so watchmaker https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-linux-x86_64
         ```
 
     *   For the latest package, the version of Watchmaker can be determined by

@@ -1,14 +1,10 @@
 image: ${IMAGE}
 
-before_script:
-  - sudo yum -y install python36 python36-libs python36-setuptools
-  - sudo python3.6 -m ensurepip --upgrade
-  - test -f /usr/bin/pip3 || sudo ln -sf /usr/local/bin/pip3 /usr/bin/pip3
-  - sudo pip3 install --upgrade -r requirements/docs.txt
-  - sudo pip3 install -e .
-
 pages:
   stage: deploy
+  before_script:
+    - pip3 install --upgrade -r requirements/docs.txt
+    - pip3 install -e .
   script:
     - sphinx-build -a -E -b html docs public
   artifacts:

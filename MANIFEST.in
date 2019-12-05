@@ -9,6 +9,7 @@ include .coveragerc
 include .editorconfig
 include .gitmodules
 include .pylintrc
+include .mergify.yml
 
 include AUTHORS.md
 include CHANGELOG.md
