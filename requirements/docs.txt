@@ -1,6 +1,6 @@
 -r docs-check.txt
 
 m2r==0.2.1
-setuptools==42.0.2
+setuptools==43.0.0
 sphinx==2.3.1
 sphinx-rtd-theme==0.4.3
