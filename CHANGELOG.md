@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.16.7
+
+**Commit Delta**: [Change from 0.16.6 release](https://github.com/plus3it/watchmaker/compare/0.16.6...0.16.7)
+
+**Released**: 2020.01.06
+
+**Summary**:
+
+*   Pins `PyYAML` dependency when running on Python 3.4 or earlier
+
 ### 0.16.6
 
 **Commit Delta**: [Change from 0.16.5 release](https://github.com/plus3it/watchmaker/compare/0.16.5...0.16.6)
