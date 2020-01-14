@@ -103,6 +103,22 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.salt_states = kwargs.pop('salt_states', None) or ''
         self.exclude_states = kwargs.pop('exclude_states', None) or ''
 
+        self.computer_name = watchmaker.utils.config_none_deprecate(
+            self.computer_name, self.log)
+        self.salt_debug_log = watchmaker.utils.config_none_deprecate(
+            self.salt_debug_log, self.log)
+        self.salt_content = watchmaker.utils.config_none_deprecate(
+            self.salt_content, self.log)
+        self.ou_path = watchmaker.utils.config_none_deprecate(
+            self.ou_path, self.log)
+        self.admin_groups = watchmaker.utils.config_none_deprecate(
+            self.admin_groups, self.log)
+        self.admin_users = watchmaker.utils.config_none_deprecate(
+            self.admin_users, self.log)
+
+        if self.salt_states and self.salt_states.lower() == 'none':
+            self.salt_states = None
+
         # Init attributes used by SaltBase, overridden by inheriting classes
         self.salt_working_dir = None
         self.salt_working_dir_prefix = None
@@ -151,10 +167,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             self.salt_working_dir_prefix
         )
 
-        if (
-            self.salt_debug_log and
-            self.salt_debug_log != 'None'
-        ):
+        if self.salt_debug_log:
             self.salt_debug_logfile = self.salt_debug_log
         else:
             self.salt_debug_logfile = os.sep.join(
@@ -241,7 +254,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
     def _build_salt_formula(self, extract_dir):
-        if self.salt_content and self.salt_content != 'None':
+        if self.salt_content:
             salt_content_filename = watchmaker.utils.basename_from_uri(
                 self.salt_content
             )
@@ -452,16 +465,16 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self._set_grain('watchmaker', ent_env)
 
         grain = {}
-        if self.ou_path and self.ou_path != 'None':
+        if self.ou_path:
             grain['oupath'] = self.ou_path
-        if self.admin_groups and self.admin_groups != 'None':
+        if self.admin_groups:
             grain['admin_groups'] = self.admin_groups.split(':')
-        if self.admin_users and self.admin_users != 'None':
+        if self.admin_users:
             grain['admin_users'] = self.admin_users.split(':')
         if grain:
             self._set_grain('join-domain', grain)
 
-        if self.computer_name and self.computer_name != 'None':
+        if self.computer_name:
             name = {'computername': str(self.computer_name)}
             self._set_grain('name-computer', name)
 
@@ -484,7 +497,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 Comma-separated string of states to exclude from execution.
 
         """
-        if not states or states.lower() == 'none':
+        if not states:
             self.log.info(
                 'No States were specified. Will not apply any salt states.'
             )
@@ -568,7 +581,8 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         self.salt_version = kwargs.pop('salt_version', None) or ''
 
         # Enforce lowercase and replace spaces with ^ in Linux
-        self.admin_groups = self.admin_groups.lower().replace(' ', '^')
+        if self.admin_groups:
+            self.admin_groups = self.admin_groups.lower().replace(' ', '^')
 
         # Extra variables needed for SaltLinux.
         self.yum_pkgs = [
@@ -720,6 +734,9 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         # Init inherited classes
         super(SaltWindows, self).__init__(*args, **kwargs)
 
+        self.ash_role = watchmaker.utils.config_none_deprecate(
+            self.ash_role, self.log)
+
         # Extra variable needed for SaltWindows.
         sys_drive = os.environ['systemdrive']
 
@@ -807,7 +824,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             if not self.service_start(salt_svc):
                 self.log.error('Failed to restart %s service', salt_svc)
 
-        if self.ash_role and self.ash_role != 'None':
+        if self.ash_role:
             role = {'lookup': {'role': str(self.ash_role)}}
             self._set_grain('ash-windows', role)
 
