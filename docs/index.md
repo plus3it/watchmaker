@@ -44,6 +44,7 @@ _workers_ to execute on each platform.
 
 *   Enterprise Linux 7 (RHEL/CentOS/etc)
 *   Enterprise Linux 6 (RHEL/CentOS/etc)
+*   Windows Server 2019
 *   Windows Server 2016
 *   Windows Server 2012 R2
 *   Windows Server 2008 R2

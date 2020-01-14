@@ -8,6 +8,7 @@
 
 **Summary**:
 
+*   Adds support for Windows Server 2019
 *   Use native markdown processing for PyPI long description
 *   Deprecate use of 'None' (string) in `config.yaml`
 *   Add optional `watchmaker_version` node to configuration
