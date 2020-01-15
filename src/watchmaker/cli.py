@@ -102,6 +102,17 @@ def main(extra_arguments=None, **kwargs):
 
     sys.excepthook = exception_hook
 
+    noneables = (
+        'computer_name',
+        'ou_path',
+        'admin_users',
+        'admin_groups',
+        'salt_states'
+    )
+    for key in noneables:
+        if str(kwargs.get(key)).lower() == 'none':
+            kwargs[key] = None
+
     watchmaker_arguments = watchmaker.Arguments(**dict(
         extra_arguments=extra_arguments,
         **kwargs
