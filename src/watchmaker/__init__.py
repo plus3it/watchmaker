@@ -181,13 +181,22 @@ class Arguments(dict):
         self.log_dir = log_dir
         self.no_reboot = no_reboot
         self.log_level = log_level
-        self.admin_groups = kwargs.pop('admin_groups', None)
-        self.admin_users = kwargs.pop('admin_users', None)
-        self.computer_name = kwargs.pop('computer_name', None)
-        self.environment = kwargs.pop('environment', None)
-        self.salt_states = kwargs.pop('salt_states', None)
-        self.ou_path = kwargs.pop('ou_path', None)
-        self.extra_arguments = kwargs.pop('extra_arguments', None) or []
+        self.admin_groups = watchmaker.utils.clean_none(
+            kwargs.pop('admin_groups', None))
+        self.admin_users = watchmaker.utils.clean_none(
+            kwargs.pop('admin_users', None))
+        self.computer_name = watchmaker.utils.clean_none(
+            kwargs.pop('computer_name', None))
+        self.environment = watchmaker.utils.clean_none(
+            kwargs.pop('environment', None))
+        self.salt_states = watchmaker.utils.clean_none(
+            kwargs.pop('salt_states', None))
+        self.ou_path = watchmaker.utils.clean_none(
+            kwargs.pop('ou_path', None))
+        self.extra_arguments = [
+            watchmaker.utils.clean_none(val) for val in kwargs.pop(
+                'extra_arguments', None) or []
+        ]
 
     def __getattr__(self, attr):
         """Support attr-notation for getting dict contents."""
