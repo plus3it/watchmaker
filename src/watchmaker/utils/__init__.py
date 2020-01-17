@@ -88,7 +88,7 @@ def copytree(src, dst, force=False, **kwargs):
 
 def config_none_deprecate(check_value, log):
     r"""
-    Check whether a variable is the string 'None' rather than Pythonic `None`.
+    Warn if variable is the string 'None' rather than Pythonic `None`.
 
     If it is the string 'None', this warns and returns Pythonic `None`.
     Otherwise, the variable is returned unchanged.
@@ -101,12 +101,21 @@ def config_none_deprecate(check_value, log):
             Logger where deprecation warning will be made.
 
     """
-    if check_value and check_value.lower() == 'none':
+    value = clean_none(check_value)
+
+    if check_value and value is None:
         deprecate_msg = (
             'Use of "None" (string) as a config value is deprecated. Use '
             '`null` instead.')
         log.warn(deprecate_msg)
         warnings.warn(deprecate_msg, DeprecationWarning)
+
+    return value
+
+
+def clean_none(value):
+    """Convert string 'None' to None."""
+    if str(value).lower() == 'none':
         return None
 
-    return check_value
+    return value
