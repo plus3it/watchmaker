@@ -8,10 +8,11 @@
 
 **Summary**:
 
-*   Adds support for Windows Server 2019
+*   Add support for Windows Server 2019
 *   Use native markdown processing for PyPI long description
 *   Deprecate use of 'None' (string) in `config.yaml`
 *   Add optional `watchmaker_version` node to configuration
+*   Use Salt 2018.3.4 in default configuration
 
 ### 0.16.7
 
