@@ -64,7 +64,7 @@ jobs:
     - stage: deploy
       if: type != pull_request AND (branch = develop OR tag is present)
       python: 2.7
-      install: pip install m2r
+      install: skip
       script: echo "Deploying..."
       deploy:
       - provider: pypi

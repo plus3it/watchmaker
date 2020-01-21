@@ -23,7 +23,27 @@ You can create a file using the above format with your own set of standard
 values and use that file for Watchmaker. Pass the CLI parameter `--config` to
 point to that file.
 
-## Config.yaml Parent Nodes
+## config.yaml Parent Nodes
+
+### watchmaker_version
+
+If used, this optional node constrains the version of Watchmaker that can be used with the configuration. The `watchmaker_version` node is recommended for all configurations used with versions of Watchmaker 0.17+.
+
+This is an example of using the `watchmaker_version` node:
+
+```yaml
+watchmaker_version: "== 0.17.0"
+```
+
+Any [PEP440-compatible version specifier](https://www.python.org/dev/peps/pep-0440/#version-specifiers) can be used in the `watchmaker_version` node. Each version clause should include a comparison operator, such as `~=`, `==`, `!=`, `<=`, `>=`, `<`, `>`, or `===`. Multiple clauses can be included, separated by commas. Below are examples of version specifiers.
+
+```yaml
+watchmaker_version: "~= 0.17.0"
+watchmaker_version: "> 0.16.5"
+watchmaker_version: ">= 0.17.0, <= 0.18.9, != 0.17.2"
+```
+
+Attempting to use a configuration with an incompatible version of Watchmaker will result in an error.
 
 ### all
 
@@ -149,14 +169,15 @@ Parameters supported by the Yum Worker:
 ## Example config.yaml
 
 ```yaml
+watchmaker_version: "~= 0.17.0"
 all:
   - salt:
-      admin_groups: None
-      admin_users: None
-      computer_name: None
-      environment: None
-      ou_path: None
-      salt_content: None
+      admin_groups: null
+      admin_users: null
+      computer_name: null
+      environment: null
+      ou_path: null
+      salt_content: null
       salt_states: Highstate
       user_formulas:
         # To add extra formulas, specify them as a map of
@@ -188,15 +209,15 @@ linux:
           el_version: 7
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2016.11.9/salt-reposync-el7.repo
   - salt:
-      salt_debug_log: None
+      salt_debug_log: null
       install_method: yum
-      bootstrap_source: None
-      git_repo: None
-      salt_version: None
+      bootstrap_source: null
+      git_repo: null
+      salt_version: null
 
 windows:
   - salt:
-      salt_debug_log: None
+      salt_debug_log: null
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-2016.11.6-AMD64-Setup.exe
 ```
 
