@@ -43,3 +43,11 @@ def test_copytree_force(mock_copy, mock_rm, mock_exists):
     mock_copy.assert_called_with(random_src, random_dst)
     mock_rm.assert_called_with(random_dst)
     mock_exists.assert_called_with(random_dst)
+
+
+def test_clean_none():
+    """Check string 'None' conversion to None."""
+    assert not watchmaker.utils.clean_none('None')
+    assert not watchmaker.utils.clean_none('none')
+    assert not watchmaker.utils.clean_none(None)
+    assert watchmaker.utils.clean_none('not none') == 'not none'

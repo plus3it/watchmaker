@@ -51,3 +51,21 @@ def default_config():
 def test_main():
     """Placeholder for tests."""
     assert watchmaker.__version__ == watchmaker.__version__
+
+
+def test_none_arguments():
+    """Check string 'None' conversion to None."""
+    raw_arguments = {
+        'admin_groups': 'None',
+        'admin_users': 'None',
+        'computer_name': 'None',
+        'salt_states': 'None',
+        'ou_path': 'None'
+    }
+    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+
+    assert not watchmaker_arguments.admin_groups
+    assert not watchmaker_arguments.admin_users
+    assert not watchmaker_arguments.computer_name
+    assert not watchmaker_arguments.salt_states
+    assert not watchmaker_arguments.ou_path

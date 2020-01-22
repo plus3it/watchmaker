@@ -13,6 +13,7 @@ import subprocess
 import pkg_resources
 import setuptools
 import yaml
+from compatibleversion import check_version
 
 import watchmaker.utils
 from watchmaker import static
@@ -137,8 +138,8 @@ class Arguments(dict):
 
         salt_states: (:obj:`str`)
             Comma-separated string of salt states to apply. A value of
-            ``'None'`` (the string) will not apply any salt states. A value
-            of ``'Highstate'`` will apply the salt highstate.
+            ``None`` will not apply any salt states. A value of ``'Highstate'``
+            will apply the salt highstate.
             (*Default*: ``None``)
 
         ou_path: (:obj:`str`)
@@ -180,13 +181,22 @@ class Arguments(dict):
         self.log_dir = log_dir
         self.no_reboot = no_reboot
         self.log_level = log_level
-        self.admin_groups = kwargs.pop('admin_groups', None)
-        self.admin_users = kwargs.pop('admin_users', None)
-        self.computer_name = kwargs.pop('computer_name', None)
-        self.environment = kwargs.pop('environment', None)
-        self.salt_states = kwargs.pop('salt_states', None)
-        self.ou_path = kwargs.pop('ou_path', None)
-        self.extra_arguments = kwargs.pop('extra_arguments', None) or []
+        self.admin_groups = watchmaker.utils.clean_none(
+            kwargs.pop('admin_groups', None))
+        self.admin_users = watchmaker.utils.clean_none(
+            kwargs.pop('admin_users', None))
+        self.computer_name = watchmaker.utils.clean_none(
+            kwargs.pop('computer_name', None))
+        self.environment = watchmaker.utils.clean_none(
+            kwargs.pop('environment', None))
+        self.salt_states = watchmaker.utils.clean_none(
+            kwargs.pop('salt_states', None))
+        self.ou_path = watchmaker.utils.clean_none(
+            kwargs.pop('ou_path', None))
+        self.extra_arguments = [
+            watchmaker.utils.clean_none(val) for val in kwargs.pop(
+                'extra_arguments', None) or []
+        ]
 
     def __getattr__(self, attr):
         """Support attr-notation for getting dict contents."""
@@ -290,6 +300,8 @@ class Client(object):
         try:
             config_all = config_full.get('all', [])
             config_system = config_full.get(self.system, [])
+            config_version_specifier = config_full.get(
+                'watchmaker_version', None)
         except AttributeError:
             msg = 'Malformed config file. Must be a dictionary.'
             self.log.critical(msg)
@@ -298,6 +310,15 @@ class Client(object):
         # If both config and config_system are empty, raise
         if not config_system and not config_all:
             msg = 'Malformed config file. No workers for this system.'
+            self.log.critical(msg)
+            raise WatchmakerException(msg)
+
+        if config_version_specifier and not check_version(
+                watchmaker.__version__, config_version_specifier):
+            msg = (
+                'Watchmaker version {} is not compatible with the config '
+                'file (watchmaker_version = {})').format(
+                    watchmaker.__version__, config_version_specifier)
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
