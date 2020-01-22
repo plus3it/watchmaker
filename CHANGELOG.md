@@ -4,7 +4,7 @@
 
 **Commit Delta**: [Change from 0.16.7 release](https://github.com/plus3it/watchmaker/compare/0.16.7...0.17.0)
 
-**Released**: (Unreleased)
+**Released**: 2020.01.21
 
 **Summary**:
 
