@@ -1,5 +1,19 @@
 ## Changelog
 
+### 0.17.1
+
+**Commit Delta**: [Change from 0.17.0 release](https://github.com/plus3it/watchmaker/compare/0.17.0...0.17.1)
+
+**Released**: 2020.01.28
+
+**Summary**:
+
+*   Fixes release date in changelog for 0.17.0
+*   Removes salt worker special handling for `salt_states` since it is now handled
+    properly in the `Arguments()` class
+*   pshelp-formula
+    -   Updates PowerShell help content, including Windows Server 2019
+
 ### 0.17.0
 
 **Commit Delta**: [Change from 0.16.7 release](https://github.com/plus3it/watchmaker/compare/0.16.7...0.17.0)
