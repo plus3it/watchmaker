@@ -115,9 +115,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             self.admin_groups, self.log)
         self.admin_users = watchmaker.utils.config_none_deprecate(
             self.admin_users, self.log)
-
-        if self.salt_states and self.salt_states.lower() == 'none':
-            self.salt_states = None
+        self.salt_states = watchmaker.utils.config_none_deprecate(
+            self.salt_states, self.log)
 
         # Init attributes used by SaltBase, overridden by inheriting classes
         self.salt_working_dir = None
