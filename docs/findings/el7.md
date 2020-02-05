@@ -1,11 +1,11 @@
+```eval_rst
 .. image:: ../images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
    :target: https://www.plus3it.com
-
-.. |sshdconfig| replace:: ``sshd_config (5)``
-.. _sshdconfig: https://linux.die.net/man/5/sshd_config
+```
+<br>
 
 ## `sshd_config` Parameter Values
 
@@ -25,7 +25,7 @@ SyslogFacility AUTHPRIV
 [...elided...]
 ```
 
-When the vendor includes a commented-out parameter-value in the configuration-file, it signifies that the paramter is set to the value shown on the commented out line. This can be further confirmed by consulting the associated manual page (see: |sshdconfig|_):
+When the vendor includes a commented-out parameter-value in the configuration-file, it signifies that the paramter is set to the value shown on the commented out line. This can be further confirmed by consulting the associated manual page (see: [sshdconfig (5)](https://linux.die.net/man/5/sshd_config)):
 
 ```shell
      LogLevel
