@@ -17,6 +17,15 @@ to use the default configuration), using Watchmaker as a CLI utility is as
 simple as executing `watchmaker`. Below is the output of `watchmaker --help`,
 showing the CLI options.
 
+In addition to the below options, any setting supported by the [configfiguration file](configuration)
+can be passed on the CLI. Some settings from the configuration file are not listed
+in the `--help` output, which displays only the most frequently used options. To
+pass any such "hidden" CLI argument, just precede it with `--` and convert an
+underscore to a dash. For example, to pass the `salt_content` argument on the CLI,
+use `watchmaker <other options> --salt-content <content-url>`. Arguments passed
+on the CLI always override the corresponding setting in the configuration file
+(see [configuration](configuration) for precedence).
+
 ```console
 # watchmaker --help
 Usage: watchmaker [OPTIONS]

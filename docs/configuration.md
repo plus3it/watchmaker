@@ -25,6 +25,18 @@ You can create a file using the above format with your own set of standard
 values and use that file for Watchmaker. Pass the CLI parameter `--config` to
 point to that file.
 
+## Configuration Precedence
+
+In addition to passing values in the configuration file, watchmaker supports
+passing arguments on the [cli](usage). The order of precedence for arguments is,
+from least to most:
+
+* configuration file
+* cli argument
+
+In other words, providing a value as a cli argument will override the same value
+provided in the configuration file.
+
 ## config.yaml Parent Nodes
 
 ### watchmaker_version
