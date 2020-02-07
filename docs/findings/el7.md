@@ -73,6 +73,9 @@ Conditionally-Valid Finding: Both spel and watchmaker implement `fips=1` by defa
 * There is an error in scanner's validation-method
 * System has been intentionally de-configured for FIPS &mdash; typically due to hosted-software's requirements &mdash; and scanned-system will need to be granted a deployment security-exception.
 
+## Configure AIDE to Use FIPS 140-2 for Validating Hashes
+
+Invalid Finding: Because there is more than one way to implement this setting, scanners typically do not perform a real scan for this setting. Instead some scanners implement a null-test to flag the configuration-item to try to force a manual review. Watchmaker implements this configuration-titem by setting `NORMAL = FIPSR+sha512` in the `/etc/aide.conf` file: may be manually validated by executing `grep NORMAL\ = /etc/aide.conf`.
 
 ## Verify and Correct Ownership with RPM
 
