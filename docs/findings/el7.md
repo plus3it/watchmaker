@@ -48,7 +48,7 @@ Invalid Finding: Watchmaker implements setting. However, scanner regex may not b
 
 ## Set Default firewalld Zone for Incoming Packets
 
-Valid Finding: [Issue](https://github.com/plus3it/ash-linux-formula/issues/285) submitted to relevant sub-project for fix
+Conditionally-Valid Finding: enabling "drop" as the default firewald zone breaks things like ping-sweeps (used by some IPAM solutions, security-scanners, etc.). Some sites will request the "drop" zone not be used. Scan-profiles should be updated to reflect the need to not have "drop" be the active zone.
 
 ## Disable Kernel Parameter for IP Forwarding
 
@@ -73,9 +73,6 @@ Conditionally-Valid Finding: Both spel and watchmaker implement `fips=1` by defa
 * There is an error in scanner's validation-method
 * System has been intentionally de-configured for FIPS &mdash; typically due to hosted-software's requirements &mdash; and scanned-system will need to be granted a deployment security-exception.
 
-## Configure AIDE to Use FIPS 140-2 for Validating Hashes
-
-Valid Finding: [Issue](https://github.com/plus3it/ash-linux-formula/issues/284) submitted to relevant sub-project for fix
 
 ## Verify and Correct Ownership with RPM
 
