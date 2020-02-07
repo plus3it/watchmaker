@@ -7,6 +7,8 @@
 ```
 <br>
 
+# Findings Summary-Table
+
 | Finding Summary | Finding Identifiers |
 |:-------------------------------------------------------|:--------------------|
 | [Use Only FIPS 140-2 Validated Ciphers](#use-only-fips-140-2-validated-ciphers) | SV-86845<br/>RHEL-07-040110 |
@@ -69,7 +71,7 @@ Conditionally-Valid Finding:
 Conditionally-Valid Finding: Both spel and watchmaker implement `fips=1` by default. If finding occurs, either:
 
 * There is an error in scanner's validation-method
-* System has been intentionally de-configured for FIPS &mdash; typically due to hosted-software's requirements &mdash; and will need to be POA&Med.
+* System has been intentionally de-configured for FIPS &mdash; typically due to hosted-software's requirements &mdash; and scanned-system will need to be granted a deployment security-exception.
 
 ## Configure AIDE to Use FIPS 140-2 for Validating Hashes
 
