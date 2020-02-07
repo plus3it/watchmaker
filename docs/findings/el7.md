@@ -42,7 +42,7 @@ Conditionally-Valid Finding: Smart Card Login use and configuration is site-spec
 
 ## Configure the Firewalld Ports
 
-Invalid Finding: Watchmaker implements setting. Howeve, scanner regex may not be sufficiently-flexible in its specification.
+Invalid Finding: Watchmaker implements setting. However, scanner regex may not be sufficiently-flexible in its specification.
 
 ## Set Default firewalld Zone for Incoming Packets
 
