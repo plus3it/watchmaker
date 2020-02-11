@@ -9,9 +9,13 @@
 
 # Findings Summary-Table
 
-| Finding Summary | Finding Identifiers |
-|:-------------------------------------------------------|:--------------------|
-| [Use Only FIPS 140-2 Validated Ciphers](#use-only-fips-140-2-validated-ciphers) | SV-86845<br/>RHEL-07-040110 |
++----------------------------------------+---------------------+
+| Finding Summary                        | Finding Identifiers |
++========================================+=====================+
+| [Use Only FIPS 140-2 Validated Ciphers](#use-only-fips-140-2-validated-ciphers) | SV-86845 |
+|                                        | RHEL-07-040110      |
++----------------------------------------+---------------------+
+
 | [Use Only FIPS 140-2 Validated MACs](#use-only-fips-140-2-validated-macs) | SV-86877<br/>RHEL-07-040400 |
 | [Modify the System Login Banner](#modify-the-system-login-banner) | SV-86487<br/>RHEL-07-010050 |
 | [Enable Smart Card Login](#enable-smart-card-login) | SV-86589<br/>RHEL-07-010500 |
