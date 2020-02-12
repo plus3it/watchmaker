@@ -7,7 +7,7 @@
 ```
 <br>
 
-# Findings Summary-Table
+## Findings Summary-Table
 
 ```eval_rst
   .. _Use Only FIPS 140-2 Validated Ciphers: #use-only-fips-140-2-validated-ciphers
