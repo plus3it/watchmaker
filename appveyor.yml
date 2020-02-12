@@ -21,7 +21,7 @@ test_script:
   - set PYTHON_ARCH=64
 
   # install
-  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+  - '%PYTHON_HOME%\Scripts\pip install -r requirements/tox.txt'
 
     # versions
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
@@ -38,7 +38,7 @@ test_script:
   - set PYTHON_ARCH=32
 
   # install
-  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+  - '%PYTHON_HOME%\Scripts\pip install -r requirements/tox.txt'
 
     # versions
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
@@ -56,7 +56,7 @@ test_script:
   - set PYTHON_ARCH=64
 
   # install
-  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+  - '%PYTHON_HOME%\Scripts\pip install -r requirements/tox.txt'
 
   # versions
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
@@ -81,7 +81,7 @@ test_script:
   - set PYTHON_ARCH=32
 
   # install
-  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+  - '%PYTHON_HOME%\Scripts\pip install -r requirements/tox.txt'
 
     # versions
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
@@ -99,7 +99,7 @@ test_script:
   - set PYTHON_ARCH=32
 
   # install
-  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+  - '%PYTHON_HOME%\Scripts\pip install -r requirements/tox.txt'
 
   # versions
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
@@ -116,7 +116,7 @@ test_script:
   - set PYTHON_ARCH=64
 
   # install
-  - '%PYTHON_HOME%\Scripts\pip install --upgrade tox setuptools virtualenv wheel'
+  - '%PYTHON_HOME%\Scripts\pip install -r requirements/tox.txt'
 
   # versions
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
