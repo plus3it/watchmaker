@@ -64,7 +64,7 @@ jobs:
       versionSpec: $(py)
       architecture: $(architecture)
     name: buildPython
-  - script: $(buildPython.pythonLocation)\python -m pip install --upgrade setuptools virtualenv wheel
+  - script: $(buildPython.pythonLocation)\python -m pip install -r requirements/basics.txt
     displayName: install python basics
   - script: |
       mkdir $(venv)
