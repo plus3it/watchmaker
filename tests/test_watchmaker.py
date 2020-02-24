@@ -69,3 +69,16 @@ def test_none_arguments():
     assert not watchmaker_arguments.computer_name
     assert not watchmaker_arguments.salt_states
     assert not watchmaker_arguments.ou_path
+
+
+def test_argument_default_value():
+    """Ensure argument default value is `Arguments.DEFAULT_VALUE`."""
+    raw_arguments = {}
+    check_val = watchmaker.Arguments.DEFAULT_VALUE
+    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+
+    assert watchmaker_arguments.admin_groups == check_val
+    assert watchmaker_arguments.admin_users == check_val
+    assert watchmaker_arguments.computer_name == check_val
+    assert watchmaker_arguments.salt_states == check_val
+    assert watchmaker_arguments.ou_path == check_val
