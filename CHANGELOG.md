@@ -1,5 +1,26 @@
 ## Changelog
 
+### 0.17.2
+
+**Commit Delta**: [Change from 0.17.1 release](https://github.com/plus3it/watchmaker/compare/0.17.1...0.17.2)
+
+**Released**: 2020.02.25
+
+**Summary**:
+
+*   Documents configuration vs cli argument handling and precedence
+*   Provides a table mapping common scan findings to an associated Finding ID
+*   Restores propagation of the `None` value on the cli to the workers
+*   ash-linux-formula
+    -   Ensures aide configuration complies with FIPS requirements
+*   ash-windows-formula
+    -   Adds missing sls to restore support for Windows 10
+*   join-domain-formula
+    -   Suppresses join-domain command in salt log output
+    -   (Windows) Supports using salt-native pillar security for the `password` value
+*   nessus-agent-formula
+    -   (Linux) Suppresses gpg verification so the pkg can be installed from a URL
+
 ### 0.17.1
 
 **Commit Delta**: [Change from 0.17.0 release](https://github.com/plus3it/watchmaker/compare/0.17.0...0.17.1)
