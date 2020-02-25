@@ -167,6 +167,8 @@ class Arguments(dict):
 
     """
 
+    DEFAULT_VALUE = 'WAM_NONE'
+
     def __init__(
         self,
         config_path=None,
@@ -182,20 +184,20 @@ class Arguments(dict):
         self.no_reboot = no_reboot
         self.log_level = log_level
         self.admin_groups = watchmaker.utils.clean_none(
-            kwargs.pop('admin_groups', None))
+            kwargs.pop('admin_groups', None) or Arguments.DEFAULT_VALUE)
         self.admin_users = watchmaker.utils.clean_none(
-            kwargs.pop('admin_users', None))
+            kwargs.pop('admin_users', None) or Arguments.DEFAULT_VALUE)
         self.computer_name = watchmaker.utils.clean_none(
-            kwargs.pop('computer_name', None))
+            kwargs.pop('computer_name', None) or Arguments.DEFAULT_VALUE)
         self.environment = watchmaker.utils.clean_none(
-            kwargs.pop('environment', None))
+            kwargs.pop('environment', None) or Arguments.DEFAULT_VALUE)
         self.salt_states = watchmaker.utils.clean_none(
-            kwargs.pop('salt_states', None))
+            kwargs.pop('salt_states', None) or Arguments.DEFAULT_VALUE)
         self.ou_path = watchmaker.utils.clean_none(
-            kwargs.pop('ou_path', None))
+            kwargs.pop('ou_path', None) or Arguments.DEFAULT_VALUE)
         self.extra_arguments = [
-            watchmaker.utils.clean_none(val) for val in kwargs.pop(
-                'extra_arguments', None) or []
+            watchmaker.utils.clean_none(val or Arguments.DEFAULT_VALUE)
+            for val in kwargs.pop('extra_arguments', None) or []
         ]
 
     def __getattr__(self, attr):
@@ -258,7 +260,8 @@ class Client(object):
         ))
         # Set self.worker_args, removing `None` values from worker_args
         self.worker_args = dict(
-            (k, v) for k, v in worker_args.items() if v is not None
+            (k, v) for k, v in worker_args.items()
+            if v != Arguments.DEFAULT_VALUE
         )
 
         self.config = self._get_config()
