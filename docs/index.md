@@ -1,8 +1,10 @@
+```eval_rst
 .. image:: images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
    :target: https://www.plus3it.com
+```
 <br>
 
 # watchmaker
@@ -23,22 +25,24 @@ Watchmaker works as a sort of task runner. It consists of "_managers_" and
 (Linux, Windows, etc). A _worker_ exposes functionality to a user that helps
 bootstrap and configure the system. _Managers_ are primarily internal
 constructs; _workers_ expose configuration artifacts to users. Watchmaker then
-uses a common [configuration file](configuration.html) to determine what
+uses a common [configuration file](configuration) to determine what
 _workers_ to execute on each platform.
 
 ## Contents
 
+```eval_rst
 .. toctree::
     :maxdepth: 1
 
     installation.md
     configuration.md
     usage.md
-    findings/index
+    findings/index.md
     faq.md
     api.md
     contributing.md
     changelog.md
+```
 
 ## Supported Operating Systems
 
@@ -56,5 +60,5 @@ _workers_ to execute on each platform.
 *   Python 3.4 and later
 *   Python 2.6 and later
 
-NOTE: See relevant [FAQ](faq.html) for details on running ``watchmaker`` in
+NOTE: See relevant [FAQ](faq) for details on running ``watchmaker`` in
 Python 2.6.

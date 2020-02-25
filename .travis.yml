@@ -22,7 +22,8 @@ before_install:
   - uname -a
   - lsb_release -a
 install:
-  - pip install --upgrade tox setuptools virtualenv wheel
+  - pip install -r requirements/pip.txt
+  - pip install -r requirements/tox.txt
   - virtualenv --version
   - easy_install --version
   - pip --version

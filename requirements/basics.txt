@@ -1,0 +1,8 @@
+setuptools==36.8.0;python_version<="2.6"
+setuptools==43.0.0;python_version<="3.4" and python_version>="2.7"
+setuptools==45.2.0;python_version>"3.4"
+virtualenv==15.2.0;python_version<="2.6"
+virtualenv==20.0.5;python_version>="2.7"
+wheel==0.29.0;python_version<="2.6"
+wheel==0.33.6;python_version<="3.4" and python_version>="2.7"
+wheel==0.34.2;python_version>"3.4"

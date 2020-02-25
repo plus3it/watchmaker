@@ -1,8 +1,10 @@
+```eval_rst
 .. image:: images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
    :target: https://www.plus3it.com
+```
 <br>
 
 # Configuration
@@ -22,6 +24,18 @@ systems.
 You can create a file using the above format with your own set of standard
 values and use that file for Watchmaker. Pass the CLI parameter `--config` to
 point to that file.
+
+## Configuration Precedence
+
+In addition to passing values in the configuration file, watchmaker supports
+passing arguments on the [cli](usage). The order of precedence for arguments is,
+from least to most:
+
+* configuration file
+* cli argument
+
+In other words, providing a value as a cli argument will override the same value
+provided in the configuration file.
 
 ## config.yaml Parent Nodes
 

@@ -1,8 +1,10 @@
+```eval_rst
 .. image:: images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
    :align: right
    :target: https://www.plus3it.com
+```
 <br>
 
 # Installation
@@ -20,6 +22,7 @@ python3 -m pip install watchmaker
 If you do not have Python or [pip][0], this [Python installation guide][1]
 can guide you through the process.
 
+```eval_rst
 .. note::
 
     Versions 10 and later of ``pip`` do not support Python 2.6. On CentOS 6 and
@@ -27,6 +30,7 @@ can guide you through the process.
     2.6 with ``watchmaker``, you will need to restrict the ``pip`` install such
     that a version earlier than 10 is installed. See the relevant question in
     the [FAQ](faq.html) for more details.
+```
 
 ## From sources
 
