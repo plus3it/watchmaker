@@ -52,9 +52,9 @@ jobs:
     - script: "$(testPython.pythonLocation)/python -c \"import sys; print(sys.version); print(sys.executable)\""
       displayName: show python information
     - script: |
-        $(testPython.pythonLocation)/python -m pip install --upgrade tox setuptools virtualenv wheel
+        $(testPython.pythonLocation)/python -m pip install -r requirements/tox.txt
         $(testPython.pythonLocation)\python -m tox --version
-      displayName: installing tox, setuptools, virtualenv, wheel
+      displayName: installing tox
     # run tests
     - script: $(testPython.pythonLocation)\python -m tox -v
       displayName: run tox test environment
