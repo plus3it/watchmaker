@@ -104,7 +104,7 @@ jobs:
   pool:
     vmImage: 'vs2017-win2016'
   environment: 'standalone'
-  variables: # alternate synatx needed when using a group
+  variables: # alternate syntax needed when using a group
   - group: wam-windows-ci
   - name: deployStage
     value: $(System.DefaultWorkingDirectory)\$(deployStageDir)
@@ -146,3 +146,5 @@ jobs:
             satsuki
           displayName: deploy to github with satsuki
           condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
+          env:
+            SATS_TOKEN: $(githubToken)
