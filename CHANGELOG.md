@@ -1,5 +1,20 @@
 ## Changelog
 
+### 0.17.3
+
+**Commit Delta**: [Change from 0.17.2 release](https://github.com/plus3it/watchmaker/compare/0.17.2...0.17.3)
+
+**Released**: 2020.02.26
+
+**Summary**:
+
+*   dotnet4-formula
+    -   Fix compatibility with Windows Server 2019 by using 2019 hotfixes
+*   ash-linux-formula
+    -   Improvements for STIGv2r6
+    -   Fix collisions caused by cat2 IDs and DISA numbering change
+    -   Use Salt Stack version 2019.2-2
+
 ### 0.17.2
 
 **Commit Delta**: [Change from 0.17.1 release](https://github.com/plus3it/watchmaker/compare/0.17.1...0.17.2)
