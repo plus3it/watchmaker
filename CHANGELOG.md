@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.17.4
+
+**Commit Delta**: [Change from 0.17.3 release](https://github.com/plus3it/watchmaker/compare/0.17.3...0.17.4)
+
+**Released**: 2020.02.28
+
+**Summary**:
+
+*   ash-linux-formula
+    -   Updates custom STIGbyID baseline to address several scan findings.
+*   Add content for RHEL-07-040530/SV-86899
+
 ### 0.17.3
 
 **Commit Delta**: [Change from 0.17.2 release](https://github.com/plus3it/watchmaker/compare/0.17.2...0.17.3)
