@@ -138,9 +138,10 @@ jobs:
             sourceFolder: $(deployStage)\standalone\dist\
         - script: |
             call $(deployStage)\$(deployArtifactName)\gravitybee-environs.bat
-            set SATS_TAG=TESTING--%GB_ENV_APP_VERSION%
+            set SATS_FILES_FILE=$(deployStage)\$(deployArtifactName)\gravitybee-files.json
+            set SATS_TAG=%GB_ENV_APP_VERSION%
             set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
-            set SATS_REL_NAME=Test Release v%GB_ENV_APP_VERSION%
+            set SATS_REL_NAME=Release v%GB_ENV_APP_VERSION%
             set
             python -m pip install -r $(deployStage)\$(deployArtifactName)\deploy.txt
             satsuki
