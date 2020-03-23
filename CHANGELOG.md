@@ -1,14 +1,19 @@
 ## Changelog
 
-### 0.17.6
+### 0.18.0
 
-**Commit Delta**: [Change from 0.17.5 release](https://github.com/plus3it/watchmaker/compare/0.17.5...0.17.6)
+**Commit Delta**: [Change from 0.17.5 release](https://github.com/plus3it/watchmaker/compare/0.17.5...0.18.0)
 
 **Released**: 2020.03.23
 
 **Summary**:
 
-*   Add new vault-auth-formula
+*   Removes deprecated `emet-formula` and `dotnet4-formula` submodules
+*   Adds new `vault-auth-formula` submodule
+*   ash-windows-formula
+    -   Replaces usage of Apply_LGPO_Delta.exe with native python and salt functionality
+    -   Addresses additional findings for domain-joined systems
+    -   Removes deprecated baselines from Windows Server 2008 R2, 8.1, and IE 8, 9, and 10
 
 ### 0.17.5
 
