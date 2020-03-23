@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.17.6
+
+**Commit Delta**: [Change from 0.17.5 release](https://github.com/plus3it/watchmaker/compare/0.17.5...0.17.6)
+
+**Released**: 2020.03.23
+
+**Summary**:
+
+*   Add new vault-auth-formula
+
 ### 0.17.5
 
 **Commit Delta**: [Change from 0.17.4 release](https://github.com/plus3it/watchmaker/compare/0.17.4...0.17.5)
