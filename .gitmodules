@@ -16,9 +16,6 @@
 [submodule "src/watchmaker/static/salt/formulas/name-computer-formula"]
 	path = src/watchmaker/static/salt/formulas/name-computer-formula
 	url = https://github.com/plus3it/name-computer-formula.git
-[submodule "src/watchmaker/static/salt/formulas/emet-formula"]
-	path = src/watchmaker/static/salt/formulas/emet-formula
-	url = https://github.com/plus3it/emet-formula.git
 [submodule "src/watchmaker/static/salt/formulas/windows-update-agent-formula"]
 	path = src/watchmaker/static/salt/formulas/windows-update-agent-formula
 	url = https://github.com/plus3it/windows-update-agent-formula.git
@@ -28,9 +25,6 @@
 [submodule "src/watchmaker/static/salt/formulas/ntp-client-windows-formula"]
 	path = src/watchmaker/static/salt/formulas/ntp-client-windows-formula
 	url = https://github.com/plus3it/ntp-client-windows-formula.git
-[submodule "src/watchmaker/static/salt/formulas/dotnet4-formula"]
-	path = src/watchmaker/static/salt/formulas/dotnet4-formula
-	url = https://github.com/plus3it/dotnet4-formula.git
 [submodule "src/watchmaker/static/salt/formulas/scap-formula"]
 	path = src/watchmaker/static/salt/formulas/scap-formula
 	url = https://github.com/plus3it/scap-formula.git
@@ -49,3 +43,6 @@
 [submodule "src/watchmaker/static/salt/formulas/fup-formula"]
 	path = src/watchmaker/static/salt/formulas/fup-formula
 	url = https://github.com/plus3it/fup-formula.git
+[submodule "src/watchmaker/static/salt/formulas/vault-auth-formula"]
+	path = src/watchmaker/static/salt/formulas/vault-auth-formula
+	url = https://github.com/plus3it/vault-auth-formula
