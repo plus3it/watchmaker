@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.18.1
+
+**Commit Delta**: [Change from 0.18.0 release](https://github.com/plus3it/watchmaker/compare/0.18.0...0.18.1)
+
+**Released**: 2020.03.23
+
+**Summary**:
+
+*   Updates version constraint in default config to allow newer versions
+
 ### 0.18.0
 
 **Commit Delta**: [Change from 0.17.5 release](https://github.com/plus3it/watchmaker/compare/0.17.5...0.18.0)
