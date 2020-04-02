@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.18.2
+
+**Commit Delta**: [Change from 0.18.1 release](https://github.com/plus3it/watchmaker/compare/0.18.1...0.18.2)
+
+**Released**: 2020.04.02
+
+**Summary**:
+
+*   vault-auth-formula
+    - Rename state to vault-auth
+    - Add url keyword argument to read_secret execution module
+
 ### 0.18.1
 
 **Commit Delta**: [Change from 0.18.0 release](https://github.com/plus3it/watchmaker/compare/0.18.0...0.18.1)
