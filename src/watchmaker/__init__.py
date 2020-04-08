@@ -452,6 +452,12 @@ class Client(object):
             self.log.critical(msg)
             raise
 
+        watchmaker.utils.set_file_perms(self.system_params['prepdir'])
+        self.log.info(
+            'Protected Watchmaker\'s files and directories (%s).',
+            self.system_params['prepdir']
+        )
+
         if self.no_reboot:
             self.log.info(
                 'Detected `no-reboot` switch. System will not be '
