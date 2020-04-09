@@ -40,6 +40,13 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             - *Linux*: ``/srv/watchmaker/salt``
             - *Windows*: ``C:\Watchmaker\Salt\srv``
 
+        salt_content_path: (:obj:`str`)
+            Used in conjunction with the "salt_content" arg.
+            Path to the salt content files inside the provided salt_content
+            archive. To be used when salt content files are located within a
+            sub-path of the archive, rather than at its top-level.
+            (*Default*: ``''``)
+
         salt_states: (:obj:`str`)
             Comma-separated string of salt states to execute. Accepts two
             special keywords (case-insensitive).
@@ -97,6 +104,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.valid_envs = kwargs.pop('valid_environments', []) or []
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
         self.salt_content = kwargs.pop('salt_content', None) or ''
+        self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
         self.ou_path = kwargs.pop('ou_path', None) or ''
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
@@ -109,6 +117,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             self.salt_debug_log, self.log)
         self.salt_content = watchmaker.utils.config_none_deprecate(
             self.salt_content, self.log)
+        self.salt_content_path = watchmaker.utils.config_none_deprecate(
+            self.salt_content_path, self.log)
         self.ou_path = watchmaker.utils.config_none_deprecate(
             self.ou_path, self.log)
         self.admin_groups = watchmaker.utils.config_none_deprecate(
@@ -266,6 +276,24 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 filepath=salt_content_file,
                 to_directory=extract_dir
             )
+            if self.salt_content_path:
+                self.log.debug(
+                    'Using salt content path: %s',
+                    self.salt_content_path
+                )
+                try:
+                    salt_content_src = os.sep.join((
+                        extract_dir, self.salt_content_path))
+                    salt_file_names = os.listdir(salt_content_src)
+                    for name in salt_file_names:
+                        srcname = os.sep.join((salt_content_src, name))
+                        shutil.move(srcname, extract_dir)
+                except OSError:
+                    if not os.path.isdir(salt_content_src):
+                        msg = 'Non-existent path in salt content ' \
+                              'file - {0}'.format(salt_content_src)
+                        self.log.critical(msg)
+                        raise
 
         bundled_content = os.sep.join(
             (static.__path__[0], 'salt', 'content')
