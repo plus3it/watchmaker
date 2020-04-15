@@ -10,6 +10,7 @@ import stat
 import warnings
 
 import backoff
+import oschmod
 
 from watchmaker.utils import urllib
 
@@ -130,10 +131,10 @@ def set_file_perms(path, dir_mode=None, file_mode=None):
         path: (:obj:`str`)
             Directory to be secured.
 
-        dir_mode: (:obj:`str`)
+        dir_mode: (`int)
             Mode to be applied to directories.
 
-        file_mode: (:obj:`str`)
+        file_mode: (`int`)
             Mode to be applied to files.
 
     """
@@ -145,9 +146,9 @@ def set_file_perms(path, dir_mode=None, file_mode=None):
 
     for root, dirs, files in os.walk(path, topdown=False):
         for one_file in [os.path.join(root, f) for f in files]:
-            os.chmod(one_file, file_mode)
+            oschmod.set_mode(one_file, file_mode)
 
         for one_dir in [os.path.join(root, d) for d in dirs]:
-            os.chmod(one_dir, dir_mode)
+            oschmod.set_mode(one_dir, dir_mode)
 
-    os.chmod(path, dir_mode)
+    oschmod.set_mode(path, dir_mode)
