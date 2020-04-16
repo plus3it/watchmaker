@@ -14,6 +14,8 @@ import platform
 import subprocess
 import xml.etree.ElementTree
 
+import oschmod
+
 IS_WINDOWS = platform.system() == 'Windows'
 MESSAGE_TYPES = ('Information', 'Warning', 'Error')
 
@@ -141,6 +143,7 @@ def prepare_logging(log_dir, log_level):
         make_log_dir(log_dir)
         log_filename = os.sep.join((log_dir, 'watchmaker.log'))
         hdlr = logging.FileHandler(log_filename)
+        oschmod.set_mode(log_filename, 0o600)
         hdlr.setLevel(level)
         hdlr.setFormatter(logging.Formatter(logformat))
         logging.getLogger().addHandler(hdlr)
