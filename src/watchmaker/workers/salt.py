@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import ast
 import codecs
+import glob
 import json
 import os
 import shutil
@@ -272,28 +273,47 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 salt_content_filename
             ))
             self.retrieve_file(self.salt_content, salt_content_file)
+            temp_extract_dir = extract_dir
+            if self.salt_content_path:
+                temp_extract_dir = os.sep.join((
+                    self.working_dir,
+                    'salt-archive'
+                ))
             self.extract_contents(
                 filepath=salt_content_file,
-                to_directory=extract_dir
+                to_directory=temp_extract_dir
             )
             if self.salt_content_path:
                 self.log.debug(
                     'Using salt content path: %s',
                     self.salt_content_path
                 )
-                try:
-                    salt_content_src = os.sep.join((
-                        extract_dir, self.salt_content_path))
-                    salt_file_names = os.listdir(salt_content_src)
-                    for name in salt_file_names:
-                        srcname = os.sep.join((salt_content_src, name))
-                        shutil.move(srcname, extract_dir)
-                except OSError:
-                    if not os.path.isdir(salt_content_src):
-                        msg = 'Non-existent path in salt content ' \
-                              'file - {0}'.format(salt_content_src)
-                        self.log.critical(msg)
-                        raise
+                salt_content_src = os.sep.join((
+                    temp_extract_dir, self.salt_content_path))
+                salt_files_dir = None
+                for (i, path) in enumerate(glob.glob(salt_content_src)):
+                    if os.path.isdir(path):
+                        if i > 0:
+                            msg = 'Found multiple paths matching' \
+                                  ' \'{0}\' in {1}'.format(
+                                      self.salt_content_path,
+                                      self.salt_content)
+                            self.log.critical(msg)
+                            raise WatchmakerException(msg)
+                        salt_files_dir = path
+                self.log.debug('Using extracted content from: %s',
+                               salt_files_dir)
+
+                for subdir in next(os.walk(salt_files_dir))[1]:
+                    if (
+                            not subdir.startswith('.') and
+                            not os.path.exists(
+                                os.sep.join((extract_dir, subdir)))
+                    ):
+                        watchmaker.utils.copytree(
+                            os.sep.join((salt_files_dir, subdir)),
+                            os.sep.join((extract_dir, subdir))
+                        )
 
         bundled_content = os.sep.join(
             (static.__path__[0], 'salt', 'content')

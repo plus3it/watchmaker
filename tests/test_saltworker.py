@@ -355,6 +355,7 @@ def test_linux_salt_content_none(
     assert mock_yload.call_count == 1
     assert mock_copytree.call_count > 1
 
+
 @pytest.mark.skipif(sys.version_info < (3, 4),
                     reason="Not supported in this Python version.")
 @patch("codecs.open", autospec=True)
@@ -362,12 +363,53 @@ def test_linux_salt_content_none(
 @patch("yaml.safe_dump", autospec=True)
 @patch("yaml.safe_load", autospec=True)
 @patch("watchmaker.utils.copytree", autospec=True)
-@patch("os.listdir", autospec=True)
-@patch("shutil.move", autospec=True)
+@patch("glob.glob", autospec=True)
 def test_linux_salt_content_path_none(
-        mock_move, mock_listdir, mock_copytree, mock_yload,
-        mock_ydump, mock_os, mock_codec):
+        mock_glob, mock_copytree, mock_yload, mock_ydump,
+        mock_os, mock_codec):
     """Test that Pythonic None can be used without error rather than 'None'."""
+    # setup ========================
+    system_params = {}
+    salt_config = {}
+    system_params["prepdir"] = "4504257a-76d0-49bd-9d04-53c1459b7156"
+    system_params["logdir"] = "045143d6-0e87-497f-a11a-5eebb1ec7edf"
+    system_params["workingdir"] = "83f16e7b-c2cf-482b-93c8-32a558f6ded6"
+
+    salt_config["salt_content"] = "33691f8e-e245-4be2-827b-2fa727600fb4.zip"
+    salt_config["salt_content_path"] = None
+
+    # execution ====================
+    saltworker_lx = SaltLinux(system_params, **salt_config)
+    saltworker_lx.working_dir = system_params["workingdir"]
+
+    saltworker_lx.retrieve_file = MagicMock(return_value=None)
+    saltworker_lx.extract_contents = MagicMock(return_value=None)
+
+    saltworker_lx._build_salt_formula("e8d7398e-49fa-4eb9-8f8b-22c9d3fdb7f7")
+
+    # assertions ===================
+    assert saltworker_lx.retrieve_file.call_count == 1
+    assert saltworker_lx.extract_contents.call_count == 1
+    assert mock_codec.call_count == 1
+    assert mock_os.call_count == 2
+    assert mock_ydump.call_count == 1
+    assert mock_yload.call_count == 1
+    assert mock_copytree.call_count > 1
+    assert mock_glob.call_count == 0
+
+
+@pytest.mark.skipif(sys.version_info < (3, 4),
+                    reason="Not supported in this Python version.")
+@patch("codecs.open", autospec=True)
+@patch("os.walk", autospec=True)
+@patch("yaml.safe_dump", autospec=True)
+@patch("yaml.safe_load", autospec=True)
+@patch("watchmaker.utils.copytree", autospec=True)
+@patch("glob.glob", autospec=True)
+def test_linux_salt_content_path(
+        mock_glob, mock_copytree, mock_yload,
+        mock_ydump, mock_os, mock_codec):
+    """Ensure that files from salt_content_path are retrieved correctly."""
     # setup ========================
     system_params = {}
     salt_config = {}
@@ -384,7 +426,9 @@ def test_linux_salt_content_path_none(
     saltworker_lx.retrieve_file = MagicMock(return_value=None)
     saltworker_lx.extract_contents = MagicMock(return_value=None)
     saltworker_lx.working_dir = system_params["workingdir"]
-    mock_listdir.return_value = ['alpha', 'beta']
+    mock_glob.return_value = ['05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d',
+                              '05628e08-f1be-474d-8c12-5bb6517fc5f9/747c3223',
+                              '05628e08-f1be-474d-8c12-5bb6517fc5f9/a73d6348']
 
     saltworker_lx._build_salt_formula("8822e968-deea-410f-9b6e-d25a36c512d1")
 
@@ -392,11 +436,11 @@ def test_linux_salt_content_path_none(
     assert saltworker_lx.retrieve_file.call_count == 1
     assert saltworker_lx.extract_contents.call_count == 1
     assert mock_codec.call_count == 1
-    assert mock_os.call_count == 2
+    assert mock_os.call_count == 3
     assert mock_ydump.call_count == 1
     assert mock_yload.call_count == 1
-    assert mock_listdir.call_count == 2
-    assert mock_move.call_count == 2
+    assert mock_copytree.call_count > 1
+    assert mock_glob.call_count == 1
 
 
 def test_linux_ou_path_none():
