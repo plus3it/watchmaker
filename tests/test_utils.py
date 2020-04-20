@@ -60,7 +60,7 @@ def test_clean_none():
     assert watchmaker.utils.clean_none('not none') == 'not none'
 
 
-def test_set_file_perms():
+def test_set_path_perms():
     """Check file permissions are correctly set."""
     # create dirs
     topdir = 'testdir1'
@@ -87,7 +87,7 @@ def test_set_file_perms():
     time.sleep(2)  # modes aren't always ready to go immediately
 
     # set permissions - the test
-    watchmaker.utils.set_file_perms(topdir)
+    watchmaker.utils.set_path_perms(topdir)
     time.sleep(2)  # modes aren't always ready to go immediately
 
     # check it out

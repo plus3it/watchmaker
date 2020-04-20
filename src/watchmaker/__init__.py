@@ -407,6 +407,7 @@ class Client(object):
             self.system_drive = '/'
             self.workers_manager = LinuxWorkersManager
             self.system_params = self._get_linux_system_params()
+            os.umask(0o077)
         elif 'windows' in self.system:
             self.system_drive = os.environ['SYSTEMDRIVE']
             self.workers_manager = WindowsWorkersManager
@@ -452,7 +453,7 @@ class Client(object):
             self.log.critical(msg)
             raise
 
-        watchmaker.utils.set_file_perms(self.system_params['prepdir'])
+        watchmaker.utils.set_path_perms(self.system_params['prepdir'])
         self.log.info(
             'Protected Watchmaker\'s files and directories (%s).',
             self.system_params['prepdir']
