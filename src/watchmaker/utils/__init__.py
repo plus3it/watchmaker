@@ -6,11 +6,9 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import shutil
 import ssl
-import stat
 import warnings
 
 import backoff
-import oschmod
 
 from watchmaker.utils import urllib
 
@@ -121,34 +119,3 @@ def clean_none(value):
         return None
 
     return value
-
-
-def set_path_perms(path, dir_mode=None, file_mode=None):
-    r"""
-    Set all file and directory permissions at or under path to modes.
-
-    Args:
-        path: (:obj:`str`)
-            Directory to be secured.
-
-        dir_mode: (`int)
-            Mode to be applied to directories.
-
-        file_mode: (`int`)
-            Mode to be applied to files.
-
-    """
-    if not dir_mode:
-        dir_mode = stat.S_IEXEC | stat.S_IWRITE | stat.S_IREAD
-
-    if not file_mode:
-        file_mode = stat.S_IWRITE | stat.S_IREAD
-
-    for root, dirs, files in os.walk(path, topdown=False):
-        for one_file in files:
-            oschmod.set_mode(os.path.join(root, one_file), file_mode)
-
-        for one_dir in dirs:
-            oschmod.set_mode(os.path.join(root, one_dir), dir_mode)
-
-    oschmod.set_mode(path, dir_mode)

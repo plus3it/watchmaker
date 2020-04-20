@@ -4,13 +4,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-import os
-import shutil
-import stat
-import time
-
-import oschmod
-
 import watchmaker.utils
 
 try:
@@ -58,45 +51,3 @@ def test_clean_none():
     assert not watchmaker.utils.clean_none('none')
     assert not watchmaker.utils.clean_none(None)
     assert watchmaker.utils.clean_none('not none') == 'not none'
-
-
-def test_set_path_perms():
-    """Check file permissions are correctly set."""
-    # create dirs
-    topdir = 'testdir1'
-    testdir = os.path.join(topdir, 'testdir2', 'testdir3')
-    os.makedirs(testdir)
-
-    # create files
-    fileh = open(os.path.join(topdir, 'file1'), "w+")
-    fileh.write("contents")
-    fileh.close()
-
-    fileh = open(os.path.join(testdir, 'file2'), "w+")
-    fileh.write("contents")
-    fileh.close()
-
-    # set permissions to badness
-    triple7 = stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR | stat.S_IRGRP\
-        | stat.S_IWGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IWOTH\
-        | stat.S_IXOTH
-    oschmod.set_mode(topdir, triple7)
-    oschmod.set_mode(testdir, triple7)
-    oschmod.set_mode(os.path.join(topdir, 'file1'), triple7)
-    oschmod.set_mode(os.path.join(testdir, 'file2'), triple7)
-    time.sleep(2)  # modes aren't always ready to go immediately
-
-    # set permissions - the test
-    watchmaker.utils.set_path_perms(topdir)
-    time.sleep(2)  # modes aren't always ready to go immediately
-
-    # check it out
-    assert oct(oschmod.get_mode(topdir))[-3:] == "700"
-    assert oct(
-        oschmod.get_mode(os.path.join(topdir, 'testdir2')))[-3:] == "700"
-    assert oct(oschmod.get_mode(testdir))[-3:] == "700"
-    assert oct(oschmod.get_mode(os.path.join(topdir, 'file1')))[-3:] == "600"
-    assert oct(oschmod.get_mode(os.path.join(testdir, 'file2')))[-3:] == "600"
-
-    # clean up
-    shutil.rmtree(topdir)

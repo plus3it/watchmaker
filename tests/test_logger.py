@@ -12,6 +12,7 @@ import subprocess
 import sys
 import xml.etree.ElementTree
 
+import oschmod
 import pytest
 
 from watchmaker import logger
@@ -65,20 +66,23 @@ def test_logger_handler():
     """
     Tests prepare_logging() use case.
 
-    Tests that prepare_logging() will set logger level appropriately
-    and attach a FileHandler if a directory is passed.
+    Tests that prepare_logging() will set logger level appropriately, attach a
+    FileHandler if a directory is passed, and set log file to the correct mode.
     """
-    logger.prepare_logging('./logfiles', 'debug')
+    logger.prepare_logging('logfiles', 'debug')
     this_logger = logging.getLogger()
 
     if logger.HAS_PYWIN32:
         log_hdlr = this_logger.handlers.pop()
-        assert type(log_hdlr) == logging.handlers.NTEventLogHandler
+        assert isinstance(log_hdlr, logging.handlers.NTEventLogHandler)
         assert log_hdlr.level == logging.DEBUG
 
     log_hdlr = this_logger.handlers.pop()
-    assert type(log_hdlr) == logging.FileHandler
+    assert isinstance(log_hdlr, logging.FileHandler)
     assert log_hdlr.level == logging.DEBUG
+
+    assert oschmod.get_mode(
+        os.path.join('logfiles', 'watchmaker.log')) == 0o600
 
 
 def test_log_if_no_log_directory_given(caplog):

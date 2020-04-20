@@ -90,6 +90,7 @@ def make_log_dir(log_dir):
     """
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
+        oschmod.set_mode(log_dir, 0o700)
 
 
 def log_system_details(log):
@@ -144,7 +145,6 @@ def prepare_logging(log_dir, log_level):
         log_filename = os.sep.join((log_dir, 'watchmaker.log'))
         hdlr = logging.FileHandler(log_filename)
         oschmod.set_mode(log_filename, 0o600)
-        oschmod.set_mode(log_dir, 0o700)
         hdlr.setLevel(level)
         hdlr.setFormatter(logging.Formatter(logformat))
         logging.getLogger().addHandler(hdlr)

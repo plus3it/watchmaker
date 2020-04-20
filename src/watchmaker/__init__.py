@@ -10,6 +10,7 @@ import os
 import platform
 import subprocess
 
+import oschmod
 import pkg_resources
 import setuptools
 import yaml
@@ -432,6 +433,7 @@ class Client(object):
         # Create watchmaker directories
         try:
             os.makedirs(self.system_params['workingdir'])
+            oschmod.set_mode(self.system_params['prepdir'], 0o700)
         except OSError:
             if not os.path.exists(self.system_params['workingdir']):
                 msg = (
@@ -452,12 +454,6 @@ class Client(object):
             msg = 'Execution of the workers cadence has failed.'
             self.log.critical(msg)
             raise
-
-        watchmaker.utils.set_path_perms(self.system_params['prepdir'])
-        self.log.info(
-            'Protected Watchmaker\'s files and directories (%s).',
-            self.system_params['prepdir']
-        )
 
         if self.no_reboot:
             self.log.info(
