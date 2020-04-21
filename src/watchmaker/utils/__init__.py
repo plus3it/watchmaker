@@ -121,7 +121,7 @@ def clean_none(value):
     return value
 
 
-def copy_subdirectories(src_dir, dest_dir, log):
+def copy_subdirectories(src_dir, dest_dir, log=None):
     """Copy subdirectories within given src dir into dest dir."""
     for subdir in next(os.walk(src_dir))[1]:
         if (

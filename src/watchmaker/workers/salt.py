@@ -303,7 +303,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                               self.salt_content)
                     self.log.critical(msg)
                     raise WatchmakerException(msg)
-                salt_files_dir = salt_content_glob[0]
+                try:
+                    salt_files_dir = salt_content_glob[0]
+                except IndexError:
+                    msg = 'Salt content glob path \'{0}\' not' \
+                          ' found in {1}'.format(
+                              self.salt_content_path,
+                              self.salt_content)
+                    self.log.critical(msg)
+                    raise WatchmakerException(msg)
 
                 watchmaker.utils.copy_subdirectories(
                     salt_files_dir, extract_dir, self.log)
