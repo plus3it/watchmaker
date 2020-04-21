@@ -364,9 +364,10 @@ def test_linux_salt_content_none(
 @patch("yaml.safe_load", autospec=True)
 @patch("watchmaker.utils.copytree", autospec=True)
 @patch("glob.glob", autospec=True)
+@patch("watchmaker.utils.copy_subdirectories", autospec=True)
 def test_linux_salt_content_path_none(
-        mock_glob, mock_copytree, mock_yload, mock_ydump,
-        mock_os, mock_codec):
+        mock_copysubdirs, mock_glob, mock_copytree, mock_yload,
+        mock_ydump, mock_os, mock_codec):
     """Test that Pythonic None can be used without error rather than 'None'."""
     # setup ========================
     system_params = {}
@@ -390,8 +391,9 @@ def test_linux_salt_content_path_none(
     # assertions ===================
     assert saltworker_lx.retrieve_file.call_count == 1
     assert saltworker_lx.extract_contents.call_count == 1
+    assert mock_copysubdirs.call_count == 1
     assert mock_codec.call_count == 1
-    assert mock_os.call_count == 2
+    assert mock_os.call_count == 1
     assert mock_ydump.call_count == 1
     assert mock_yload.call_count == 1
     assert mock_copytree.call_count > 1
@@ -426,9 +428,7 @@ def test_linux_salt_content_path(
     saltworker_lx.retrieve_file = MagicMock(return_value=None)
     saltworker_lx.extract_contents = MagicMock(return_value=None)
     saltworker_lx.working_dir = system_params["workingdir"]
-    mock_glob.return_value = ['05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d',
-                              '05628e08-f1be-474d-8c12-5bb6517fc5f9/747c3223',
-                              '05628e08-f1be-474d-8c12-5bb6517fc5f9/a73d6348']
+    mock_glob.return_value = ['05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d']
 
     saltworker_lx._build_salt_formula("8822e968-deea-410f-9b6e-d25a36c512d1")
 

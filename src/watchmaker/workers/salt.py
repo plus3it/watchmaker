@@ -43,9 +43,12 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         salt_content_path: (:obj:`str`)
             Used in conjunction with the "salt_content" arg.
-            Path to the salt content files inside the provided salt_content
-            archive. To be used when salt content files are located within a
-            sub-path of the archive, rather than at its top-level.
+            Glob pattern for the location of salt content files inside the
+            provided salt_content archive. To be used when salt content files
+            are located within a sub-path of the archive, rather than at its
+            top-level. Multiple paths matching the given pattern will result
+            in error.
+            E.g. ``salt_content_path='*/'``
             (*Default*: ``''``)
 
         salt_states: (:obj:`str`)
@@ -273,64 +276,43 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 salt_content_filename
             ))
             self.retrieve_file(self.salt_content, salt_content_file)
-            temp_extract_dir = extract_dir
-            if self.salt_content_path:
-                temp_extract_dir = os.sep.join((
-                    self.working_dir,
-                    'salt-archive'
-                ))
-            self.extract_contents(
-                filepath=salt_content_file,
-                to_directory=temp_extract_dir
-            )
-            if self.salt_content_path:
+            if not self.salt_content_path:
+                self.extract_contents(
+                    filepath=salt_content_file,
+                    to_directory=extract_dir
+                )
+            else:
                 self.log.debug(
                     'Using salt content path: %s',
                     self.salt_content_path
                 )
+                temp_extract_dir = os.sep.join((
+                    self.working_dir, 'salt-archive'))
+                self.extract_contents(
+                    filepath=salt_content_file,
+                    to_directory=temp_extract_dir
+                )
                 salt_content_src = os.sep.join((
                     temp_extract_dir, self.salt_content_path))
-                salt_files_dir = None
-                for (i, path) in enumerate(glob.glob(salt_content_src)):
-                    if os.path.isdir(path):
-                        if i > 0:
-                            msg = 'Found multiple paths matching' \
-                                  ' \'{0}\' in {1}'.format(
-                                      self.salt_content_path,
-                                      self.salt_content)
-                            self.log.critical(msg)
-                            raise WatchmakerException(msg)
-                        salt_files_dir = path
-                self.log.debug('Using extracted content from: %s',
-                               salt_files_dir)
+                salt_content_glob = glob.glob(salt_content_src)
+                self.log.debug('salt_content_glob: %s', salt_content_glob)
+                if len(salt_content_glob) > 1:
+                    msg = 'Found multiple paths matching' \
+                          ' \'{0}\' in {1}'.format(
+                              self.salt_content_path,
+                              self.salt_content)
+                    self.log.critical(msg)
+                    raise WatchmakerException(msg)
+                salt_files_dir = salt_content_glob[0]
 
-                for subdir in next(os.walk(salt_files_dir))[1]:
-                    if (
-                            not subdir.startswith('.') and
-                            not os.path.exists(
-                                os.sep.join((extract_dir, subdir)))
-                    ):
-                        watchmaker.utils.copytree(
-                            os.sep.join((salt_files_dir, subdir)),
-                            os.sep.join((extract_dir, subdir))
-                        )
+                watchmaker.utils.copy_subdirectories(
+                    salt_files_dir, extract_dir, self.log)
 
         bundled_content = os.sep.join(
             (static.__path__[0], 'salt', 'content')
         )
-        for subdir in next(os.walk(bundled_content))[1]:
-            if (
-                not subdir.startswith('.') and
-                not os.path.exists(os.sep.join((extract_dir, subdir)))
-            ):
-                watchmaker.utils.copytree(
-                    os.sep.join((bundled_content, subdir)),
-                    os.sep.join((extract_dir, subdir))
-                )
-                self.log.info(
-                    'Using bundled content from %s',
-                    os.sep.join((bundled_content, subdir))
-                )
+        watchmaker.utils.copy_subdirectories(
+            bundled_content, extract_dir, self.log)
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),

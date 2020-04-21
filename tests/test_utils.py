@@ -51,3 +51,21 @@ def test_clean_none():
     assert not watchmaker.utils.clean_none('none')
     assert not watchmaker.utils.clean_none(None)
     assert watchmaker.utils.clean_none('not none') == 'not none'
+
+
+@patch('os.path.exists', autospec=True)
+@patch('watchmaker.utils.copytree', autospec=True)
+@patch("os.walk", autospec=True)
+def test_copy_subdirectories(mock_os, mock_copy, mock_exists):
+    """Test that copy_subdirectories executes expected calls."""
+    random_src = '580a9176-20f6-4f64-b77a-75dbea14d74f'
+    random_dst = '6538965c-5131-414a-897f-b01f7dfb6c2b'
+    mock_exists.return_value = False
+    mock_os.return_value = [
+        ('580a9176-20f6-4f64-b77a-75dbea14d74f', ('87a2a74d',)),
+        ('580a9176-20f6-4f64-b77a-75dbea14d74f/87a2a74d', (),
+            ('6274fd83', '1923c65a')),
+    ].__iter__()
+
+    watchmaker.utils.copy_subdirectories(random_src, random_dst, None)
+    assert mock_copy.call_count == 1
