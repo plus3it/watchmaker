@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import ast
 import codecs
+import glob
 import json
 import os
 import shutil
@@ -39,6 +40,16 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
             - *Linux*: ``/srv/watchmaker/salt``
             - *Windows*: ``C:\Watchmaker\Salt\srv``
+
+        salt_content_path: (:obj:`str`)
+            Used in conjunction with the "salt_content" arg.
+            Glob pattern for the location of salt content files inside the
+            provided salt_content archive. To be used when salt content files
+            are located within a sub-path of the archive, rather than at its
+            top-level. Multiple paths matching the given pattern will result
+            in error.
+            E.g. ``salt_content_path='*/'``
+            (*Default*: ``''``)
 
         salt_states: (:obj:`str`)
             Comma-separated string of salt states to execute. Accepts two
@@ -97,6 +108,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.valid_envs = kwargs.pop('valid_environments', []) or []
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
         self.salt_content = kwargs.pop('salt_content', None) or ''
+        self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
         self.ou_path = kwargs.pop('ou_path', None) or ''
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
@@ -109,6 +121,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             self.salt_debug_log, self.log)
         self.salt_content = watchmaker.utils.config_none_deprecate(
             self.salt_content, self.log)
+        self.salt_content_path = watchmaker.utils.config_none_deprecate(
+            self.salt_content_path, self.log)
         self.ou_path = watchmaker.utils.config_none_deprecate(
             self.ou_path, self.log)
         self.admin_groups = watchmaker.utils.config_none_deprecate(
@@ -262,27 +276,51 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 salt_content_filename
             ))
             self.retrieve_file(self.salt_content, salt_content_file)
-            self.extract_contents(
-                filepath=salt_content_file,
-                to_directory=extract_dir
-            )
+            if not self.salt_content_path:
+                self.extract_contents(
+                    filepath=salt_content_file,
+                    to_directory=extract_dir
+                )
+            else:
+                self.log.debug(
+                    'Using salt content path: %s',
+                    self.salt_content_path
+                )
+                temp_extract_dir = os.sep.join((
+                    self.working_dir, 'salt-archive'))
+                self.extract_contents(
+                    filepath=salt_content_file,
+                    to_directory=temp_extract_dir
+                )
+                salt_content_src = os.sep.join((
+                    temp_extract_dir, self.salt_content_path))
+                salt_content_glob = glob.glob(salt_content_src)
+                self.log.debug('salt_content_glob: %s', salt_content_glob)
+                if len(salt_content_glob) > 1:
+                    msg = 'Found multiple paths matching' \
+                          ' \'{0}\' in {1}'.format(
+                              self.salt_content_path,
+                              self.salt_content)
+                    self.log.critical(msg)
+                    raise WatchmakerException(msg)
+                try:
+                    salt_files_dir = salt_content_glob[0]
+                except IndexError:
+                    msg = 'Salt content glob path \'{0}\' not' \
+                          ' found in {1}'.format(
+                              self.salt_content_path,
+                              self.salt_content)
+                    self.log.critical(msg)
+                    raise WatchmakerException(msg)
+
+                watchmaker.utils.copy_subdirectories(
+                    salt_files_dir, extract_dir, self.log)
 
         bundled_content = os.sep.join(
             (static.__path__[0], 'salt', 'content')
         )
-        for subdir in next(os.walk(bundled_content))[1]:
-            if (
-                not subdir.startswith('.') and
-                not os.path.exists(os.sep.join((extract_dir, subdir)))
-            ):
-                watchmaker.utils.copytree(
-                    os.sep.join((bundled_content, subdir)),
-                    os.sep.join((extract_dir, subdir))
-                )
-                self.log.info(
-                    'Using bundled content from %s',
-                    os.sep.join((bundled_content, subdir))
-                )
+        watchmaker.utils.copy_subdirectories(
+            bundled_content, extract_dir, self.log)
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),

@@ -134,6 +134,11 @@ Parameters supported by the Salt Worker:
 -   `salt_content` (_string_): URL to the Salt content file that contains
     further configuration specific to the salt install.
 
+-   `salt_content_path` (_string_): The path within the Salt content file
+    specified using `salt_content` where salt files are located.
+    Can be used to provide the path within the archive file where
+    the Salt configuration files are located.
+
 -   `install_method` (_string_): (Linux-only) The method used to install Salt.
     Currently supports: `yum`, `git`
 
