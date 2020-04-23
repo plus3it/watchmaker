@@ -13,4 +13,4 @@ m2r==0.2.1
 pep8-naming==0.10.0
 pydocstyle==5.0.2
 pylint==2.4.4
-readme-renderer==25.0
+readme-renderer==26.0
