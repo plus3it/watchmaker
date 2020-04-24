@@ -107,6 +107,29 @@ Parameters supported by the Salt Worker:
     ou_path: "OU=Super Cool App,DC=example,DC=com"
     ```
 
+-   `pip_install` (_list_): The Python package(s) that formulas require.
+
+    ```yaml
+    pip_install:
+        - hvac
+        - numpy
+    ```
+
+-   `pip_args` (_list_): Options to be passed to pip when installing package(s). Options with values should be passed with the option and value as separate list items.
+
+    Linux example where emoji is a value that corresponds to the `--progress-bar` option:
+
+    ```yaml
+    linux:
+      - salt:
+          pip_args:
+            - --ignore-installed
+            - --progress-bar
+            - emoji
+    ```
+
+-   `pip_index` (_string_): Base URL of Python Package Index.
+
 -   `salt_states` (_string, comma-separated_): User-defined salt states to
     apply.
 
@@ -196,6 +219,7 @@ all:
       computer_name: null
       environment: null
       ou_path: null
+      pip_install: null
       salt_content: null
       salt_states: Highstate
       user_formulas:
