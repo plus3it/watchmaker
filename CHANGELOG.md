@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.19.0
+
+**Commit Delta**: [Change from 0.18.2 release](https://github.com/plus3it/watchmaker/compare/0.18.2...0.19.0)
+
+**Released**: 2020.05.01
+
+**Summary**:
+
+*   Updates Watchmaker file permissions and makes them more restrictive
+*   Adds new SaltWorker optional argument `--salt-content-path` that allows specifying glob pattern for
+    salt files located within salt archive file
+
 ### 0.18.2
 
 **Commit Delta**: [Change from 0.18.1 release](https://github.com/plus3it/watchmaker/compare/0.18.1...0.18.2)
