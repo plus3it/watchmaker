@@ -10,6 +10,7 @@ import os
 import platform
 import subprocess
 
+import oschmod
 import pkg_resources
 import setuptools
 import yaml
@@ -407,6 +408,7 @@ class Client(object):
             self.system_drive = '/'
             self.workers_manager = LinuxWorkersManager
             self.system_params = self._get_linux_system_params()
+            os.umask(0o077)
         elif 'windows' in self.system:
             self.system_drive = os.environ['SYSTEMDRIVE']
             self.workers_manager = WindowsWorkersManager
@@ -431,6 +433,7 @@ class Client(object):
         # Create watchmaker directories
         try:
             os.makedirs(self.system_params['workingdir'])
+            oschmod.set_mode(self.system_params['prepdir'], 0o700)
         except OSError:
             if not os.path.exists(self.system_params['workingdir']):
                 msg = (
