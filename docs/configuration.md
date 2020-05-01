@@ -124,8 +124,7 @@ Parameters supported by the Salt Worker:
       - salt:
           pip_args:
             - --ignore-installed
-            - --progress-bar
-            - emoji
+            - --progress-bar=emoji
     ```
 
 -   `pip_index` (_string_): Base URL of Python Package Index.

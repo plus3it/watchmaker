@@ -128,7 +128,6 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.pip_args = kwargs.pop('pip_args', None) or []
         self.pip_index = kwargs.pop('pip_index', None) or \
             'https://pypi.org/simple'
-        self.py_exec = None
         self.salt_states = kwargs.pop('salt_states', None) or ''
         self.exclude_states = kwargs.pop('exclude_states', None) or ''
 
@@ -381,10 +380,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             failed_states = state_ret
         return failed_states
 
-    def _install_pip(self):
-        if not self.py_exec:
-            raise WatchmakerException("Python executable not set")
-
+    def _install_pip(self, py_exec):
         get_pip = os.path.join(
             os.path.abspath(
                 os.path.join(os.path.dirname(__file__), '..', '..')),
@@ -396,20 +392,17 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.log.info(
             'Attempting pip install using get-pip (%s)...', get_pip)
         cmd = [
-            self.py_exec,
+            py_exec,
             get_pip,
             "--index-url",
             self.pip_index
         ]
         self.call_process(cmd)
 
-    def _upgrade_pip(self):
-        if not self.py_exec:
-            raise WatchmakerException("Python executable not set")
-
-        self.log.info('Attempting to upgrade pip...')
+    def _upgrade_pip(self, py_exec):
+        self.log.debug('Attempting to upgrade pip...')
         cmd = [
-            self.py_exec,
+            py_exec,
             "-m",
             "pip",
             "install",
@@ -418,59 +411,40 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             "--index-url",
             self.pip_index
         ]
-        try:
-            self.call_process(cmd)
-        except WatchmakerException:
-            self.log.info(
-                'Unable to upgrade pip, continuing with legacy version')
+        self.call_process(cmd, raise_error=False)
 
-        ver = self.call_process([self.py_exec, '-m', 'pip', '--version'])
-        self.log.info('Pip version: %s', ver['stdout'])
+        ver = self.call_process([py_exec, '-m', 'pip', '--version'])
+        self.log.debug('Pip version: %s', ver['stdout'])
 
     def _install_pip_packages(self):
-        if not self.pip_install:
-            self.log.info('No Python packages specified for install in config')
-            return 0
-
-        self.py_exec = self._get_grain('pythonexecutable')
-        self.log.info('Salt Python interpreter: `%s`', self.py_exec)
+        py_exec = self._get_grain('pythonexecutable')
+        self.log.debug('Salt Python interpreter: `%s`', py_exec)
 
         try:
             ver = self.call_process([
-                self.py_exec,
+                py_exec,
                 '-m',
                 'pip',
                 '--version'])
-            self.log.info('Pip version: %s', ver['stdout'])
+            self.log.debug('Pip version: %s', ver['stdout'])
         except WatchmakerException:
-            self.log.info('Pip not installed for Salt interpreter!')
-            self._install_pip()
+            self.log.debug('Pip not installed for Salt interpreter!')
+            self._install_pip(py_exec)
 
-        self._upgrade_pip()
+        self._upgrade_pip(py_exec)
 
         self.log.info(
             'Pip installing module(s): `%s`', " ".join(self.pip_install))
         pip_cmd = [
-            self.py_exec,
+            py_exec,
             '-m',
             'pip',
             'install'
         ]
         pip_cmd.extend(self.pip_install)
         pip_cmd.extend(['--index-url', self.pip_index])
-        if self.pip_args:
-            pip_cmd.extend(self.pip_args)
+        pip_cmd.extend(self.pip_args)
         self.call_process(pip_cmd)
-
-        pip_list = [
-            self.py_exec,
-            '-m',
-            'pip',
-            'list'
-        ]
-        mod_list = self.call_process(pip_list)
-        self.log.info('Installed Python packages: %s', mod_list['stdout'])
-        return len(self.pip_install)
 
     def run_salt(self, command, **kwargs):
         """
@@ -737,7 +711,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         self.yum_pkgs = [
             'policycoreutils-python',
             'selinux-policy-targeted',
-            'salt-minion'
+            'salt-minion',
         ]
 
         # Set up variables for paths to Salt directories and applications.
@@ -829,7 +803,8 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
-        self._install_pip_packages()
+        if self.pip_install:
+            self._install_pip_packages()
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
@@ -962,7 +937,8 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
-        self._install_pip_packages()
+        if self.pip_install:
+            self._install_pip_packages()
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:

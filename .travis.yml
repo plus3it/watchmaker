@@ -89,7 +89,7 @@ jobs:
       if: type != pull_request AND (branch in (master, develop) OR tag is present)
       python: 3.6
       install:
-        - git submodule update --init --recursive
+        - echo "Install"
       script:
         - chmod +x ci/prep_docker.sh && sudo ci/prep_docker.sh
       before_deploy:
