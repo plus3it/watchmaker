@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.20.0
+
+**Commit Delta**: [Change from 0.19.0 release](https://github.com/plus3it/watchmaker/compare/0.19.0...0.20.0)
+
+**Released**: 2020.05.06
+
+**Summary**:
+
+*   Adds capability to install Python packages using Pip in Salt's Python interpreter
+
 ### 0.19.0
 
 **Commit Delta**: [Change from 0.18.2 release](https://github.com/plus3it/watchmaker/compare/0.18.2...0.19.0)
