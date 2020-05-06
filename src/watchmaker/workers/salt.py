@@ -95,6 +95,18 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             E.g. ``"OU=SuperCoolApp,DC=example,DC=com"``
             (*Default*: ``''``)
 
+        pip_install: (:obj:`list`)
+            Python packages to be installed prior to applying the high state.
+            (*Default*: ``[]``)
+
+        pip_args: (:obj:`list`)
+            Options to pass to pip when installing packages.
+            (*Default*: ``[]``)
+
+        pip_index: (:obj:`str`)
+            URL used for an index by pip.
+            (*Default*: ``https://pypi.org/simple``)
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -112,6 +124,10 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.ou_path = kwargs.pop('ou_path', None) or ''
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
+        self.pip_install = kwargs.pop('pip_install', None) or []
+        self.pip_args = kwargs.pop('pip_args', None) or []
+        self.pip_index = kwargs.pop('pip_index', None) or \
+            'https://pypi.org/simple'
         self.salt_states = kwargs.pop('salt_states', None) or ''
         self.exclude_states = kwargs.pop('exclude_states', None) or ''
 
@@ -340,6 +356,10 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
         self.run_salt(cmd)
 
+    def _get_grain(self, grain):
+        grain_full = self.run_salt(['grains.get', grain])
+        return grain_full['stdout'].decode().split('\n')[1].strip()
+
     def _get_failed_states(self, state_ret):
         failed_states = {}
         try:
@@ -359,6 +379,72 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             self.log.debug('Salt return (KeyError): %s', state_ret)
             failed_states = state_ret
         return failed_states
+
+    def _install_pip(self, py_exec):
+        get_pip = os.path.join(
+            os.path.abspath(
+                os.path.join(os.path.dirname(__file__), '..', '..')),
+            'vendor',
+            'pypa',
+            'get-pip',
+            '2.6',
+            'get-pip.py')
+        self.log.info(
+            'Attempting pip install using get-pip (%s)...', get_pip)
+        cmd = [
+            py_exec,
+            get_pip,
+            "--index-url",
+            self.pip_index
+        ]
+        self.call_process(cmd)
+
+    def _upgrade_pip(self, py_exec):
+        self.log.debug('Attempting to upgrade pip...')
+        cmd = [
+            py_exec,
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "pip",
+            "--index-url",
+            self.pip_index
+        ]
+        self.call_process(cmd, raise_error=False)
+
+        ver = self.call_process([py_exec, '-m', 'pip', '--version'])
+        self.log.debug('Pip version: %s', ver['stdout'])
+
+    def _install_pip_packages(self):
+        py_exec = self._get_grain('pythonexecutable')
+        self.log.debug('Salt Python interpreter: `%s`', py_exec)
+
+        try:
+            ver = self.call_process([
+                py_exec,
+                '-m',
+                'pip',
+                '--version'])
+            self.log.debug('Pip version: %s', ver['stdout'])
+        except WatchmakerException:
+            self.log.debug('Pip not installed for Salt interpreter!')
+            self._install_pip(py_exec)
+
+        self._upgrade_pip(py_exec)
+
+        self.log.info(
+            'Pip installing module(s): `%s`', " ".join(self.pip_install))
+        pip_cmd = [
+            py_exec,
+            '-m',
+            'pip',
+            'install'
+        ]
+        pip_cmd.extend(self.pip_install)
+        pip_cmd.extend(['--index-url', self.pip_index])
+        pip_cmd.extend(self.pip_args)
+        self.call_process(pip_cmd)
 
     def run_salt(self, command, **kwargs):
         """
@@ -717,6 +803,8 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
+        if self.pip_install:
+            self._install_pip_packages()
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
@@ -849,6 +937,8 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
         self._install_package()
+        if self.pip_install:
+            self._install_pip_packages()
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
