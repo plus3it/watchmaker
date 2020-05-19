@@ -319,6 +319,7 @@ def test_linux_salt_debug_log_none(mock_safe, mock_makedirs, mock_codec):
     assert saltworker_lx.salt_debug_logfile == os.sep.join(
         (system_params["logdir"], 'salt_call.debug.log'))
 
+
 @pytest.mark.skipif(sys.version_info < (3, 4),
                     reason="Not supported in this Python version.")
 @patch("codecs.open", autospec=True)

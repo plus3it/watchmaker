@@ -4,8 +4,6 @@ pull_request_rules:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - status-success=continuous-integration/travis-ci/pr
       - status-success=continuous-integration/appveyor/pr
-      - status-success=codecov/project
-      - status-success=codecov/patch
     actions:
       review:
         type: APPROVE
