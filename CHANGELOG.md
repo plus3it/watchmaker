@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.20.1
+
+**Commit Delta**: [Change from 0.20.0 release](https://github.com/plus3it/watchmaker/compare/0.20.0...0.20.1)
+
+**Released**: 2020.05.19
+
+**Summary**:
+
+*   ash-linux-formula
+    - Fixes issue with Postfix occasionally failing to start
+
 ### 0.20.0
 
 **Commit Delta**: [Change from 0.19.0 release](https://github.com/plus3it/watchmaker/compare/0.19.0...0.20.0)
