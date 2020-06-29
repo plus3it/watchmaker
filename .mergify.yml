@@ -3,7 +3,7 @@ pull_request_rules:
     conditions:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - status-success=continuous-integration/travis-ci/pr
-      - status-success=continuous-integration/appveyor/pr
+      - status-success=continuous-integration.azure-devops
     actions:
       review:
         type: APPROVE
