@@ -1,4 +1,4 @@
-dist: xenial
+dist: bionic
 language: python
 stages:
   - test
@@ -9,7 +9,6 @@ env:
     - SEGFAULT_SIGNALS=all
 python:
   - 2.7
-  - 3.4
   - 3.5
   - 3.6
   - 3.7
@@ -54,6 +53,9 @@ jobs:
     - stage: test
       python: 2.6
       dist: trusty
+    - stage: test
+      python: 3.4
+      dist: xenial
     - stage: test
       python: 3.6
       env:

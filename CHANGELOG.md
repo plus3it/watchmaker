@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.20.2
+
+**Commit Delta**: [Change from 0.20.1 release](https://github.com/plus3it/watchmaker/compare/0.20.1...0.20.2)
+
+**Released**: 2020.07.01
+
+**Summary**:
+
+*   scap-formula
+    - Updates SCAP content from DISA (as of June 2020) and OpenSCAP (v0.1.50)
+
 ### 0.20.1
 
 **Commit Delta**: [Change from 0.20.0 release](https://github.com/plus3it/watchmaker/compare/0.20.0...0.20.1)

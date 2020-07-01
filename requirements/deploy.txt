@@ -1,1 +1,1 @@
-satsuki==0.1.22
+satsuki==0.1.24
