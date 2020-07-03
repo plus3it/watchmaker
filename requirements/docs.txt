@@ -1,6 +1,6 @@
 -r docs-check.txt
 
 recommonmark==0.6.0
-setuptools==47.3.2
+setuptools==48.0.0
 sphinx==3.1.1
 sphinx-rtd-theme==0.5.0
