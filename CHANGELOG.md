@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.20.3
+
+**Commit Delta**: [Change from 0.20.2 release](https://github.com/plus3it/watchmaker/compare/0.20.2...0.20.3)
+
+**Released**: 2020.07.07
+
+**Summary**:
+
+*   join-domain-formula
+    - (Linux) Fixes issue with admin users not being able to sudo
+
 ### 0.20.2
 
 **Commit Delta**: [Change from 0.20.1 release](https://github.com/plus3it/watchmaker/compare/0.20.1...0.20.2)
