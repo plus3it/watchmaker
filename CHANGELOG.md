@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.20.5
+
+**Commit Delta**: [Change from 0.20.4 release](https://github.com/plus3it/watchmaker/compare/0.20.4...0.20.5)
+
+**Released**: 2020.07.16
+
+**Summary**:
+
+*   splunkforwarder-formula
+    - (Linux) Patches splunkforwarder state to work with salt 2019.2.5
+
 ### 0.20.4
 
 **Commit Delta**: [Change from 0.20.3 release](https://github.com/plus3it/watchmaker/compare/0.20.3...0.20.4)
