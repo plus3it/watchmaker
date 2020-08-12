@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.21.0
+
+**Commit Delta**: [Change from 0.20.5 release](https://github.com/plus3it/watchmaker/compare/0.20.5...0.21.0)
+
+**Released**: 2020.08.12
+
+**Summary**:
+
+*   Updates default watchmaker config.yaml to use salt 2019.2.5
+
 ### 0.20.5
 
 **Commit Delta**: [Change from 0.20.4 release](https://github.com/plus3it/watchmaker/compare/0.20.4...0.20.5)
