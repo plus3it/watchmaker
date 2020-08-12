@@ -21,7 +21,8 @@ pull_request_rules:
     conditions:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - label=submodules
-      - status-success=codebuild/pr
+      - status-success=codebuild/custom/pr
+      - status-success=codebuild/default/pr
       - "#approved-reviews-by>=1"
     actions:
       merge:
