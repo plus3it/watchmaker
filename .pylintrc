@@ -76,7 +76,8 @@ disable=
     too-many-instance-attributes,
     too-many-statements,
     unnecessary-pass,
-    useless-object-inheritance
+    useless-object-inheritance,
+    imports,
 
 [REPORTS]
 
@@ -383,31 +384,31 @@ max-bool-expr=5
 [IMPORTS]
 
 # Deprecated modules which should not be used, separated by a comma
-deprecated-modules=optparse
+#deprecated-modules=optparse
 
 # Create a graph of every (i.e. internal and external) dependencies in the
 # given file (report RP0402 must not be disabled)
-import-graph=
+#import-graph=
 
 # Create a graph of external dependencies in the given file (report RP0402 must
 # not be disabled)
-ext-import-graph=
+#ext-import-graph=
 
 # Create a graph of internal dependencies in the given file (report RP0402 must
 # not be disabled)
-int-import-graph=
+#int-import-graph=
 
 # Force import order to recognize a module as part of the standard
 # compatibility libraries.
-known-standard-library=
+#known-standard-library=
 
 # Force import order to recognize a module as part of a third party library.
-known-third-party=enchant
+#known-third-party=enchant
 
 # Analyse import fallback blocks. This can be used to support both Python 2 and
 # 3 compatible code, which means that the block might have code that exists
 # only in one or another interpreter, leading to false positives when analysed.
-analyse-fallback-blocks=no
+#analyse-fallback-blocks=no
 
 
 [EXCEPTIONS]
