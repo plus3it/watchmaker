@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.21.1
+
+**Commit Delta**: [Change from 0.21.0 release](https://github.com/plus3it/watchmaker/compare/0.21.0...0.21.1)
+
+**Released**: 2020.08.20
+
+**Summary**:
+
+*   splunkforwarder-formula
+    - (Linux) Patches splunkforwarder state to work with Splunk Universal Forwarder v7.3.6
+
 ### 0.21.0
 
 **Commit Delta**: [Change from 0.20.5 release](https://github.com/plus3it/watchmaker/compare/0.20.5...0.21.0)
