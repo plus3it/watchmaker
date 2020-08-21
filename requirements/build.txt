@@ -1,1 +1,1 @@
-gravitybee==0.1.54
+gravitybee==0.1.55
