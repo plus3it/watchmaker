@@ -957,8 +957,6 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
 
         self.process_grains()
 
-        self.log.info('Generating winrepo cache file...')
-        self.run_salt('winrepo.genrepo')
         self.log.info('Refreshing package database...')
         self.run_salt('pkg.refresh_db')
 
