@@ -1,5 +1,15 @@
 ## Changelog
 
+### 0.21.2
+
+**Commit Delta**: [Change from 0.21.1 release](https://github.com/plus3it/watchmaker/compare/0.21.1...0.21.2)
+
+**Released**: 2020.10.05
+
+**Summary**:
+
+*   (Windows) Removes winrepo.genrepo usage in Salt worker since it's no longer required
+
 ### 0.21.1
 
 **Commit Delta**: [Change from 0.21.0 release](https://github.com/plus3it/watchmaker/compare/0.21.0...0.21.1)
