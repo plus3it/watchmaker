@@ -1,6 +1,6 @@
 -r docs-check.txt
 
-check-manifest==0.43
+check-manifest==0.44
 flake8==3.8.3
 flake8-bugbear==20.1.4
 flake8-builtins==1.5.3
