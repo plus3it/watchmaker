@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.21.3
+
+**Commit Delta**: [Change from 0.21.2 release](https://github.com/plus3it/watchmaker/compare/0.21.2...0.21.3)
+
+**Released**: 2020.10.23
+
+**Summary**:
+
+*   watchmaker-salt-content
+    - (Linux) Updates scap-formula pillar to use alternative stig profile parameter for Red Hat
+
 ### 0.21.2
 
 **Commit Delta**: [Change from 0.21.1 release](https://github.com/plus3it/watchmaker/compare/0.21.1...0.21.2)
