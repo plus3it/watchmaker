@@ -79,8 +79,8 @@ jobs:
       call $(venv)\Scripts\activate.bat
       python -m pip install -r requirements\pip.txt
       python -m pip install -r requirements\build.txt
-      pip install --editable .
-      gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-pkgs boto3 --extra-modules boto3
+      python -m pip install --editable .
+      gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-data ../vendor/pypa/get-pip/2.6 --extra-pkgs boto3 --extra-modules boto3
     displayName: create standalone application
   - script: move requirements\deploy.txt $(artifactDirFull)
     displayName: include requirements.txt for deploy
