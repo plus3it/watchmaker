@@ -1,3 +1,5 @@
+version: ~> 1.0
+
 dist: bionic
 language: python
 stages:
@@ -36,6 +38,7 @@ before_script:
       ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
       sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
     fi
+  - grep "version = " setup.cfg
 after_failure:
   - more .tox/log/* | cat
   - more .tox/*/log/* | cat
@@ -110,7 +113,8 @@ jobs:
       if: type != pull_request AND (branch = develop OR tag is present)
       python: 2.7
       install: skip
-      script: echo "Deploying..."
+      script: skip
+      before_deploy: echo Deploying "$(grep 'version = ' setup.cfg)"
       deploy:
       - provider: pypi
         server: https://test.pypi.org/legacy/
