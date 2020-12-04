@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.21.4
+
+**Commit Delta**: [Change from 0.21.3 release](https://github.com/plus3it/watchmaker/compare/0.21.3...0.21.4)
+
+**Released**: 2020.12.04
+
+**Summary**:
+
+*   nessus-agent-formula
+    - (Linux) Switch to using Salt service state to ensure Nessus agent service is running
+
 ### 0.21.3
 
 **Commit Delta**: [Change from 0.21.2 release](https://github.com/plus3it/watchmaker/compare/0.21.2...0.21.3)
