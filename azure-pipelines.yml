@@ -41,12 +41,6 @@ jobs:
 
 - job: build
   displayName: build standalone
-  dependsOn:
-  - py37_64
-  - py37_32
-  - py36_64
-  - py27_64
-  condition: succeeded()
   pool:
     vmImage: 'vs2017-win2016'
   variables:
@@ -64,24 +58,19 @@ jobs:
       versionSpec: $(py)
       architecture: $(architecture)
     name: buildPython
-  - script: $(buildPython.pythonLocation)\python -m pip install -r requirements/basics.txt
-    displayName: install python basics
-  - script: |
-      mkdir $(venv)
-      $(buildPython.pythonLocation)\python -m virtualenv $(venv)
-    displayName: setup virtual environment
   - ${{ if eq(variables['build.sourceBranch'], 'refs/heads/develop') }}:
     - powershell: |
         $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
         (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg
       displayName: mark the version as development
+  - script: $(buildPython.pythonLocation)\python -m pip install -r requirements/basics.txt
+    displayName: install python basics
+  - script: $(buildPython.pythonLocation)\python -m virtualenv $(venv)
+    displayName: setup virtual environment
   - script: |
       call $(venv)\Scripts\activate.bat
-      python -m pip install -r requirements\pip.txt
-      python -m pip install -r requirements\build.txt
-      pip install --editable .
-      gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-pkgs boto3 --extra-modules boto3
-    displayName: create standalone application
+      call ci/build.cmd
+    displayName: build standalone
   - script: move requirements\deploy.txt $(artifactDirFull)
     displayName: include requirements.txt for deploy
   - script: dir $(artifactDirFull)
@@ -123,7 +112,6 @@ jobs:
           inputs:
             awsCredentials: dev-lab
             targetFolder: $(keyPrefix)
-            #regionName: 'us-east-1' # should come from creds
             bucketName: $(devBucket)
             sourceFolder: $(artifactDirFull)\dist\
         - task: S3Upload@1
@@ -132,7 +120,6 @@ jobs:
           inputs:
             awsCredentials: dev-lab
             targetFolder: $(keyPrefix)
-            #regionName: 'us-east-1' # should come from creds
             bucketName: $(releaseBucket)
             sourceFolder: $(artifactDirFull)\dist\
         - script: |
