@@ -86,25 +86,27 @@ jobs:
         - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
         - echo Tag name is $SATS_TAG
         - pip install -r requirements/deploy.txt
+        - echo Deploying "$(grep 'version = ' setup.cfg)"
+      after_deploy: echo Deployed "$(grep 'version = ' setup.cfg)"
       deploy:
         - provider: script
           # deploy to github releases
           script: satsuki
-          cleanup: false
+          skip_cleanup: true
           on:
             branch: master
         - provider: s3
           bucket: $RELEASE_BUCKET
           upload_dir: $S3_KEYFIX
           local_dir: $GB_ENV_STAGING_DIR
-          cleanup: false
+          skip_cleanup: true
           on:
             tags: true
         - provider: s3
           bucket: $DEV_BUCKET
           upload_dir: $S3_KEYFIX
           local_dir: $GB_ENV_STAGING_DIR
-          cleanup: false
+          skip_cleanup: true
           on:
             branch: develop
 
@@ -115,21 +117,22 @@ jobs:
       install: skip
       script: skip
       before_deploy: echo Deploying "$(grep 'version = ' setup.cfg)"
+      after_deploy: echo Deployed "$(grep 'version = ' setup.cfg)"
       deploy:
       - provider: pypi
         server: https://test.pypi.org/legacy/
         distributions: sdist bdist_wheel
         username: plus3it
         password: $PYPI_TEST_PASSWORD
-        cleanup: false
-        upload_docs: false
+        skip_cleanup: true
+        skip_upload_docs: true
         on:
           branch: develop
       - provider: pypi
         distributions: sdist bdist_wheel
         username: plus3it
         password: $PYPI_PASSWORD
-        cleanup: false
-        upload_docs: false
+        skip_cleanup: true
+        skip_upload_docs: true
         on:
           tags: true
