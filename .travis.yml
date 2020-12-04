@@ -1,3 +1,5 @@
+version: ~> 1.0
+
 dist: bionic
 language: python
 stages:
@@ -12,7 +14,7 @@ python:
   - 3.5
   - 3.6
   - 3.7
-stage: test
+if: branch in (master, develop) OR type = pull_request OR tag is present
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
   - export TOXENV="${TOXENV:-$TRAVIS_PYTHON_VERSION-codecov}"
@@ -36,6 +38,7 @@ before_script:
       ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
       sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
     fi
+  - grep "version = " setup.cfg
 after_failure:
   - more .tox/log/* | cat
   - more .tox/*/log/* | cat
@@ -53,47 +56,28 @@ jobs:
     - stage: test
       python: 2.6
       dist: trusty
+
     - stage: test
       python: 3.4
       dist: xenial
+
     - stage: test
+      name: lint
       python: 3.6
       env:
         - TOXENV=check
+
     - stage: test
+      name: docs
       python: 3.6
       env:
         - TOXENV=docs
-    - stage: deploy
-      if: type != pull_request AND (branch = develop OR tag is present)
-      python: 2.7
-      install: skip
-      script: echo "Deploying..."
-      deploy:
-      - provider: pypi
-        server: https://test.pypi.org/legacy/
-        distributions: sdist bdist_wheel
-        user: plus3it
-        password: $PYPI_TEST_PASSWORD
-        skip_cleanup: true
-        skip_upload_docs: true
-        on:
-          branch: develop
-      - provider: pypi
-        distributions: sdist bdist_wheel
-        user: plus3it
-        password: $PYPI_PASSWORD
-        skip_cleanup: true
-        skip_upload_docs: true
-        on:
-          tags: true
-    - stage: deploy
-      if: type != pull_request AND (branch in (master, develop) OR tag is present)
+
+    - stage: test
+      name: build standalone
       python: 3.6
-      install:
-        - echo "Install"
-      script:
-        - chmod +x ci/prep_docker.sh && sudo ci/prep_docker.sh
+      install: chmod +x ci/prep_docker.sh
+      script: ci/prep_docker.sh
       before_deploy:
         # prepare deployment envs
         - source .gravitybee/gravitybee-environs.sh
@@ -102,6 +86,8 @@ jobs:
         - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
         - echo Tag name is $SATS_TAG
         - pip install -r requirements/deploy.txt
+        - echo Deploying "$(grep 'version = ' setup.cfg)"
+      after_deploy: echo Deployed "$(grep 'version = ' setup.cfg)"
       deploy:
         - provider: script
           # deploy to github releases
@@ -111,15 +97,42 @@ jobs:
             branch: master
         - provider: s3
           bucket: $RELEASE_BUCKET
-          upload-dir: $S3_KEYFIX
-          local-dir: $GB_ENV_STAGING_DIR
+          upload_dir: $S3_KEYFIX
+          local_dir: $GB_ENV_STAGING_DIR
           skip_cleanup: true
           on:
             tags: true
         - provider: s3
           bucket: $DEV_BUCKET
-          upload-dir: $S3_KEYFIX
-          local-dir: $GB_ENV_STAGING_DIR
+          upload_dir: $S3_KEYFIX
+          local_dir: $GB_ENV_STAGING_DIR
           skip_cleanup: true
           on:
             branch: develop
+
+    - stage: deploy
+      name: deploy to pypi
+      if: type != pull_request AND (branch = develop OR tag is present)
+      python: 2.7
+      install: skip
+      script: skip
+      before_deploy: echo Deploying "$(grep 'version = ' setup.cfg)"
+      after_deploy: echo Deployed "$(grep 'version = ' setup.cfg)"
+      deploy:
+      - provider: pypi
+        server: https://test.pypi.org/legacy/
+        distributions: sdist bdist_wheel
+        username: plus3it
+        password: $PYPI_TEST_PASSWORD
+        skip_cleanup: true
+        skip_upload_docs: true
+        on:
+          branch: develop
+      - provider: pypi
+        distributions: sdist bdist_wheel
+        username: plus3it
+        password: $PYPI_PASSWORD
+        skip_cleanup: true
+        skip_upload_docs: true
+        on:
+          tags: true
