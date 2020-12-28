@@ -57,7 +57,8 @@ _workers_ to execute on each platform.
 
 ## Supported Python Versions
 
-*   Python 3.4 and later
+*   Python 3.4
+*   Python 3.6 and later
 *   Python 2.6 and later
 
 NOTE: See relevant [FAQ](faq) for details on running ``watchmaker`` in
