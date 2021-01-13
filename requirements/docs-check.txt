@@ -1,1 +1,1 @@
-pygments==2.7.3
+pygments==2.7.4
