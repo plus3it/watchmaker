@@ -11,9 +11,9 @@ env:
     - SEGFAULT_SIGNALS=all
 python:
   - 2.7
-  - 3.5
   - 3.6
   - 3.7
+  - 3.8
 if: branch in (master, develop) OR type = pull_request OR tag is present
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
@@ -53,14 +53,6 @@ notifications:
     on_failure: always
 jobs:
   include:
-    - stage: test
-      python: 2.6
-      dist: trusty
-
-    - stage: test
-      python: 3.4
-      dist: xenial
-
     - stage: test
       name: lint
       python: 3.6
@@ -113,7 +105,7 @@ jobs:
     - stage: deploy
       name: deploy to pypi
       if: type != pull_request AND (branch = develop OR tag is present)
-      python: 2.7
+      python: 3.6
       install: skip
       script: skip
       before_deploy: echo Deploying "$(grep 'version = ' setup.cfg)"
