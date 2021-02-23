@@ -380,7 +380,7 @@ linkcheck_ignore = [
 
 
 def setup(app):  # noqa: D103
-    app.add_stylesheet("theme_overrides.css")
+    app.add_css_file("theme_overrides.css")
     app.add_config_value(
         'recommonmark_config',
         {
