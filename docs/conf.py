@@ -372,10 +372,11 @@ texinfo_documents = [
 autosectionlabel_prefix_document = True
 
 linkcheck_ignore = [
-    r'https://github.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.\d+){3}',
-    r'https://github.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.x){3}',
-    r'https://watchmaker.cloudarmor.io/releases/(.*)$',
-    r'https://docs\.saltstack\.com/en/latest/ref/modules/all/[a-z\.]*#[a-z\.]*'
+    r'https://github\.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.\d+){3}',
+    r'https://github\.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.x){3}',
+    r'https://watchmaker\.cloudarmor\.io/releases/.*$',
+    r'https://watchmaker\.cloudarmor\.io\/list\.html#.*',
+    r'https://docs\.saltstack\.com/en/latest/ref/modules/all/[a-z\.]*#[a-z\.]*',  # noqa: E501, pylint: disable=line-too-long
 ]
 
 
