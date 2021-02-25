@@ -1,5 +1,21 @@
 ## Changelog
 
+### 0.21.5
+
+**Commit Delta**: [Change from 0.21.4 release](https://github.com/plus3it/watchmaker/compare/0.21.4...0.21.5)
+
+**Released**: 2021.02.25
+
+**Summary**:
+
+*   ash-linux-formula
+    - Replace `watch` with `listen` to restart the `sshd` service a single time
+    - Make state RHEL-07-040560 more resilient when the yum group info is missing
+*   scap-formula
+    - Updates SCAP content from DISA (as of February 2021) and OpenSCAP (v0.1.54)
+*   Update watchmaker default `config.yaml` to use salt v2019.2.8
+*   Ability to browse [Watchmaker Cloudarmor repo](https://watchmaker.cloudarmor.io/list.html)
+
 ### 0.21.4
 
 **Commit Delta**: [Change from 0.21.3 release](https://github.com/plus3it/watchmaker/compare/0.21.3...0.21.4)
