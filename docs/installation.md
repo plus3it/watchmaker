@@ -32,10 +32,10 @@ can guide you through the process.
     the [FAQ](faq.html) for more details.
 ```
 
-## From sources
+## From source
 
 Watchmaker can also be built and installed from source, using `git` and `pip`.
-The sources for `watchmaker` are available from the [GitHub repo][2].
+The source for `watchmaker` are available from the [GitHub repo][2].
 
 1.  First clone the public repository to pull the code to your local machine:
 
@@ -64,60 +64,59 @@ The sources for `watchmaker` are available from the [GitHub repo][2].
     python3 -m pip install .
     ```
 
-## From standalone executable package (Beta feature)
+## From standalone executable
 
-*Standalone packages are a beta feature and may not function in all
-environments.*
+Watchmaker can also be downloaded and executed in an all-in-one package containing
+Watchmaker's dependencies, such as Python and necessary Python packages. Packages
+are available for Windows and Linux.
 
-Watchmaker can also be downloaded and executed in an all-in-one
-package containing Watchmaker's dependencies, such as Python and
-necessary Python packages.  Packages are available for Windows and
-Linux.
+1.  Retrieve the Watchmaker standalone package for your desired platform from
+    GitHub Releases or the [Cloudarmor repo][5].
 
-1.  Download the Watchmaker standalone package for your desired platform from
-    GitHub Releases or AWS S3.
+    *   [GitHub Releases][3] shows the available Watchmaker versions and includes
+        links to the Windows and Linux packages, and their SHA256 hashes.
+    *   The [latest release][4] can also be directly accessed on GitHub:
 
-    *   [GitHub Releases][3] shows the available
-        Watchmaker versions and includes links to the
-        Windows and Linux packages, and SHA256 hashes.
-        The [latest release][4] can also be directly accessed on GitHub.
-    *   The AWS S3 bucket also contains versioned Watchmaker packages
-        and corresponding SHA256 hashes. To access versions on S3, construct a
-        URL using these examples for version 0.9.7:
+        *   `https://github.com/plus3it/watchmaker/releases/latest/`
 
-        *   https://watchmaker.cloudarmor.io/releases/0.9.7/watchmaker-0.9.7-standalone-linux-x86_64
-        *   https://watchmaker.cloudarmor.io/releases/0.9.7/watchmaker-0.9.7-standalone-windows-amd64.exe
+    *   The [Cloudarmor repo][5] also contains versioned Watchmaker packages
+        and corresponding SHA256 hashes. You can [browse the repo][5], or construct
+        the URL to the files using these patterns:
 
-    *   Links to the latest versions of Watchmaker and SHA hashes on S3 are:
+        *   `https://watchmaker.cloudarmor.io/releases/${VERSION}/watchmaker-${VERSION}-standalone-linux-x86_64`
+        *   `https://watchmaker.cloudarmor.io/releases/${VERSION}/watchmaker-${VERSION}-sha256-linux-x86_64.json`
+        *   `https://watchmaker.cloudarmor.io/releases/${VERSION}/watchmaker-${VERSION}-standalone-windows-amd64.exe`
+        *   `https://watchmaker.cloudarmor.io/releases/${VERSION}/watchmaker-${VERSION}-sha256-windows-amd64.json`
 
-        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-linux-x86_64
-        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-sha256-linux-x86_64.json
-        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-windows-amd64.exe
-        *   https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-sha256-windows-amd64.json
+    *   The [latest release][6] is always available on the Cloudarmor repo at these
+        URLs:
 
-    *   From PowerShell, the Windows package can be downloaded
-        as follows:
+        *   `https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-linux-x86_64`
+        *   `https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-sha256-linux-x86_64.json`
+        *   `https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-windows-amd64.exe`
+        *   `https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-sha256-windows-amd64.json`
+
+    *   From PowerShell, the Windows package can be downloaded as follows:
 
         ```ps1con
         PS C:\wam> $url = "https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-windows-amd64.exe"
         PS C:\wam> (New-Object System.Net.WebClient).DownloadFile($url, "watchmaker.exe")
         ```
 
-    *   From the command line, the Linux package can be downloaded
-        as follows:
+    *   From the command line, the Linux package can be downloaded as follows:
 
         ```console
         # curl -so watchmaker https://watchmaker.cloudarmor.io/releases/latest/watchmaker-latest-standalone-linux-x86_64
         ```
 
     *   For the latest package, the version of Watchmaker can be determined by
-        viewing the contents of the SHA256 hash file or by executing the
-        package with the `--version` flag.
+        viewing the contents of the SHA256 hash file or by executing the package
+        with the `--version` flag.
 
 2.  Verify the integrity of the standalone package.
 
-    Compare the SHA256 hash contained in the downloaded hash file to
-    a hash you compute for the package.
+    Compare the SHA256 hash contained in the downloaded hash file to a hash you
+    compute for the package.
 
     For Linux, execute this command to compute the SHA256 hash:
 
@@ -133,8 +132,8 @@ Linux.
 
 3.  Set executable access permission.
 
-    For Linux, you will need to set the access permissions to allow the
-    standalone executable to run. Below is an example:
+    For Linux, you will need to set the access permissions to allow the standalone
+    executable to run. Below is an example:
 
     ```console
     # chmod +x watchmaker-latest-standalone-linux-x86_64
@@ -146,3 +145,5 @@ Linux.
 [2]: https://github.com/plus3it/watchmaker
 [3]: https://github.com/plus3it/watchmaker/releases/
 [4]: https://github.com/plus3it/watchmaker/releases/latest/
+[5]: https://watchmaker.cloudarmor.io/list.html
+[6]: https://watchmaker.cloudarmor.io/list.html#releases/latest/

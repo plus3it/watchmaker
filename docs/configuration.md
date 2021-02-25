@@ -209,6 +209,10 @@ Parameters supported by the Yum Worker:
 
 ## Example config.yaml
 
+This example can be used to construct your own `config.yaml` file. The
+[Cloudarmor repo][2] provides yum repo definitions and installers for a few salt
+versions.
+
 ```yaml
 watchmaker_version: "~= 0.17.0"
 all:
@@ -265,3 +269,4 @@ windows:
 
 [0]: https://yaml.org/spec/1.2/spec.html
 [1]: https://github.com/plus3it/watchmaker/blob/develop/src/watchmaker/static/config.yaml
+[2]: https://watchmaker.cloudarmor.io/list.html
