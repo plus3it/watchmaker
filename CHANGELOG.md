@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.21.6
+
+**Commit Delta**: [Change from 0.21.5 release](https://github.com/plus3it/watchmaker/compare/0.21.5...0.21.6)
+
+**Released**: 2021.03.03
+
+**Summary**:
+
+*   ash-linux-formula
+    - Adds patch to re-enable NOPASSWD sudo for users in /etc/sudoers.d/ after oscap remediation.
+
 ### 0.21.5
 
 **Commit Delta**: [Change from 0.21.4 release](https://github.com/plus3it/watchmaker/compare/0.21.4...0.21.5)
