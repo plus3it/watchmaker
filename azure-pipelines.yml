@@ -56,13 +56,12 @@ jobs:
       versionSpec: $(py)
       architecture: $(architecture)
     name: buildPython
-  - ${{ if eq(variables['build.sourceBranch'], 'refs/heads/main') }}:
-    - powershell: |
-        $ReleaseVersion = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(\d+\.\d+\.\d+).*$', '$2'
-        $PriorVersion = (git describe --abbrev=0 --tags)
-        $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
-        if ($ReleaseVersion -eq $PriorVersion) { (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg }
-      displayName: mark the version as development
+  - powershell: |
+      $ReleaseVersion = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(\d+\.\d+\.\d+).*$', '$2'
+      $PriorVersion = (git describe --abbrev=0 --tags)
+      $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
+      if ($ReleaseVersion -eq $PriorVersion) { (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg }
+    displayName: mark the version as development
   - script: $(buildPython.pythonLocation)\python -m pip install -r requirements/basics.txt
     displayName: install python basics
   - script: $(buildPython.pythonLocation)\python -m virtualenv $(venv)
