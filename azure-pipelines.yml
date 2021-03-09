@@ -4,14 +4,12 @@ trigger:
   batch: true
   branches:
     include:
-    - master
-    - develop
+    - main
     - refs/tags/*
 pr:
   branches:
     include:
-    - master
-    - develop
+    - main
 
 variables:
   # satsuki looks by default for dir named .gravitybee, using that name simplifies
@@ -58,10 +56,12 @@ jobs:
       versionSpec: $(py)
       architecture: $(architecture)
     name: buildPython
-  - ${{ if eq(variables['build.sourceBranch'], 'refs/heads/develop') }}:
+  - ${{ if eq(variables['build.sourceBranch'], 'refs/heads/main') }}:
     - powershell: |
+        $ReleaseVersion = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(\d+\.\d+\.\d+).*$', '$2'
+        $PriorVersion = (git describe --abbrev=0 --tags)
         $ver = (git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
-        (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg
+        if ($ReleaseVersion -eq $PriorVersion) { (Get-Content setup.cfg) -replace '^(version = )(\d+\.\d+\.\d+).*$', ('$1$2.dev' + $ver) | Set-Content setup.cfg }
       displayName: mark the version as development
   - script: $(buildPython.pythonLocation)\python -m pip install -r requirements/basics.txt
     displayName: install python basics
@@ -108,7 +108,7 @@ jobs:
           displayName: check artifacts
         - task: S3Upload@1
           displayName: upload dev standalone binaries to s3 (dev)
-          condition: eq(variables['build.sourceBranch'], 'refs/heads/develop')
+          condition: eq(variables['build.sourceBranch'], 'refs/heads/main')
           inputs:
             awsCredentials: dev-lab
             targetFolder: $(keyPrefix)
