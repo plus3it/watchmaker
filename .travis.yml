@@ -9,12 +9,14 @@ env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
+    - RELEASE_VERSION=$(grep -E '^current_version' $TRAVIS_BUILD_DIR/.bumpversion.cfg | sed 's/^.*= //')
+    - PRIOR_VERSION=$(git describe --abbrev=0 --tags)
 python:
   - 2.7
   - 3.6
   - 3.7
   - 3.8
-if: branch in (master, develop) OR type = pull_request OR tag is present
+if: branch = main OR type = pull_request OR tag is present
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
   - export TOXENV="${TOXENV:-$TRAVIS_PYTHON_VERSION-codecov}"
@@ -33,7 +35,8 @@ script:
   - tox -v
 before_script:
   - |
-    if [ "$TRAVIS_BRANCH" = "develop" ]; then
+    if [[ "$TRAVIS_BRANCH" = "main" && "$PRIOR_VERSION" = "$RELEASE_VERSION" ]]; then
+      # not a release, so need to set the dev version for test pypi and standalones
       # whether setup.cfg version has "dev" or not, it is added but not duplicated
       ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
       sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
@@ -86,7 +89,15 @@ jobs:
           script: satsuki
           skip_cleanup: true
           on:
-            branch: master
+            branch: main
+            condition: '"$PRIOR_VERSION" != "$RELEASE_VERSION"'
+        - provider: s3
+          bucket: $DEV_BUCKET
+          upload_dir: $S3_KEYFIX
+          local_dir: $GB_ENV_STAGING_DIR
+          skip_cleanup: true
+          on:
+            branch: main
         - provider: s3
           bucket: $RELEASE_BUCKET
           upload_dir: $S3_KEYFIX
@@ -94,17 +105,10 @@ jobs:
           skip_cleanup: true
           on:
             tags: true
-        - provider: s3
-          bucket: $DEV_BUCKET
-          upload_dir: $S3_KEYFIX
-          local_dir: $GB_ENV_STAGING_DIR
-          skip_cleanup: true
-          on:
-            branch: develop
 
     - stage: deploy
       name: deploy to pypi
-      if: type != pull_request AND (branch = develop OR tag is present)
+      if: type != pull_request AND (branch = main OR tag is present)
       python: 3.6
       install: skip
       script: skip
@@ -119,7 +123,7 @@ jobs:
         skip_cleanup: true
         skip_upload_docs: true
         on:
-          branch: develop
+          branch: main
       - provider: pypi
         distributions: sdist bdist_wheel
         username: plus3it
