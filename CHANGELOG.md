@@ -1,5 +1,18 @@
 ## Changelog
 
+### 0.21.7
+
+**Commit Delta**: [Change from 0.21.6 release](https://github.com/plus3it/watchmaker/compare/0.21.6...0.21.7)
+
+**Released**: 2021.03.10
+
+**Summary**:
+
+*   ash-linux-formula
+    - Coordinates `sshd` service restarts across all states that modify `/etc/sshd_config`,
+      so the service restarts only once. This avoids systemd failures when the
+      service restarts too frequently. See [ash-linux-formula PR #303](https://github.com/plus3it/ash-linux-formula/pull/303).
+
 ### 0.21.6
 
 **Commit Delta**: [Change from 0.21.5 release](https://github.com/plus3it/watchmaker/compare/0.21.5...0.21.6)
