@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.21.8
+
+**Commit Delta**: [Change from 0.21.7 release](https://github.com/plus3it/watchmaker/compare/0.21.7...0.21.8)
+
+**Released**: 2021.03.11
+
+**Summary**:
+
+*   Updated CI configs to set the correct version for the Windows standalone package.
+    Effectively, this version is the same as 0.21.7.
+
 ### 0.21.7
 
 **Commit Delta**: [Change from 0.21.6 release](https://github.com/plus3it/watchmaker/compare/0.21.6...0.21.7)
