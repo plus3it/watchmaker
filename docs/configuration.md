@@ -268,5 +268,5 @@ windows:
 ```
 
 [0]: https://yaml.org/spec/1.2/spec.html
-[1]: https://github.com/plus3it/watchmaker/blob/develop/src/watchmaker/static/config.yaml
+[1]: https://github.com/plus3it/watchmaker/blob/main/src/watchmaker/static/config.yaml
 [2]: https://watchmaker.cloudarmor.io/list.html
