@@ -99,3 +99,6 @@ Pipfile.lock
 nosetests.xml
 coverage.xml
 htmlcov
+
+# gravitybee build dir
+.gravitybee
