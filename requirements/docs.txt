@@ -2,5 +2,5 @@
 
 recommonmark==0.7.1
 setuptools==54.1.2
-sphinx==3.5.2
+sphinx==3.5.3
 sphinx-rtd-theme==0.5.1
