@@ -179,7 +179,7 @@ specify something like this for EC2 userdata:
     $GitRepo = "https://github.com/<your-github-username>/watchmaker.git"
     $GitBranch = "<your-branch>"
 
-    $BootstrapUrl = "https://raw.githubusercontent.com/plus3it/watchmaker/main/docs/files/bootstrap/watchmaker-bootstrap.ps1"
+    $BootstrapUrl = "https://watchmaker.cloudarmor.io/repo/releases/latest/watchmaker-bootstrap.ps1"
     $PythonUrl = "https://www.python.org/ftp/python/3.6.8/python-3.6.8-amd64.exe"
     $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.21.0.windows.1/Git-2.21.0-64-bit.exe"
     $PypiUrl = "https://pypi.org/simple"
