@@ -28,3 +28,8 @@ gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-da
 
 source .gravitybee/gravitybee-environs.sh
 eval "$GB_ENV_GEN_FILE_W_PATH" --version
+
+# Copies windows bootstrap to the gravitybee staging directory
+cp docs/files/bootstrap/watchmaker-bootstrap.ps1 "${GB_ENV_STAGING_DIR}/${GB_ENV_APP_VERSION}"
+cp docs/files/bootstrap/watchmaker-bootstrap.ps1 "${GB_ENV_STAGING_DIR}/latest"
+ls -alR "${GB_ENV_STAGING_DIR}/"*
