@@ -112,11 +112,12 @@ And then rebooting the system.
 
 ## How do I install watchmaker when I am using Python 2.6?
 
-The trouble here is that a lot of the Python ecosystem has begun deprecating
-support for Python 2.6. Watchmaker still supports Python 2.6, and does control
-its dependency versions based on the Python version. However, there are three
-python "setup" packages needed just to install ``watchmaker``, and these
-packages cannot be platform-restricted within the ``watchmaker`` package
+While Watchmaker no longer offically supports Python 2.6, you may use the last
+version where it was tested, Watchmaker 0.21.7. That version includes pins on
+dependencies that will work for Python 2.6.
+
+However, there are three python "setup" packages needed just to install ``watchmaker``,
+and these packages cannot be platform-restricted within the ``watchmaker`` package
 specification.
 
 Below is the list of packages in question, and the versions that no longer
@@ -134,10 +135,15 @@ Once a Python 2.6-compatible ``pip`` version is installed, you can install
 compatible versions of the other packages like this:
 
 ```shell
-pip install --upgrade "pip<10" "wheel<0.30.0" "setuptools<37"
+python -m pip install --upgrade "pip<10" "wheel<0.30.0" "setuptools<37"
 ```
 
-You can then [install watchmaker](installation) normally.
+You can then [install watchmaker](installation) by restricting the watchmaker
+version to the last version tested with Python 2.6:
+
+```shell
+python -m pip install "watchmaker==0.21.7"
+```
 
 ## How do I get Watchmaker release/project notifications?
 
