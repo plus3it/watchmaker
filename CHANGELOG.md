@@ -1,5 +1,23 @@
 ## Changelog
 
+### 0.21.9
+
+**Commit Delta**: [Change from 0.21.8 release](https://github.com/plus3it/watchmaker/compare/0.21.8...0.21.9)
+
+**Released**: 2021.04.26
+
+**Summary**:
+
+*   Provides support for Salt 3003
+*   ash-linux-formula
+    - Updates syntax to support Salt 3003
+    - RHEL-07-040160 - Ensure no (competing) attempts to set TMOUT
+    - RHEL-07-040860 - Adds ability to handle lack of /etc/sysct.conf file
+*   nessus-agent-formula
+    - Separate agent install and configuration to support baked-in Nessus agent installations
+*   join-domain-formula
+    - (Windows) Add double-quotes to Members parameter in order for startup task state to work with Salt 3003 
+
 ### 0.21.8
 
 **Commit Delta**: [Change from 0.21.7 release](https://github.com/plus3it/watchmaker/compare/0.21.7...0.21.8)
