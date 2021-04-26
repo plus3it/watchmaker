@@ -62,3 +62,9 @@ _workers_ to execute on each platform.
 
 NOTE: If you really need Python 2.6, see the relevant [FAQ](faq) for details on
 installing ``watchmaker`` in Python 2.6.
+
+## Supported Salt Versions
+
+*   Salt 2018.3, from 2018.3.4 and later
+*   Salt 2019.2, from 2019.2.5 and later
+*   Salt 300x, from 3003 and later
