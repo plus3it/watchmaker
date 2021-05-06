@@ -101,7 +101,7 @@ salt-call -c /opt/watchmaker/salt state.show_top
 ## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?
 
 Yes, indirectly. Because watchmaker implements most of its functionality via
-[SaltStack](https://www.saltstack.com) modules, you can directly-use the underlying
+[SaltStack](https://saltproject.io/) modules, you can directly-use the underlying
 SaltStack functionality to effect the desired change. This is done from the
 commandline - as root - by executing:
 
