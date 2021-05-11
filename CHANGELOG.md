@@ -1,5 +1,30 @@
 ## Changelog
 
+### 0.22.1
+
+**Commit Delta**: [Change from 0.22.0 release](https://github.com/plus3it/watchmaker/compare/0.22.0...0.22.1)
+
+**Released**: 2021.05.11
+
+**Summary**:
+
+*   ash-linux-formula/nessus-agent-formula
+    - Patches maxdepth parameter to use integer type to support Jinja rendering in Salt 3003
+
+### 0.22.0
+
+**Commit Delta**: [Change from 0.21.9 release](https://github.com/plus3it/watchmaker/compare/0.21.9...0.22.0)
+
+**Released**: 2021.05.07
+
+**Summary**:
+
+*   Updates default config.yaml to use Salt 3003
+*   ash-linux-formula
+    - Adds ability to selectively skip extra EL7 STIG handlers 
+*   nessus-agent-formula
+    - (Linux) Updates nessus-agent to call install and configure states
+
 ### 0.21.9
 
 **Commit Delta**: [Change from 0.21.8 release](https://github.com/plus3it/watchmaker/compare/0.21.8...0.21.9)
