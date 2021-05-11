@@ -200,7 +200,8 @@ class PlatformManagerBase(object):
 
         with subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
-        ) as process, concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        ) as process, \
+            concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             stdout_future = executor.submit(
                 self._pipe_handler,
                 process.stdout,
