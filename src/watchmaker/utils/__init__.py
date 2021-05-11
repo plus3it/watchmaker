@@ -59,6 +59,7 @@ def urlopen_retry(uri):
     except AttributeError:
         pass
 
+    # pylint: disable=consider-using-with
     return urllib.request.urlopen(uri, **kwargs)
 
 
