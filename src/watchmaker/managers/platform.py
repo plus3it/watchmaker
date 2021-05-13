@@ -198,14 +198,11 @@ class PlatformManagerBase(object):
 
             kwargs['env'] = env
 
-        process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            **kwargs
-        )
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        with subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+        ) as process, concurrent.futures.ThreadPoolExecutor(
+            max_workers=2
+        ) as executor:
             stdout_future = executor.submit(
                 self._pipe_handler,
                 process.stdout,
@@ -222,7 +219,7 @@ class PlatformManagerBase(object):
             ret['stdout'] = stdout_future.result()
             ret['stderr'] = stderr_future.result()
 
-        ret['retcode'] = process.wait()
+            ret['retcode'] = process.wait()
 
         self.log.debug('Command retcode: %s', ret['retcode'])
 
