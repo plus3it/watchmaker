@@ -387,7 +387,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             'vendor',
             'pypa',
             'get-pip',
-            '2.6',
+            'public',
+            '2.7',
             'get-pip.py')
         self.log.info(
             'Attempting pip install using get-pip (%s)...', get_pip)
