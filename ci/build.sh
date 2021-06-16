@@ -24,7 +24,7 @@ python -m pip install --editable .
 python -m pip list
 
 # creates standalone
-gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-data ../vendor/pypa/get-pip/2.6 --extra-pkgs boto3 --extra-modules boto3
+gravitybee --src-dir src --sha file --with-latest --extra-data static --extra-data ../vendor/pypa/get-pip/public/2.7 --extra-pkgs boto3 --extra-modules boto3
 
 source .gravitybee/gravitybee-environs.sh
 eval "$GB_ENV_GEN_FILE_W_PATH" --version
