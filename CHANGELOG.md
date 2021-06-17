@@ -1,5 +1,16 @@
 ## Changelog
 
+### 0.22.2
+
+**Commit Delta**: [Change from 0.22.1 release](https://github.com/plus3it/watchmaker/compare/0.22.1...0.22.2)
+
+**Released**: 2021.06.17
+
+**Summary**:
+
+*   ash-linux-formula
+    - Patches RHEL-07-040810 to apply to only iptables-services RPM and not core-package iptables RPM
+
 ### 0.22.1
 
 **Commit Delta**: [Change from 0.22.0 release](https://github.com/plus3it/watchmaker/compare/0.22.0...0.22.1)
