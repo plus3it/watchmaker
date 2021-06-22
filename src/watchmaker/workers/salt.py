@@ -52,8 +52,9 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             (*Default*: ``''``)
 
         salt_states: (:obj:`str`)
-            Comma-separated string of salt states to execute. Accepts two
-            special keywords (case-insensitive).
+            Comma-separated string of salt states to execute. When "highstate"
+            is included with additional states, "highstate" runs first, then
+            the other states. Accepts two special keywords (case-insensitive):
             (*Default*: ``''``)
 
             - ``none``: Do not apply any salt states.
@@ -611,8 +612,10 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         Args:
             states: (:obj:`str`)
-                Comma-separated string of salt states to execute. Accepts two
-                special keywords (case-insensitive):
+                Comma-separated string of salt states to execute. When
+                "highstate" is included with additional states, "highstate"
+                runs first, then the other states. Accepts two special
+                keywords (case-insensitive):
 
                 - ``none``: Do not apply any salt states.
                 - ``highstate``: Apply the salt "highstate".
@@ -625,22 +628,26 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             self.log.info(
                 'No States were specified. Will not apply any salt states.'
             )
-        else:
-            cmd = self.salt_state_args
+            return
 
-            if states.lower() == 'highstate':
-                self.log.info(
-                    'Applying the salt "highstate", states=%s',
-                    states
-                )
-                cmd.extend(['state.highstate'])
-            else:
-                self.log.info(
-                    'Applying the user-defined list of states, states=%s',
-                    states
-                )
-                cmd.extend(['state.sls', states])
+        cmds = []
+        states = states.lower().split(',')
+        salt_cmd = self.salt_state_args
 
+        if 'highstate' in states:
+            self.log.info('Applying the salt "highstate"')
+            states.remove('highstate')
+            cmds.append(salt_cmd + ['state.highstate'])
+
+        if states:
+            self.log.info(
+                'Applying the user-defined list of states, states=%s',
+                states
+            )
+            states = ','.join(states)
+            cmds.append(salt_cmd + ['state.sls', states])
+
+        for cmd in cmds:
             if exclude:
                 cmd.extend(['exclude={0}'.format(exclude)])
 
@@ -661,7 +668,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                         )
                     )
 
-            self.log.info('Salt states all applied successfully!')
+        self.log.info('Salt states all applied successfully!')
 
 
 class SaltLinux(SaltBase, LinuxPlatformManager):
