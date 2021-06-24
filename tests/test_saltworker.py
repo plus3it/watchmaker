@@ -27,6 +27,18 @@ def saltworker_client():
     return SaltBase(system_params, **salt_config)
 
 
+@pytest.fixture
+def saltworker_base_salt_args():
+    """Return base arguments for salt-call."""
+    return [
+        '--log-file', 'salt_call.debug.log',
+        '--log-file-level', 'debug',
+        '--log-level', 'error',
+        '--out', 'quiet',
+        '--return', 'local'
+    ]
+
+
 def test_default_valid_environments(saltworker_client):
     """
     Ensure valid_environment checks work as expected.
@@ -67,7 +79,10 @@ def test_valid_environment(saltworker_client):
     assert saltworker_client.before_install() is None
 
 
-def test_process_states_highstate(saltworker_client):
+def test_process_states_highstate(
+    saltworker_client,
+    saltworker_base_salt_args,
+):
     """
     Run process_states with "highstate".
 
@@ -80,13 +95,7 @@ def test_process_states_highstate(saltworker_client):
     exclude = None
 
     saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
-    saltworker_client.salt_state_args = [
-        '--log-file', 'salt_call.debug.log',
-        '--log-file-level', 'debug',
-        '--log-level', 'error',
-        '--out', 'quiet',
-        '--return', 'local'
-    ]
+    saltworker_client.salt_state_args = saltworker_base_salt_args
 
     expected = saltworker_client.salt_state_args + ['state.highstate']
 
@@ -102,7 +111,10 @@ def test_process_states_highstate(saltworker_client):
     assert saltworker_client.run_salt.call_count == 1
 
 
-def test_process_states_multiple_states(saltworker_client):
+def test_process_states_multiple_states(
+    saltworker_client,
+    saltworker_base_salt_args,
+):
     """
     Run process_states with "foo,bar".
 
@@ -115,13 +127,7 @@ def test_process_states_multiple_states(saltworker_client):
     exclude = None
 
     saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
-    saltworker_client.salt_state_args = [
-        '--log-file', 'salt_call.debug.log',
-        '--log-file-level', 'debug',
-        '--log-level', 'error',
-        '--out', 'quiet',
-        '--return', 'local'
-    ]
+    saltworker_client.salt_state_args = saltworker_base_salt_args
 
     expected = saltworker_client.salt_state_args + ['state.sls', 'foo,bar']
 
@@ -137,7 +143,10 @@ def test_process_states_multiple_states(saltworker_client):
     assert saltworker_client.run_salt.call_count == 1
 
 
-def test_process_states_highstate_extra_states(saltworker_client):
+def test_process_states_highstate_extra_states(
+    saltworker_client,
+    saltworker_base_salt_args,
+):
     """
     Run process_states with "highstate,foo,bar".
 
@@ -150,13 +159,7 @@ def test_process_states_highstate_extra_states(saltworker_client):
     exclude = None
 
     saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
-    saltworker_client.salt_state_args = [
-        '--log-file', 'salt_call.debug.log',
-        '--log-file-level', 'debug',
-        '--log-level', 'error',
-        '--out', 'quiet',
-        '--return', 'local'
-    ]
+    saltworker_client.salt_state_args = saltworker_base_salt_args
 
     call_1 = saltworker_client.salt_state_args + ['state.highstate']
     call_2 = saltworker_client.salt_state_args + ['state.sls', 'foo,bar']
