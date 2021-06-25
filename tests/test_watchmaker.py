@@ -82,3 +82,83 @@ def test_argument_default_value():
     assert watchmaker_arguments.computer_name == check_val
     assert watchmaker_arguments.salt_states == check_val
     assert watchmaker_arguments.ou_path == check_val
+
+
+def test_extra_arguments_string():
+    """Test string in extra_arguments loads correctly."""
+    # setup
+    raw_arguments = {
+        "extra_arguments": [
+            '--foo',
+            'bar'
+        ]
+    }
+    check_val = {"foo": "bar"}
+
+    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+
+    # test
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    # assertions
+    assert watchmaker_client.worker_args == check_val
+
+
+def test_extra_arguments_quoted_string():
+    """Test quoted string in extra_arguments loads correctly."""
+    # setup
+    raw_arguments = {
+        "extra_arguments": [
+            '--foo',
+            '"bar"'
+        ]
+    }
+    check_val = {"foo": "bar"}
+
+    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+
+    # test
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    # assertions
+    assert watchmaker_client.worker_args == check_val
+
+
+def test_extra_arguments_list():
+    """Test list in extra_arguments loads correctly."""
+    # setup
+    raw_arguments = {
+        "extra_arguments": [
+            '--foo',
+            '["bar"]'
+        ]
+    }
+    check_val = {"foo": ["bar"]}
+
+    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+
+    # test
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    # assertions
+    assert watchmaker_client.worker_args == check_val
+
+
+def test_extra_arguments_map():
+    """Test map in extra_arguments loads correctly."""
+    # setup
+    raw_arguments = {
+        "extra_arguments": [
+            '--user-formulas',
+            '{"foo-formula": "https://url"}'
+        ]
+    }
+    check_val = {"user_formulas": {"foo-formula": "https://url"}}
+
+    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+
+    # test
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    # assertions
+    assert watchmaker_client.worker_args == check_val

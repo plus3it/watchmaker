@@ -261,7 +261,7 @@ class Client(object):
         ))
         # Set self.worker_args, removing `None` values from worker_args
         self.worker_args = dict(
-            (k, v) for k, v in worker_args.items()
+            (k, yaml.safe_load(v)) for k, v in worker_args.items()
             if v != Arguments.DEFAULT_VALUE
         )
 

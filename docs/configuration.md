@@ -173,7 +173,8 @@ Parameters supported by the Salt Worker:
 -   `salt_version` (_string_): (Linux-only) A git reference present in
     `git_repo`, such as a commit or a tag. If not specifid, the HEAD of the
     default branch will be used.
-    `installer_url` (_string_): (Windows-only) URL to the Salt Minion installer
+
+-   `installer_url` (_string_): (Windows-only) URL to the Salt Minion installer
     for Windows.
 
 ### yum worker (linux-only)
