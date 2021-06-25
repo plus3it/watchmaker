@@ -13,9 +13,9 @@ from watchmaker.exceptions import InvalidValue
 from watchmaker.workers.salt import SaltBase, SaltLinux, SaltWindows
 
 try:
-    from unittest.mock import MagicMock, patch
+    from unittest.mock import MagicMock, call, patch
 except ImportError:
-    from mock import MagicMock, patch
+    from mock import MagicMock, call, patch
 
 
 @pytest.fixture
@@ -25,6 +25,18 @@ def saltworker_client():
     salt_config = {}
 
     return SaltBase(system_params, **salt_config)
+
+
+@pytest.fixture
+def saltworker_base_salt_args():
+    """Return base arguments for salt-call."""
+    return [
+        '--log-file', 'salt_call.debug.log',
+        '--log-file-level', 'debug',
+        '--log-level', 'error',
+        '--out', 'quiet',
+        '--return', 'local'
+    ]
 
 
 def test_default_valid_environments(saltworker_client):
@@ -65,6 +77,104 @@ def test_valid_environment(saltworker_client):
     saltworker_client.ent_env = "dev"
     saltworker_client.valid_envs = [None, "dev", "test", "prod"]
     assert saltworker_client.before_install() is None
+
+
+def test_process_states_highstate(
+    saltworker_client,
+    saltworker_base_salt_args,
+):
+    """
+    Run process_states with "highstate".
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    # setup
+    states = 'highstate'
+    exclude = None
+
+    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.salt_state_args = saltworker_base_salt_args
+
+    expected = saltworker_client.salt_state_args + ['state.highstate']
+
+    # test
+    saltworker_client.process_states(states, exclude)
+
+    # assertions
+    saltworker_client.run_salt.assert_called_with(
+        expected,
+        log_pipe='stderr',
+        raise_error=False
+    )
+    assert saltworker_client.run_salt.call_count == 1
+
+
+def test_process_states_multiple_states(
+    saltworker_client,
+    saltworker_base_salt_args,
+):
+    """
+    Run process_states with "foo,bar".
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    # setup
+    states = 'foo,bar'
+    exclude = None
+
+    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.salt_state_args = saltworker_base_salt_args
+
+    expected = saltworker_client.salt_state_args + ['state.sls', 'foo,bar']
+
+    # test
+    saltworker_client.process_states(states, exclude)
+
+    # assertions
+    saltworker_client.run_salt.assert_called_with(
+        expected,
+        log_pipe='stderr',
+        raise_error=False
+    )
+    assert saltworker_client.run_salt.call_count == 1
+
+
+def test_process_states_highstate_extra_states(
+    saltworker_client,
+    saltworker_base_salt_args,
+):
+    """
+    Run process_states with "highstate,foo,bar".
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    # setup
+    states = 'highstate,foo,bar'
+    exclude = None
+
+    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.salt_state_args = saltworker_base_salt_args
+
+    call_1 = saltworker_client.salt_state_args + ['state.highstate']
+    call_2 = saltworker_client.salt_state_args + ['state.sls', 'foo,bar']
+
+    calls = [
+        call(call_1, log_pipe='stderr', raise_error=False),
+        call(call_2, log_pipe='stderr', raise_error=False),
+    ]
+
+    # test
+    saltworker_client.process_states(states, exclude)
+
+    # assertions
+    saltworker_client.run_salt.assert_has_calls(calls)
+    assert saltworker_client.run_salt.call_count == len(calls)
 
 
 @patch.dict(os.environ, {"systemdrive": "C:"})
