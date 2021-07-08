@@ -133,7 +133,7 @@ Parameters supported by the Salt Worker:
     apply.
 
     ```yaml
-    salt_states: foo,bar
+    salt_states: highstate,foo,bar
     ```
 
 -   `exclude_states` (_string, comma-separated_): States to exclude from
