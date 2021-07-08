@@ -1,5 +1,19 @@
 ## Changelog
 
+### 0.23.0
+
+**Commit Delta**: [Change from 0.22.2 release](https://github.com/plus3it/watchmaker/compare/0.22.2...0.23.0)
+
+**Released**: 2021.07.08
+
+**Summary**:
+
+*   Adds capability to run extra states after highstate
+    - E.g. from cli, `--salt-states highstate,foo,bar`
+    - E.g. in config file, `salt_states: highstate,foo,bar`
+*   Adds capability to pass complex worker arguments on the cli as JSON or YAML
+    - E.g. `--user-formulas '[{"foo-formula": "https://url-to/foo-formula.zip"}]'`
+
 ### 0.22.2
 
 **Commit Delta**: [Change from 0.22.1 release](https://github.com/plus3it/watchmaker/compare/0.22.1...0.22.2)
