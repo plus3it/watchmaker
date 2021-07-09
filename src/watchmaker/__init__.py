@@ -8,6 +8,7 @@ import datetime
 import logging
 import os
 import platform
+import re
 import subprocess
 
 import oschmod
@@ -196,10 +197,33 @@ class Arguments(dict):
             kwargs.pop('salt_states', None) or Arguments.DEFAULT_VALUE)
         self.ou_path = watchmaker.utils.clean_none(
             kwargs.pop('ou_path', None) or Arguments.DEFAULT_VALUE)
-        self.extra_arguments = [
-            watchmaker.utils.clean_none(val or Arguments.DEFAULT_VALUE)
-            for val in kwargs.pop('extra_arguments', None) or []
-        ]
+
+        # Parse extra_arguments passed as `--argument=value` into separate
+        # tokens, ['--argument', 'value']. This way the `=` as the separator is
+        # treated the same as the ` ` as the separator, e.g. `--argument value`
+        extra_arguments = []
+        for item in kwargs.pop('extra_arguments', None) or []:
+            match = re.match('^(?P<arg>-+.*?)=(?P<val>.*)', item)
+            if match:
+                # item is using '=' to separate argument name and value
+                extra_arguments.extend([
+                    match.group('arg'),
+                    watchmaker.utils.clean_none(
+                        match.group('val') or Arguments.DEFAULT_VALUE
+                    )
+                ])
+            elif item.startswith('-'):
+                # item is the argument name
+                extra_arguments.extend([item])
+            else:
+                # item is the argument value
+                extra_arguments.extend([
+                    watchmaker.utils.clean_none(
+                        item or Arguments.DEFAULT_VALUE
+                    )
+                ])
+
+        self.extra_arguments = extra_arguments
 
     def __getattr__(self, attr):
         """Support attr-notation for getting dict contents."""

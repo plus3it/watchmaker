@@ -104,6 +104,25 @@ def test_extra_arguments_string():
     assert watchmaker_client.worker_args == check_val
 
 
+def test_extra_arguments_equal_separator():
+    """Test equal separator in extra_arguments loads correctly."""
+    # setup
+    raw_arguments = {
+        "extra_arguments": [
+            '--foo=bar',
+        ]
+    }
+    check_val = {"foo": "bar"}
+
+    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+
+    # test
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    # assertions
+    assert watchmaker_client.worker_args == check_val
+
+
 def test_extra_arguments_quoted_string():
     """Test quoted string in extra_arguments loads correctly."""
     # setup
