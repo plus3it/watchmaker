@@ -32,6 +32,7 @@ if [ -n "${DOCKER_SLUG}" ]; then
     docker exec "${DOCKER_INSTANCE_NAME}" ci/build.sh
 
     docker stop "${DOCKER_INSTANCE_NAME}"
+    docker rm "${DOCKER_INSTANCE_NAME}"
 
   else
 
