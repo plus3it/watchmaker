@@ -1,5 +1,19 @@
 ## Changelog
 
+### 0.23.1
+
+**Commit Delta**: [Change from 0.23.0 release](https://github.com/plus3it/watchmaker/compare/0.23.0...0.23.1)
+
+**Released**: 2021.07.15
+
+**Summary**:
+
+*   ash-linux-formula
+    - Supports managing FIPS when / and /boot are on the same partition
+    - Allows `oscap remediate` to exit non-zero on valid errors
+*   Supports parsing extra_arguments when passed using `=` as the separator
+    - E.g. `--user-formulas='{"foo-formula": "https://url-to/foo-formula.zip"}'`
+
 ### 0.23.0
 
 **Commit Delta**: [Change from 0.22.2 release](https://github.com/plus3it/watchmaker/compare/0.22.2...0.23.0)
@@ -12,7 +26,7 @@
     - E.g. from cli, `--salt-states highstate,foo,bar`
     - E.g. in config file, `salt_states: highstate,foo,bar`
 *   Adds capability to pass complex worker arguments on the cli as JSON or YAML
-    - E.g. `--user-formulas '[{"foo-formula": "https://url-to/foo-formula.zip"}]'`
+    - E.g. `--user-formulas '{"foo-formula": "https://url-to/foo-formula.zip"}'`
 
 ### 0.22.2
 
