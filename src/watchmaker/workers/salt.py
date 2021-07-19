@@ -8,7 +8,6 @@ import codecs
 import glob
 import json
 import os
-import re
 import shutil
 
 import yaml
@@ -632,15 +631,17 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             return
 
         cmds = []
+        states = states.split(',')
         salt_cmd = self.salt_state_args
 
-        if 'highstate' in states.lower().split(','):
+        highstate = False
+        for state in states:
+            if state.lower() == 'highstate':
+                highstate = True
+                states.remove(state)
+
+        if highstate:
             self.log.info('Applying the salt "highstate"')
-            states = ','.join(' '.join(re.sub(
-                'highstate',
-                '',
-                states,
-                flags=re.IGNORECASE).split(',')).split())
             cmds.append(salt_cmd + ['state.highstate'])
 
         if states:
@@ -648,6 +649,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 'Applying the user-defined list of states, states=%s',
                 states
             )
+            states = ','.join(states)
             cmds.append(salt_cmd + ['state.sls', states])
 
         for cmd in cmds:
