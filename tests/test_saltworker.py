@@ -143,6 +143,38 @@ def test_process_states_multiple_states(
     assert saltworker_client.run_salt.call_count == 1
 
 
+def test_process_states_multiple_states_case_sensitive(
+    saltworker_client,
+    saltworker_base_salt_args,
+):
+    """
+    Run process_states with "Foo,bAR".
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    # setup
+    states = 'Foo,bAR'
+    exclude = None
+
+    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.salt_state_args = saltworker_base_salt_args
+
+    expected = saltworker_client.salt_state_args + ['state.sls', 'Foo,bAR']
+
+    # test
+    saltworker_client.process_states(states, exclude)
+
+    # assertions
+    saltworker_client.run_salt.assert_called_with(
+        expected,
+        log_pipe='stderr',
+        raise_error=False
+    )
+    assert saltworker_client.run_salt.call_count == 1
+
+
 def test_process_states_highstate_extra_states(
     saltworker_client,
     saltworker_base_salt_args,
