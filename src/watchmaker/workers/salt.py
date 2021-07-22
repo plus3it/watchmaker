@@ -631,12 +631,17 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             return
 
         cmds = []
-        states = states.lower().split(',')
+        states = states.split(',')
         salt_cmd = self.salt_state_args
 
-        if 'highstate' in states:
+        highstate = False
+        for state in states:
+            if state.lower() == 'highstate':
+                highstate = True
+                states.remove(state)
+
+        if highstate:
             self.log.info('Applying the salt "highstate"')
-            states.remove('highstate')
             cmds.append(salt_cmd + ['state.highstate'])
 
         if states:
