@@ -55,7 +55,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             Comma-separated string of salt states to execute. When "highstate"
             is included with additional states, "highstate" runs first, then
             the other states. Accepts two special keywords (case-insensitive):
-            (*Default*: ``''``)
+            (*Default*: ``'highstate'``)
 
             - ``none``: Do not apply any salt states.
             - ``highstate``: Apply the salt "highstate".
@@ -147,7 +147,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.admin_users = watchmaker.utils.config_none_deprecate(
             self.admin_users, self.log)
         self.salt_states = watchmaker.utils.config_none_deprecate(
-            self.salt_states, self.log)
+            self.salt_states, self.log) or 'highstate'
 
         # Init attributes used by SaltBase, overridden by inheriting classes
         self.salt_working_dir = None

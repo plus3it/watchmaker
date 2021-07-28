@@ -303,7 +303,7 @@ def test_windows_defaults():
 
 
 @patch.dict(os.environ, {"systemdrive": "C:"})
-def test_windows_install():
+def test_windows_install(saltworker_base_salt_args):
     """Ensure that install runs as expected."""
     system_params = {}
     salt_config = {}
@@ -317,16 +317,27 @@ def test_windows_install():
     saltworker_win = SaltWindows(system_params, **salt_config)
 
     saltworker_win._prepare_for_install = MagicMock(return_value=None)
+    saltworker_win.salt_state_args = saltworker_base_salt_args
     saltworker_win._install_package = MagicMock(return_value=None)
     saltworker_win.service_stop = MagicMock(return_value=None)
     saltworker_win._build_salt_formula = MagicMock(return_value=None)
     saltworker_win.service_disable = MagicMock(return_value=True)
     saltworker_win._set_grain = MagicMock(return_value=None)
     saltworker_win.process_grains = MagicMock(return_value=None)
-    saltworker_win.run_salt = MagicMock(return_value=None)
+    saltworker_win.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_win.working_dir = system_params["workingdir"]
     saltworker_win.cleanup = MagicMock(return_value=None)
 
+    run_salt_calls = [
+        call("pkg.refresh_db"),
+        call(
+            saltworker_win.salt_state_args + ['state.highstate'],
+            log_pipe='stderr',
+            raise_error=False
+        ),
+    ]
+
+    # test
     saltworker_win.install()
 
     # assertions ===================
@@ -340,7 +351,8 @@ def test_windows_install():
         "ash-windows", {"lookup": {"role": salt_config["ash_role"]}}
     )
     assert saltworker_win.process_grains.call_count == 1
-    saltworker_win.run_salt.assert_called_with("pkg.refresh_db")
+    assert saltworker_win.run_salt.call_count == len(run_salt_calls)
+    saltworker_win.run_salt.assert_has_calls(run_salt_calls)
     assert saltworker_win.cleanup.call_count == 1
 
 

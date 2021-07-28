@@ -59,7 +59,7 @@ def _print_version(ctx, _param, value):
         'Watchmaker suppresses the reboot automatically if it '
         'encounters a failure.'))
 @click.option(
-    '-s', '--salt-states', default='highstate', show_default=True,
+    '-s', '--salt-states', default=None, show_default=True,
     help=(
         'Comma-separated string of salt states to apply. A value of '
         '\'none\' will not apply any salt states. A value of '
