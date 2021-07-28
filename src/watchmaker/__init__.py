@@ -19,7 +19,7 @@ from compatibleversion import check_version
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import WatchmakerException
+from watchmaker.exceptions import InvalidValue, WatchmakerException
 from watchmaker.logger import log_system_details
 from watchmaker.managers.worker_manager import (LinuxWorkersManager,
                                                 WindowsWorkersManager)
@@ -283,11 +283,23 @@ class Client(object):
             (k.lstrip('-').replace('-', '_'), v) for k, v in zip(
                 *[iter(extra_arguments)] * 2)
         ))
-        # Set self.worker_args, removing `None` values from worker_args
-        self.worker_args = dict(
-            (k, yaml.safe_load(v)) for k, v in worker_args.items()
-            if v != Arguments.DEFAULT_VALUE
-        )
+
+        try:
+            # Set self.worker_args, removing `None` values from worker_args
+            self.worker_args = dict(
+                (k, yaml.safe_load(v)) for k, v in worker_args.items()
+                if v != Arguments.DEFAULT_VALUE
+            )
+        except yaml.YAMLError as exc:
+            if hasattr(exc, "problem_mark"):
+                msg = (
+                    "Failed to parse argument value as YAML. Check the format "
+                    "and/or properly quote the value when using the CLI to "
+                    "account for shell interpolation. YAML error: {0}"
+                ).format(str(exc))
+                self.log.critical(msg)
+                raise InvalidValue(msg)
+            raise
 
         self.config = self._get_config()
 
