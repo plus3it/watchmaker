@@ -350,7 +350,15 @@ class Client(object):
             self.log.critical(msg)
             raise WatchmakerException(msg)
 
-        # Merge the config data, preserving the listed order of workers
+        # Merge the config data, preserving the listed order of workers.
+        # The worker order from config_system has precedence over config_all.
+        # This is managed by adding config_system to the config first, using
+        # the loop order, e.g. config_system + config_all. In the loop, if the
+        # worker is already in the config, it is always the worker from
+        # config_system.
+        # To also preserve precedence of worker options from config_system, the
+        # worker_config from config_all is updated with the config from
+        # config_system, then the config is replaced with the worker_config.
         config = collections.OrderedDict()
         for worker in config_system + config_all:
             try:
@@ -366,8 +374,11 @@ class Client(object):
                     config[worker_name] = {'config': worker_config}
                     self.log.debug('%s config: %s', worker_name, worker_config)
                 else:
-                    # Worker present in both config_system and config_all
-                    config[worker_name]['config'].update(worker_config)
+                    # Worker is present in both config_system and config_all,
+                    # config[worker_name]['config'] is from config_system,
+                    # worker_config is from config_all
+                    worker_config.update(config[worker_name]['config'])
+                    config[worker_name]['config'] = worker_config
                     self.log.debug(
                         '%s extra config: %s',
                         worker_name, worker_config
