@@ -1,47 +1,46 @@
 #!/bin/bash
 
-set -xe -o pipefail
+set -eu -o pipefail
 
 echo "***********************************************************************"
 echo "Prepping for Docker Watchmaker build on $(lsb_release -a)"
 echo "***********************************************************************"
 
-if [ -n "${DOCKER_SLUG}" ]; then
+DOCKER_INSTANCE_NAME=wam-builder
+echo "DOCKER_INSTANCE_NAME:${DOCKER_INSTANCE_NAME}"
 
-  echo "Installing Docker container..."
-  docker pull "${DOCKER_SLUG}":latest
+WORKDIR="${WORKDIR:-${TRAVIS_BUILD_DIR:-}}"
+WORKDIR="${WORKDIR:-${PWD}}"
+echo "WORKDIR:${WORKDIR}"
 
-  DOCKER_INSTANCE_NAME="${DOCKER_INSTANCE_NAME:-wam-builder}"
-  echo "DOCKER_INSTANCE_NAME:${DOCKER_INSTANCE_NAME}"
-  echo "DOCKER_SLUG:${DOCKER_SLUG}"
+if [ -n "${WORKDIR}" ]; then
 
-  WORKDIR="${WORKDIR:-${TRAVIS_BUILD_DIR}}"
-  WORKDIR="${WORKDIR:-${PWD}}"
+  echo "Building Docker container..."
+  docker build \
+    --build-arg USER_UID="$(id -u)" \
+    --build-arg USER_GID="$(id -g)" \
+    -t $DOCKER_INSTANCE_NAME -f "${WORKDIR}/ci/Dockerfile" .
 
-  if [ -n "${WORKDIR}" ]; then
+  echo "Building using container and workdir (${WORKDIR})..."
+  docker run --detach --privileged \
+    --user "$(id -u):$(id -g)" \
+    --volume="${WORKDIR}:${WORKDIR}" \
+    --workdir "${WORKDIR}" \
+    --name "${DOCKER_INSTANCE_NAME}" \
+    "${DOCKER_INSTANCE_NAME}:latest" \
+    init
 
-    echo "Building using container and workdir (${WORKDIR})..."
-    docker run --detach --privileged \
-      --volume="${WORKDIR}":"${WORKDIR}" \
-      --workdir "${WORKDIR}" \
-      --name "${DOCKER_INSTANCE_NAME}" \
-      "${DOCKER_SLUG}":latest \
-      init
+  echo "Building the standalone using ci/build.sh..."
+  docker exec "${DOCKER_INSTANCE_NAME}" chmod +x ci/build.sh
+  docker exec "${DOCKER_INSTANCE_NAME}" ci/build.sh
 
-    docker exec "${DOCKER_INSTANCE_NAME}" chmod +x ci/build.sh
-    docker exec "${DOCKER_INSTANCE_NAME}" ci/build.sh
-
-    docker stop "${DOCKER_INSTANCE_NAME}"
-    docker rm "${DOCKER_INSTANCE_NAME}"
-
-  else
-
-    echo "No WORKDIR provided so not building..."
-
-  fi
+  echo "Stopping the docker container ${DOCKER_INSTANCE_NAME}..."
+  docker stop "${DOCKER_INSTANCE_NAME}"
+  echo "Removing the docker image ${DOCKER_INSTANCE_NAME}..."
+  docker rm "${DOCKER_INSTANCE_NAME}"
 
 else
 
-  echo "No DOCKER_SLUG provided so not installing container..."
+  echo "No WORKDIR provided so not building..."
 
 fi

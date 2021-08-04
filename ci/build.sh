@@ -1,13 +1,7 @@
 #!/bin/bash
+set -eu -o pipefail
 
 export VIRTUAL_ENV_DIR=venv
-
-python3 -m ensurepip --upgrade --default-pip
-python3 -m pip install -r requirements/pip.txt
-python3 -m pip --version
-
-python3 -m pip install -r requirements/basics.txt
-python3 -m pip list
 
 virtualenv --python=python3 $VIRTUAL_ENV_DIR
 source $VIRTUAL_ENV_DIR/bin/activate
