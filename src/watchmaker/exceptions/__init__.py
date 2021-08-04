@@ -4,9 +4,14 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 
-class WatchmakerException(Exception):
+class WatchmakerError(Exception):
     """An unknown error occurred."""
 
 
-class InvalidValue(WatchmakerException):
+class InvalidValueError(WatchmakerError):
     """Passed an invalid value."""
+
+
+# Deprecated/renamed exceptions
+WatchmakerException = WatchmakerError
+InvalidValue = InvalidValueError

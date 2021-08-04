@@ -8,7 +8,7 @@ import re
 import six
 
 import watchmaker.utils
-from watchmaker.exceptions import WatchmakerException
+from watchmaker.exceptions import WatchmakerError
 from watchmaker.managers.platform import LinuxPlatformManager
 from watchmaker.workers.base import WorkerBase
 
@@ -77,7 +77,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
                 .format(', '.join(self.SUPPORTED_DISTS))
             )
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
         # Assign dist,version from the match groups tuple, removing any spaces
         dist, version = (x.replace(' ', '') for x in matched.groups())
@@ -94,7 +94,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
                 .format(dist, version)
             )
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
         dist_info = {
             'dist': dist,
@@ -110,7 +110,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
         elif not isinstance(self.yumrepomap, list):
             msg = '`yumrepomap` must be a list!'
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
     def _validate_repo(self, repo):
         """Check if a repo is applicable to this system."""

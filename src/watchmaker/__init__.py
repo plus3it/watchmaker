@@ -19,7 +19,7 @@ from compatibleversion import check_version
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import InvalidValue, WatchmakerException
+from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
 from watchmaker.managers.worker_manager import (LinuxWorkersManager,
                                                 WindowsWorkersManager)
@@ -298,7 +298,7 @@ class Client(object):
                     "account for shell interpolation. YAML error: {0}"
                 ).format(str(exc))
                 self.log.critical(msg)
-                raise InvalidValue(msg)
+                raise InvalidValueError(msg)
             raise
 
         self.config = self._get_config()
@@ -351,7 +351,7 @@ class Client(object):
         if not config_system and not config_all:
             msg = 'Malformed config file. No workers for this system.'
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
         if config_version_specifier and not check_version(
                 watchmaker.__version__, config_version_specifier):
@@ -360,7 +360,7 @@ class Client(object):
                 'file (watchmaker_version = {})').format(
                     watchmaker.__version__, config_version_specifier)
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
         # Merge the config data, preserving the listed order of workers.
         # The worker order from config_system has precedence over config_all.
@@ -463,7 +463,7 @@ class Client(object):
         else:
             msg = 'System, {0}, is not recognized?'.format(self.system)
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
         if self.log_dir:
             self.system_params['logdir'] = self.log_dir
 
