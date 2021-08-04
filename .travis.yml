@@ -71,7 +71,15 @@ jobs:
     - stage: test
       name: build standalone
       python: 3.6
-      install: chmod +x ci/prep_docker.sh
+      before_install:
+        - sudo apt-get -y remove docker docker-engine docker.io containerd runc
+        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        - echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        - sudo apt-get update
+        - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce docker-ce-cli containerd.io
+      install:
+        - docker --version
+        - chmod +x ci/prep_docker.sh
       script: ci/prep_docker.sh
       before_deploy:
         # prepare deployment envs
