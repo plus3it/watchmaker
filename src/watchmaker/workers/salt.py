@@ -14,7 +14,7 @@ import yaml
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import InvalidValue, WatchmakerException
+from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.managers.platform import (LinuxPlatformManager,
                                           PlatformManagerBase,
                                           WindowsPlatformManager)
@@ -176,7 +176,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 ' environment types: {1}'.format(env, valid_envs)
             )
             self.log.critical(msg)
-            raise InvalidValue(msg)
+            raise InvalidValueError(msg)
 
     def install(self):
         """Install Salt."""
@@ -319,7 +319,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                               self.salt_content_path,
                               self.salt_content)
                     self.log.critical(msg)
-                    raise WatchmakerException(msg)
+                    raise WatchmakerError(msg)
                 try:
                     salt_files_dir = salt_content_glob[0]
                 except IndexError:
@@ -328,7 +328,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                               self.salt_content_path,
                               self.salt_content)
                     self.log.critical(msg)
-                    raise WatchmakerException(msg)
+                    raise WatchmakerError(msg)
 
                 watchmaker.utils.copy_subdirectories(
                     salt_files_dir, extract_dir, self.log)
@@ -429,7 +429,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 'pip',
                 '--version'])
             self.log.debug('Pip version: %s', ver['stdout'])
-        except WatchmakerException:
+        except WatchmakerError:
             self.log.debug('Pip not installed for Salt interpreter!')
             self._install_pip(py_exec)
 
@@ -662,7 +662,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 failed_states = self._get_failed_states(
                     ast.literal_eval(ret['stdout'].decode('utf-8')))
                 if failed_states:
-                    raise WatchmakerException(
+                    raise WatchmakerError(
                         yaml.safe_dump(
                             {
                                 'Salt state execution failed':

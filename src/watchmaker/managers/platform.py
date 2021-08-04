@@ -13,7 +13,7 @@ import tempfile
 import zipfile
 
 import watchmaker.utils
-from watchmaker.exceptions import WatchmakerException
+from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib
 
 
@@ -169,7 +169,7 @@ class PlatformManagerBase(object):
         if not isinstance(cmd, list):
             msg = 'Command is not a list: {0}'.format(cmd)
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
         self.log.debug('Command: %s', ' '.join(cmd))
 
@@ -227,7 +227,7 @@ class PlatformManagerBase(object):
             msg = 'Command failed! Exit code={0}, cmd={1}'.format(
                 ret['retcode'], ' '.join(cmd))
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
         return ret
 
@@ -283,7 +283,7 @@ class PlatformManagerBase(object):
                 .format(filepath)
             )
             self.log.critical(msg)
-            raise WatchmakerException(msg)
+            raise WatchmakerError(msg)
 
         if create_dir:
             to_directory = os.sep.join((
