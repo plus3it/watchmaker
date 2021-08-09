@@ -28,7 +28,6 @@ install:
   - pip install -r requirements/pip.txt
   - pip install -r requirements/tox.txt
   - virtualenv --version
-  - easy_install --version
   - pip --version
   - tox --version
 script:
