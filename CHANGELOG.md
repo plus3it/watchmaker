@@ -1,5 +1,17 @@
 ## Changelog
 
+### 0.23.2
+
+**Commit Delta**: [Change from 0.23.1 release](https://github.com/plus3it/watchmaker/compare/0.23.1...0.23.2)
+
+**Released**: 2021.08.11
+
+**Summary**:
+
+*   Patched Salt worker to be case-sensitive when processsing Salt states
+*   Refactored Salt states handling between CLI and config.yaml
+*   Standalone packages are now based on EL7 and are no longer compatible with EL6 (EL6 hasn't been supported for a while now)
+
 ### 0.23.1
 
 **Commit Delta**: [Change from 0.23.0 release](https://github.com/plus3it/watchmaker/compare/0.23.0...0.23.1)
