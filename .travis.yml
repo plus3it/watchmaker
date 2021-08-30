@@ -114,13 +114,13 @@ jobs:
             tags: true
         - provider: script
           # publish dev scap reports
-          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$DEV_BUCKET/$S3_KEYFIX/$RELEASE_VERSION/scans
+          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$DEV_BUCKET/$S3_KEYFIX/$GB_ENV_APP_VERSION/scans
           skip_cleanup: true
           on:
             branch: main
         - provider: script
           # publish release scap reports
-          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$RELEASE_BUCKET/$S3_KEYFIX/$RELEASE_VERSION/scans
+          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$RELEASE_BUCKET/$S3_KEYFIX/$GB_ENV_APP_VERSION/scans
           skip_cleanup: true
           on:
             tags: true
