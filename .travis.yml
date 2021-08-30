@@ -84,7 +84,7 @@ jobs:
         # prepare deployment envs
         - source .gravitybee/gravitybee-environs.sh
         - export SATS_TAG=$GB_ENV_APP_VERSION
-        - export SATS_BODY="* [$GB_ENV_APP_NAME v$GB_ENV_APP_VERSION CHANGELOG](https://github.com/plus3it/$GB_ENV_APP_NAME/blob/$GB_ENV_APP_VERSION/CHANGELOG.md)"
+        - export SATS_BODY="$(echo -e '* ['$GB_ENV_APP_NAME' v'$GB_ENV_APP_VERSION' CHANGELOG](https://github.com/plus3it/'$GB_ENV_APP_NAME'/blob/'$GB_ENV_APP_VERSION'/CHANGELOG.md)\n* ['$GB_ENV_APP_NAME' v'$GB_ENV_APP_VERSION' SCAP REPORTS](https://watchmaker.cloudarmor.io/list.html#releases/'$GB_ENV_APP_VERSION'/scans/)')"
         - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
         - echo Tag name is $SATS_TAG
         - pip install -r requirements/deploy.txt
@@ -109,6 +109,18 @@ jobs:
           bucket: $RELEASE_BUCKET
           upload_dir: $S3_KEYFIX
           local_dir: $GB_ENV_STAGING_DIR
+          skip_cleanup: true
+          on:
+            tags: true
+        - provider: script
+          # publish dev scap reports
+          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$DEV_BUCKET/$S3_KEYFIX/$RELEASE_VERSION/scans
+          skip_cleanup: true
+          on:
+            branch: main
+        - provider: script
+          # publish release scap reports
+          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$RELEASE_BUCKET/$S3_KEYFIX/$RELEASE_VERSION/scans
           skip_cleanup: true
           on:
             tags: true
