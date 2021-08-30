@@ -7,6 +7,7 @@ set -eu -o pipefail
     exit 1
 }
 
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 PROJECT_NAME=$1
 S3_URL=$2
 
@@ -26,10 +27,10 @@ build_status() {
   aws codebuild batch-get-builds --ids ${BUILD_ID} --query 'builds[*].buildStatus' --output text
 }
 
-echo "Start checking status for build..."
+echo "Start checking status for build...(https://console.aws.amazon.com/codesuite/codebuild/$ACCOUNT_ID/projects/$PROJECT_NAME/build/$BUILD_ID/?region=$AWS_DEFAULT_REGION)"
 
 while [ "$(build_status)" == "IN_PROGRESS" ]; do
-  echo "[codebuild_start_wait]: Build is still in progress. Check again in a ${WAIT_INTERVAL} seconds..."
+  echo "[codebuild_start_wait]: Build is still in progress. Checking again in ${WAIT_INTERVAL} seconds..."
   sleep ${WAIT_INTERVAL}
 done
 
@@ -38,4 +39,5 @@ if [ "$(build_status)" == "FAILED" ]; then
   exit 1
 fi
 
+echo "Build completed successfully! (https://console.aws.amazon.com/codesuite/codebuild/$ACCOUNT_ID/projects/$PROJECT_NAME/build/$BUILD_ID/?region=$AWS_DEFAULT_REGION)"
 exit 0
