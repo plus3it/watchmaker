@@ -200,7 +200,7 @@ def _enable_ec2_config_event_log():
             plugin.find('State').text = 'Enabled'
             break
 
-    with io.open(EC2_CONFIG, encoding='utf8', mode='wb') as fh_:
+    with io.open(EC2_CONFIG, mode='wb') as fh_:
         ec2_config.write(fh_)
 
 
@@ -266,7 +266,7 @@ def _configure_ec2_config_event_log():
         app_name.text = 'Watchmaker'
 
     if events_missing:
-        with io.open(EC2_CONFIG_EVENT_LOG, encoding='utf8', mode='wb') as fh_:
+        with io.open(EC2_CONFIG_EVENT_LOG, mode='wb') as fh_:
             ec2_log_config.write(fh_)
 
 

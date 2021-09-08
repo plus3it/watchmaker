@@ -156,7 +156,7 @@ def test_enable_ec2_config_event_log(mocker):
     # Verify we opened the file twice, once for read and once for write
     assert mo_.call_args_list == [
         mocker.call(logger.EC2_CONFIG, encoding='utf8'),
-        mocker.call(logger.EC2_CONFIG, encoding='utf8', mode='wb')
+        mocker.call(logger.EC2_CONFIG, mode='wb')
     ]
 
     # Convert write calls to xml tree
@@ -195,7 +195,7 @@ def test_configure_ec2config_write_all_events(mocker):
     # Verify we opened the file twice, once for read and once for write
     assert mo_.call_args_list == [
         mocker.call(logger.EC2_CONFIG_EVENT_LOG, encoding='utf8'),
-        mocker.call(logger.EC2_CONFIG_EVENT_LOG, encoding='utf8', mode='wb')
+        mocker.call(logger.EC2_CONFIG_EVENT_LOG, mode='wb')
     ]
 
     # Convert write calls to xml tree
