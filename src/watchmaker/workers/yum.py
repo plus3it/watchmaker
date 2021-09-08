@@ -59,7 +59,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
         # Read first line from /etc/system-release
         try:
-            with open('/etc/system-release') as fh_:
+            with open('/etc/system-release', encoding='utf8') as fh_:
                 release = fh_.readline().strip()
         except Exception:
             self.log.critical(
