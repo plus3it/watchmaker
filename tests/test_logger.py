@@ -155,7 +155,7 @@ def test_enable_ec2_config_event_log(mocker):
 
     # Verify we opened the file twice, once for read and once for write
     assert mo_.call_args_list == [
-        mocker.call(logger.EC2_CONFIG),
+        mocker.call(logger.EC2_CONFIG, encoding='utf8'),
         mocker.call(logger.EC2_CONFIG, mode='wb')
     ]
 
@@ -194,7 +194,7 @@ def test_configure_ec2config_write_all_events(mocker):
 
     # Verify we opened the file twice, once for read and once for write
     assert mo_.call_args_list == [
-        mocker.call(logger.EC2_CONFIG_EVENT_LOG),
+        mocker.call(logger.EC2_CONFIG_EVENT_LOG, encoding='utf8'),
         mocker.call(logger.EC2_CONFIG_EVENT_LOG, mode='wb')
     ]
 
@@ -257,7 +257,7 @@ def test_configure_ec2config_skip_if_events_present(mocker):
 
     # Verify we read the data
     assert mo_.call_args_list == [
-        mocker.call(logger.EC2_CONFIG_EVENT_LOG),
+        mocker.call(logger.EC2_CONFIG_EVENT_LOG, encoding='utf8'),
     ]
 
     # Verify we didn't write anything
@@ -302,8 +302,8 @@ def test_configure_ec2launch_write_all_events(mocker):
 
     # Verify we opened the file twice, once for read and once for write
     assert mo_.call_args_list == [
-        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG),
-        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG, mode='w')
+        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG, encoding='utf8'),
+        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG, encoding='utf8', mode='w'),
     ]
 
     # Convert write calls to json
@@ -346,7 +346,7 @@ def test_configure_ec2launch_skip_if_events_present(mocker):
 
     # Verify we read the data
     assert mo_.call_args_list == [
-        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG),
+        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG, encoding=u'utf8'),
     ]
 
     # Verify we didn't write anything

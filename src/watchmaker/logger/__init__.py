@@ -188,7 +188,7 @@ def _enable_ec2_config_event_log():
     ec2_config = xml.etree.ElementTree.ElementTree(
         xml.etree.ElementTree.Element('Ec2ConfigurationSettings'))
 
-    with io.open(EC2_CONFIG) as fh_:
+    with io.open(EC2_CONFIG, encoding='utf8') as fh_:
         ec2_config = defusedxml.ElementTree.parse(
             fh_,
             forbid_dtd=True
@@ -209,7 +209,7 @@ def _configure_ec2_config_event_log():
     ec2_log_config = xml.etree.ElementTree.ElementTree(
         xml.etree.ElementTree.Element('EventLogConfig'))
 
-    with io.open(EC2_CONFIG_EVENT_LOG) as fh_:
+    with io.open(EC2_CONFIG_EVENT_LOG, encoding='utf8') as fh_:
         ec2_log_config = defusedxml.ElementTree.parse(
             fh_,
             forbid_dtd=True
@@ -273,7 +273,7 @@ def _configure_ec2_config_event_log():
 def _configure_ec2_launch_event_log():
     """Configure EC2Launch to forward Event Log entries for Watchmaker."""
     event_config = {}
-    with io.open(EC2_LAUNCH_LOG_CONFIG) as fh_:
+    with io.open(EC2_LAUNCH_LOG_CONFIG, encoding='utf8') as fh_:
         event_config = json.load(fh_)
 
     events_present = set()
@@ -300,7 +300,7 @@ def _configure_ec2_launch_event_log():
 
     if events_missing:
         event_config['events'] = events
-        with io.open(EC2_LAUNCH_LOG_CONFIG, mode='w') as fh_:
+        with io.open(EC2_LAUNCH_LOG_CONFIG, encoding='utf8', mode='w') as fh_:
             json.dump(event_config, fh_, indent=4)
 
 
