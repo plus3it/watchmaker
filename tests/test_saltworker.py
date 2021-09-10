@@ -79,6 +79,55 @@ def test_valid_environment(saltworker_client):
     assert saltworker_client.before_install() is None
 
 
+def test_salt_client_defaults():
+    """
+    Check SaltClient default values.
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    system_params = {}
+    salt_config = {}
+
+    saltworker_client = SaltBase(system_params, **salt_config)
+    assert saltworker_client.salt_states == 'highstate'
+
+
+def test_salt_client_none():
+    """
+    Check SaltClient handles None values properly.
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    system_params = {}
+    salt_config = {
+        'salt_states': None
+    }
+
+    saltworker_client = SaltBase(system_params, **salt_config)
+    assert saltworker_client.salt_states == ''
+
+
+def test_salt_client_explicit_value():
+    """
+    Check SaltClient handles explicit values properly.
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    system_params = {}
+    salt_config = {
+        'salt_states': 'foo'
+    }
+
+    saltworker_client = SaltBase(system_params, **salt_config)
+    assert saltworker_client.salt_states == 'foo'
+
+
 def test_process_states_highstate(
     saltworker_client,
     saltworker_base_salt_args,
