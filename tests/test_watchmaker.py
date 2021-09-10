@@ -70,6 +70,11 @@ def test_none_arguments():
     assert watchmaker_arguments.salt_states is None
     assert watchmaker_arguments.ou_path is None
 
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    assert 'salt_states' in watchmaker_client.worker_args
+    assert watchmaker_client.worker_args['salt_states'] is None
+
 
 def test_argument_default_value():
     """Ensure argument default value is `Arguments.DEFAULT_VALUE`."""
