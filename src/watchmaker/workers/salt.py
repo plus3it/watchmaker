@@ -129,7 +129,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.pip_args = kwargs.pop('pip_args', None) or []
         self.pip_index = kwargs.pop('pip_index', None) or \
             'https://pypi.org/simple'
-        self.salt_states = kwargs.pop('salt_states', None) or ''
+        self.salt_states = kwargs.pop('salt_states', 'highstate') or ''
         self.exclude_states = kwargs.pop('exclude_states', None) or ''
 
         self.computer_name = watchmaker.utils.config_none_deprecate(
@@ -147,7 +147,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.admin_users = watchmaker.utils.config_none_deprecate(
             self.admin_users, self.log)
         self.salt_states = watchmaker.utils.config_none_deprecate(
-            self.salt_states, self.log) or 'highstate'
+            self.salt_states, self.log)
 
         # Init attributes used by SaltBase, overridden by inheriting classes
         self.salt_working_dir = None
