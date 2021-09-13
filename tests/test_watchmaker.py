@@ -64,11 +64,16 @@ def test_none_arguments():
     }
     watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
 
-    assert not watchmaker_arguments.admin_groups
-    assert not watchmaker_arguments.admin_users
-    assert not watchmaker_arguments.computer_name
-    assert not watchmaker_arguments.salt_states
-    assert not watchmaker_arguments.ou_path
+    assert watchmaker_arguments.admin_groups is None
+    assert watchmaker_arguments.admin_users is None
+    assert watchmaker_arguments.computer_name is None
+    assert watchmaker_arguments.salt_states is None
+    assert watchmaker_arguments.ou_path is None
+
+    watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    assert 'salt_states' in watchmaker_client.worker_args
+    assert watchmaker_client.worker_args['salt_states'] is None
 
 
 def test_argument_default_value():
