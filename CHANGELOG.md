@@ -1,5 +1,19 @@
 ## Changelog
 
+### 0.23.3
+
+**Commit Delta**: [Change from 0.23.2 release](https://github.com/plus3it/watchmaker/compare/0.23.2...0.23.3)
+
+**Released**: 2021.09.28
+
+**Summary**:
+
+*   Added publishing of SCAP reports for Linux systems with each release
+*   Fixed CLI behavior when passing 'none' value, e.g. `--salt-states none`
+*   Updated default config to use Salt 3003.3
+*   mcafee-agent-formula
+    - (Linux) Refactored to allow install over an existing installation
+
 ### 0.23.2
 
 **Commit Delta**: [Change from 0.23.1 release](https://github.com/plus3it/watchmaker/compare/0.23.1...0.23.2)
