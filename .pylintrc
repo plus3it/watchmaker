@@ -80,6 +80,7 @@ disable=
     unnecessary-pass,
     useless-object-inheritance,
     imports,
+    consider-using-f-string,
 
 [REPORTS]
 
