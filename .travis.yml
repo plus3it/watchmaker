@@ -57,19 +57,19 @@ jobs:
   include:
     - stage: test
       name: lint
-      python: 3.6
+      python: 3.8
       env:
         - TOXENV=check
 
     - stage: test
       name: docs
-      python: 3.6
+      python: 3.8
       env:
         - TOXENV=docs
 
     - stage: test
       name: build standalone
-      python: 3.6
+      python: 3.8
       before_install:
         - sudo apt-get -y remove docker docker-engine docker.io containerd runc
         - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -128,7 +128,7 @@ jobs:
     - stage: deploy
       name: deploy to pypi
       if: type != pull_request AND (branch = main OR tag is present)
-      python: 3.6
+      python: 3.8
       install: skip
       script: skip
       before_deploy: echo Deploying "$(grep 'version = ' setup.cfg)"
