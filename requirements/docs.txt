@@ -1,6 +1,6 @@
 -r docs-check.txt
 
-docutils==0.16.0
+docutils==0.17.1
 recommonmark==0.7.1
 setuptools==58.2.0
 sphinx==4.2.0
