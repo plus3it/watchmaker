@@ -20,6 +20,18 @@ jobs:
   parameters:
     tox_version: ''
     jobs:
+      py310_64:
+        image: [win16, win19]
+        architecture: x64
+        py: "3.10"
+      py39_64:
+        image: [win16, win19]
+        architecture: x64
+        py: "3.9"
+      py38_64:
+        image: [win16, win19]
+        architecture: x64
+        py: "3.8"
       py37_64:
         image: [win16, win19]
         architecture: x64
