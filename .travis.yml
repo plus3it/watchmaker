@@ -17,11 +17,11 @@ python:
   - 3.7
   - 3.8
   - 3.9
-  - 3.10
+  - 3.10-dev
 if: branch = main OR type = pull_request OR tag is present
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
-  - export TOXENV="${TOXENV:-$TRAVIS_PYTHON_VERSION-codecov}"
+  - export TOXENV="${TOXENV:-${TRAVIS_PYTHON_VERSION%-dev}-codecov}"
   - echo $TOXENV
   - python --version
   - uname -a
