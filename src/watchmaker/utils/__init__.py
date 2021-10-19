@@ -54,7 +54,7 @@ def urlopen_retry(uri):
         # proper way for 2.7.9+ on Linux
         if uri.startswith("https://"):
             kwargs['context'] = ssl.create_default_context(
-                ssl.Purpose.CLIENT_AUTH
+                ssl.Purpose.SERVER_AUTH
             )
     except AttributeError:
         pass
