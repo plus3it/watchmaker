@@ -1,4 +1,4 @@
-```eval_rst
+```{eval-rst}
 .. image:: images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
@@ -110,7 +110,7 @@ first, as part of the userdata. Since the userdata syntax and dependency
 installation differ a bit on Linux and Windows, we provide methods for each as
 examples.
 
-```eval_rst
+```{eval-rst}
 .. note::
 
     The ``pip`` commands in the examples are a bit more complex than
@@ -232,7 +232,7 @@ and passing the required parameters.
 *   [Windows Autoscale Group][dir-win-autoscale]
 *   [Windows Instance][dir-win-instance]
 
-```eval_rst
+```{eval-rst}
 .. note::
 
    Each corresponding Terraform module and CloudFormation template are
@@ -323,7 +323,7 @@ client = watchhmaker.Client(arguments)
 client.install()
 ```
 
-```eval_rst
+```{eval-rst}
 .. note::
 
    This demonstrates only a few of the arguments that are available for the

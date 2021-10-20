@@ -1,4 +1,4 @@
-```eval_rst
+```{eval-rst}
 .. image:: images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
@@ -30,18 +30,17 @@ _workers_ to execute on each platform.
 
 ## Contents
 
-```eval_rst
-.. toctree::
-    :maxdepth: 1
+```{toctree}
+:maxdepth: 1
 
-    installation.md
-    configuration.md
-    usage.md
-    findings/index.md
-    faq.md
-    api.md
-    contributing.md
-    changelog.md
+installation.md
+configuration.md
+usage.md
+findings/index.md
+faq.md
+api.md
+contributing.md
+changelog.md
 ```
 
 ## Supported Operating Systems

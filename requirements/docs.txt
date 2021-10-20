@@ -1,7 +1,6 @@
 -r docs-check.txt
 
-docutils==0.16.0
-recommonmark==0.7.1
+myst-parser==0.15.2
 setuptools==58.2.0
 sphinx==4.2.0
 sphinx-rtd-theme==1.0.0
