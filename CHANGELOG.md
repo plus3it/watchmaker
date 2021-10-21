@@ -1,6 +1,6 @@
-## Changelog
+# Changelog
 
-### 0.23.3
+## 0.23.3
 
 **Commit Delta**: [Change from 0.23.2 release](https://github.com/plus3it/watchmaker/compare/0.23.2...0.23.3)
 
@@ -14,7 +14,7 @@
 *   mcafee-agent-formula
     - (Linux) Refactored to allow install over an existing installation
 
-### 0.23.2
+## 0.23.2
 
 **Commit Delta**: [Change from 0.23.1 release](https://github.com/plus3it/watchmaker/compare/0.23.1...0.23.2)
 
@@ -26,7 +26,7 @@
 *   Refactored Salt states handling between CLI and config.yaml
 *   Standalone packages are now based on EL7 and are no longer compatible with EL6 (EL6 hasn't been supported for a while now)
 
-### 0.23.1
+## 0.23.1
 
 **Commit Delta**: [Change from 0.23.0 release](https://github.com/plus3it/watchmaker/compare/0.23.0...0.23.1)
 
@@ -40,7 +40,7 @@
 *   Supports parsing extra_arguments when passed using `=` as the separator
     - E.g. `--user-formulas='{"foo-formula": "https://url-to/foo-formula.zip"}'`
 
-### 0.23.0
+## 0.23.0
 
 **Commit Delta**: [Change from 0.22.2 release](https://github.com/plus3it/watchmaker/compare/0.22.2...0.23.0)
 
@@ -54,7 +54,7 @@
 *   Adds capability to pass complex worker arguments on the cli as JSON or YAML
     - E.g. `--user-formulas '{"foo-formula": "https://url-to/foo-formula.zip"}'`
 
-### 0.22.2
+## 0.22.2
 
 **Commit Delta**: [Change from 0.22.1 release](https://github.com/plus3it/watchmaker/compare/0.22.1...0.22.2)
 
@@ -65,7 +65,7 @@
 *   ash-linux-formula
     - Patches RHEL-07-040810 to apply to only iptables-services RPM and not core-package iptables RPM
 
-### 0.22.1
+## 0.22.1
 
 **Commit Delta**: [Change from 0.22.0 release](https://github.com/plus3it/watchmaker/compare/0.22.0...0.22.1)
 
@@ -76,7 +76,7 @@
 *   ash-linux-formula/nessus-agent-formula
     - Patches maxdepth parameter to use integer type to support Jinja rendering in Salt 3003
 
-### 0.22.0
+## 0.22.0
 
 **Commit Delta**: [Change from 0.21.9 release](https://github.com/plus3it/watchmaker/compare/0.21.9...0.22.0)
 
@@ -90,7 +90,7 @@
 *   nessus-agent-formula
     - (Linux) Updates nessus-agent to call install and configure states
 
-### 0.21.9
+## 0.21.9
 
 **Commit Delta**: [Change from 0.21.8 release](https://github.com/plus3it/watchmaker/compare/0.21.8...0.21.9)
 
@@ -108,7 +108,7 @@
 *   join-domain-formula
     - (Windows) Add double-quotes to Members parameter in order for startup task state to work with Salt 3003 
 
-### 0.21.8
+## 0.21.8
 
 **Commit Delta**: [Change from 0.21.7 release](https://github.com/plus3it/watchmaker/compare/0.21.7...0.21.8)
 
@@ -119,7 +119,7 @@
 *   Updated CI configs to set the correct version for the Windows standalone package.
     Effectively, this version is the same as 0.21.7.
 
-### 0.21.7
+## 0.21.7
 
 **Commit Delta**: [Change from 0.21.6 release](https://github.com/plus3it/watchmaker/compare/0.21.6...0.21.7)
 
@@ -132,7 +132,7 @@
       so the service restarts only once. This avoids systemd failures when the
       service restarts too frequently. See [ash-linux-formula PR #303](https://github.com/plus3it/ash-linux-formula/pull/303).
 
-### 0.21.6
+## 0.21.6
 
 **Commit Delta**: [Change from 0.21.5 release](https://github.com/plus3it/watchmaker/compare/0.21.5...0.21.6)
 
@@ -143,7 +143,7 @@
 *   ash-linux-formula
     - Adds patch to re-enable NOPASSWD sudo for users in /etc/sudoers.d/ after oscap remediation.
 
-### 0.21.5
+## 0.21.5
 
 **Commit Delta**: [Change from 0.21.4 release](https://github.com/plus3it/watchmaker/compare/0.21.4...0.21.5)
 
@@ -159,7 +159,7 @@
 *   Update watchmaker default `config.yaml` to use salt v2019.2.8
 *   Ability to browse [Watchmaker Cloudarmor repo](https://watchmaker.cloudarmor.io/list.html)
 
-### 0.21.4
+## 0.21.4
 
 **Commit Delta**: [Change from 0.21.3 release](https://github.com/plus3it/watchmaker/compare/0.21.3...0.21.4)
 
@@ -170,7 +170,7 @@
 *   nessus-agent-formula
     - (Linux) Switch to using Salt service state to ensure Nessus agent service is running
 
-### 0.21.3
+## 0.21.3
 
 **Commit Delta**: [Change from 0.21.2 release](https://github.com/plus3it/watchmaker/compare/0.21.2...0.21.3)
 
@@ -181,7 +181,7 @@
 *   watchmaker-salt-content
     - (Linux) Updates scap-formula pillar to use alternative stig profile parameter for Red Hat
 
-### 0.21.2
+## 0.21.2
 
 **Commit Delta**: [Change from 0.21.1 release](https://github.com/plus3it/watchmaker/compare/0.21.1...0.21.2)
 
@@ -191,7 +191,7 @@
 
 *   (Windows) Removes winrepo.genrepo usage in Salt worker since it's no longer required
 
-### 0.21.1
+## 0.21.1
 
 **Commit Delta**: [Change from 0.21.0 release](https://github.com/plus3it/watchmaker/compare/0.21.0...0.21.1)
 
@@ -202,7 +202,7 @@
 *   splunkforwarder-formula
     - (Linux) Patches splunkforwarder state to work with Splunk Universal Forwarder v7.3.6
 
-### 0.21.0
+## 0.21.0
 
 **Commit Delta**: [Change from 0.20.5 release](https://github.com/plus3it/watchmaker/compare/0.20.5...0.21.0)
 
@@ -212,7 +212,7 @@
 
 *   Updates default watchmaker config.yaml to use salt 2019.2.5
 
-### 0.20.5
+## 0.20.5
 
 **Commit Delta**: [Change from 0.20.4 release](https://github.com/plus3it/watchmaker/compare/0.20.4...0.20.5)
 
@@ -223,7 +223,7 @@
 *   splunkforwarder-formula
     - (Linux) Patches splunkforwarder state to work with salt 2019.2.5
 
-### 0.20.4
+## 0.20.4
 
 **Commit Delta**: [Change from 0.20.3 release](https://github.com/plus3it/watchmaker/compare/0.20.3...0.20.4)
 
@@ -234,7 +234,7 @@
 *   splunkforwarder-formula
     - (Windows) Patches splunkforwarder state to work with salt 2019.2.5
 
-### 0.20.3
+## 0.20.3
 
 **Commit Delta**: [Change from 0.20.2 release](https://github.com/plus3it/watchmaker/compare/0.20.2...0.20.3)
 
@@ -245,7 +245,7 @@
 *   join-domain-formula
     - (Linux) Fixes issue with admin users not being able to sudo
 
-### 0.20.2
+## 0.20.2
 
 **Commit Delta**: [Change from 0.20.1 release](https://github.com/plus3it/watchmaker/compare/0.20.1...0.20.2)
 
@@ -256,7 +256,7 @@
 *   scap-formula
     - Updates SCAP content from DISA (as of June 2020) and OpenSCAP (v0.1.50)
 
-### 0.20.1
+## 0.20.1
 
 **Commit Delta**: [Change from 0.20.0 release](https://github.com/plus3it/watchmaker/compare/0.20.0...0.20.1)
 
@@ -267,7 +267,7 @@
 *   ash-linux-formula
     - Fixes issue with Postfix occasionally failing to start
 
-### 0.20.0
+## 0.20.0
 
 **Commit Delta**: [Change from 0.19.0 release](https://github.com/plus3it/watchmaker/compare/0.19.0...0.20.0)
 
@@ -277,7 +277,7 @@
 
 *   Adds capability to install Python packages using Pip in Salt's Python interpreter
 
-### 0.19.0
+## 0.19.0
 
 **Commit Delta**: [Change from 0.18.2 release](https://github.com/plus3it/watchmaker/compare/0.18.2...0.19.0)
 
@@ -289,7 +289,7 @@
 *   Adds new SaltWorker optional argument `--salt-content-path` that allows specifying glob pattern for
     salt files located within salt archive file
 
-### 0.18.2
+## 0.18.2
 
 **Commit Delta**: [Change from 0.18.1 release](https://github.com/plus3it/watchmaker/compare/0.18.1...0.18.2)
 
@@ -301,7 +301,7 @@
     - Rename state to vault-auth
     - Add url keyword argument to read_secret execution module
 
-### 0.18.1
+## 0.18.1
 
 **Commit Delta**: [Change from 0.18.0 release](https://github.com/plus3it/watchmaker/compare/0.18.0...0.18.1)
 
@@ -311,7 +311,7 @@
 
 *   Updates version constraint in default config to allow newer versions
 
-### 0.18.0
+## 0.18.0
 
 **Commit Delta**: [Change from 0.17.5 release](https://github.com/plus3it/watchmaker/compare/0.17.5...0.18.0)
 
@@ -326,7 +326,7 @@
     -   Addresses additional findings for domain-joined systems
     -   Removes deprecated baselines from Windows Server 2008 R2, 8.1, and IE 8, 9, and 10
 
-### 0.17.5
+## 0.17.5
 
 **Commit Delta**: [Change from 0.17.4 release](https://github.com/plus3it/watchmaker/compare/0.17.4...0.17.5)
 
@@ -337,7 +337,7 @@
 *   join-domain-formula
     -   Allow use of password with Linux join domain capability
 
-### 0.17.4
+## 0.17.4
 
 **Commit Delta**: [Change from 0.17.3 release](https://github.com/plus3it/watchmaker/compare/0.17.3...0.17.4)
 
@@ -349,7 +349,7 @@
     -   Updates custom STIGbyID baseline to address several scan findings.
 *   Add content for RHEL-07-040530/SV-86899
 
-### 0.17.3
+## 0.17.3
 
 **Commit Delta**: [Change from 0.17.2 release](https://github.com/plus3it/watchmaker/compare/0.17.2...0.17.3)
 
@@ -364,7 +364,7 @@
     -   Fix collisions caused by cat2 IDs and DISA numbering change
     -   Use Salt Stack version 2019.2-2
 
-### 0.17.2
+## 0.17.2
 
 **Commit Delta**: [Change from 0.17.1 release](https://github.com/plus3it/watchmaker/compare/0.17.1...0.17.2)
 
@@ -385,7 +385,7 @@
 *   nessus-agent-formula
     -   (Linux) Suppresses gpg verification so the pkg can be installed from a URL
 
-### 0.17.1
+## 0.17.1
 
 **Commit Delta**: [Change from 0.17.0 release](https://github.com/plus3it/watchmaker/compare/0.17.0...0.17.1)
 
@@ -399,7 +399,7 @@
 *   pshelp-formula
     -   Updates PowerShell help content, including Windows Server 2019
 
-### 0.17.0
+## 0.17.0
 
 **Commit Delta**: [Change from 0.16.7 release](https://github.com/plus3it/watchmaker/compare/0.16.7...0.17.0)
 
@@ -413,7 +413,7 @@
 *   Add optional `watchmaker_version` node to configuration
 *   Use Salt 2018.3.4 in default configuration
 
-### 0.16.7
+## 0.16.7
 
 **Commit Delta**: [Change from 0.16.6 release](https://github.com/plus3it/watchmaker/compare/0.16.6...0.16.7)
 
@@ -423,7 +423,7 @@
 
 *   Pins `PyYAML` dependency when running on Python 3.4 or earlier
 
-### 0.16.6
+## 0.16.6
 
 **Commit Delta**: [Change from 0.16.5 release](https://github.com/plus3it/watchmaker/compare/0.16.5...0.16.6)
 
@@ -434,7 +434,7 @@
 *   Uses CDN URLs for watchmaker config and content, instead of direct S3 URLs
 *   Pins `backoff` dependency when running on Python 3.4 or earlier
 
-### 0.16.5
+## 0.16.5
 
 **Commit Delta**: [Change from 0.16.4 release](https://github.com/plus3it/watchmaker/compare/0.16.4...0.16.5)
 
@@ -454,7 +454,7 @@
 *   salt-content
     -   Update SCAP pillar to match filename changes in SCAP formula
 
-### 0.16.4
+## 0.16.4
 
 **Commit Delta**: [Change from 0.16.3 release](https://github.com/plus3it/watchmaker/compare/0.16.3...0.16.4)
 
@@ -472,7 +472,7 @@
 *   watchmaker-salt-content
     -   (Windows) Adds .NET Framework 4.8 info to dotnet winrepo package content
 
-### 0.16.3
+## 0.16.3
 
 **Commit Delta**: [Change from 0.16.2 release](https://github.com/plus3it/watchmaker/compare/0.16.2...0.16.3)
 
@@ -491,7 +491,7 @@
 *   name-computer-formula
     -   (Linux) Updates /etc/hosts with hostname fqdn, when the domain name is provided
 
-### 0.16.2
+## 0.16.2
 
 **Commit Delta**: [Change from 0.16.1 release](https://github.com/plus3it/watchmaker/compare/0.16.1...0.16.2)
 
@@ -509,7 +509,7 @@
     -   Redirects splunk log folder with symlink
     -   Adds option to skip GPG check
 
-### 0.16.1
+## 0.16.1
 
 **Commit Delta**: [Change from 0.16.0 release](https://github.com/plus3it/watchmaker/compare/0.16.0...0.16.1)
 
@@ -525,7 +525,7 @@
 *   watchmaker-salt-content
     -   Switches Linux scap profile pillar settings to 'stig'
 
-### 0.16.0
+## 0.16.0
 
 **Commit Delta**: [Change from 0.15.2 release](https://github.com/plus3it/watchmaker/compare/0.15.2...0.16.0)
 
@@ -539,7 +539,7 @@
 *   join-domain-formula
     -   Adds additional enhancements and logic to better handle the domin-join process in Linux
 
-### 0.15.2
+## 0.15.2
 
 **Commit Delta**: [Change from 0.15.1 release](https://github.com/plus3it/watchmaker/compare/0.15.1...0.15.2)
 
@@ -552,7 +552,7 @@
 *   join-domain-formula
     -   Fixes issue with improper handling of admin names with spaces in Windows
 
-### 0.15.1
+## 0.15.1
 
 **Commit Delta**: [Change from 0.15.0 release](https://github.com/plus3it/watchmaker/compare/0.15.0...0.15.1)
 
@@ -564,7 +564,7 @@
     -   (Linux) Avoids `unique` jinja filter to preserve compatibility for older
         versions of salt
 
-### 0.15.0
+## 0.15.0
 
 **Commit Delta**: [Change from 0.14.2 release](https://github.com/plus3it/watchmaker/compare/0.14.2...0.15.0)
 
@@ -580,7 +580,7 @@
     -   (Linux) Adds pillar option to pass a list of domains to add to the trust
         list
 
-### 0.14.2
+## 0.14.2
 
 **Commit Delta**: [Change from 0.14.1 release](https://github.com/plus3it/watchmaker/compare/0.14.1...0.14.2)
 
@@ -592,7 +592,7 @@
     -   Corrects regression on Windows to support adding admin groups that have
         spaces in the name
 
-### 0.14.1
+## 0.14.1
 
 **Commit Delta**: [Change from 0.14.0 release](https://github.com/plus3it/watchmaker/compare/0.14.0...0.14.1)
 
@@ -604,7 +604,7 @@
 *   join-domain-formula
     -   Fixes issue adding admin groups/users to Windows systems with recent versions of Salt
 
-### 0.14.0
+## 0.14.0
 
 **Commit Delta**: [Change from 0.13.0 release](https://github.com/plus3it/watchmaker/compare/0.13.0...0.14.0)
 
@@ -622,7 +622,7 @@
 *   scap-formula
     -   Updates SCAP Security Guide content to v0.1.41
 
-### 0.13.0
+## 0.13.0
 
 **Commit Delta**: [Change from 0.12.1 release](https://github.com/plus3it/watchmaker/compare/0.12.1...0.13.0)
 
@@ -643,7 +643,7 @@
     - Import correct source of fopen function
     - Configure Postfix to only use ipv4 when ipv6 is disabled
 
-### 0.12.1
+## 0.12.1
 
 **Commit Delta**: [Change from 0.12.0 release](https://github.com/plus3it/watchmaker/compare/0.12.0...0.12.1)
 
@@ -654,7 +654,7 @@
 *   ash-windows-formula
     -   Corrects yaml syntax error in win2016 DC baseline
 
-### 0.12.0
+## 0.12.0
 
 **Commit Delta**: [Change from 0.11.0 release](https://github.com/plus3it/watchmaker/compare/0.11.0...0.12.0)
 
@@ -664,7 +664,7 @@
 
 *   Adds `valid_environments` option to config to allow for the restriction of environment selection
 
-### 0.11.0
+## 0.11.0
 
 **Commit Delta**: [Change from 0.10.3 release](https://github.com/plus3it/watchmaker/compare/0.10.3...0.11.0)
 
@@ -684,7 +684,7 @@
         -   Red Hat 6 STIG Benchmark - Ver 1, Rel 21
         -   Red Hat 7 STIG Benchmark - Ver 2, Rel 1
 
-### 0.10.3
+## 0.10.3
 
 **Commit Delta**: [Change from 0.10.2 release](https://github.com/plus3it/watchmaker/compare/0.10.2...0.10.3)
 
@@ -696,7 +696,7 @@
     -   Updates Formula to Support Salt 2017.7.x and 2018.3.x
     -   Removed admin account rename from delta state
 
-### 0.10.2
+## 0.10.2
 
 **Commit Delta**: [Change from 0.10.1 release](https://github.com/plus3it/watchmaker/compare/0.10.1...0.10.2)
 
@@ -712,7 +712,7 @@
 *   pshelp-formula
     -   Removed byte-order-mark unicode character at beginning of init.sls file
 
-### 0.10.1
+## 0.10.1
 
 **Commit Delta**: [Change from 0.10.0 release](https://github.com/plus3it/watchmaker/compare/0.10.0...0.10.1)
 
@@ -722,7 +722,7 @@
 
 *   No functional changes; just patches the CI/release configuration
 
-### 0.10.0
+## 0.10.0
 
 **Commit Delta**: [Change from 0.9.6 release](https://github.com/plus3it/watchmaker/compare/0.9.6...0.10.0)
 
@@ -743,7 +743,7 @@
 *   nessus-agent-formula
     -   New salt formula distributed with Watchmaker
 
-### 0.9.6
+## 0.9.6
 
 **Commit Delta**: [Change from 0.9.5 release](https://github.com/plus3it/watchmaker/compare/0.9.5...0.9.6)
 
@@ -757,7 +757,7 @@
 *   scap-formula
     -   Incorporates content from OpenSCAP Security Guide v0.1.39-1
 
-### 0.9.5
+## 0.9.5
 
 **Commit Delta**: [Change from 0.9.4 release](https://github.com/plus3it/watchmaker/compare/0.9.4...0.9.5)
 
@@ -774,7 +774,7 @@
 
 [574]: https://github.com/plus3it/watchmaker/pull/574
 
-### 0.9.4
+## 0.9.4
 
 **Commit Delta**: [Change from 0.9.3 release](https://github.com/plus3it/watchmaker/compare/0.9.3...0.9.4)
 
@@ -786,7 +786,7 @@
     -   Updates STIG baselines to address all findings in latest SCAP
         benchmarks
 
-### 0.9.3
+## 0.9.3
 
 **Commit Delta**: [Change from 0.9.2 release](https://github.com/plus3it/watchmaker/compare/0.9.2...0.9.3)
 
@@ -812,7 +812,7 @@
     -   Creates per-OS maps for hotfix updates, since the hotfix id varies per
         OS
 
-### 0.9.2
+## 0.9.2
 
 **Commit Delta**: [Change from 0.9.1 release](https://github.com/plus3it/watchmaker/compare/0.9.1...0.9.2)
 
@@ -823,7 +823,7 @@
 *   dotnet4-formula
     -   Passes version correctly to module.run
 
-### 0.9.1
+## 0.9.1
 
 **Commit Delta**: [Change from 0.9.0 release](https://github.com/plus3it/watchmaker/compare/0.9.0...0.9.1)
 
@@ -836,7 +836,7 @@
 *   ~dotnet4-formula~
     -   ~Passes version correctly to module.run~
 
-### 0.9.0
+## 0.9.0
 
 **Commit Delta**: [Change from 0.8.0 release](https://github.com/plus3it/watchmaker/compare/0.8.0...0.9.0)
 
@@ -876,7 +876,7 @@
 [513]: https://github.com/plus3it/watchmaker/pull/513
 [terraform-aws-watchmaker]: https://github.com/plus3it/terraform-aws-watchmaker
 
-### 0.8.0
+## 0.8.0
 
 **Commit Delta**: [Change from 0.7.2 release](https://github.com/plus3it/watchmaker/compare/0.7.2...0.8.0)
 
@@ -904,7 +904,7 @@
 [458]: https://github.com/plus3it/watchmaker/pull/458
 [467]: https://github.com/plus3it/watchmaker/pull/467
 
-### 0.7.2
+## 0.7.2
 
 **Commit Delta**: [Change from 0.7.1 release](https://github.com/plus3it/watchmaker/compare/0.7.1...0.7.2)
 
@@ -914,7 +914,7 @@
 
 *   Installs `futures` only on Python 2 -- no functional changes
 
-### 0.7.1
+## 0.7.1
 
 **Commit Delta**: [Change from 0.7.0 release](https://github.com/plus3it/watchmaker/compare/0.7.0...0.7.1)
 
@@ -924,7 +924,7 @@
 
 *   Fixes readthedocs build -- no functional changes
 
-### 0.7.0
+## 0.7.0
 
 **Commit Delta**: [Change from 0.6.6 release](https://github.com/plus3it/watchmaker/compare/0.6.6...0.7.0)
 
@@ -953,7 +953,7 @@
 [419]: https://github.com/plus3it/watchmaker/pull/419
 [418]: https://github.com/plus3it/watchmaker/issues/418
 
-### 0.6.6
+## 0.6.6
 
 **Commit Delta**: [Change from 0.6.5 release](https://github.com/plus3it/watchmaker/compare/0.6.5...0.6.6)
 
@@ -971,7 +971,7 @@
     *   (el7) Adds required outbound ports to the OUTPUT chain; previously,
         they were mistakenly being added as inbound rules
 
-### 0.6.5
+## 0.6.5
 
 **Commit Delta**: [Change from 0.6.4 release](https://github.com/plus3it/watchmaker/compare/0.6.4...0.6.5)
 
@@ -989,7 +989,7 @@
 
 [391]: https://github.com/plus3it/watchmaker/pull/391
 
-### 0.6.4
+## 0.6.4
 
 **Commit Delta**: [Change from 0.6.3 release](https://github.com/plus3it/watchmaker/compare/0.6.3...0.6.4)
 
@@ -1002,7 +1002,7 @@
 
 [381]: https://github.com/plus3it/watchmaker/pull/381
 
-### 0.6.3
+## 0.6.3
 
 **Commit Delta**: [Change from 0.6.2 release](https://github.com/plus3it/watchmaker/compare/0.6.2...0.6.3)
 
@@ -1015,7 +1015,7 @@
         access will remain available, in the event the default zone is set to
         "drop"
 
-### 0.6.2
+## 0.6.2
 
 **Commit Delta**: [Change from 0.6.1 release](https://github.com/plus3it/watchmaker/compare/0.6.1...0.6.2)
 
@@ -1029,7 +1029,7 @@
 *   scap-formula
     *   (elX) Updates openscap security guide content to version 0.1.34-1
 
-### 0.6.1
+## 0.6.1
 
 **Commit Delta**: [Change from 0.6.0 release](https://github.com/plus3it/watchmaker/compare/0.6.0...0.6.1)
 
@@ -1041,7 +1041,7 @@
     *   Modified the FIPS custom execution module to discover the boot
         partition and add the `boot=` line to the grub configuration
 
-### 0.6.0
+## 0.6.0
 
 **Commit Delta**: [Change from 0.5.1 release](https://github.com/plus3it/watchmaker/compare/0.5.1...0.6.0)
 
@@ -1066,7 +1066,7 @@
 *   scap-formula
     *   Adds SCAP content for the Window Server 2016 SCAP v1r1 Benchmark
 
-### 0.5.1
+## 0.5.1
 
 **Commit Delta**: [Change from 0.5.0 release](https://github.com/plus3it/watchmaker/compare/0.5.0...0.5.1)
 
@@ -1084,7 +1084,7 @@
 [342]: https://github.com/plus3it/watchmaker/pull/342
 [341]: https://github.com/plus3it/watchmaker/issues/341
 
-### 0.5.0
+## 0.5.0
 
 **Commit Delta**: [Change from 0.4.4 release](https://github.com/plus3it/watchmaker/compare/0.4.4...0.5.0)
 
@@ -1118,7 +1118,7 @@
 [320]: https://github.com/plus3it/watchmaker/pull/320
 [316]: https://github.com/plus3it/watchmaker/issues/316
 
-### 0.4.4
+## 0.4.4
 
 **Commit Delta**: [Change from 0.4.3 release](https://github.com/plus3it/watchmaker/compare/0.4.3...0.4.4)
 
@@ -1132,7 +1132,7 @@
         setting, but still sets the requested value. This exit code is now
         ignored
 
-### 0.4.3
+## 0.4.3
 
 **Commit Delta**: [Change from 0.4.2 release](https://github.com/plus3it/watchmaker/compare/0.4.2...0.4.3)
 
@@ -1144,7 +1144,7 @@
     *   (Linux) Uses an alternate method of working around a bad code-path in
         salt that does not handle quoted values in /etc/sysconfig/network.
 
-### 0.4.2
+## 0.4.2
 
 **Commit Delta**: [Change from 0.4.1 release](https://github.com/plus3it/watchmaker/compare/0.4.1...0.4.2)
 
@@ -1175,7 +1175,7 @@
 
 [301]: https://github.com/plus3it/watchmaker/pull/301
 
-### 0.4.1
+## 0.4.1
 
 **Commit Delta**: [Change from 0.4.0 release](https://github.com/plus3it/watchmaker/compare/0.4.0...0.4.1)
 
@@ -1199,7 +1199,7 @@
     *   Updates stig content with latest benchmark versions
     *   Adds openscap ds.xml content, used to support remediate actions
 
-### 0.4.0
+## 0.4.0
 
 **Commit Delta**: [Change from 0.3.1 release](https://github.com/plus3it/watchmaker/compare/0.3.1...0.4.0)
 
@@ -1224,7 +1224,7 @@
 [286]: https://github.com/plus3it/watchmaker/pull/286
 [284]: https://github.com/plus3it/watchmaker/pull/284
 
-### 0.3.1
+## 0.3.1
 
 **Commit Delta**: [Change from 0.3.0 release](https://github.com/plus3it/watchmaker/compare/0.3.0...0.3.1)
 
@@ -1245,7 +1245,7 @@
 
 [280]: https://github.com/plus3it/watchmaker/pull/280
 
-### 0.3.0
+## 0.3.0
 
 **Commit Delta**: [Change from 0.2.4 release](https://github.com/plus3it/watchmaker/compare/0.2.4...0.3.0)
 
@@ -1267,7 +1267,7 @@
 [271]: https://github.com/plus3it/watchmaker/pull/271
 [270]: https://github.com/plus3it/watchmaker/issues/270
 
-### 0.2.4
+## 0.2.4
 
 **Commit Delta**: [Change from 0.2.3 release](https://github.com/plus3it/watchmaker/compare/0.2.3...0.2.4)
 
@@ -1277,7 +1277,7 @@
 
 *   Fixes a bad version string
 
-### 0.2.3
+## 0.2.3
 
 **Commit Delta**: [Change from 0.2.2 release](https://github.com/plus3it/watchmaker/compare/0.2.2...0.2.3)
 
@@ -1295,7 +1295,7 @@
 [262]: https://github.com/plus3it/watchmaker/issues/262
 [261]: https://github.com/plus3it/watchmaker/issues/261
 
-### 0.2.2
+## 0.2.2
 
 **Commit Delta**: [Change from 0.2.1 release](https://github.com/plus3it/watchmaker/compare/0.2.1...0.2.2)
 
@@ -1311,7 +1311,7 @@
 
 [251]: https://github.com/plus3it/watchmaker/pull/251
 
-### 0.2.1
+## 0.2.1
 
 **Commit Delta**: [Change from 0.2.0 release](https://github.com/plus3it/watchmaker/compare/0.2.0...0.2.1)
 
@@ -1325,7 +1325,7 @@
 *   splunkforwarder-formula
     *   (Windows) Clears system name entries from local Splunk config files
 
-### 0.2.0
+## 0.2.0
 
 **Commit Delta**: [Change from 0.1.7 release](https://github.com/plus3it/watchmaker/compare/0.1.7...0.2.0)
 
@@ -1370,7 +1370,7 @@
 [234]: https://github.com/plus3it/watchmaker/issues/234
 [238]: https://github.com/plus3it/watchmaker/issues/238
 
-### 0.1.7
+## 0.1.7
 
 **Commit Delta**: [Change from 0.1.6 release](https://github.com/plus3it/watchmaker/compare/0.1.6...0.1.7)
 
@@ -1392,7 +1392,7 @@
 
 [226]: https://github.com/plus3it/watchmaker/issues/226
 
-### 0.1.6
+## 0.1.6
 
 **Commit Delta**: [Change from 0.1.5 release](https://github.com/plus3it/watchmaker/compare/0.1.5...0.1.6)
 
@@ -1403,7 +1403,7 @@
 *   ash-linux-formula
     *   Provides same baseline states for both EL6 and EL7
 
-### 0.1.5
+## 0.1.5
 
 **Commit Delta**: [Change from 0.1.4 release](https://github.com/plus3it/watchmaker/compare/0.1.4...0.1.5)
 
@@ -1424,7 +1424,7 @@
 *   splunkforwarder-formula
     *   Uses firewalld on EL7 rather than iptables
 
-### 0.1.4
+## 0.1.4
 
 **Commit Delta**: [Change from 0.1.3 release](https://github.com/plus3it/watchmaker/compare/0.1.3...0.1.4)
 
@@ -1436,7 +1436,7 @@
 
 [180]: https://github.com/plus3it/watchmaker/issues/180
 
-### 0.1.3
+## 0.1.3
 
 **Commit Delta**: [Change from 0.1.2 release](https://github.com/plus3it/watchmaker/compare/0.1.2...0.1.3)
 
@@ -1452,7 +1452,7 @@
 [164]: https://github.com/plus3it/watchmaker/issues/164
 [165]: https://github.com/plus3it/watchmaker/issues/165
 
-### 0.1.2
+## 0.1.2
 
 **Commit Delta**: [Change from 0.1.1 release](https://github.com/plus3it/watchmaker/compare/0.1.1...0.1.2)
 
@@ -1473,7 +1473,7 @@
 *   emet-formula:
     *   Adds support for EMET 5.52
 
-### 0.1.1
+## 0.1.1
 
 **Commit Delta**: [Change from 0.1.0 release](https://github.com/plus3it/watchmaker/compare/0.1.0...0.1.1)
 
@@ -1483,7 +1483,7 @@
 
 *   Adds more logging messages when downloading files
 
-### 0.1.0
+## 0.1.0
 
 **Commit Delta**: N/A
 

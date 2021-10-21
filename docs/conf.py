@@ -6,8 +6,6 @@ from __future__ import (absolute_import, division, print_function,
 import os
 import sys
 
-from recommonmark.transform import AutoStructify
-
 #
 # Created by sphinx-quickstart on Thu Jun 30 20:11:36 2016.
 #
@@ -39,7 +37,7 @@ rtd = os.environ.get('READTHEDOCS', None) == 'True'
 # ones.
 # extensions = []
 extensions = [
-    'recommonmark',
+    'myst_parser',
     'sphinx.ext.autodoc',
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.coverage',
@@ -382,11 +380,3 @@ linkcheck_ignore = [
 
 def setup(app):  # noqa: D103
     app.add_css_file("theme_overrides.css")
-    app.add_config_value(
-        'recommonmark_config',
-        {
-            'enable_eval_rst': True,
-        },
-        True,
-    )
-    app.add_transform(AutoStructify)

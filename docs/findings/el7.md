@@ -1,4 +1,4 @@
-```eval_rst
+```{eval-rst}
 .. image:: ../images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
@@ -7,9 +7,9 @@
 ```
 <br>
 
-## Findings Summary-Table
+# Findings Summary-Table
 
-```eval_rst
+```{eval-rst}
   .. _Use Only FIPS 140-2 Validated Ciphers: #use-only-fips-140-2-validated-ciphers
   .. _Use Only FIPS 140-2 Validated MACs: #use-only-fips-140-2-validated-macs
   .. _Modify the System Login Banner: #modify-the-system-login-banner
@@ -94,39 +94,39 @@
 
 ```
 
-## Use Only FIPS 140-2 Validated Ciphers
+# Use Only FIPS 140-2 Validated Ciphers
 
 Invalid Finding: Watchmaker implements setting valid through EL7 STIGv2R6 (released: October 2019)
 
-## Use Only FIPS 140-2 Validated MACs 
+# Use Only FIPS 140-2 Validated MACs 
 
 Invalid Finding:  Watchmaker implements setting valid through EL7 STIGv2R6 (released: October 2019)
 
-## Modify the System Login Banner
+# Modify the System Login Banner
 
 Invalid Finding: Watchmaker implements site-prescribed banner. Scan-profile's regex may not be flexible enough to match the site-prescribed banner as implemented by watchmaker.
 
-## Enable Smart Card Login
+# Enable Smart Card Login
 
 Conditionally-Valid Finding: Smart Card Login use and configuration is site-specific. Site has not provided specification for implementing this setting within scanned context.
 
-## Configure the Firewalld Ports
+# Configure the Firewalld Ports
 
 Invalid Finding: Watchmaker implements setting. However, scanner regex may not be sufficiently-flexible in its specification.
 
-## Set Default firewalld Zone for Incoming Packets
+# Set Default firewalld Zone for Incoming Packets
 
 Conditionally-Valid Finding: enabling "drop" as the default firewald zone breaks things like ping-sweeps (used by some IPAM solutions, security-scanners, etc.). Some sites will request the "drop" zone not be used. Scan-profiles should be updated to reflect the need to not have "drop" be the active zone.
 
-## Disable Kernel Parameter for IP Forwarding
+# Disable Kernel Parameter for IP Forwarding
 
 Invalid Finding: The prescribed `net.ipv4.ip_forward` value is set by watchmaker in `/etc/sysctl.d/99-sysctl.conf`. Executing `sysctl net.ipv4.ip_forward` on watchmaker-hardened system returns expected `net.ipv4.ip_forward = 0` result
 
-## The Installed Operating System Is Vendor Supported
+# The Installed Operating System Is Vendor Supported
 
 Invalid Finding: No programmatic validation or remediation prescribed or universally-implementable: requires manual validation with OS-vendor lifecycle information page(s). 
 
-## Install McAfee Virus Scanning Software
+# Install McAfee Virus Scanning Software
 
 Conditionally-Valid Finding: 
 
@@ -134,25 +134,25 @@ Conditionally-Valid Finding:
 * Where required/scanned for but not installed, site will need to specify automatable installation-method that will produce match againste scanned-for configuration
 * Where not required, scanner should either be reconfigured not to scan for presence or scan-results should be ignored
 
-## Enable FIPS Mode in GRUB2
+# Enable FIPS Mode in GRUB2
 
 Conditionally-Valid Finding: Both spel and watchmaker implement `fips=1` by default. If finding occurs, either:
 
 * There is an error in scanner's validation-method
 * System has been intentionally de-configured for FIPS &mdash; typically due to hosted-software's requirements &mdash; and scanned-system will need to be granted a deployment security-exception.
 
-## Configure AIDE to Use FIPS 140-2 for Validating Hashes
+# Configure AIDE to Use FIPS 140-2 for Validating Hashes
 
 Invalid Finding: Because there is more than one way to implement this setting, scanners typically do not perform a real scan for this setting. Instead some scanners implement a null-test to flag the configuration-item to try to force a manual review. Watchmaker implements this configuration-titem by setting `NORMAL = FIPSR+sha512` in the `/etc/aide.conf` file: may be manually validated by executing `grep NORMAL\ = /etc/aide.conf`.
 
-## Verify and Correct Ownership with RPM
+# Verify and Correct Ownership with RPM
 
 Invalid Finding:
 
 * Flags on system-journal ownership: Journal ownership settings are automatically reset by systemd (upon reboot) after hardening has run. Currently, no means of permanently remediating is possible.
 * Similarly, if HBSS or VSEL is installed, scan may flag on user-ownership depending on how site specifies installation of HBSS or VSEL. One would reasonably expect similar for other, third-party packages.  "Fixing" (per STIG guidance) would likely break the functioning of the HBSS/VSEL (or third-party) software
 
-## Verify and Correct File Permissions with RPM
+# Verify and Correct File Permissions with RPM
 
 Invalid Finding:
 
@@ -160,11 +160,11 @@ Invalid Finding:
 * May also flag on vendor-delivered CA-trust files which are dynamicly-injected into relevant trust-stores. Currently, no known means of permanently remediating is possible.
 * May flag on third-party tools' (e.g., Splunk) config, log and other files
 
-## Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
+# Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
 
 Conditionally-Valid Finding: Flagged-configuration is frequently required for properly enabling a "break-glass" account at provisioning-time. This is especially so in consoleless environments (like AWS). Disable scan or ignore scan-findings when such accounts are required.
 
-## Operating system must display the date and time of the last successful account logon upon logon
+# Operating system must display the date and time of the last successful account logon upon logon
 
 Invalid Finding:
 

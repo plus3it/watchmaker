@@ -1,4 +1,4 @@
-```eval_rst
+```{eval-rst}
 .. image:: images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
@@ -129,7 +129,7 @@ support Python 2.6:
 
 In order to install pip in Python 2.6, you can get it from:
 
-*   <https://bootstrap.pypa.io/2.6/get-pip.py>
+*   <https://bootstrap.pypa.io/pip/2.6/get-pip.py>
 
 Once a Python 2.6-compatible ``pip`` version is installed, you can install
 compatible versions of the other packages like this:

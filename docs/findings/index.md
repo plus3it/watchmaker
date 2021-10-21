@@ -1,4 +1,4 @@
-```eval_rst
+```{eval-rst}
 .. image:: ../images/cropped-plus3it-logo-cmyk.png
    :width: 140px
    :alt: Powered by Plus3 IT Systems
@@ -17,9 +17,8 @@ configuration-state.
 
 ## Common Scan Findings for EL7
 
-```eval_rst
-.. toctree::
-    :maxdepth: 1
+```{toctree}
+:maxdepth: 1
 
-    el7.md
+el7.md
 ```
