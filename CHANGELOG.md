@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.23.4
+
+**Commit Delta**: [Change from 0.23.3 release](https://github.com/plus3it/watchmaker/compare/0.23.3...0.23.4)
+
+**Released**: 2021.12.20
+
+**Summary**:
+
+*   ash-windows: Adds baseline `ash-windows.cis_1_3_0`
+*   Builds python 3.8 into standalone binary instead of python 3.6
+*   Uses SERVER_AUTH for ssl context, fixing bug resulting from incorrect use of CLIENT_AUTH previously
+
 ## 0.23.3
 
 **Commit Delta**: [Change from 0.23.2 release](https://github.com/plus3it/watchmaker/compare/0.23.2...0.23.3)
