@@ -3,6 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
+import io
 import re
 
 import six
@@ -59,7 +60,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
         # Read first line from /etc/system-release
         try:
-            with open('/etc/system-release', encoding='utf8') as fh_:
+            with io.open('/etc/system-release', encoding='utf8') as fh_:
                 release = fh_.readline().strip()
         except Exception:
             self.log.critical(
