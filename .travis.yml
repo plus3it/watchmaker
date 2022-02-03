@@ -19,7 +19,7 @@ python:
   - 3.7
   - 3.8
   - 3.9
-  - 3.10-dev
+  - 3.10
 if: branch = main OR type = pull_request OR tag is present
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
