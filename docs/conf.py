@@ -55,6 +55,8 @@ autoclass_content = 'class'
 autodoc_member_order = 'bysource'
 autodoc_default_options = {'members': True, 'show-inheritance': True}
 
+myst_heading_anchors = 4
+
 napoleon_use_param = False
 
 # Add any paths that contain templates here, relative to this directory.
