@@ -65,7 +65,7 @@ To set up `watchmaker` for local development:
     > `tox.ini`. If `tox` cannot find the interpreter for the version, the test
     > will fail with an `InterpreterNotFound` error. This is ok, as long as at
     > least one interpreter runs and the tests pass. You can also specify which
-    > [tox environments](#tips) to execute, which can be used to restrict the
+    > [tox environments](#tox-tips) to execute, which can be used to restrict the
     > Python version required.
     >
     > You can also rely on Travis and Appveyor to [run the tests][1] after

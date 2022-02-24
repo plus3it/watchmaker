@@ -15,14 +15,13 @@ jobs:
           ${{ each image in job.value.image }}:
             ${{ image }}:
               ${{ if eq(image, 'win16') }}:
+                # this image is deprecated, but leave it as an example when we
+                # need to update this logic again
                 image: 'vs2017-win2016'
                 image_name: 'win16'
               ${{ if eq(image, 'win19') }}:
                 image: 'windows-2019'
                 image_name: 'win19'
-              ${{ if eq(image, 'win12') }}:
-                image: 'vs2015-win2012r2'
-                image_name: 'win12'
 
     displayName: ${{ format('test python {0} ({1})', job.value.py, job.value.architecture) }}
 

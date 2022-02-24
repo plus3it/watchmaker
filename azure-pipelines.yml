@@ -21,38 +21,40 @@ jobs:
     tox_version: ''
     jobs:
       py310_64:
-        image: [win16, win19]
+        # keep an example of the syntax for building on multiple platforms
+        # image: [win16, win19]
+        image: [win19]
         architecture: x64
         py: "3.10"
       py39_64:
-        image: [win16, win19]
+        image: [win19]
         architecture: x64
         py: "3.9"
       py38_64:
-        image: [win16, win19]
+        image: [win19]
         architecture: x64
         py: "3.8"
       py37_64:
-        image: [win16, win19]
+        image: [win19]
         architecture: x64
         py: "3.7"
       py37_32:
-        image: [win16, win19]
+        image: [win19]
         architecture: x86
         py: "3.7"
       py36_64:
-        image: [win16, win19]
+        image: [win19]
         architecture: x64
         py: "3.6"
       py27_64:
-        image: [win16, win19]
+        image: [win19]
         architecture: x64
         py: "2.7"
 
 - job: build
   displayName: build standalone
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   variables:
     py: "3.7"
     architecture: "x64"
@@ -101,7 +103,7 @@ jobs:
   dependsOn: build
   condition: succeeded()
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   environment: 'standalone'
   variables: # alternate syntax needed when using a group
   - group: wam-windows-ci
