@@ -875,13 +875,8 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         self.ash_role = watchmaker.utils.config_none_deprecate(
             self.ash_role, self.log)
 
-        # Extra variable needed for SaltWindows.
-        sys_drive = os.environ['systemdrive']
-
         # Set up variables for paths to Salt directories and applications.
-        self.salt_root = os.sep.join((sys_drive, 'Salt'))
-
-        self.salt_call = os.sep.join((self.salt_root, 'salt-call.bat'))
+        self.salt_call = SaltWindows._get_salt_call()
         self.salt_wam_root = os.sep.join((
             self.system_params['prepdir'],
             'Salt'))
@@ -940,6 +935,19 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         self.log.info('Setting grain `%s` ...', grain)
         super(SaltWindows, self)._set_grain(grain, value)
 
+    @staticmethod
+    def _get_salt_call():
+        """Retrieve installation path for Salt if it exists."""
+        system_drive = os.environ['systemdrive']
+        program_files = os.environ['ProgramFiles']
+
+        new_salt_path = os.sep.join((program_files, 'Salt Project', 'Salt',
+                                     'salt-call.bat'))
+        old_salt_path = os.sep.join((system_drive, 'Salt', 'salt-call.bat'))
+        if os.path.isfile(new_salt_path):
+            return new_salt_path
+        return old_salt_path
+
     def install(self):
         """Install salt and execute salt states."""
         self._prepare_for_install()
@@ -952,6 +960,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         self._install_package()
         if self.pip_install:
             self._install_pip_packages()
+        self.salt_call = SaltWindows._get_salt_call()
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
