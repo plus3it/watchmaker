@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.24.0
+
+**Commit Delta**: [Change from 0.23.4 release](https://github.com/plus3it/watchmaker/compare/0.23.4...0.24.0)
+
+**Released**: 2022.03.09
+
+**Summary**:
+
+*   Updates default config to use Salt 3004
+*   scap-formula
+    - Fixes invalid requisite reference for scap.scan
+
 ## 0.23.4
 
 **Commit Delta**: [Change from 0.23.3 release](https://github.com/plus3it/watchmaker/compare/0.23.3...0.23.4)
