@@ -1,4 +1,4 @@
-watchmaker_version: ">= 0.21.9"
+watchmaker_version: ">= 0.24.0"
 all:
   - salt:
       admin_groups: null
