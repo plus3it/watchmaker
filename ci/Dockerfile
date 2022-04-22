@@ -1,11 +1,10 @@
-FROM centos:centos7@sha256:c73f515d06b0fa07bb18d8202035e739a494ce760aa73129f60f4bf2bd22b407
+FROM quay.io/centos7/python-38-centos7:centos7@sha256:a36dc59d9a41aaccb3df053a20828b50f0190d2493d99d118bf3fcef6e0d59cb
 
 ARG USER=wam-builder
 ARG USER_UID
 ARG USER_GID
 
-RUN yum -y install python3 \
-    && yum clean all
+USER root
 
 RUN if [[ ${USER_UID} -eq 0 ]] ; then adduser ${USER} ; \
     else if ! getent group "$USER_GID" ; then groupadd --gid ${USER_GID} ${USER} ; \
