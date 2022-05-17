@@ -1,4 +1,4 @@
-FROM quay.io/centos7/python-38-centos7:centos7@sha256:1bd6cf3eddf780ca42df203d4a092506ff22aa5a09d10802b05ab1a4b35ea746
+FROM quay.io/centos7/python-38-centos7:centos7@sha256:318324be9fa3e8ab8ae4d3ac618983d3e45819ff51506b1952bdf4e255e4c7a2
 
 ARG USER=wam-builder
 ARG USER_UID
