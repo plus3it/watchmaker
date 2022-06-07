@@ -1,2 +1,2 @@
 satsuki==0.1.45
-awscli==1.25.2
+awscli==1.25.3
