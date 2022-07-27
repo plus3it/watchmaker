@@ -188,6 +188,9 @@ $PypiUrl = "https://pypi.org/simple"
 $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 (New-Object System.Net.WebClient).DownloadFile("$BootstrapUrl", "$BootstrapFile")
 
+# Use TLS 1.2+
+[Net.ServicePointManager]::SecurityProtocol = "Tls12, Tls13"
+
 # Install python
 & "$BootstrapFile" -PythonUrl "$PythonUrl" -Verbose -ErrorAction Stop
 
