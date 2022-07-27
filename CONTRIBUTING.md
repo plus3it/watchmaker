@@ -181,8 +181,11 @@ specify something like this for EC2 userdata:
 
     $BootstrapUrl = "https://watchmaker.cloudarmor.io/repo/releases/latest/watchmaker-bootstrap.ps1"
     $PythonUrl = "https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe"
-    $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.33.1.windows.1/Git-2.33.1-64-bit.exe"
+    $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.37.1.windows.1/Git-2.37.1-64-bit.exe"
     $PypiUrl = "https://pypi.org/simple"
+
+    # Use TLS 1.2+
+    [Net.ServicePointManager]::SecurityProtocol = "Tls12, Tls13"
 
     # Download bootstrap file
     $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split("/")[-1])"
