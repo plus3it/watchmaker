@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.24.1
+
+**Commit Delta**: [Change from 0.24.0 release](https://github.com/plus3it/watchmaker/compare/0.24.0...0.24.1)
+
+**Released**: 2022.07.27
+
+**Summary**:
+
+*   Builds Linux standalone with python 3.8
+*   Updates default config to use Salt 3004.2
+*   Updates Windows usage docs with requirement to enforce modern TLS versions
+*   join-domain-formula
+    - Windows: Quotes path when running scripts to configure local admin group
+*   ash-linux-formula
+    - Tests if grub.cfg exists before attempting to modify it
+
 ## 0.24.0
 
 **Commit Delta**: [Change from 0.23.4 release](https://github.com/plus3it/watchmaker/compare/0.23.4...0.24.0)
