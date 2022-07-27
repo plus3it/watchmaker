@@ -215,7 +215,7 @@ This example can be used to construct your own `config.yaml` file. The
 versions.
 
 ```yaml
-watchmaker_version: ">= 0.21.9"
+watchmaker_version: ">= 0.24.0.dev"
 all:
   - salt:
       admin_groups: null
@@ -253,7 +253,7 @@ linux:
             - redhat
             - centos
           el_version: 7
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3003.3/salt-reposync-el7-python3.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el7-python3.repo
   - salt:
       salt_debug_log: null
       install_method: yum
@@ -264,7 +264,7 @@ linux:
 windows:
   - salt:
       salt_debug_log: null
-      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3003.3-Py3-AMD64-Setup.exe
+      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
 ```
 
 [0]: https://yaml.org/spec/1.2/spec.html
