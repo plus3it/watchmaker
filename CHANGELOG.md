@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.24.2
+
+**Commit Delta**: [Change from 0.24.1 release](https://github.com/plus3it/watchmaker/compare/0.24.1...0.24.2)
+
+**Released**: 2022.08.16
+
+**Summary**:
+
+*   scap-formula
+    - Updates OpenSCAP and DISA STIG content
+    - Linux: Adds EL8 content
+*   watchmaker-salt-content
+    - Windows: Re-adds scap scan using public distributable SCC 5.5
+
 ## 0.24.1
 
 **Commit Delta**: [Change from 0.24.0 release](https://github.com/plus3it/watchmaker/compare/0.24.0...0.24.1)
