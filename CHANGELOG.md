@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.24.3
+
+**Commit Delta**: [Change from 0.24.2 release](https://github.com/plus3it/watchmaker/compare/0.24.2...0.24.3)
+
+**Released**: 2022.09.16
+
+**Summary**:
+
+*   ash-linux-formula
+    - Adds check to ensure root account password is set to not expire
+*   join-domain-formula
+    - Removes PAM Lsass login re-configuration
+
 ## 0.24.2
 
 **Commit Delta**: [Change from 0.24.1 release](https://github.com/plus3it/watchmaker/compare/0.24.1...0.24.2)
