@@ -854,7 +854,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         """Return name of distro version-appropriate policycoreutils RPM."""
         if arg < '8':
             result = 'policycoreutils-python'
-        elif arg >= '8':
+        else:
             result = 'policycoreutils-python-utils'
 
         return result
