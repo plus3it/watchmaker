@@ -10,6 +10,7 @@ import json
 import os
 import shutil
 
+import distro
 import yaml
 
 import watchmaker.utils
@@ -722,10 +723,12 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
 
         # Extra variables needed for SaltLinux.
         self.yum_pkgs = [
-            'policycoreutils-python',
             'selinux-policy-targeted',
             'salt-minion',
         ]
+
+        # Add distro-specific policycoreutils RPM to package-list
+        self.yum_pkgs.append(self._policy_rpm(distro.version()[0]))
 
         # Set up variables for paths to Salt directories and applications.
         self.salt_call = '/usr/bin/salt-call'
@@ -846,6 +849,15 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
 
         if self.working_dir:
             self.cleanup()
+
+    def _policy_rpm(self, arg):
+        """Return name of distro version-appropriate policycoreutils RPM."""
+        if arg < '8':
+            result = 'policycoreutils-python'
+        else:
+            result = 'policycoreutils-python-utils'
+
+        return result
 
 
 class SaltWindows(SaltBase, WindowsPlatformManager):
