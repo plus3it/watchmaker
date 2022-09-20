@@ -1,2 +1,3 @@
 satsuki==0.1.47
 awscli==1.25.76
+distro>=1.7.0;python_version>="3.6"
