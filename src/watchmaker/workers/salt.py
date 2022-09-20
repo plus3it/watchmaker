@@ -5,12 +5,12 @@ from __future__ import (absolute_import, division, print_function,
 
 import ast
 import codecs
-import distro
 import glob
 import json
 import os
 import shutil
 
+import distro
 import yaml
 
 import watchmaker.utils
