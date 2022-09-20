@@ -728,9 +728,9 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         ]
 
         # Add distro-specific policycoreutils RPM to package-list
-        if distro.version()[0] == '7':
+        if distro.version()[0] < '8':
             self.yum_pkgs.append('policycoreutils-python')
-        elif distro.version()[0] == '8':
+        elif distro.version()[0] >= '8':
             self.yum_pkgs.append('policycoreutils-python-utils')
 
         # Set up variables for paths to Salt directories and applications.
