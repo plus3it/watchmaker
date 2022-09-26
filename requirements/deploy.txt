@@ -1,2 +1,2 @@
-satsuki==0.1.47
+satsuki==0.1.48
 awscli==1.25.81
