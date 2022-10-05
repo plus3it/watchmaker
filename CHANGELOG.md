@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.25.0
+
+**Commit Delta**: [Change from 0.24.3 release](https://github.com/plus3it/watchmaker/compare/0.24.3...0.25.0)
+
+**Released**: 2022.10.05
+
+**Summary**:
+
+*   [Alpha] Begins initial preparation to support running watchmaker on EL8 platforms
+*   forescout-secure-connector-formula
+    - First release that packages a formula for ForeScout Secure Connector
+
 ## 0.24.3
 
 **Commit Delta**: [Change from 0.24.2 release](https://github.com/plus3it/watchmaker/compare/0.24.2...0.24.3)
@@ -153,7 +165,7 @@
 
 *   Updates default config.yaml to use Salt 3003
 *   ash-linux-formula
-    - Adds ability to selectively skip extra EL7 STIG handlers 
+    - Adds ability to selectively skip extra EL7 STIG handlers
 *   nessus-agent-formula
     - (Linux) Updates nessus-agent to call install and configure states
 
@@ -173,7 +185,7 @@
 *   nessus-agent-formula
     - Separate agent install and configuration to support baked-in Nessus agent installations
 *   join-domain-formula
-    - (Windows) Add double-quotes to Members parameter in order for startup task state to work with Salt 3003 
+    - (Windows) Add double-quotes to Members parameter in order for startup task state to work with Salt 3003
 
 ## 0.21.8
 
