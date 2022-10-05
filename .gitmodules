@@ -1,3 +1,6 @@
+[submodule "src/vendor/pypa/get-pip"]
+	path = src/vendor/pypa/get-pip
+	url = https://github.com/pypa/get-pip.git
 [submodule "src/watchmaker/static/salt/formulas/ash-linux-formula"]
 	path = src/watchmaker/static/salt/formulas/ash-linux-formula
 	url = https://github.com/plus3it/ash-linux-formula.git
@@ -46,6 +49,6 @@
 [submodule "src/watchmaker/static/salt/formulas/vault-auth-formula"]
 	path = src/watchmaker/static/salt/formulas/vault-auth-formula
 	url = https://github.com/plus3it/vault-auth-formula
-[submodule "src/vendor/pypa/get-pip"]
-	path = src/vendor/pypa/get-pip
-	url = https://github.com/pypa/get-pip.git
+[submodule "src/watchmaker/static/salt/formulas/forescout-secure-connector-formula"]
+	path = src/watchmaker/static/salt/formulas/forescout-secure-connector-formula
+	url = https://github.com/plus3it/forescout-secure-connector-formula.git
