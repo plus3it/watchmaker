@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Loads helper utility modules and functions."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import os
 import shutil
@@ -12,6 +17,16 @@ import backoff
 
 from watchmaker.utils import urllib
 
+HAS_BOTO3 = False
+try:
+    import boto3
+
+    HAS_BOTO3 = True
+except ImportError:
+    pass
+
+HAS_AZURE = False
+
 
 def scheme_from_uri(uri):
     """Return a scheme from a parsed uri."""
@@ -19,7 +34,7 @@ def scheme_from_uri(uri):
     # i.e. '/abspath/foo' or 'relpath/foo'
     # Do not test `if parts.scheme` because of how urlparse handles Windows
     # file paths -- i.e. 'C:\\foo' => scheme = 'c' :(
-    return uri.scheme if '://' in urllib.parse.urlunparse(uri) else 'file'
+    return uri.scheme if "://" in urllib.parse.urlunparse(uri) else "file"
 
 
 def uri_from_filepath(filepath):
@@ -27,15 +42,18 @@ def uri_from_filepath(filepath):
     parts = urllib.parse.urlparse(filepath)
     scheme = scheme_from_uri(parts)
 
-    if scheme != 'file':
+    if scheme != "file":
         # Return non-file paths unchanged
         return filepath
 
     # Expand relative file paths and convert them to uri-style
-    path = urllib.request.pathname2url(os.path.abspath(os.path.expanduser(
-        ''.join([x for x in [parts.netloc, parts.path] if x]))))
+    path = urllib.request.pathname2url(
+        os.path.abspath(
+            os.path.expanduser("".join([x for x in [parts.netloc, parts.path] if x]))
+        )
+    )
 
-    return urllib.parse.urlunparse((scheme, '', path, '', '', ''))
+    return urllib.parse.urlunparse((scheme, "", path, "", "", ""))
 
 
 def basename_from_uri(uri):
@@ -53,9 +71,7 @@ def urlopen_retry(uri):
         # trust the system's default CA certificates
         # proper way for 2.7.9+ on Linux
         if uri.startswith("https://"):
-            kwargs['context'] = ssl.create_default_context(
-                ssl.Purpose.SERVER_AUTH
-            )
+            kwargs["context"] = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     except AttributeError:
         pass
 
@@ -107,7 +123,8 @@ def config_none_deprecate(check_value, log):
     if check_value and value is None:
         deprecate_msg = (
             'Use of "None" (string) as a config value is deprecated. Use '
-            '`null` instead.')
+            "`null` instead."
+        )
         log.warn(deprecate_msg)
         warnings.warn(deprecate_msg, DeprecationWarning)
 
@@ -116,7 +133,7 @@ def config_none_deprecate(check_value, log):
 
 def clean_none(value):
     """Convert string 'None' to None."""
-    if str(value).lower() == 'none':
+    if str(value).lower() == "none":
         return None
 
     return value
@@ -125,15 +142,13 @@ def clean_none(value):
 def copy_subdirectories(src_dir, dest_dir, log=None):
     """Copy subdirectories within given src dir into dest dir."""
     for subdir in next(os.walk(src_dir))[1]:
-        if (
-            not subdir.startswith('.') and
-            not os.path.exists(os.sep.join((dest_dir, subdir)))
+        if not subdir.startswith(".") and not os.path.exists(
+            os.sep.join((dest_dir, subdir))
         ):
-            copytree(
-                os.sep.join((src_dir, subdir)),
-                os.sep.join((dest_dir, subdir))
-            )
+            copytree(os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir)))
             if log:
-                log.info('Copied from %s to %s',
-                         os.sep.join((src_dir, subdir)),
-                         os.sep.join((dest_dir, subdir)))
+                log.info(
+                    "Copied from %s to %s",
+                    os.sep.join((src_dir, subdir)),
+                    os.sep.join((dest_dir, subdir)),
+                )

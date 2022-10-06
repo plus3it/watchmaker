@@ -1,4 +1,15 @@
 watchmaker_version: ">= 0.24.0.dev"
+status:
+  targets:
+    - key: 'WatchmakerStatus'
+      required: False
+      target_type: 'ec2_tag'
+      status_type: 'Running'
+    - key: 'WatchmakerStatus'
+      required: False
+      target_type: 'azure_tag'
+      status_type: 'Running'
+
 all:
   - salt:
       admin_groups: null

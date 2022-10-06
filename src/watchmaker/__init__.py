@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Watchmaker module."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import collections
 import datetime
@@ -21,9 +26,11 @@ import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
-from watchmaker.managers.worker_manager import (LinuxWorkersManager,
-                                                WindowsWorkersManager)
-from watchmaker.utils import urllib
+from watchmaker.managers.worker_manager import (
+    LinuxWorkersManager,
+    WindowsWorkersManager,
+)
+from watchmaker.utils import urllib, HAS_BOTO3, HAS_AZURE
 
 
 def _extract_version(package_name):
@@ -32,24 +39,24 @@ def _extract_version(package_name):
     except pkg_resources.DistributionNotFound:
         _conf = setuptools.config.read_configuration(
             os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                'setup.cfg'
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "setup.cfg"
             )
         )
-        return _conf['metadata']['version']
+        return _conf["metadata"]["version"]
 
 
 def _version_info(app_name, version):
-    return '{0}/{1} Python/{2} {3}/{4}'.format(
+    return "{0}/{1} Python/{2} {3}/{4}".format(
         app_name,
         version,
         platform.python_version(),
         platform.system(),
-        platform.release())
+        platform.release(),
+    )
 
 
-__version__ = _extract_version('watchmaker')
-VERSION_INFO = _version_info('Watchmaker', __version__)
+__version__ = _extract_version("watchmaker")
+VERSION_INFO = _version_info("Watchmaker", __version__)
 
 
 class Arguments(dict):
@@ -169,7 +176,7 @@ class Arguments(dict):
 
     """
 
-    DEFAULT_VALUE = 'WAM_NONE'
+    DEFAULT_VALUE = "WAM_NONE"
 
     def __init__(
         self,
@@ -178,7 +185,7 @@ class Arguments(dict):
         no_reboot=False,
         log_level=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super(Arguments, self).__init__(*args, **kwargs)
         self.config_path = config_path
@@ -186,42 +193,48 @@ class Arguments(dict):
         self.no_reboot = no_reboot
         self.log_level = log_level
         self.admin_groups = watchmaker.utils.clean_none(
-            kwargs.pop('admin_groups', None) or Arguments.DEFAULT_VALUE)
+            kwargs.pop("admin_groups", None) or Arguments.DEFAULT_VALUE
+        )
         self.admin_users = watchmaker.utils.clean_none(
-            kwargs.pop('admin_users', None) or Arguments.DEFAULT_VALUE)
+            kwargs.pop("admin_users", None) or Arguments.DEFAULT_VALUE
+        )
         self.computer_name = watchmaker.utils.clean_none(
-            kwargs.pop('computer_name', None) or Arguments.DEFAULT_VALUE)
+            kwargs.pop("computer_name", None) or Arguments.DEFAULT_VALUE
+        )
         self.environment = watchmaker.utils.clean_none(
-            kwargs.pop('environment', None) or Arguments.DEFAULT_VALUE)
+            kwargs.pop("environment", None) or Arguments.DEFAULT_VALUE
+        )
         self.salt_states = watchmaker.utils.clean_none(
-            kwargs.pop('salt_states', None) or Arguments.DEFAULT_VALUE)
+            kwargs.pop("salt_states", None) or Arguments.DEFAULT_VALUE
+        )
         self.ou_path = watchmaker.utils.clean_none(
-            kwargs.pop('ou_path', None) or Arguments.DEFAULT_VALUE)
+            kwargs.pop("ou_path", None) or Arguments.DEFAULT_VALUE
+        )
 
         # Parse extra_arguments passed as `--argument=value` into separate
         # tokens, ['--argument', 'value']. This way the `=` as the separator is
         # treated the same as the ` ` as the separator, e.g. `--argument value`
         extra_arguments = []
-        for item in kwargs.pop('extra_arguments', None) or []:
-            match = re.match('^(?P<arg>-+.*?)=(?P<val>.*)', item)
+        for item in kwargs.pop("extra_arguments", None) or []:
+            match = re.match("^(?P<arg>-+.*?)=(?P<val>.*)", item)
             if match:
                 # item is using '=' to separate argument name and value
-                extra_arguments.extend([
-                    match.group('arg'),
-                    watchmaker.utils.clean_none(
-                        match.group('val') or Arguments.DEFAULT_VALUE
-                    )
-                ])
-            elif item.startswith('-'):
+                extra_arguments.extend(
+                    [
+                        match.group("arg"),
+                        watchmaker.utils.clean_none(
+                            match.group("val") or Arguments.DEFAULT_VALUE
+                        ),
+                    ]
+                )
+            elif item.startswith("-"):
                 # item is the argument name
                 extra_arguments.extend([item])
             else:
                 # item is the argument value
-                extra_arguments.extend([
-                    watchmaker.utils.clean_none(
-                        item or Arguments.DEFAULT_VALUE
-                    )
-                ])
+                extra_arguments.extend(
+                    [watchmaker.utils.clean_none(item or Arguments.DEFAULT_VALUE)]
+                )
 
         self.extra_arguments = extra_arguments
 
@@ -246,24 +259,24 @@ class Client(object):
 
     def __init__(self, arguments):
         self.log = logging.getLogger(
-            '{0}.{1}'.format(__name__, self.__class__.__name__)
+            "{0}.{1}".format(__name__, self.__class__.__name__)
         )
         # Pop extra_arguments now so we can log it separately
-        extra_arguments = arguments.pop('extra_arguments', [])
+        extra_arguments = arguments.pop("extra_arguments", [])
 
-        header = ' WATCHMAKER RUN '
-        header = header.rjust((40 + len(header) // 2), '#').ljust(80, '#')
+        header = " WATCHMAKER RUN "
+        header = header.rjust((40 + len(header) // 2), "#").ljust(80, "#")
         self.log.info(header)
-        self.log.debug('Watchmaker Version: %s', __version__)
-        self.log.debug('Parameters: %s', arguments)
-        self.log.debug('Extra Parameters: %s', extra_arguments)
+        self.log.debug("Watchmaker Version: %s", __version__)
+        self.log.debug("Parameters: %s", arguments)
+        self.log.debug("Extra Parameters: %s", extra_arguments)
 
         # Pop remaining arguments used by watchmaker.Client itself
-        self.default_config = os.path.join(static.__path__[0], 'config.yaml')
-        self.no_reboot = arguments.pop('no_reboot', False)
-        self.config_path = arguments.pop('config_path')
-        self.log_dir = arguments.pop('log_dir')
-        self.log_level = arguments.pop('log_level')
+        self.default_config = os.path.join(static.__path__[0], "config.yaml")
+        self.no_reboot = arguments.pop("no_reboot", False)
+        self.config_path = arguments.pop("config_path")
+        self.log_dir = arguments.pop("log_dir")
+        self.log_level = arguments.pop("log_level")
 
         log_system_details(self.log)
 
@@ -271,7 +284,7 @@ class Client(object):
         self.system = platform.system().lower()
         self._set_system_params()
 
-        self.log.debug('System Parameters: %s', self.system_params)
+        self.log.debug("System Parameters: %s", self.system_params)
 
         # All remaining arguments are worker_args
         worker_args = arguments
@@ -279,15 +292,17 @@ class Client(object):
         # Convert extra_arguments to a dict and merge it with worker_args.
         # Leading hypens are removed, and other hyphens are converted to
         # underscores
-        worker_args.update(dict(
-            (k.lstrip('-').replace('-', '_'), v) for k, v in zip(
-                *[iter(extra_arguments)] * 2)
-        ))
+        worker_args.update(
+            dict(
+                (k.lstrip("-").replace("-", "_"), v)
+                for k, v in zip(*[iter(extra_arguments)] * 2)
+            )
+        )
 
         try:
             # Set self.worker_args, removing `None` values from worker_args
             self.worker_args = dict(
-                (k, yaml.safe_load('null' if v is None else v))
+                (k, yaml.safe_load("null" if v is None else v))
                 for k, v in worker_args.items()
                 if v != Arguments.DEFAULT_VALUE
             )
@@ -302,7 +317,9 @@ class Client(object):
                 raise InvalidValueError(msg)
             raise
 
-        self.config = self._get_config()
+        self.config, self.status_config = self._get_configs()
+
+        self.__tag_status()
 
     def _get_config(self):
         """
@@ -315,51 +332,50 @@ class Client(object):
 
         """
         if not self.config_path:
-            self.log.warning(
-                'User did not supply a config. Using the default config.'
-            )
+            self.log.warning("User did not supply a config. Using the default config.")
             self.config_path = self.default_config
         else:
-            self.log.info('User supplied config being used.')
+            self.log.info("User supplied config being used.")
 
         # Convert a local config path to a URI
         self.config_path = watchmaker.utils.uri_from_filepath(self.config_path)
 
         # Get the raw config data
-        data = ''
+        data = ""
         try:
             data = watchmaker.utils.urlopen_retry(self.config_path).read()
         except (ValueError, urllib.error.URLError):
             msg = (
                 'Could not read config file from the provided value "{0}"! '
-                'Check that the config is available.'.format(self.config_path)
+                "Check that the config is available.".format(self.config_path)
             )
             self.log.critical(msg)
             raise
 
         config_full = yaml.safe_load(data)
         try:
-            config_all = config_full.get('all', [])
+            config_all = config_full.get("all", [])
+            config_status = config_full.get("status", [])
             config_system = config_full.get(self.system, [])
-            config_version_specifier = config_full.get(
-                'watchmaker_version', None)
+            config_version_specifier = config_full.get("watchmaker_version", None)
         except AttributeError:
-            msg = 'Malformed config file. Must be a dictionary.'
+            msg = "Malformed config file. Must be a dictionary."
             self.log.critical(msg)
             raise
 
         # If both config and config_system are empty, raise
         if not config_system and not config_all:
-            msg = 'Malformed config file. No workers for this system.'
+            msg = "Malformed config file. No workers for this system."
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
         if config_version_specifier and not check_version(
-                watchmaker.__version__, config_version_specifier):
+            watchmaker.__version__, config_version_specifier
+        ):
             msg = (
-                'Watchmaker version {} is not compatible with the config '
-                'file (watchmaker_version = {})').format(
-                    watchmaker.__version__, config_version_specifier)
+                "Watchmaker version {} is not compatible with the config "
+                "file (watchmaker_version = {})"
+            ).format(watchmaker.__version__, config_version_specifier)
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
@@ -384,51 +400,48 @@ class Client(object):
                 worker_name, worker_config = list(worker.items())[0]
                 if worker_name not in config:
                     # Add worker to config
-                    config[worker_name] = {'config': worker_config}
-                    self.log.debug('%s config: %s', worker_name, worker_config)
+                    config[worker_name] = {"config": worker_config}
+                    self.log.debug("%s config: %s", worker_name, worker_config)
                 else:
                     # Worker is present in both config_system and config_all,
                     # config[worker_name]['config'] is from config_system,
                     # worker_config is from config_all
-                    worker_config.update(config[worker_name]['config'])
-                    config[worker_name]['config'] = worker_config
-                    self.log.debug(
-                        '%s extra config: %s',
-                        worker_name, worker_config
-                    )
+                    worker_config.update(config[worker_name]["config"])
+                    config[worker_name]["config"] = worker_config
+                    self.log.debug("%s extra config: %s", worker_name, worker_config)
                     # Need to (re)merge cli worker args so they override
-                    config[worker_name]['__merged'] = False
-                if not config[worker_name].get('__merged'):
+                    config[worker_name]["__merged"] = False
+                if not config[worker_name].get("__merged"):
                     # Merge worker_args into config params
-                    config[worker_name]['config'].update(self.worker_args)
-                    config[worker_name]['__merged'] = True
+                    config[worker_name]["config"].update(self.worker_args)
+                    config[worker_name]["__merged"] = True
             except Exception:
-                msg = (
-                    'Failed to merge worker config; worker={0}'
-                    .format(worker)
-                )
+                msg = "Failed to merge worker config; worker={0}".format(worker)
                 self.log.critical(msg)
                 raise
 
         self.log.debug(
-            'Command-line arguments merged into worker configs: %s',
-            self.worker_args
+            "Command-line arguments merged into worker configs: %s", self.worker_args
         )
 
-        return config
+        config_status = self.__get_status_target_by_target_type(config_status)
+
+        return config, config_status
 
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
-        params['prepdir'] = os.path.join(
-            '{0}'.format(self.system_drive), 'usr', 'tmp', 'watchmaker')
-        params['readyfile'] = os.path.join(
-            '{0}'.format(self.system_drive), 'var', 'run', 'system-is-ready')
-        params['logdir'] = os.path.join(
-            '{0}'.format(self.system_drive), 'var', 'log')
-        params['workingdir'] = os.path.join(
-            '{0}'.format(params['prepdir']), 'workingfiles')
-        params['restart'] = 'shutdown -r +1 &'
+        params["prepdir"] = os.path.join(
+            "{0}".format(self.system_drive), "usr", "tmp", "watchmaker"
+        )
+        params["readyfile"] = os.path.join(
+            "{0}".format(self.system_drive), "var", "run", "system-is-ready"
+        )
+        params["logdir"] = os.path.join("{0}".format(self.system_drive), "var", "log")
+        params["workingdir"] = os.path.join(
+            "{0}".format(params["prepdir"]), "workingfiles"
+        )
+        params["restart"] = "shutdown -r +1 &"
         return params
 
     def _get_windows_system_params(self):
@@ -436,37 +449,41 @@ class Client(object):
         params = {}
         # os.path.join does not produce path as expected when first string
         # ends in colon; so using a join on the sep character.
-        params['prepdir'] = os.path.sep.join([self.system_drive, 'Watchmaker'])
-        params['readyfile'] = os.path.join(
-            '{0}'.format(params['prepdir']), 'system-is-ready')
-        params['logdir'] = os.path.join(
-            '{0}'.format(params['prepdir']), 'Logs')
-        params['workingdir'] = os.path.join(
-            '{0}'.format(params['prepdir']), 'WorkingFiles')
-        params['shutdown_path'] = os.path.join(
-            '{0}'.format(os.environ['SYSTEMROOT']), 'system32', 'shutdown.exe')
-        params['restart'] = params["shutdown_path"] + \
-            ' /r /t 30 /d p:2:4 /c ' + \
-            '"Watchmaker complete. Rebooting computer."'
+        params["prepdir"] = os.path.sep.join([self.system_drive, "Watchmaker"])
+        params["readyfile"] = os.path.join(
+            "{0}".format(params["prepdir"]), "system-is-ready"
+        )
+        params["logdir"] = os.path.join("{0}".format(params["prepdir"]), "Logs")
+        params["workingdir"] = os.path.join(
+            "{0}".format(params["prepdir"]), "WorkingFiles"
+        )
+        params["shutdown_path"] = os.path.join(
+            "{0}".format(os.environ["SYSTEMROOT"]), "system32", "shutdown.exe"
+        )
+        params["restart"] = (
+            params["shutdown_path"]
+            + " /r /t 30 /d p:2:4 /c "
+            + '"Watchmaker complete. Rebooting computer."'
+        )
         return params
 
     def _set_system_params(self):
         """Set OS-specific attributes."""
-        if 'linux' in self.system:
-            self.system_drive = '/'
+        if "linux" in self.system:
+            self.system_drive = "/"
             self.workers_manager = LinuxWorkersManager
             self.system_params = self._get_linux_system_params()
             os.umask(0o077)
-        elif 'windows' in self.system:
-            self.system_drive = os.environ['SYSTEMDRIVE']
+        elif "windows" in self.system:
+            self.system_drive = os.environ["SYSTEMDRIVE"]
             self.workers_manager = WindowsWorkersManager
             self.system_params = self._get_windows_system_params()
         else:
-            msg = 'System, {0}, is not recognized?'.format(self.system)
+            msg = "System, {0}, is not recognized?".format(self.system)
             self.log.critical(msg)
             raise WatchmakerError(msg)
         if self.log_dir:
-            self.system_params['logdir'] = self.log_dir
+            self.system_params["logdir"] = self.log_dir
 
     def install(self):
         """
@@ -475,43 +492,84 @@ class Client(object):
         Upon successful execution, the system will be properly provisioned,
         according to the defined configuration and workers.
         """
-        self.log.info('Start time: %s', datetime.datetime.now())
-        self.log.info('Workers to execute: %s', self.config.keys())
+        self.log.info("Start time: %s", datetime.datetime.now())
+        self.log.info("Workers to execute: %s", self.config.keys())
 
         # Create watchmaker directories
         try:
-            os.makedirs(self.system_params['workingdir'])
-            oschmod.set_mode(self.system_params['prepdir'], 0o700)
+            os.makedirs(self.system_params["workingdir"])
+            oschmod.set_mode(self.system_params["prepdir"], 0o700)
         except OSError:
-            if not os.path.exists(self.system_params['workingdir']):
-                msg = (
-                    'Unable to create directory - {0}'
-                    .format(self.system_params['workingdir'])
+            if not os.path.exists(self.system_params["workingdir"]):
+                msg = "Unable to create directory - {0}".format(
+                    self.system_params["workingdir"]
                 )
                 self.log.critical(msg)
                 raise
 
         workers_manager = self.workers_manager(
-            system_params=self.system_params,
-            workers=self.config
+            system_params=self.system_params, workers=self.config
         )
 
         try:
             workers_manager.worker_cadence()
         except Exception:
-            msg = 'Execution of the workers cadence has failed.'
+            msg = "Execution of the workers cadence has failed."
             self.log.critical(msg)
             raise
 
         if self.no_reboot:
             self.log.info(
-                'Detected `no-reboot` switch. System will not be '
-                'rebooted.'
+                "Detected `no-reboot` switch. System will not be " "rebooted."
             )
         else:
             self.log.info(
-                'Reboot scheduled. System will reboot after the script '
-                'exits.'
+                "Reboot scheduled. System will reboot after the script " "exits."
             )
-            subprocess.call(self.system_params['restart'], shell=True)
-        self.log.info('Stop time: %s', datetime.datetime.now())
+            subprocess.call(self.system_params["restart"], shell=True)
+        self.log.info("Stop time: %s", datetime.datetime.now())
+
+    def __get_status_target_by_target_type(self, config_status):
+        if config_status:
+            target_type = self.__get_target_type(self)
+
+            if target_type:
+                return [
+                    target
+                    for target in config_status["targets"]
+                    if target["target_type"].lower() == target_type
+                ]
+            else:
+                self.__process_required_tags(config_status)
+
+    def __tag_status(self, status_type, status):
+        if self.status_config:
+            status_type = status_type.lower()
+            targets = [
+                target
+                for target in self.status_config["targets"]
+                if target["status_type"].lower() == status_type
+            ]
+            for target in targets:
+                # tag instance with status
+                pass
+
+    def __process_required_tags(self, config_status):
+        """Checks for any required tags and raises exception if found"""
+        targets = [target for target in config_status["targets"] if target["required"]]
+
+        target_types = set()
+        for target in targets:
+            target_types.append(f'{target["target_type"]} : {target["status_type"]}')
+
+        if target_types:
+            raise Exception(
+                f"Target types and tags {target_types}are required but no environment is not available"
+            )
+
+    def __get_target_type(self):
+        if HAS_BOTO3:
+            return "ec2_tag"
+        if HAS_AZURE:
+            return "azure_tag"
+        return None

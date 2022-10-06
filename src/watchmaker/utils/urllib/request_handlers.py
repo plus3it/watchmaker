@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 """Extends urllib with additional handlers."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import io
 from email import message_from_string
 
 from six.moves import urllib
-
-HAS_BOTO3 = False
-try:
-    import boto3
-    HAS_BOTO3 = True
-except ImportError:
-    pass
 
 
 class BufferedIOS3Key(io.BufferedIOBase):
@@ -21,7 +19,7 @@ class BufferedIOS3Key(io.BufferedIOBase):
 
     def __init__(self, key, *args, **kwargs):
         super(BufferedIOS3Key, self).__init__(*args, **kwargs)
-        self.read = key.get()['Body'].read
+        self.read = key.get()["Body"].read
 
 
 class S3Handler(urllib.request.BaseHandler):
@@ -45,9 +43,7 @@ class S3Handler(urllib.request.BaseHandler):
         key_name = selector[1:]
 
         if not bucket_name or not key_name:
-            raise urllib.error.URLError(
-                'url must be in the format s3://<bucket>/<key>'
-            )
+            raise urllib.error.URLError("url must be in the format s3://<bucket>/<key>")
 
         try:
             s3_conn = self.s3_conn
@@ -57,29 +53,26 @@ class S3Handler(urllib.request.BaseHandler):
 
         key = s3_conn.Object(bucket_name=bucket_name, key=key_name)
 
-        origurl = 's3://{0}/{1}'.format(bucket_name, key_name)
+        origurl = "s3://{0}/{1}".format(bucket_name, key_name)
 
         if key is None:
-            raise urllib.error.URLError(
-                'no such resource: {0}'.format(origurl)
-            )
+            raise urllib.error.URLError("no such resource: {0}".format(origurl))
 
         headers = [
-            ('Content-type', key.content_type),
-            ('Content-encoding', key.content_encoding),
-            ('Content-language', key.content_language),
-            ('Content-length', key.content_length),
-            ('Etag', key.e_tag),
-            ('Last-modified', key.last_modified),
+            ("Content-type", key.content_type),
+            ("Content-encoding", key.content_encoding),
+            ("Content-language", key.content_language),
+            ("Content-length", key.content_length),
+            ("Etag", key.e_tag),
+            ("Last-modified", key.last_modified),
         ]
 
         headers = message_from_string(
-            '\n'.join(
-                '{0}: {1}'.format(header, value) for header, value in headers
+            "\n".join(
+                "{0}: {1}".format(header, value)
+                for header, value in headers
                 if value is not None
             )
         )
 
-        return urllib.response.addinfourl(
-            BufferedIOS3Key(key), headers, origurl
-        )
+        return urllib.response.addinfourl(BufferedIOS3Key(key), headers, origurl)
