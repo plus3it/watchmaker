@@ -32,6 +32,11 @@ from watchmaker.managers.worker_manager import (
 )
 from watchmaker.utils import urllib, HAS_BOTO3, HAS_AZURE
 
+RUNNING_TYPE = "Running"
+START_STATUS = "Started"
+COMPLETE_STATUS = "Completed"
+ERROR_STATUS = "Error"
+
 
 def _extract_version(package_name):
     try:
@@ -319,7 +324,7 @@ class Client(object):
 
         self.config, self.status_config = self._get_configs()
 
-        self.__tag_status()
+        self.__tag_status(RUNNING_TYPE, START_STATUS)
 
     def _get_config(self):
         """
@@ -505,6 +510,7 @@ class Client(object):
                     self.system_params["workingdir"]
                 )
                 self.log.critical(msg)
+                self.__tag_status(RUNNING_TYPE, ERROR_STATUS)
                 raise
 
         workers_manager = self.workers_manager(
@@ -516,6 +522,7 @@ class Client(object):
         except Exception:
             msg = "Execution of the workers cadence has failed."
             self.log.critical(msg)
+            self.__tag_status(RUNNING_TYPE, ERROR_STATUS)
             raise
 
         if self.no_reboot:
@@ -527,6 +534,7 @@ class Client(object):
                 "Reboot scheduled. System will reboot after the script " "exits."
             )
             subprocess.call(self.system_params["restart"], shell=True)
+        self.__tag_status(RUNNING_TYPE, COMPLETE_STATUS)
         self.log.info("Stop time: %s", datetime.datetime.now())
 
     def __get_status_target_by_target_type(self, config_status):
