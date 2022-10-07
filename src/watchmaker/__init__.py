@@ -30,7 +30,8 @@ from watchmaker.managers.worker_manager import (
     LinuxWorkersManager,
     WindowsWorkersManager,
 )
-from watchmaker.utils import urllib, HAS_BOTO3, HAS_AZURE
+from watchmaker.utils import urllib
+from watchmaker.utils.conditions import HAS_BOTO3, HAS_AZURE
 
 RUNNING_TYPE = "Running"
 START_STATUS = "Started"

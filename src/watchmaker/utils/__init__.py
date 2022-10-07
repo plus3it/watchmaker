@@ -17,16 +17,6 @@ import backoff
 
 from watchmaker.utils import urllib
 
-HAS_BOTO3 = False
-try:
-    import boto3
-
-    HAS_BOTO3 = True
-except ImportError:
-    pass
-
-HAS_AZURE = False
-
 
 def scheme_from_uri(uri):
     """Return a scheme from a parsed uri."""

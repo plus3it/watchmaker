@@ -11,7 +11,7 @@ from __future__ import (
 # pylint: disable=import-error
 from six.moves.urllib import error, parse, request
 
-from watchmaker.utils import HAS_BOTO3
+from watchmaker.utils.conditions import HAS_BOTO3
 from watchmaker.utils.urllib.request_handlers import S3Handler
 
 if HAS_BOTO3:
