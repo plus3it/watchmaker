@@ -1,5 +1,15 @@
-from abc import ABCMeta  # noqa: F401
-from abc import abstractmethod  # noqa: F401
+# -*- coding: utf-8 -*-
+"""Abstract Provider."""
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
+
+from abc import ABCMeta
+from abc import abstractmethod
 
 
 class AbstractProvider:

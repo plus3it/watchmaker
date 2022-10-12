@@ -31,7 +31,7 @@ from watchmaker.managers.worker_manager import (
     WindowsWorkersManager,
 )
 from watchmaker.utils import urllib
-from watchmaker.utils.conditions import HAS_BOTO3, HAS_AZURE
+import watchmaker.utils.imds.detect
 
 RUNNING_TYPE = "Running"
 START_STATUS = "Started"
@@ -327,7 +327,7 @@ class Client(object):
 
         self.__tag_status(RUNNING_TYPE, START_STATUS)
 
-    def _get_config(self):
+    def _get_configs(self):
         """
         Read and validate configuration data for installation.
 
@@ -540,7 +540,7 @@ class Client(object):
 
     def __get_status_target_by_target_type(self, config_status):
         if config_status:
-            target_type = self.__get_target_type(self)
+            target_type = self.__get_target_type()
 
             if target_type:
                 return [
@@ -577,8 +577,5 @@ class Client(object):
             )
 
     def __get_target_type(self):
-        if HAS_BOTO3:
-            return "ec2_tag"
-        if HAS_AZURE:
-            return "azure_tag"
-        return None
+        response = watchmaker.utils.imds.detect.provider
+        print(response)
