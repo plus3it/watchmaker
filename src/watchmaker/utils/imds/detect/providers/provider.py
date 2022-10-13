@@ -8,15 +8,20 @@ from __future__ import (
     with_statement,
 )
 
-from abc import ABCMeta
-from abc import abstractmethod
+try:
+    from abc import ABC, abstractmethod
+except (ImportError, NameError):
+    from abc import ABCMeta, abstractmethod
 
 
-class AbstractProvider:
+class AbstractProvider(ABC):
     """
     Abstract class representing a cloud provider.
     All concrete cloud providers should implement this.
     """
+
+    identifier = "unknown"
+    url_timeout = 5
 
     @abstractmethod
     def identify(self):

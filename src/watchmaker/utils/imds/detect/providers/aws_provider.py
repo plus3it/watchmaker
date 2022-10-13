@@ -10,8 +10,9 @@ from __future__ import (
 
 import json
 import logging
-import urllib.request
-from pathlib import Path
+from os.path import exists
+
+from six.moves import urllib
 
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 
@@ -19,19 +20,24 @@ from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 class AWSProvider(AbstractProvider):
     """Concrete implementation of the AWS cloud provider."""
 
+    identifier = "aws"
 
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
-        self.vendor_file = "/sys/class/dmi/id/product_version"
-
+        self.metadata_url = (
+            "http://169.254.169.254/latest/dynamic/instance-identity/document"
+        )
+        self.vendor_files = (
+            "/sys/class/dmi/id/product_version",
+            "/sys/class/dmi/id/bios_vendor",
+        )
 
     def identify(self):
         """
         Tries to identify AWS using all the implemented options
         """
         self.logger.info("Try to identify AWS")
-        response = self.check_metadata_server() or self.check_vendor_file()
-
+        return self.check_metadata_server() or self.check_vendor_file()
 
     def check_metadata_server(self):
         """
@@ -39,8 +45,7 @@ class AWSProvider(AbstractProvider):
         """
         self.logger.debug("Checking AWS metadata")
         try:
-            with urllib.request.urlopen(self.metadata_url) as response:
-                data = response.read()
+            data = self.__get_data_from_server()
 
             response = json.loads(data.decode("utf-8"))
 
@@ -52,3 +57,19 @@ class AWSProvider(AbstractProvider):
         except BaseException as e:
             self.logger.error(e)
             return False
+
+    def check_vendor_file(self):
+        """
+        Tries to identify AWS provider by reading the /sys/class/dmi/id/product_version
+        """
+        self.logger.debug("Checking AWS vendor file")
+        for vendor_file in self.vendor_files:
+            if exists(vendor_file):
+                with open(vendor_file) as f:
+                    if "amazon" in f.read().lower():
+                        return True
+        return False
+
+    def __get_data_from_server(self):
+        with urllib.request.urlopen(self.metadata_url, timeout = AbstractProvider.url_timeout) as response:
+                return response.read()

@@ -8,7 +8,6 @@ from __future__ import (
     with_statement,
 )
 
-import collections
 import datetime
 import logging
 import os
@@ -20,18 +19,18 @@ import oschmod
 import pkg_resources
 import setuptools
 import yaml
-from compatibleversion import check_version
 
 import watchmaker.utils
-from watchmaker import static
 from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
 from watchmaker.managers.worker_manager import (
     LinuxWorkersManager,
     WindowsWorkersManager,
 )
-from watchmaker.utils import urllib
-import watchmaker.utils.imds.detect
+
+from watchmaker.utils.config.watchmaker_config import get_watchmaker_configs
+from watchmaker.utils.config.watchmaker_config import get_tag_targets
+from watchmaker.utils.imds import tag_resource
 
 RUNNING_TYPE = "Running"
 START_STATUS = "Started"
@@ -191,7 +190,7 @@ class Arguments(dict):
         no_reboot=False,
         log_level=None,
         *args,
-        **kwargs,
+        **kwargs
     ):
         super(Arguments, self).__init__(*args, **kwargs)
         self.config_path = config_path
@@ -278,7 +277,6 @@ class Client(object):
         self.log.debug("Extra Parameters: %s", extra_arguments)
 
         # Pop remaining arguments used by watchmaker.Client itself
-        self.default_config = os.path.join(static.__path__[0], "config.yaml")
         self.no_reboot = arguments.pop("no_reboot", False)
         self.config_path = arguments.pop("config_path")
         self.log_dir = arguments.pop("log_dir")
@@ -293,146 +291,11 @@ class Client(object):
         self.log.debug("System Parameters: %s", self.system_params)
 
         # All remaining arguments are worker_args
-        worker_args = arguments
+        self.worker_args = self._get_worker_args(arguments, extra_arguments)
 
-        # Convert extra_arguments to a dict and merge it with worker_args.
-        # Leading hypens are removed, and other hyphens are converted to
-        # underscores
-        worker_args.update(
-            dict(
-                (k.lstrip("-").replace("-", "_"), v)
-                for k, v in zip(*[iter(extra_arguments)] * 2)
-            )
-        )
-
-        try:
-            # Set self.worker_args, removing `None` values from worker_args
-            self.worker_args = dict(
-                (k, yaml.safe_load("null" if v is None else v))
-                for k, v in worker_args.items()
-                if v != Arguments.DEFAULT_VALUE
-            )
-        except yaml.YAMLError as exc:
-            if hasattr(exc, "problem_mark"):
-                msg = (
-                    "Failed to parse argument value as YAML. Check the format "
-                    "and/or properly quote the value when using the CLI to "
-                    "account for shell interpolation. YAML error: {0}"
-                ).format(str(exc))
-                self.log.critical(msg)
-                raise InvalidValueError(msg)
-            raise
-
-        self.config, self.status_config = self._get_configs()
-
-        self.__tag_status(RUNNING_TYPE, START_STATUS)
-
-    def _get_configs(self):
-        """
-        Read and validate configuration data for installation.
-
-        Returns:
-            :obj:`collections.OrderedDict`: Returns the data from the the YAML
-            configuration file, scoped to the value of ``self.system`` and
-            merged with the value of the ``"All"`` key.
-
-        """
-        if not self.config_path:
-            self.log.warning("User did not supply a config. Using the default config.")
-            self.config_path = self.default_config
-        else:
-            self.log.info("User supplied config being used.")
-
-        # Convert a local config path to a URI
-        self.config_path = watchmaker.utils.uri_from_filepath(self.config_path)
-
-        # Get the raw config data
-        data = ""
-        try:
-            data = watchmaker.utils.urlopen_retry(self.config_path).read()
-        except (ValueError, urllib.error.URLError):
-            msg = (
-                'Could not read config file from the provided value "{0}"! '
-                "Check that the config is available.".format(self.config_path)
-            )
-            self.log.critical(msg)
-            raise
-
-        config_full = yaml.safe_load(data)
-        try:
-            config_all = config_full.get("all", [])
-            config_status = config_full.get("status", [])
-            config_system = config_full.get(self.system, [])
-            config_version_specifier = config_full.get("watchmaker_version", None)
-        except AttributeError:
-            msg = "Malformed config file. Must be a dictionary."
-            self.log.critical(msg)
-            raise
-
-        # If both config and config_system are empty, raise
-        if not config_system and not config_all:
-            msg = "Malformed config file. No workers for this system."
-            self.log.critical(msg)
-            raise WatchmakerError(msg)
-
-        if config_version_specifier and not check_version(
-            watchmaker.__version__, config_version_specifier
-        ):
-            msg = (
-                "Watchmaker version {} is not compatible with the config "
-                "file (watchmaker_version = {})"
-            ).format(watchmaker.__version__, config_version_specifier)
-            self.log.critical(msg)
-            raise WatchmakerError(msg)
-
-        # Merge the config data, preserving the listed order of workers.
-        # The worker order from config_system has precedence over config_all.
-        # This is managed by adding config_system to the config first, using
-        # the loop order, e.g. config_system + config_all. In the loop, if the
-        # worker is already in the config, it is always the worker from
-        # config_system.
-        # To also preserve precedence of worker options from config_system, the
-        # worker_config from config_all is updated with the config from
-        # config_system, then the config is replaced with the worker_config.
-        config = collections.OrderedDict()
-        for worker in config_system + config_all:
-            try:
-                # worker is a single-key dict, where the key is the name of the
-                # worker and the value is the worker parameters. we need to
-                # test if the worker is already in the config, but a dict is
-                # is not hashable so cannot be tested directly with
-                # `if worker not in config`. this bit of ugliness extracts the
-                # key and its value so we can use them directly.
-                worker_name, worker_config = list(worker.items())[0]
-                if worker_name not in config:
-                    # Add worker to config
-                    config[worker_name] = {"config": worker_config}
-                    self.log.debug("%s config: %s", worker_name, worker_config)
-                else:
-                    # Worker is present in both config_system and config_all,
-                    # config[worker_name]['config'] is from config_system,
-                    # worker_config is from config_all
-                    worker_config.update(config[worker_name]["config"])
-                    config[worker_name]["config"] = worker_config
-                    self.log.debug("%s extra config: %s", worker_name, worker_config)
-                    # Need to (re)merge cli worker args so they override
-                    config[worker_name]["__merged"] = False
-                if not config[worker_name].get("__merged"):
-                    # Merge worker_args into config params
-                    config[worker_name]["config"].update(self.worker_args)
-                    config[worker_name]["__merged"] = True
-            except Exception:
-                msg = "Failed to merge worker config; worker={0}".format(worker)
-                self.log.critical(msg)
-                raise
-
-        self.log.debug(
-            "Command-line arguments merged into worker configs: %s", self.worker_args
-        )
-
-        config_status = self.__get_status_target_by_target_type(config_status)
-
-        return config, config_status
+        self.config, self.status_config = get_watchmaker_configs(self.system, self.worker_args, self.config_path)
+        self.running_targets = get_tag_targets(self.status_config, RUNNING_TYPE)
+        tag_resource(self.running_targets, START_STATUS)
 
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
@@ -491,6 +354,38 @@ class Client(object):
         if self.log_dir:
             self.system_params["logdir"] = self.log_dir
 
+
+    def _get_worker_args(self, arguments, extra_arguments):
+        worker_args = arguments
+
+        # Convert extra_arguments to a dict and merge it with worker_args.
+        # Leading hypens are removed, and other hyphens are converted to
+        # underscores
+        worker_args.update(
+            dict(
+                (k.lstrip("-").replace("-", "_"), v)
+                for k, v in zip(*[iter(extra_arguments)] * 2)
+            )
+        )
+
+        try:
+            # Set self.worker_args, removing `None` values from worker_args
+            return dict(
+                (k, yaml.safe_load("null" if v is None else v))
+                for k, v in worker_args.items()
+                if v != Arguments.DEFAULT_VALUE
+            )
+        except yaml.YAMLError as exc:
+            if hasattr(exc, "problem_mark"):
+                msg = (
+                    "Failed to parse argument value as YAML. Check the format "
+                    "and/or properly quote the value when using the CLI to "
+                    "account for shell interpolation. YAML error: {0}"
+                ).format(str(exc))
+                self.log.critical(msg)
+                raise InvalidValueError(msg)
+            raise
+
     def install(self):
         """
         Execute the watchmaker workers against the system.
@@ -511,7 +406,7 @@ class Client(object):
                     self.system_params["workingdir"]
                 )
                 self.log.critical(msg)
-                self.__tag_status(RUNNING_TYPE, ERROR_STATUS)
+                tag_resource(self.running_targets, ERROR_STATUS)
                 raise
 
         workers_manager = self.workers_manager(
@@ -523,59 +418,17 @@ class Client(object):
         except Exception:
             msg = "Execution of the workers cadence has failed."
             self.log.critical(msg)
-            self.__tag_status(RUNNING_TYPE, ERROR_STATUS)
+            tag_resource(self.running_targets, ERROR_STATUS)
             raise
 
         if self.no_reboot:
-            self.log.info(
-                "Detected `no-reboot` switch. System will not be " "rebooted."
-            )
+            self.log.info("Detected `no-reboot` switch. System will not be rebooted.")
         else:
             self.log.info(
-                "Reboot scheduled. System will reboot after the script " "exits."
+                "Reboot scheduled. System will reboot after the script exits."
             )
             subprocess.call(self.system_params["restart"], shell=True)
-        self.__tag_status(RUNNING_TYPE, COMPLETE_STATUS)
+        tag_resource(self.running_targets, COMPLETE_STATUS)
         self.log.info("Stop time: %s", datetime.datetime.now())
 
-    def __get_status_target_by_target_type(self, config_status):
-        if config_status:
-            target_type = self.__get_target_type()
 
-            if target_type:
-                return [
-                    target
-                    for target in config_status["targets"]
-                    if target["target_type"].lower() == target_type
-                ]
-            else:
-                self.__process_required_tags(config_status)
-
-    def __tag_status(self, status_type, status):
-        if self.status_config:
-            status_type = status_type.lower()
-            targets = [
-                target
-                for target in self.status_config["targets"]
-                if target["status_type"].lower() == status_type
-            ]
-            for target in targets:
-                # tag instance with status
-                pass
-
-    def __process_required_tags(self, config_status):
-        """Checks for any required tags and raises exception if found"""
-        targets = [target for target in config_status["targets"] if target["required"]]
-
-        target_types = set()
-        for target in targets:
-            target_types.append(f'{target["target_type"]} : {target["status_type"]}')
-
-        if target_types:
-            raise Exception(
-                f"Target types and tags {target_types}are required but no environment is not available"
-            )
-
-    def __get_target_type(self):
-        response = watchmaker.utils.imds.detect.provider
-        print(response)

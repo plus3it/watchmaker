@@ -55,14 +55,3 @@ windows:
   - salt:
       salt_debug_log: null
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
-
-status:
-  targets:
-    - key: 'WatchmakerStatus'
-      required: False
-      target_type: 'aws'
-      status_type: 'Running'
-    - key: 'WatchmakerStatus'
-      required: False
-      target_type: 'azure'
-      status_type: 'Running'
