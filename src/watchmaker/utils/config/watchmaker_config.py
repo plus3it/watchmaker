@@ -11,6 +11,7 @@ import yaml
 from compatibleversion import check_version
 
 import watchmaker.utils.imds.detect
+from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib
@@ -128,7 +129,7 @@ def get_status_target_by_target_type(config_status):
     if config_status:
         target_type = get_target_type()
 
-        if target_type != "unknown":
+        if target_type != AbstractProvider.identifier:
             targets = [
                 target
                 for target in config_status["targets"]
