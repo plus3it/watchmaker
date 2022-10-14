@@ -22,7 +22,7 @@ from watchmaker.managers.worker_manager import (LinuxWorkersManager,
                                                 WindowsWorkersManager)
 from watchmaker.utils.config.watchmaker_config import (get_tag_targets,
                                                        get_watchmaker_configs)
-from watchmaker.utils.imds import tag_resource
+from watchmaker.utils.imds import tag_resource, update_tag_resource
 
 RUNNING_TYPE = "Running"
 START_STATUS = "Started"
@@ -407,7 +407,7 @@ class Client(object):
                     self.system_params["workingdir"]
                 )
                 self.log.critical(msg)
-                tag_resource(self.running_targets, ERROR_STATUS)
+                update_tag_resource(self.running_targets, ERROR_STATUS)
                 raise
 
         workers_manager = self.workers_manager(
@@ -419,7 +419,7 @@ class Client(object):
         except Exception:
             msg = "Execution of the workers cadence has failed."
             self.log.critical(msg)
-            tag_resource(self.running_targets, ERROR_STATUS)
+            update_tag_resource(self.running_targets, ERROR_STATUS)
             raise
 
         if self.no_reboot:
@@ -430,5 +430,5 @@ class Client(object):
                 "Reboot scheduled. System will reboot after the script exits."
             )
             subprocess.call(self.system_params["restart"], shell=True)
-        tag_resource(self.running_targets, COMPLETE_STATUS)
+        update_tag_resource(self.running_targets, COMPLETE_STATUS)
         self.log.info("Stop time: %s", datetime.datetime.now())

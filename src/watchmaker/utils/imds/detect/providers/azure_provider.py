@@ -17,7 +17,8 @@ class AzureProvider(AbstractProvider):
     """Concrete implementation of the Azure cloud provider."""
 
     identifier = 'azure'
-    instance_id = None
+    subscription_id = None
+    resource_group = None
 
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
@@ -63,4 +64,5 @@ class AzureProvider(AbstractProvider):
     @staticmethod
     def reset():
         """Reset static vars."""
-        AzureProvider.instance_id = None
+        AzureProvider.subscription_id = None
+        AzureProvider.resource_group = None
