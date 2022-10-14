@@ -54,6 +54,6 @@ def tag_azure_resource(targets, status):
         log.debug("Tagging Azure Resource")
         if HAS_AZURE:
             # Do tagging
-            log.debug("Tag Resource " % target["key"])
-            log.debug("With status " % status)
+            log.debug("Tag Resource %s", target["key"])
+            log.debug("With status %s", status)
             pass

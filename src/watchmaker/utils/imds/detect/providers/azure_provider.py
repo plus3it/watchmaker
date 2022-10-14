@@ -4,6 +4,8 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import logging
+# pylint: disable=redefined-builtin
+from io import open
 from os.path import exists
 
 from six.moves import urllib
