@@ -12,12 +12,14 @@ from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 
 
 def test_reading_invalid_vendor_file():
+    """Tests invalid vendor file."""
     provider = AWSProvider()
     assert provider.check_vendor_file() is False
 
 
 @patch.object(AWSProvider, '_AWSProvider__get_data_from_server')
 def test_metadata_server_check(provider_mock):
+    """Tests metadata server check."""
     provider = AWSProvider()
 
     provider_mock.return_value = (

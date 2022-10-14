@@ -128,6 +128,7 @@ def get_watchmaker_configs(system, worker_args, config_path=None):
 
 
 def get_status_target_by_target_type(config_status):
+    """Get the targets for the detected provider type."""
     if config_status:
         target_type = get_target_type()
 
@@ -145,6 +146,7 @@ def get_status_target_by_target_type(config_status):
 
 
 def get_tag_targets(status_config, status_type):
+    """Get the targets from the status config for this status type."""
     if status_config:
         status_type = status_type.lower()
         targets = [
@@ -157,7 +159,7 @@ def get_tag_targets(status_config, status_type):
 
 
 def has_required_tag(config_status, target_type, status_type):
-    """Checks if tag is required and riases exception if found"""
+    """Check if tag is required and raises exception."""
     targets = [target for target in config_status["targets"]
                if target["required"] and
                target["target_type"].lower() == target_type and
@@ -181,4 +183,5 @@ def has_required_tag(config_status, target_type, status_type):
 
 
 def get_target_type():
+    """Return the target provider type."""
     return watchmaker.utils.imds.detect.provider()

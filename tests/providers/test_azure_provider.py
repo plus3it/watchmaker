@@ -12,12 +12,14 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 
 
 def test_reading_invalid_vendor_file():
+    """Tests invalid vendor file."""
     provider = AzureProvider()
     assert provider.check_vendor_file() is False
 
 
 @patch.object(AzureProvider, '_AzureProvider__is_valid_server')
 def test_metadata_server_check(provider_mock):
+    """Tests metadata server check."""
     provider = AzureProvider()
 
     provider_mock.return_value = True

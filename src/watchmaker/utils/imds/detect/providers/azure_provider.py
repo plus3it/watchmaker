@@ -15,6 +15,7 @@ class AzureProvider(AbstractProvider):
     """Concrete implementation of the Azure cloud provider."""
 
     identifier = 'azure'
+    instance_id = None
 
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
@@ -25,14 +26,12 @@ class AzureProvider(AbstractProvider):
         self.headers = {'Metadata': 'true'}
 
     def identify(self):
-        """Tries to identify Azure using all the implemented options."""
-
+        """Identify Azure using all the implemented options."""
         self.logger.info('Try to identify DO')
         return self.check_vendor_file() or self.check_metadata_server()
 
     def check_metadata_server(self):
-        """Identifies Azure via metadata server."""
-
+        """Identify Azure via metadata server."""
         self.logger.debug('Checking Azure metadata')
         try:
             return self.__is_valid_server()
@@ -41,11 +40,10 @@ class AzureProvider(AbstractProvider):
             return False
 
     def check_vendor_file(self):
-        """Identifiest whether this in an Azure provider.
+        """Identify whether this in an Azure provider.
 
-            Reads file /sys/class/dmi/id/sys_vendor
+        Read file /sys/class/dmi/id/sys_vendor
         """
-
         self.logger.debug('Checking Azure vendor file')
         if exists(self.vendor_file):
             with open(self.vendor_file) as f:
@@ -54,9 +52,13 @@ class AzureProvider(AbstractProvider):
         return False
 
     def __is_valid_server(self):
-        """Retrieves Azure metadata."""
-
+        """Retrieve Azure metadata."""
         with urllib.request.urlopen(self.metadata_url,
                                     timeout=AbstractProvider.url_timeout) \
                 as response:
             return response.status == 200
+
+    @staticmethod
+    def reset():
+        """Reset static vars."""
+        AzureProvider.instance_id = None

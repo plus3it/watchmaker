@@ -13,6 +13,7 @@ log = logging.getLogger(__name__)
 
 
 def provider(excluded=None):
+    """Identify and return identifier."""
     if not is_excluded(AWSProvider().identifier, excluded):
         result = AWSProvider().identify()
         if result:
@@ -29,7 +30,8 @@ def provider(excluded=None):
     return AbstractProvider.identifier
 
 
-def is_excluded(id, excluded=None):
+def is_excluded(identifier, excluded=None):
+    """Check if identifier is in excluded list."""
     if not excluded:
         return False
-    return id in excluded
+    return identifier in excluded

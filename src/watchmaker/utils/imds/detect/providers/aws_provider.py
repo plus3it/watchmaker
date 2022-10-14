@@ -32,21 +32,18 @@ class AWSProvider(AbstractProvider):
         )
 
     def identify(self):
-        """Identifies AWS using all the implemented options."""
-
+        """Identify AWS using all the implemented options."""
         self.logger.info("Try to identify AWS")
         return self.check_metadata_server() or self.check_vendor_file()
 
     def get_instance_id(self):
-        """Gets AWS ec2 instance id."""
-
+        """Get AWS instance id."""
         if self.instance_id:
             return self.instance_id
         return self.__get_instance_id_from_server()
 
     def check_metadata_server(self):
-        """Tries to identify AWS via metadata server."""
-
+        """Identify AWS via metadata server."""
         self.logger.debug("Checking AWS metadata")
         try:
             data = self.__get_data_from_server()
@@ -64,11 +61,10 @@ class AWSProvider(AbstractProvider):
             return False
 
     def check_vendor_file(self):
-        """Identifies whether this is an AWS provider.
+        """Identifiy whether this is an AWS provider.
 
         Reads file/sys/class/dmi/id/product_version
         """
-
         self.logger.debug("Checking AWS vendor file")
         for vendor_file in self.vendor_files:
             if exists(vendor_file):
@@ -78,16 +74,14 @@ class AWSProvider(AbstractProvider):
         return False
 
     def __get_data_from_server(self):
-        """Retrieves AWS metadata."""
-
+        """Retrieve AWS metadata."""
         with urllib.request.urlopen(self.metadata_url,
                                     timeout=AbstractProvider.url_timeout) \
                 as response:
             return response.read()
 
     def __get_instance_id_from_server(self):
-        """Retrieves AWS instance id from metadata."""
-
+        """Retrieve AWS instance id from metadata."""
         try:
             with urllib.request.urlopen(self.metadata_id_url,
                                         timeout=AbstractProvider.url_timeout) \
@@ -97,3 +91,8 @@ class AWSProvider(AbstractProvider):
         except BaseException as e:
             self.logger.error("Exception getting instance id {0}".format(e))
             return None
+
+    @staticmethod
+    def reset():
+        """Reset static vars."""
+        AWSProvider.instance_id = None

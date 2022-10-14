@@ -8,10 +8,19 @@ try:
 except ImportError:
     from mock import patch
 
+import pytest
+
 from watchmaker.utils.imds.detect import provider
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
+
+
+@pytest.fixture(autouse=True)
+def reset_tests():
+    """Reset providers static attributes before each test."""
+    AWSProvider.reset()
+    AzureProvider.reset()
 
 
 @patch.object(AWSProvider,
@@ -19,6 +28,7 @@ from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
               return_value=('{"imageId": "ami-12312412", \
                             "instanceId": "i-ec12as"}'.encode("utf8")))
 def test_aws_provider(provider_mock):
+    """Test aws provider identification."""
     assert provider() == AWSProvider.identifier
     assert AWSProvider.instance_id == "i-ec12as"
 
@@ -28,7 +38,9 @@ def test_aws_provider(provider_mock):
               return_value=('{"imageId": "some_ID", \
                               "instanceId": "some_Instance"}'.encode("utf8")))
 def test_not_aws_provider(provider_mock):
+    """Test failed aws provider identification."""
     assert provider() == AbstractProvider.identifier
+    assert AWSProvider.instance_id is None
 
 
 @patch.object(AzureProvider,
@@ -36,6 +48,7 @@ def test_not_aws_provider(provider_mock):
               return_value=True)
 @patch.object(AzureProvider, 'check_vendor_file', return_value=False)
 def test_azure_provider(mock_is_valid_server, mock_check_vendor_file):
+    """Test azure provider identification."""
     assert provider() == AzureProvider.identifier
 
 
@@ -44,4 +57,5 @@ def test_azure_provider(mock_is_valid_server, mock_check_vendor_file):
               return_value=False)
 @patch.object(AzureProvider, 'check_vendor_file', return_value=False)
 def test_not_azure_provider(mock_is_valid_server, mock_check_vendor_file):
+    """Test failed azure provider identification."""
     assert provider() == AbstractProvider.identifier

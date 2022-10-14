@@ -10,8 +10,8 @@ import six
 
 @six.add_metaclass(abc.ABCMeta)
 class AbstractProvider():
-    """
-    Abstract class representing a cloud provider.
+    """Abstract class representing a cloud provider.
+
     All concrete cloud providers should implement this.
     """
 
@@ -20,12 +20,15 @@ class AbstractProvider():
 
     @abc.abstractmethod
     def identify(self):
+        """Identify provider type."""
         pass  # pragma: no cover
 
     @abc.abstractmethod
     def check_metadata_server(self):
+        """Identify via metadata server."""
         pass  # pragma: no cover
 
     @abc.abstractmethod
     def check_vendor_file(self):
+        """Identify via vendor file."""
         pass  # pragma: no cover
