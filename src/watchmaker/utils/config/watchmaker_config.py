@@ -11,10 +11,10 @@ import yaml
 from compatibleversion import check_version
 
 import watchmaker.utils.imds.detect
-from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib
+from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 
 log = logging.getLogger(__name__)
 
