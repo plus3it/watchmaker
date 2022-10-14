@@ -122,12 +122,12 @@ def get_watchmaker_configs(system, worker_args, config_path=None):
         "Command-line arguments merged into worker configs: %s", worker_args
     )
 
-    config_status = get_status_target_by_target_type(config_status)
+    config_status = get_targets_by_target_type(config_status)
 
     return config, config_status
 
 
-def get_status_target_by_target_type(config_status):
+def get_targets_by_target_type(config_status):
     """Get the targets for the detected provider type."""
     if config_status:
         target_type = get_target_type()
@@ -156,6 +156,7 @@ def get_tag_targets(status_config, status_type):
         ]
 
         return targets
+    return None
 
 
 def has_required_tag(config_status, target_type, status_type):
@@ -168,7 +169,7 @@ def has_required_tag(config_status, target_type, status_type):
     if targets:
         target_types = set()
         for target in targets:
-            target_types.append(
+            target_types.add(
                 "{0} : {1}".format(target["target_type"],
                                    target["status_type"])
             )

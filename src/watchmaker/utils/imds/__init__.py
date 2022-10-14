@@ -31,11 +31,12 @@ def tag_aws_resource(targets, status):
         if HAS_BOTO3:
             # Do tagging
             log.debug("Tag Resource")
+            # pylint: disable=undefined-variable
             client = boto3.client('ec2')  # noqa F821
             client.create_tags(
                 DryRun=True,
                 Resources=[
-                    AWSProvider.get_instance_id(),
+                    AWSProvider().get_instance_id(),
                 ],
                 Tags=[
                     {
@@ -53,5 +54,6 @@ def tag_azure_resource(targets, status):
         log.debug("Tagging Azure Resource")
         if HAS_AZURE:
             # Do tagging
-            log.debug("Tag Resource " + target["key"])
+            log.debug("Tag Resource " % target["key"])
+            log.debug("With status " % status)
             pass

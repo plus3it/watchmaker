@@ -38,8 +38,8 @@ class AWSProvider(AbstractProvider):
 
     def get_instance_id(self):
         """Get AWS instance id."""
-        if self.instance_id:
-            return self.instance_id
+        if AWSProvider.instance_id:
+            return AWSProvider.instance_id
         return self.__get_instance_id_from_server()
 
     def check_metadata_server(self):
@@ -56,8 +56,8 @@ class AWSProvider(AbstractProvider):
                 AWSProvider.instance_id = response["instanceId"]
                 return True
             return False
-        except BaseException as e:
-            self.logger.error(e)
+        except BaseException as ex:
+            self.logger.error(ex)
             return False
 
     def check_vendor_file(self):
@@ -68,8 +68,8 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS vendor file")
         for vendor_file in self.vendor_files:
             if exists(vendor_file):
-                with open(vendor_file) as f:
-                    if "amazon" in f.read().lower():
+                with open(vendor_file, encoding="utf-8") as vendor_file:
+                    if "amazon" in vendor_file.read().lower():
                         return True
         return False
 
@@ -88,8 +88,8 @@ class AWSProvider(AbstractProvider):
                     as response:
                 AWSProvider.instance_id = response.read()
                 return AWSProvider.instance_id
-        except BaseException as e:
-            self.logger.error("Exception getting instance id {0}".format(e))
+        except BaseException as ex:
+            self.logger.error("Exception getting instance id {0}".format(ex))
             return None
 
     @staticmethod

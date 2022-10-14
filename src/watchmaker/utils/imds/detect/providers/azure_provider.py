@@ -35,8 +35,8 @@ class AzureProvider(AbstractProvider):
         self.logger.debug('Checking Azure metadata')
         try:
             return self.__is_valid_server()
-        except BaseException as e:
-            self.logger.error(e)
+        except BaseException as ex:
+            self.logger.error(ex)
             return False
 
     def check_vendor_file(self):
@@ -46,8 +46,8 @@ class AzureProvider(AbstractProvider):
         """
         self.logger.debug('Checking Azure vendor file')
         if exists(self.vendor_file):
-            with open(self.vendor_file) as f:
-                if "Microsoft Corporation" in f.read():
+            with open(self.vendor_file, encoding="utf-8") as vendor_file:
+                if "Microsoft Corporation" in vendor_file.read():
                     return True
         return False
 
