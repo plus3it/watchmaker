@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """Watchmaker module."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import datetime
 import logging
@@ -23,13 +18,10 @@ import yaml
 import watchmaker.utils
 from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
-from watchmaker.managers.worker_manager import (
-    LinuxWorkersManager,
-    WindowsWorkersManager,
-)
-
-from watchmaker.utils.config.watchmaker_config import get_watchmaker_configs
-from watchmaker.utils.config.watchmaker_config import get_tag_targets
+from watchmaker.managers.worker_manager import (LinuxWorkersManager,
+                                                WindowsWorkersManager)
+from watchmaker.utils.config.watchmaker_config import (get_tag_targets,
+                                                       get_watchmaker_configs)
 from watchmaker.utils.imds import tag_resource
 
 RUNNING_TYPE = "Running"
@@ -44,7 +36,8 @@ def _extract_version(package_name):
     except pkg_resources.DistributionNotFound:
         _conf = setuptools.config.read_configuration(
             os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "setup.cfg"
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+                "setup.cfg"
             )
         )
         return _conf["metadata"]["version"]
@@ -238,7 +231,10 @@ class Arguments(dict):
             else:
                 # item is the argument value
                 extra_arguments.extend(
-                    [watchmaker.utils.clean_none(item or Arguments.DEFAULT_VALUE)]
+                    [
+                        watchmaker.utils.clean_none(
+                            item or Arguments.DEFAULT_VALUE)
+                    ]
                 )
 
         self.extra_arguments = extra_arguments
@@ -293,8 +289,12 @@ class Client(object):
         # All remaining arguments are worker_args
         self.worker_args = self._get_worker_args(arguments, extra_arguments)
 
-        self.config, self.status_config = get_watchmaker_configs(self.system, self.worker_args, self.config_path)
-        self.running_targets = get_tag_targets(self.status_config, RUNNING_TYPE)
+        self.config, self.status_config = \
+            get_watchmaker_configs(self.system,
+                                   self.worker_args,
+                                   self.config_path)
+        self.running_targets = get_tag_targets(self.status_config,
+                                               RUNNING_TYPE)
         tag_resource(self.running_targets, START_STATUS)
 
     def _get_linux_system_params(self):
@@ -306,7 +306,8 @@ class Client(object):
         params["readyfile"] = os.path.join(
             "{0}".format(self.system_drive), "var", "run", "system-is-ready"
         )
-        params["logdir"] = os.path.join("{0}".format(self.system_drive), "var", "log")
+        params["logdir"] = os.path.join("{0}".format(self.system_drive),
+                                        "var", "log")
         params["workingdir"] = os.path.join(
             "{0}".format(params["prepdir"]), "workingfiles"
         )
@@ -322,7 +323,8 @@ class Client(object):
         params["readyfile"] = os.path.join(
             "{0}".format(params["prepdir"]), "system-is-ready"
         )
-        params["logdir"] = os.path.join("{0}".format(params["prepdir"]), "Logs")
+        params["logdir"] = \
+            os.path.join("{0}".format(params["prepdir"]), "Logs")
         params["workingdir"] = os.path.join(
             "{0}".format(params["prepdir"]), "WorkingFiles"
         )
@@ -353,7 +355,6 @@ class Client(object):
             raise WatchmakerError(msg)
         if self.log_dir:
             self.system_params["logdir"] = self.log_dir
-
 
     def _get_worker_args(self, arguments, extra_arguments):
         worker_args = arguments
@@ -422,7 +423,8 @@ class Client(object):
             raise
 
         if self.no_reboot:
-            self.log.info("Detected `no-reboot` switch. System will not be rebooted.")
+            self.log.info("Detected `no-reboot` switch. \
+                           System will not be rebooted.")
         else:
             self.log.info(
                 "Reboot scheduled. System will reboot after the script exits."
@@ -430,5 +432,3 @@ class Client(object):
             subprocess.call(self.system_params["restart"], shell=True)
         tag_resource(self.running_targets, COMPLETE_STATUS)
         self.log.info("Stop time: %s", datetime.datetime.now())
-
-

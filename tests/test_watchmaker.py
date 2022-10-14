@@ -9,13 +9,13 @@ import pytest
 import yaml
 
 try:
-    from unittest.mock import MagicMock, call, patch
+    from unittest.mock import patch
 except ImportError:
-    from mock import MagicMock, call, patch
+    from mock import patch
 
 import watchmaker
 from watchmaker import static
-from watchmaker.utils.imds.detect import provider
+
 
 @pytest.fixture
 def watchmaker_arguments():
@@ -57,6 +57,7 @@ def test_main():
     """Placeholder for tests."""
     assert watchmaker.__version__ == watchmaker.__version__
 
+
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_none_arguments(provider_mock):
     """Check string 'None' conversion to None."""
@@ -80,6 +81,7 @@ def test_none_arguments(provider_mock):
     assert 'salt_states' in watchmaker_client.worker_args
     assert watchmaker_client.worker_args['salt_states'] is None
 
+
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_argument_default_value(provider_mock):
     """Ensure argument default value is `Arguments.DEFAULT_VALUE`."""
@@ -92,6 +94,7 @@ def test_argument_default_value(provider_mock):
     assert watchmaker_arguments.computer_name == check_val
     assert watchmaker_arguments.salt_states == check_val
     assert watchmaker_arguments.ou_path == check_val
+
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_extra_arguments_string(provider_mock):
@@ -113,6 +116,7 @@ def test_extra_arguments_string(provider_mock):
     # assertions
     assert watchmaker_client.worker_args == check_val
 
+
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_extra_arguments_equal_separator(provider_mock):
     """Test equal separator in extra_arguments loads correctly."""
@@ -131,6 +135,7 @@ def test_extra_arguments_equal_separator(provider_mock):
 
     # assertions
     assert watchmaker_client.worker_args == check_val
+
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_extra_arguments_quoted_string(provider_mock):
@@ -152,6 +157,7 @@ def test_extra_arguments_quoted_string(provider_mock):
     # assertions
     assert watchmaker_client.worker_args == check_val
 
+
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_extra_arguments_list(provider_mock):
     """Test list in extra_arguments loads correctly."""
@@ -171,6 +177,7 @@ def test_extra_arguments_list(provider_mock):
 
     # assertions
     assert watchmaker_client.worker_args == check_val
+
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_extra_arguments_map(provider_mock):

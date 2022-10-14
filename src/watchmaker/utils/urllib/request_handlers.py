@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """Extends urllib with additional handlers."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import io
 from email import message_from_string
@@ -43,20 +38,22 @@ class S3Handler(urllib.request.BaseHandler):
         key_name = selector[1:]
 
         if not bucket_name or not key_name:
-            raise urllib.error.URLError("url must be in the format s3://<bucket>/<key>")
+            raise urllib.error.URLError(
+                "url must be in the format s3://<bucket>/<key>")
 
         try:
             s3_conn = self.s3_conn
         except AttributeError:
             # pylint: disable=attribute-defined-outside-init
-            s3_conn = self.s3_conn = boto3.resource("s3")
+            s3_conn = self.s3_conn = boto3.resource("s3")  # noqa F821
 
         key = s3_conn.Object(bucket_name=bucket_name, key=key_name)
 
         origurl = "s3://{0}/{1}".format(bucket_name, key_name)
 
         if key is None:
-            raise urllib.error.URLError("no such resource: {0}".format(origurl))
+            raise urllib.error.URLError(
+                "no such resource: {0}".format(origurl))
 
         headers = [
             ("Content-type", key.content_type),
@@ -75,4 +72,5 @@ class S3Handler(urllib.request.BaseHandler):
             )
         )
 
-        return urllib.response.addinfourl(BufferedIOS3Key(key), headers, origurl)
+        return urllib.response.addinfourl(
+            BufferedIOS3Key(key), headers, origurl)

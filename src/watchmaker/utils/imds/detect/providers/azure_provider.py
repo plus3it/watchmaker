@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
 """AWS Provider."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
-import json
 import logging
 from os.path import exists
 
@@ -51,7 +45,8 @@ class AzureProvider(AbstractProvider):
 
     def check_vendor_file(self):
         """
-            Tries to identify Azure provider by reading the /sys/class/dmi/id/sys_vendor
+            Tries to identify Azure provider by reading the
+            /sys/class/dmi/id/sys_vendor
         """
         self.logger.debug('Checking Azure vendor file')
         if exists(self.vendor_file):
@@ -61,5 +56,7 @@ class AzureProvider(AbstractProvider):
         return False
 
     def __is_valid_server(self):
-        with urllib.request.urlopen(self.metadata_url, timeout = AbstractProvider.url_timeout, headers=self.headers) as response:
-                return response.status == 200
+        with urllib.request.urlopen(self.metadata_url,
+                                    timeout=AbstractProvider.url_timeout) \
+                as response:
+            return response.status == 200

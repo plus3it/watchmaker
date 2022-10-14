@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """AWS Provider."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import json
 import logging
@@ -60,7 +55,8 @@ class AWSProvider(AbstractProvider):
 
     def check_vendor_file(self):
         """
-        Tries to identify AWS provider by reading the /sys/class/dmi/id/product_version
+        Tries to identify AWS provider by reading the
+        /sys/class/dmi/id/product_version
         """
         self.logger.debug("Checking AWS vendor file")
         for vendor_file in self.vendor_files:
@@ -71,5 +67,7 @@ class AWSProvider(AbstractProvider):
         return False
 
     def __get_data_from_server(self):
-        with urllib.request.urlopen(self.metadata_url, timeout = AbstractProvider.url_timeout) as response:
-                return response.read()
+        with urllib.request.urlopen(self.metadata_url,
+                                    timeout=AbstractProvider.url_timeout) \
+                as response:
+            return response.read()

@@ -18,6 +18,7 @@ from watchmaker.utils import urllib
 
 log = logging.getLogger(__name__)
 
+
 def get_watchmaker_configs(system, worker_args, config_path=None):
     """
     Read and validate configuration data for installation.
@@ -125,6 +126,7 @@ def get_watchmaker_configs(system, worker_args, config_path=None):
 
     return config, config_status
 
+
 def get_status_target_by_target_type(config_status):
     if config_status:
         target_type = get_target_type()
@@ -141,6 +143,7 @@ def get_status_target_by_target_type(config_status):
 
     return None
 
+
 def get_tag_targets(status_config, status_type):
     if status_config:
         status_type = status_type.lower()
@@ -151,6 +154,7 @@ def get_tag_targets(status_config, status_type):
         ]
 
         return targets
+
 
 def has_required_tag(config_status, target_type, status_type):
     """Checks if tag is required and riases exception if found"""
@@ -163,15 +167,18 @@ def has_required_tag(config_status, target_type, status_type):
         target_types = set()
         for target in targets:
             target_types.append(
-                "{0} : {1}".format(target["target_type"], target["status_type"])
+                "{0} : {1}".format(target["target_type"],
+                                   target["status_type"])
             )
         raise Exception(
-            "Target types and tags {0} are required but unable to tag the environment".format(
+            "Target types and tags {0} are required but \
+             unable to tag the environment".format(
                 target_types
             )
         )
 
     return False
+
 
 def get_target_type():
     return watchmaker.utils.imds.detect.provider()

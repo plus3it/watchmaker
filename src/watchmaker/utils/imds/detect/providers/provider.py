@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 """Abstract Provider."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
-try:
-    from abc import ABC, abstractmethod
-except (ImportError, NameError):
-    from abc import ABCMeta, abstractmethod
+import abc
+
+import six
 
 
-class AbstractProvider(ABC):
+@six.add_metaclass(abc.ABCMeta)
+class AbstractProvider():
     """
     Abstract class representing a cloud provider.
     All concrete cloud providers should implement this.
@@ -23,14 +18,14 @@ class AbstractProvider(ABC):
     identifier = "unknown"
     url_timeout = 5
 
-    @abstractmethod
+    @abc.abstractmethod
     def identify(self):
         pass  # pragma: no cover
 
-    @abstractmethod
+    @abc.abstractmethod
     def check_metadata_server(self):
         pass  # pragma: no cover
 
-    @abstractmethod
+    @abc.abstractmethod
     def check_vendor_file(self):
         pass  # pragma: no cover
