@@ -12,14 +12,14 @@ from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 log = logging.getLogger(__name__)
 
 
-def provider(excluded=[]):
-    if AWSProvider().identifier not in excluded:
+def provider(excluded=None):
+    if not is_excluded(AWSProvider().identifier, excluded):
         result = AWSProvider().identify()
         if result:
             log.debug("IMDS detected result is aws")
             return AWSProvider().identifier
 
-    if AzureProvider().identifier not in excluded:
+    if not is_excluded(AzureProvider().identifier, excluded):
         result = AzureProvider().identify()
         if result:
             log.debug("IMDS detected result is azure")
@@ -27,3 +27,9 @@ def provider(excluded=[]):
 
     log.debug("IMDS detected result is unknown")
     return AbstractProvider.identifier
+
+
+def is_excluded(id, excluded=None):
+    if not excluded:
+        return False
+    return id in excluded
