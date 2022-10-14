@@ -20,6 +20,7 @@ from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
                             "instanceId": "i-ec12as"}'.encode("utf8")))
 def test_aws_provider(provider_mock):
     assert provider() == AWSProvider.identifier
+    assert AWSProvider.instance_id == "i-ec12as"
 
 
 @patch.object(AWSProvider,
