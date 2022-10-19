@@ -15,9 +15,6 @@ class AbstractProvider():
     All concrete cloud providers should implement this.
     """
 
-    identifier = "unknown"
-    url_timeout = 5
-
     @abc.abstractmethod
     def identify(self):
         """Identify provider type."""

@@ -5,29 +5,21 @@ from __future__ import (absolute_import, division, print_function,
 
 import json
 import logging
-# pylint: disable=redefined-builtin
-from io import open
 from os.path import exists
 
-from six.moves import urllib
-
+import watchmaker.utils as utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 
 
 class AWSProvider(AbstractProvider):
     """Concrete implementation of the AWS cloud provider."""
 
-    identifier = "aws"
-    instance_id = None
-
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.metadata_url = (
             "http://169.254.169.254/latest/dynamic/instance-identity/document"
         )
-        self.metadata_id_url = (
-            'http://169.254.169.254/latest/meta-data/instance-id'
-        )
+
         self.vendor_files = (
             "/sys/class/dmi/id/product_version",
             "/sys/class/dmi/id/bios_vendor",
@@ -38,63 +30,51 @@ class AWSProvider(AbstractProvider):
         self.logger.info("Try to identify AWS")
         return self.check_metadata_server() or self.check_vendor_file()
 
-    def get_instance_id(self):
-        """Get AWS instance id."""
-        if AWSProvider.instance_id:
-            return AWSProvider.instance_id
-        return self.__get_instance_id_from_server()
-
     def check_metadata_server(self):
         """Identify AWS via metadata server."""
         self.logger.debug("Checking AWS metadata")
         try:
-            data = self.__get_data_from_server()
-
-            response = json.loads(data.decode("utf-8"))
-
-            if response["imageId"].startswith("ami-",) and response[
-                "instanceId"
-            ].startswith("i-"):
-                AWSProvider.instance_id = response["instanceId"]
-                return True
-            return False
+            return self.__is_valid_server()
         except BaseException as ex:
             self.logger.error(ex)
             return False
 
     def check_vendor_file(self):
-        """Identifiy whether this is an AWS provider.
+        """Identify whether this is an AWS provider.
 
-        Reads file/sys/class/dmi/id/product_version
+        Checks the vendor files to see if it contains amazon.
         """
         self.logger.debug("Checking AWS vendor file")
         for vendor_file in self.vendor_files:
-            if exists(vendor_file):
-                with open(vendor_file, encoding="utf-8") as vendor_file:
-                    if "amazon" in vendor_file.read().lower():
-                        return True
+            data = self.__get_file_contents(vendor_file)
+            return True if data and "amazon" in data.lower() else False
+        return False
+
+    def __is_valid_server(self):
+        data = self.__get_data_from_server()
+        if data:
+            response = json.loads(data.decode("utf-8"))
+            if response["imageId"].startswith("ami-",) and response[
+                "instanceId"
+            ].startswith("i-"):
+                return True
         return False
 
     def __get_data_from_server(self):
         """Retrieve AWS metadata."""
-        with urllib.request.urlopen(self.metadata_url,
-                                    timeout=AbstractProvider.url_timeout) \
-                as response:
-            return response.read()
+        response = utils.urlopen_retry(self.metadata_url)
+        if response.status == 200:
+            response.read()
+        return None
 
-    def __get_instance_id_from_server(self):
-        """Retrieve AWS instance id from metadata."""
-        try:
-            with urllib.request.urlopen(self.metadata_id_url,
-                                        timeout=AbstractProvider.url_timeout) \
-                    as response:
-                AWSProvider.instance_id = response.read()
-                return AWSProvider.instance_id
-        except BaseException as ex:
-            self.logger.error("Exception getting instance id {0}".format(ex))
+    def __get_file_contents(self, file):
+        '''Get file contents if exists'''
+        if not exists(file):
             return None
-
-    @staticmethod
-    def reset():
-        """Reset static vars."""
-        AWSProvider.instance_id = None
+        # Convert a local vendor file to a URI
+        file_path = utils.uri_from_filepath(file)
+        try:
+            check_vendor_file = utils.urlopen_retry(file_path)
+            return check_vendor_file.read()
+        except (ValueError, utils.urllib.error.URLError):
+            return None

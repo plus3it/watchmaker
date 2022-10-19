@@ -58,7 +58,7 @@ def test_main():
     assert watchmaker.__version__ == watchmaker.__version__
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_none_arguments(provider_mock):
     """Check string 'None' conversion to None."""
     raw_arguments = {
@@ -82,7 +82,7 @@ def test_none_arguments(provider_mock):
     assert watchmaker_client.worker_args['salt_states'] is None
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_argument_default_value(provider_mock):
     """Ensure argument default value is `Arguments.DEFAULT_VALUE`."""
     raw_arguments = {}
@@ -96,7 +96,7 @@ def test_argument_default_value(provider_mock):
     assert watchmaker_arguments.ou_path == check_val
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_extra_arguments_string(provider_mock):
     """Test string in extra_arguments loads correctly."""
     # setup
@@ -117,7 +117,7 @@ def test_extra_arguments_string(provider_mock):
     assert watchmaker_client.worker_args == check_val
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_extra_arguments_equal_separator(provider_mock):
     """Test equal separator in extra_arguments loads correctly."""
     # setup
@@ -137,7 +137,7 @@ def test_extra_arguments_equal_separator(provider_mock):
     assert watchmaker_client.worker_args == check_val
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_extra_arguments_quoted_string(provider_mock):
     """Test quoted string in extra_arguments loads correctly."""
     # setup
@@ -158,7 +158,7 @@ def test_extra_arguments_quoted_string(provider_mock):
     assert watchmaker_client.worker_args == check_val
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_extra_arguments_list(provider_mock):
     """Test list in extra_arguments loads correctly."""
     # setup
@@ -179,7 +179,7 @@ def test_extra_arguments_list(provider_mock):
     assert watchmaker_client.worker_args == check_val
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_extra_arguments_map(provider_mock):
     """Test map in extra_arguments loads correctly."""
     # setup
@@ -200,7 +200,7 @@ def test_extra_arguments_map(provider_mock):
     assert watchmaker_client.worker_args == check_val
 
 
-@patch("watchmaker.utils.imds.detect.provider", return_value="aws")
+@patch("watchmaker.status.Status.initialize", return_value=None)
 def test_none_arguments_aws_provider(provider_mock):
     """Check string 'None' conversion to None."""
     raw_arguments = {

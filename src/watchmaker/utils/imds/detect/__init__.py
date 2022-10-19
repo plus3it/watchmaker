@@ -14,20 +14,20 @@ log = logging.getLogger(__name__)
 
 def provider(excluded=None):
     """Identify and return identifier."""
-    if not is_excluded(AWSProvider().identifier, excluded):
+    if not is_excluded("aws", excluded):
         result = AWSProvider().identify()
         if result:
             log.debug("IMDS detected result is aws")
-            return AWSProvider().identifier
+            return "aws"
 
-    if not is_excluded(AzureProvider().identifier, excluded):
+    if not is_excluded("azure", excluded):
         result = AzureProvider().identify()
         if result:
             log.debug("IMDS detected result is azure")
-            return AzureProvider().identifier
+            return "azure"
 
     log.debug("IMDS detected result is unknown")
-    return AbstractProvider.identifier
+    return "unknown"
 
 
 def is_excluded(identifier, excluded=None):

@@ -14,7 +14,7 @@ import watchmaker.utils.imds.detect
 from watchmaker import static
 from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib
-from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
+from watchmaker.config.status import is_valid_status_config
 
 log = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ def get_watchmaker_configs(system, worker_args, config_path=None):
     try:
         config_all = config_full.get("all", [])
         config_system = config_full.get(system, [])
-        config_status = config_full.get("status", [])
+        config_status = config_full.get("status", None)
         config_version_specifier = config_full.get("watchmaker_version", None)
     except AttributeError:
         msg = "Malformed config file. Must be a dictionary."
@@ -122,67 +122,8 @@ def get_watchmaker_configs(system, worker_args, config_path=None):
         "Command-line arguments merged into worker configs: %s", worker_args
     )
 
-    config_status = get_targets_by_target_type(config_status)
+    if not is_valid_status_config(config_status):
+        log.error("Status config is invalid %s", config_status)
+        config_status = None
 
     return config, config_status
-
-
-def get_targets_by_target_type(config_status):
-    """Get the targets for the detected provider type."""
-    if config_status:
-        target_type = get_target_type()
-
-        if target_type != AbstractProvider.identifier:
-            targets = [
-                target
-                for target in config_status["targets"]
-                if target["target_type"].lower() == target_type
-            ]
-
-            if targets:
-                return {"targets": targets}
-
-    return None
-
-
-def get_tag_targets(status_config, status_type):
-    """Get the targets from the status config for this status type."""
-    if status_config:
-        status_type = status_type.lower()
-        targets = [
-            target
-            for target in status_config["targets"]
-            if target["status_type"].lower() == status_type
-        ]
-
-        return targets
-    return None
-
-
-def has_required_tag(config_status, target_type, status_type):
-    """Check if tag is required and raises exception."""
-    targets = [target for target in config_status["targets"]
-               if target["required"] and
-               target["target_type"].lower() == target_type and
-               target["status_type"].lower() == status_type]
-
-    if targets:
-        target_types = set()
-        for target in targets:
-            target_types.add(
-                "{0} : {1}".format(target["target_type"],
-                                   target["status_type"])
-            )
-        raise Exception(
-            "Target types and tags {0} are required but \
-             unable to tag the environment".format(
-                target_types
-            )
-        )
-
-    return False
-
-
-def get_target_type():
-    """Return the target provider type."""
-    return watchmaker.utils.imds.detect.provider()

@@ -16,18 +16,14 @@ import setuptools
 import yaml
 
 import watchmaker.utils
+from watchmaker.config.status import (COMPLETE_TARGET, ERROR_TARGET,
+                                      RUNNING_TARGET)
+from watchmaker.config.watchmaker_config import get_watchmaker_configs
 from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
 from watchmaker.managers.worker_manager import (LinuxWorkersManager,
                                                 WindowsWorkersManager)
-from watchmaker.utils.config.watchmaker_config import (get_tag_targets,
-                                                       get_watchmaker_configs)
-from watchmaker.utils.imds import tag_resource, update_tag_resource
-
-RUNNING_TYPE = "Running"
-START_STATUS = "Started"
-COMPLETE_STATUS = "Completed"
-ERROR_STATUS = "Error"
+from watchmaker.status import Status
 
 
 def _extract_version(package_name):
@@ -293,9 +289,10 @@ class Client(object):
             get_watchmaker_configs(self.system,
                                    self.worker_args,
                                    self.config_path)
-        self.running_targets = get_tag_targets(self.status_config,
-                                               RUNNING_TYPE)
-        tag_resource(self.running_targets, START_STATUS)
+
+        self.status = Status(self.status_config)
+
+        self.status.tag_resource(RUNNING_TARGET)
 
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
@@ -407,7 +404,7 @@ class Client(object):
                     self.system_params["workingdir"]
                 )
                 self.log.critical(msg)
-                update_tag_resource(self.running_targets, ERROR_STATUS)
+                self.status.tag_resource(ERROR_TARGET)
                 raise
 
         workers_manager = self.workers_manager(
@@ -419,7 +416,7 @@ class Client(object):
         except Exception:
             msg = "Execution of the workers cadence has failed."
             self.log.critical(msg)
-            update_tag_resource(self.running_targets, ERROR_STATUS)
+            self.status.tag_resource(ERROR_TARGET)
             raise
 
         if self.no_reboot:
@@ -430,5 +427,5 @@ class Client(object):
                 "Reboot scheduled. System will reboot after the script exits."
             )
             subprocess.call(self.system_params["restart"], shell=True)
-        update_tag_resource(self.running_targets, COMPLETE_STATUS)
+        self.status.tag_resource(COMPLETE_TARGET)
         self.log.info("Stop time: %s", datetime.datetime.now())
