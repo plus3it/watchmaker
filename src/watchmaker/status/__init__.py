@@ -5,11 +5,10 @@ from __future__ import (absolute_import, division, print_function,
 
 import logging
 
-import watchmaker.utils.imds.detect.providers.provider as provider
-from watchmaker.status.providers.aws_status_provider import AWSStatusProvider
-from watchmaker.status.providers.azure_status_provider import \
-    AzureStatusProvider
 import watchmaker.config.status as status_config
+import watchmaker.utils.imds.detect.providers.provider as provider
+from watchmaker.status.providers.aws import AWSStatusProvider
+from watchmaker.status.providers.azure import AzureStatusProvider
 
 
 class Status():
@@ -38,7 +37,7 @@ class Status():
     def get_status_provider(self):
         return self.status_provider
 
-    def tag_resource(self, status_type):
+    def tag_resource(self, status_type, status):
         """Update Tag resources key and status provided."""
         if not self.status_provider or not self.targets:
             return
@@ -51,7 +50,7 @@ class Status():
             required = status_config.is_target_required(target)
             self.status_provider.tag_resource(
                 status_type, key,
-                status_config.get_status(status_type), required)
+                status_config.get_status(status_type, status), required)
 
     def __get_status_provider_by_id(id, logger=None):
         """Get provider for this resource"""

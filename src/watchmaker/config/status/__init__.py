@@ -5,14 +5,16 @@ from __future__ import (absolute_import, division, print_function,
 
 import logging
 
-RUNNING_TARGET = "RUNNING"
-COMPLETE_TARGET = "COMPLETE"
-ERROR_TARGET = "ERROR"
+STATUS_TYPES = {
+    "RUNNING": "RUNNING",
+}
 
 STATUS = {
-    "RUNNING": "Running",
-    "COMPLETE": "Completed",
-    "ERROR": "Error",
+    "RUNNING": {
+        "RUNNING": "Running",
+        "COMPLETE": "Completed",
+        "ERROR": "Error",
+    }
 }
 
 
@@ -30,7 +32,7 @@ def is_valid_status_config(config):
                 is_valid = False
                 logging.error("Status target is missing status_type or value")
             if ("status_type" in target and target["status_type"].upper()
-                    not in STATUS.keys()):
+                    not in STATUS_TYPES.keys()):
                 is_valid = False
                 logging.error("Status target is invalid value %s",
                               target["status_type"])
@@ -42,9 +44,10 @@ def is_valid_status_config(config):
     return is_valid
 
 
-def get_status(status_type):
-    if status_type in STATUS:
-        return STATUS[status_type]
+def get_status(status_type, status):
+    status = STATUS.get(status_type, None)
+    if status:
+        return status.get(status, status)
     return None
 
 
@@ -61,11 +64,11 @@ def is_target_required(target):
 def get_targets_by_status_type(targets, status_type):
     """Gets the targets from the status config for this status type."""
     if targets and status_type:
-        status_type = status_type.lower()
+        status_type = status_type.UPPER()
         return [
             target
             for target in targets
-            if target["status_type"].lower() == status_type
+            if target["status_type"].UPPER() == status_type
         ]
 
     return None
