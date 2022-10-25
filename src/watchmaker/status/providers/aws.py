@@ -5,8 +5,8 @@ from __future__ import (absolute_import, division, print_function,
 
 import logging
 
-from watchmaker.status.providers.status_provider import (
-    AbstractStatusProvider, StatusProviderException)
+from watchmaker.status.providers.abstract import (AbstractStatusProvider,
+                                                  StatusProviderException)
 from watchmaker.utils import urllib
 from watchmaker.utils.conditions import HAS_BOTO3
 

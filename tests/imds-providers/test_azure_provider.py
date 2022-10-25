@@ -10,7 +10,6 @@ except ImportError:
 
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 
-
 # def test_reading_invalid_vendor_file():
 #     """Tests invalid vendor file."""
 #     provider = AzureProvider()

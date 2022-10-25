@@ -8,7 +8,7 @@ try:
 except ImportError:
     from mock import patch
 
-from watchmaker.utils.imds.detect import provider, is_excluded
+from watchmaker.utils.imds.detect import is_excluded, provider
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 
