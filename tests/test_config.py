@@ -5,7 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import os
 
-from watchmaker.config.watchmaker_config import get_watchmaker_configs
+from watchmaker.config import get_configs
 
 try:
     from unittest.mock import patch
@@ -24,7 +24,7 @@ def test_config_with_suppported_status_provider(mock_provider):
         'ou_path': 'None'
     }
     config, status_config = \
-        get_watchmaker_configs(
+        get_configs(
             "linux",
             worker_args,
             os.path.join("tests", "resources", "config_with_status.yaml"))
@@ -43,7 +43,7 @@ def test_config_without_status_config(mock_provider):
         'ou_path': 'None'
     }
     config, status_config = \
-        get_watchmaker_configs(
+        get_configs(
             "linux",
             worker_args,
             os.path.join("tests", "resources", "config_without_status.yaml"))

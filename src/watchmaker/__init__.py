@@ -16,9 +16,9 @@ import setuptools
 import yaml
 
 import watchmaker.utils
+from watchmaker.config import get_configs
 from watchmaker.config.status import (COMPLETE_TARGET, ERROR_TARGET,
                                       RUNNING_TARGET)
-from watchmaker.config.watchmaker_config import get_watchmaker_configs
 from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
 from watchmaker.managers.worker_manager import (LinuxWorkersManager,
@@ -286,9 +286,9 @@ class Client(object):
         self.worker_args = self._get_worker_args(arguments, extra_arguments)
 
         self.config, self.status_config = \
-            get_watchmaker_configs(self.system,
-                                   self.worker_args,
-                                   self.config_path)
+            get_configs(self.system,
+                        self.worker_args,
+                        self.config_path)
 
         self.status = Status(self.status_config)
 
