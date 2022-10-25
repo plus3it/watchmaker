@@ -8,7 +8,7 @@ import logging
 from watchmaker.status.providers.abstract import (AbstractStatusProvider,
                                                   StatusProviderException)
 from watchmaker.utils import urllib
-from watchmaker.utils.conditions import HAS_BOTO3
+from watchmaker.conditions import HAS_BOTO3
 
 
 class AWSStatusProvider(AbstractStatusProvider):

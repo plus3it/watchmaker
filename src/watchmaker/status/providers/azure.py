@@ -9,7 +9,7 @@ import logging
 import watchmaker.utils as utils
 from watchmaker.status.providers.abstract import (AbstractStatusProvider,
                                                   StatusProviderException)
-from watchmaker.utils.conditions import HAS_AZURE
+from watchmaker.conditions import HAS_AZURE
 
 
 class AzureStatusProvider(AbstractStatusProvider):
