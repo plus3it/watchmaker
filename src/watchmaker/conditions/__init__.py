@@ -14,9 +14,10 @@ except ImportError:
 HAS_AZURE = False
 try:
     from azure.core import pipeline  # type: ignore # noqa: F401
-    from azure.identity import AzureCliCredential, _credentials  # type: ignore # noqa: F401 E501
-    from azure.mgmt.resource import ResourceManagementClient  # type: ignore # noqa: F401 E501
-    from azure.mgmt.resource import resources  # type: ignore # noqa: F401
+    from azure.identity import (  # type: ignore # noqa: F401 E501
+        AzureCliCredential, _credentials)
+    from azure.mgmt.resource import (  # type: ignore # noqa: F401 E501
+        ResourceManagementClient, resources)
     HAS_AZURE = True
 except ImportError:
     pass

@@ -7,13 +7,14 @@ import json
 import logging
 
 import watchmaker.utils as utils
-from watchmaker.status.providers.abstract import (AbstractStatusProvider,
-                                                  StatusProviderException)
 from watchmaker.conditions import HAS_AZURE
+from watchmaker.status.providers.abstract import (AbstractStatusProvider,
+                                                  StatusProviderError)
 
 
 class AzureStatusProvider(AbstractStatusProvider):
     """Concrete implementation of the Azure status cloud provider."""
+
     identifier = 'azure'
 
     def __init__(self, logger=None):
@@ -26,7 +27,7 @@ class AzureStatusProvider(AbstractStatusProvider):
         self.initialize()
 
     def initialize(self):
-        """Initializes subscription and resource ids"""
+        """Initialize subscription and resource id."""
         if not self.subscription_id or not self.resource_id:
             try:
                 self.__set_ids_from_server()
@@ -35,7 +36,7 @@ class AzureStatusProvider(AbstractStatusProvider):
                     "Error retrieving ids from metadata service %s", ex)
 
     def tag_resource(self, status_type, key, status, required):
-        """Tags an Azure instance with the key and status provided."""
+        """Tag an Azure instance with the key and status provided."""
         self.logger.debug("Tagging Azure Resource")
         if HAS_AZURE and \
             self.subscription_id and \
@@ -50,7 +51,7 @@ class AzureStatusProvider(AbstractStatusProvider):
 
     def __tag_azure_resouce(self, key, status):
         self.logger.debug("Tag Resource %s with  %s:%s",
-                          self.instance_id, key, status)
+                          self.resource_id, key, status)
         # pylint: disable=attribute-defined-outside-init
         # pylint: disable=undefined-variable
         credential = AzureCliCredential()  # type: ignore # noqa F821
@@ -58,7 +59,8 @@ class AzureStatusProvider(AbstractStatusProvider):
         # pylint: disable=attribute-defined-outside-init
         # pylint: disable=undefined-variable
         resource_client =  \
-            ResourceManagementClient(credential, self.get_subscription_id())  # type: ignore # noqa F821
+            ResourceManagementClient(   # type: ignore # noqa F821
+                credential, self.subscription_id)
 
         body = {
             "operation": self.__get_operation(),
@@ -67,18 +69,18 @@ class AzureStatusProvider(AbstractStatusProvider):
             }
         }
         resource_client.tags.create_or_update_at_scope(
-            self.get_resource_id(), body)
+            self.resource_id, body)
         self.logger.debug("Resource tag created")
 
     def __set_ids_from_server(self):
-        """Retrieves Azure instance id from metadata."""
-        response = utils.urlopen_retry(self.metadata_url)
+        """Retrieve Azure instance id from metadata."""
+        response = utils.urlopen_retry(self.metadata_id_url)
         data = json.load(response)
         self.subscription_id = data["compute"]["subscriptionId"]
         self.resource_id = data["compute"]["resourceId"]
 
     def __get_operation(self):
-        """Gets the tag operation
+        """Get the tag operation.
 
         Return "create" if initial status otherwise "udpate"
         """
@@ -100,4 +102,4 @@ class AzureStatusProvider(AbstractStatusProvider):
                     "%s resource and subcription ids \
                         were not found via metadata service", err_prefix
             logging.error(err_msg)
-            raise StatusProviderException(err_msg)
+            raise StatusProviderError(err_msg)

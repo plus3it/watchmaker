@@ -47,10 +47,11 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS vendor file")
         for vendor_file in self.vendor_files:
             data = self.__get_file_contents(vendor_file)
-            return True if data and "amazon" in data.lower() else False
+            return bool(data and "amazon" in data.lower())
         return False
 
     def __is_valid_server(self):
+        """Determine if valid metadata server."""
         data = self.__get_data_from_server()
         if data:
             response = json.loads(data.decode("utf-8"))
@@ -64,11 +65,11 @@ class AWSProvider(AbstractProvider):
         """Retrieve AWS metadata."""
         response = utils.urlopen_retry(self.metadata_url)
         if response.status == 200:
-            response.read()
+            return response.read()
         return None
 
     def __get_file_contents(self, file):
-        '''Get file contents if exists'''
+        """Get file contents if exists."""
         if not exists(file):
             return None
         # Convert a local vendor file to a URI

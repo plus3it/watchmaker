@@ -6,12 +6,13 @@ from __future__ import (absolute_import, division, print_function,
 import logging
 
 import watchmaker.config.status as status_config
-import watchmaker.utils.imds.detect.providers.provider as provider
 from watchmaker.status.providers.aws import AWSStatusProvider
 from watchmaker.status.providers.azure import AzureStatusProvider
+from watchmaker.utils.imds.detect import provider
 
 
 class Status():
+    """Status factory for providers."""
 
     def __init__(self, config=None, excluded=None, logger=None):
         self.logger = logger or logging.getLogger(__name__)
@@ -21,24 +22,27 @@ class Status():
         self.initialize(config, excluded)
 
     def initialize(self, config=None, excluded=None):
-        """Initializes Status if not already done"""
+        """Initialize and get provider."""
         if not self.identifier or not self.status_provider:
             self.identifier = provider(excluded)
             self.status_provider = \
-                self.__get_status_provider_by_id(self.identifier)
+                self.__get_status_provider_by_id()
 
-        if self.identifier and config:
+        if not self.targets and config:
             self.targets = \
-                status_config.get_targets_by_target_type(self.identifier)
+                status_config.get_targets_by_target_type(
+                    config, self.identifier)
 
     def get_status_provider_identifier(self):
+        """Get provider identifier."""
         return self.identifier
 
     def get_status_provider(self):
+        """Get provider."""
         return self.status_provider
 
     def tag_resource(self, status_type, status):
-        """Update Tag resources key and status provided."""
+        """Tag resource with key and status provided."""
         if not self.status_provider or not self.targets:
             return
 
@@ -52,10 +56,10 @@ class Status():
                 status_type, key,
                 status_config.get_status(status_type, status), required)
 
-    def __get_status_provider_by_id(id, logger=None):
-        """Get provider for this resource"""
-        if id == AWSStatusProvider().identifier:
-            return AWSStatusProvider(logger)
-        if id == AzureStatusProvider().identifier:
-            return AzureStatusProvider(logger)
+    def __get_status_provider_by_id(self):
+        """Get provider by identifier."""
+        if self.identifier == AWSStatusProvider().identifier:
+            return AWSStatusProvider()
+        if self.identifier == AzureStatusProvider().identifier:
+            return AzureStatusProvider()
         return None

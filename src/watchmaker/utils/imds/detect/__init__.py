@@ -7,7 +7,6 @@ import logging
 
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
-from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 
 log = logging.getLogger(__name__)
 

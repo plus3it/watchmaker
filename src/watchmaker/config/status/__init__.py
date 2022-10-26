@@ -19,6 +19,7 @@ STATUS = {
 
 
 def is_valid_status_config(config):
+    """Validate config."""
     is_valid = True
     if config and "targets" in config:
         for target in config["targets"]:
@@ -32,7 +33,7 @@ def is_valid_status_config(config):
                 is_valid = False
                 logging.error("Status target is missing status_type or value")
             if ("status_type" in target and target["status_type"].upper()
-                    not in STATUS_TYPES.keys()):
+                    not in list(STATUS_TYPES)):
                 is_valid = False
                 logging.error("Status target is invalid value %s",
                               target["status_type"])
@@ -44,25 +45,26 @@ def is_valid_status_config(config):
     return is_valid
 
 
-def get_status(status_type, status):
+def get_status(status_type, status_key):
+    """Get status message for status type and status key provided."""
     status = STATUS.get(status_type, None)
     if status:
-        return status.get(status, status)
+        return status.get(status_key, status_key)
     return None
 
 
 def get_target_key(target):
-    """Gets key from the target"""
+    """Get key from the target."""
     return target["key"]
 
 
 def is_target_required(target):
-    """Gets whether target required"""
+    """Get whether target required."""
     return target["required"]
 
 
 def get_targets_by_status_type(targets, status_type):
-    """Gets the targets from the status config for this status type."""
+    """Get the targets from the status config for this status type."""
     if targets and status_type:
         status_type = status_type.UPPER()
         return [
@@ -75,7 +77,7 @@ def get_targets_by_status_type(targets, status_type):
 
 
 def get_targets_by_target_type(config_status, target_type):
-    """Gets the targets for the target type."""
+    """Get the targets for the target type."""
     if config_status and target_type:
         target_type = target_type.lower()
         if target_type:

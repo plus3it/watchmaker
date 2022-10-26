@@ -12,9 +12,9 @@ from compatibleversion import check_version
 
 import watchmaker.utils.imds.detect
 from watchmaker import static
+from watchmaker.config.status import is_valid_status_config
 from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib
-from watchmaker.config.status import is_valid_status_config
 
 log = logging.getLogger(__name__)
 

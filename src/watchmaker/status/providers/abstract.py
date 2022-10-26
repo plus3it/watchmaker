@@ -8,7 +8,7 @@ import abc
 import six
 
 
-class StatusProviderException(Exception):
+class StatusProviderError(Exception):
     """Status Exception."""
 
 
@@ -18,14 +18,15 @@ class AbstractStatusProvider():
 
     All concrete watchmaker status cloud providers should implement this.
     """
+
     identifier = "unknown"
 
     @abc.abstractmethod
     def initialize(self):
-        """Initializes provider."""
+        """Initialize provider."""
         pass  # pragma: no cover
 
     @abc.abstractmethod
     def tag_resource(self, status_type, key, status, required):
-        """Identifies via metadata server."""
+        """Identify via metadata server."""
         pass  # pragma: no cover

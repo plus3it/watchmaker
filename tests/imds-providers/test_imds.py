@@ -62,5 +62,5 @@ def test_provider_not_excluded():
 
 
 def test_provider_no_exclusions():
-    """Test provider is not excluded when no exclusions provided"""
+    """Test provider is not excluded when no exclusions provided."""
     assert is_excluded("aws") is False
