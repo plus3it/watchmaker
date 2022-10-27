@@ -35,7 +35,7 @@ class AzureStatusProvider(AbstractStatusProvider):
                 self.logger.error(
                     "Error retrieving ids from metadata service %s", ex)
 
-    def tag_resource(self, status_type, key, status, required):
+    def tag_resource(self, key, status, required):
         """Tag an Azure instance with the key and status provided."""
         self.logger.debug("Tagging Azure Resource")
         if HAS_AZURE and \
@@ -47,7 +47,7 @@ class AzureStatusProvider(AbstractStatusProvider):
                 return
             except BaseException as ex:
                 logging.error("Exception while tagging azure resource %s", ex)
-        self.__error_on_required_status(status_type, required)
+        self.__error_on_required_status(required)
 
     def __tag_azure_resouce(self, key, status):
         self.logger.debug("Tag Resource %s with  %s:%s",
@@ -90,10 +90,10 @@ class AzureStatusProvider(AbstractStatusProvider):
 
         return "update"
 
-    def __error_on_required_status(self, status_type, required):
+    def __error_on_required_status(self, required):
         if required:
-            err_prefix = "Tag Status is required for azure resource \
-                    and status type %s but ", status_type
+            err_prefix = "Watchmaker status tag required for azure resources, "
+
             if not HAS_AZURE:
                 err_msg = \
                     "%s required python sdk was not found", err_prefix

@@ -41,20 +41,18 @@ class Status():
         """Get provider."""
         return self.status_provider
 
-    def tag_resource(self, status_type, status):
+    def tag_resource(self, status):
         """Tag resource with key and status provided."""
         if not self.status_provider or not self.targets:
             return
 
-        targets = \
-            status_config.get_targets_by_status_type(self.targets, status_type)
-
-        for target in targets:
+        for target in self.targets:
             key = status_config.get_target_key(target)
             required = status_config.is_target_required(target)
             self.status_provider.tag_resource(
-                status_type, key,
-                status_config.get_status(status_type, status), required)
+                key,
+                status_config.get_status(status),
+                required)
 
     def __get_status_provider_by_id(self):
         """Get provider by identifier."""

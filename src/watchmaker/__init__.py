@@ -17,7 +17,6 @@ import yaml
 
 import watchmaker.utils
 from watchmaker.config import get_configs
-from watchmaker.config.status import STATUS_TYPES
 from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
 from watchmaker.managers.worker_manager import (LinuxWorkersManager,
@@ -291,9 +290,7 @@ class Client(object):
 
         self.status = Status(self.status_config)
 
-        self.status.tag_resource(
-            STATUS_TYPES["RUNNING"],
-            "RUNNING")
+        self.status.tag_resource("RUNNING")
 
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
@@ -405,9 +402,7 @@ class Client(object):
                     self.system_params["workingdir"]
                 )
                 self.log.critical(msg)
-                self.status.tag_resource(
-                    STATUS_TYPES["RUNNING"],
-                    "ERROR")
+                self.status.tag_resource("ERROR")
                 raise
 
         workers_manager = self.workers_manager(
@@ -419,9 +414,7 @@ class Client(object):
         except Exception:
             msg = "Execution of the workers cadence has failed."
             self.log.critical(msg)
-            self.status.tag_resource(
-                STATUS_TYPES["RUNNING"],
-                "ERROR")
+            self.status.tag_resource("ERROR")
             raise
 
         if self.no_reboot:
@@ -432,7 +425,5 @@ class Client(object):
                 "Reboot scheduled. System will reboot after the script exits."
             )
             subprocess.call(self.system_params["restart"], shell=True)
-        self.status.tag_resource(
-            STATUS_TYPES["RUNNING"],
-            "COMPLETE")
+        self.status.tag_resource("COMPLETE")
         self.log.info("Stop time: %s", datetime.datetime.now())

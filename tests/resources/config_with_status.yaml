@@ -61,8 +61,6 @@ status:
     - key: 'WatchmakerStatus'
       required: False
       target_type: 'aws'
-      status_type: 'Running'
     - key: 'WatchmakerStatus'
       required: False
       target_type: 'azure'
-      status_type: 'Running'

@@ -27,6 +27,6 @@ class AbstractStatusProvider():
         pass  # pragma: no cover
 
     @abc.abstractmethod
-    def tag_resource(self, status_type, key, status, required):
+    def tag_resource(self, key, status, required):
         """Identify via metadata server."""
         pass  # pragma: no cover
