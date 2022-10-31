@@ -40,8 +40,7 @@ pull_request_rules:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - "#approved-reviews-by>=1"
       - label!=submodules
-      - not:
-        - title~=(?i).*pyinstaller.*
+      - -title~=(?i).*pyinstaller.*
     actions:
       merge:
         method: merge
