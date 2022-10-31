@@ -21,7 +21,7 @@ pull_request_rules:
       comment:
         message: go codebuild go
 
-  - name: automatic merge for dependabot pull requests
+  - name: automatic merge for dependabot submodule or pyinstaller pull requests with approval and codebuild success 
     conditions:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - or:
@@ -35,7 +35,7 @@ pull_request_rules:
         method: merge
 
   # For regular dependabot pr, automatically merge on approve
-  - name: automatic merge for dependabot pull requests
+  - name: automatic merge for dependabot pull requests that are not pyinstaller and not submodules
     conditions:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - "#approved-reviews-by>=1"
