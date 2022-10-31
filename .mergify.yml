@@ -12,11 +12,11 @@ pull_request_rules:
   - name: write issue comment to start codebuild job
     conditions:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
-      - or:
-        - and:
-          - label=submodules
+      - and:
           - "#approved-reviews-by>=1"
-        - title~=(?i)pyinstaller
+          - or:
+            - label=submodules
+            - title~=(?i).*pyinstaller.*
     actions:
       comment:
         message: go codebuild go
@@ -26,7 +26,7 @@ pull_request_rules:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - or:
           - label=submodules
-          - title~=(?i)pyinstaller
+          - title~=(?i).*pyinstaller.*
       - status-success=codebuild/custom/pr
       - status-success=codebuild/default/pr
       - "#approved-reviews-by>=1"
@@ -40,7 +40,8 @@ pull_request_rules:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - "#approved-reviews-by>=1"
       - label!=submodules
-      - -title~=(?i)pyinstaller
+      - not:
+        - title~=(?i).*pyinstaller.*
     actions:
       merge:
         method: merge
