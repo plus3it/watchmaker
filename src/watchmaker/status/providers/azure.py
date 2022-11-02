@@ -28,12 +28,14 @@ class AzureStatusProvider(AbstractStatusProvider):
 
     def initialize(self):
         """Initialize subscription and resource id."""
-        if not self.subscription_id or not self.resource_id:
-            try:
-                self.__set_ids_from_server()
-            except BaseException as ex:
-                self.logger.error(
-                    "Error retrieving ids from metadata service %s", ex)
+        if self.subscription_id and self.resource_id:
+            return
+
+        try:
+            self.__set_ids_from_server()
+        except BaseException as ex:
+            self.logger.error(
+                "Error retrieving ids from metadata service %s", ex)
 
     def tag_resource(self, key, status, required):
         """Tag an Azure instance with the key and status provided."""

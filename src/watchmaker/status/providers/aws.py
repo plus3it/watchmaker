@@ -26,12 +26,13 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def initialize(self):
         """Initialize instance id."""
-        if not self.instance_id:
-            try:
-                self.__set_id_from_server()
-            except BaseException as ex:
-                self.logger.error(
-                    "Error retrieving id from metadata service %s", ex)
+        if self.instance_id:
+            return
+        try:
+            self.__set_id_from_server()
+        except BaseException as ex:
+            self.logger.error(
+                "Error retrieving id from metadata service %s", ex)
 
     def tag_resource(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
