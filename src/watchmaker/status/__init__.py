@@ -26,9 +26,9 @@ class Status():
         if not self.identifier or not self.status_provider:
             self.identifier = provider(excluded)
             self.status_provider = \
-                self.__get_status_provider_by_id()
+                self.__get_status_provider()
 
-        if not self.targets and not self.identifier and config:
+        if not self.targets and self.identifier and config:
             self.targets = \
                 status_config.get_targets_by_target_type(
                     config, self.identifier)
@@ -54,7 +54,7 @@ class Status():
                 status_config.get_status(status),
                 required)
 
-    def __get_status_provider_by_id(self):
+    def __get_status_provider(self):
         """Get provider by identifier."""
         if self.identifier == AWSStatusProvider().identifier:
             return AWSStatusProvider()
