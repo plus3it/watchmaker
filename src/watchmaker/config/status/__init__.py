@@ -12,7 +12,7 @@ STATUS = {
 }
 
 
-def is_valid_status_config(config):
+def is_valid(config):
     """Validate config."""
     if not config:
         return True

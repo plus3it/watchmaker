@@ -12,7 +12,7 @@ from compatibleversion import check_version
 
 import watchmaker.utils.imds.detect
 from watchmaker import static
-from watchmaker.config.status import is_valid_status_config
+from watchmaker.config.status import is_valid
 from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib
 
@@ -122,8 +122,8 @@ def get_configs(system, worker_args, config_path=None):
         "Command-line arguments merged into worker configs: %s", worker_args
     )
 
-    if not is_valid_status_config(config_status):
+    if not is_valid(config_status):
         log.error("Status config is invalid %s", config_status)
-        raise Exception("Status config is invalid %s" % config_status)
+        raise WatchmakerError("Status config is invalid %s" % config_status)
 
     return config, config_status
