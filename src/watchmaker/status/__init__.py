@@ -28,7 +28,7 @@ class Status():
             self.status_provider = \
                 self.__get_status_provider_by_id()
 
-        if not self.targets and config:
+        if not self.targets and not self.identifier and config:
             self.targets = \
                 status_config.get_targets_by_target_type(
                     config, self.identifier)

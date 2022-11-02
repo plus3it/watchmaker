@@ -55,13 +55,8 @@ def is_target_required(target):
 
 def get_targets_by_target_type(config_status, target_type):
     """Get the targets for the target type."""
-    if config_status and target_type:
-        target_type = target_type.lower()
-        if target_type:
-            return [
-                target
-                for target in config_status["targets"]
-                if target["target_type"].lower() == target_type
-            ]
-
-    return None
+    return [
+        target
+        for target in config_status["targets"]
+        if target["target_type"].lower() == target_type.lower()
+    ]
