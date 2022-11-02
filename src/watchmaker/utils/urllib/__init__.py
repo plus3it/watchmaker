@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 from six.moves.urllib import error, parse, request  # type:ignore # noqa F401
 
 from watchmaker.conditions import HAS_BOTO3
-from watchmaker.utils.urllib.request_handlers import S3Handler
 
 if HAS_BOTO3:
+    from watchmaker.utils.urllib.request_handlers import S3Handler
     request.install_opener(request.build_opener(S3Handler))

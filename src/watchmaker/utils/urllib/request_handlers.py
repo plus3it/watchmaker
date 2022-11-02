@@ -6,11 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 import io
 from email import message_from_string
 
-try:
-    import boto3
-except ImportError:
-    pass
-from six.moves import urllib
+from six.moves import urllib  # type: ignore
 
 
 class BufferedIOS3Key(io.BufferedIOBase):
