@@ -21,20 +21,20 @@ def is_valid(config):
     if not targets:
         return False
 
-    is_valid = True
+    valid = True
     for target in targets:
         if "key" not in target or not target["key"]:
-            is_valid = False
+            valid = False
             logging.error("Status target is missing key or value")
         if "target_type" not in target or not target["target_type"]:
-            is_valid = False
+            valid = False
             logging.error("Status target is missing target_type or value")
         if "required" in target:
             if not isinstance(target["required"], bool):
-                is_valid = False
+                valid = False
                 logging.error("Status target required value is not a bool")
 
-    return is_valid
+    return valid
 
 
 def get_status(status_key):

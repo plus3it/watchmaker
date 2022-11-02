@@ -48,6 +48,7 @@ class S3Handler(urllib.request.BaseHandler):
         try:
             s3_conn = self.s3_conn
         except AttributeError:
+            # pylint: disable=attribute-defined-outside-init
             s3_conn = self.s3_conn = boto3.resource("s3")
 
         key = s3_conn.Object(bucket_name=bucket_name, key=key_name)
