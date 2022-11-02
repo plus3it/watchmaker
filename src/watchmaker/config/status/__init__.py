@@ -14,19 +14,25 @@ STATUS = {
 
 def is_valid_status_config(config):
     """Validate config."""
+    if not config:
+        return True
+
+    targets = config.get("targets", None)
+    if not targets:
+        return False
+
     is_valid = True
-    if config and "targets" in config:
-        for target in config["targets"]:
-            if "key" not in target or not target["key"]:
+    for target in targets:
+        if "key" not in target or not target["key"]:
+            is_valid = False
+            logging.error("Status target is missing key or value")
+        if "target_type" not in target or not target["target_type"]:
+            is_valid = False
+            logging.error("Status target is missing target_type or value")
+        if "required" in target:
+            if not isinstance(target["required"], bool):
                 is_valid = False
-                logging.error("Status target is missing key or value")
-            if "target_type" not in target or not target["target_type"]:
-                is_valid = False
-                logging.error("Status target is missing target_type or value")
-            if "required" in target:
-                if not isinstance(target["required"], bool):
-                    is_valid = False
-                    logging.error("Status target required value is not a bool")
+                logging.error("Status target required value is not a bool")
 
     return is_valid
 

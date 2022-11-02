@@ -124,6 +124,6 @@ def get_configs(system, worker_args, config_path=None):
 
     if not is_valid_status_config(config_status):
         log.error("Status config is invalid %s", config_status)
-        config_status = None
+        raise Exception("Status config is invalid %s" % config_status)
 
     return config, config_status
