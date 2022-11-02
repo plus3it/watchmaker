@@ -31,6 +31,4 @@ def provider(excluded=None):
 
 def is_excluded(identifier, excluded=None):
     """Check if identifier is in excluded list."""
-    if not excluded:
-        return False
-    return identifier in excluded
+    return identifier in excluded if excluded else False
