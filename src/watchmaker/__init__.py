@@ -283,12 +283,12 @@ class Client(object):
         # All remaining arguments are worker_args
         self.worker_args = self._get_worker_args(arguments, extra_arguments)
 
-        self.config, self.status_config = \
+        self.config, status_config = \
             get_configs(self.system,
                         self.worker_args,
                         self.config_path)
 
-        self.status = Status(self.status_config)
+        self.status = Status(status_config)
 
         self.status.tag_resource("RUNNING")
 
