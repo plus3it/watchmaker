@@ -7,8 +7,8 @@ import logging
 
 import watchmaker.utils as utils
 from watchmaker.conditions import HAS_BOTO3
-from watchmaker.status.providers.abstract import (AbstractStatusProvider,
-                                                  StatusProviderError)
+from watchmaker.exceptions import StatusProviderError
+from watchmaker.status.providers.abstract import AbstractStatusProvider
 
 
 class AWSStatusProvider(AbstractStatusProvider):

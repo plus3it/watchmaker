@@ -8,10 +8,6 @@ import abc
 import six
 
 
-class StatusProviderError(Exception):
-    """Status Exception."""
-
-
 @six.add_metaclass(abc.ABCMeta)
 class AbstractStatusProvider():
     """Abstract class representing a watchmaker status cloud provider.

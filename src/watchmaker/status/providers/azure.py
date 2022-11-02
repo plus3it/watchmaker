@@ -8,8 +8,8 @@ import logging
 
 import watchmaker.utils as utils
 from watchmaker.conditions import HAS_AZURE
-from watchmaker.status.providers.abstract import (AbstractStatusProvider,
-                                                  StatusProviderError)
+from watchmaker.exceptions import StatusProviderError
+from watchmaker.status.providers.abstract import AbstractStatusProvider
 
 
 class AzureStatusProvider(AbstractStatusProvider):

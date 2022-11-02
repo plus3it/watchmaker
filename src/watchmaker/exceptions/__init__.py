@@ -12,6 +12,10 @@ class InvalidValueError(WatchmakerError):
     """Passed an invalid value."""
 
 
+class StatusProviderError(WatchmakerError):
+    """Status Error."""
+
+
 # Deprecated/renamed exceptions
 WatchmakerException = WatchmakerError
 InvalidValue = InvalidValueError
