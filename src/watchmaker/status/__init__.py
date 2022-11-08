@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 import logging
 
 import watchmaker.config.status as status_config
+from watchmaker.status.providers.abstract import AbstractStatusProvider
 from watchmaker.status.providers.aws import AWSStatusProvider
 from watchmaker.status.providers.azure import AzureStatusProvider
 from watchmaker.utils.imds.detect import provider
@@ -14,50 +15,53 @@ from watchmaker.utils.imds.detect import provider
 class Status():
     """Status factory for providers."""
 
-    def __init__(self, config=None, excluded=None, logger=None):
+    _PROVIDERS = {
+        AWSStatusProvider.identifier: AWSStatusProvider,
+        AzureStatusProvider.identifier: AzureStatusProvider
+    }
+
+    def __init__(self, config=None, logger=None):
         self.logger = logger or logging.getLogger(__name__)
-        self.status_provider = None
-        self.identifier = None
-        self.targets = None
-        self.initialize(config, excluded)
+        self.status_providers = {}
+        self.targets = {}
+        self.initialize(config)
 
-    def initialize(self, config=None, excluded=None):
-        """Initialize and get provider."""
-        if not self.identifier or not self.status_provider:
-            self.identifier = provider(excluded)
-            self.status_provider = \
-                self.__get_status_provider()
+    def initialize(self, config=None):
+        """Initialize status providers."""
 
-        if not self.targets and self.identifier and config:
-            self.targets = \
-                status_config.get_targets_by_target_type(
-                    config, self.identifier)
+        status_provider_ids = []
+        if status_config.get_supported_cloud_target_identifiers(config):
+            cloud_identifier = provider()
+            if cloud_identifier != AbstractStatusProvider.identifier:
+                status_provider_ids.append(cloud_identifier)
 
-    def get_status_provider_identifier(self):
-        """Get provider identifier."""
-        return self.identifier
+        status_provider_ids += \
+            status_config.get_supported_non_cloud_target_identifiers(config)
 
-    def get_status_provider(self):
-        """Get provider."""
-        return self.status_provider
+        self.status_providers = \
+            self.__get_status_providers(status_provider_ids)
 
-    def tag_resource(self, status):
-        """Tag resource with key and status provided."""
-        if not self.status_provider or not self.targets:
+        for k, v in self.status_providers:
+            self.targets[k] = \
+                status_config.get_targets_by_target_types(
+                    config, k)
+
+    def update_status(self, status):
+        """Update status for each status provider."""
+        if not self.status_providers or not self.targets:
             return
 
-        for target in self.targets:
-            key = status_config.get_target_key(target)
-            required = status_config.is_target_required(target)
-            self.status_provider.tag_resource(
-                key,
-                status_config.get_status(status),
-                required)
+        for identifier, targets in self.targets:
+            status_provider = self.status_providers.get(identifier)
+            for target in targets:
+                status_provider.update_status(
+                    status_config.get_target_key(target),
+                    status_config.get_status(status),
+                    status_config.is_target_required(target))
 
-    def __get_status_provider(self):
-        """Get provider by identifier."""
-        if self.identifier == AWSStatusProvider().identifier:
-            return AWSStatusProvider()
-        if self.identifier == AzureStatusProvider().identifier:
-            return AzureStatusProvider()
-        return None
+    def __get_status_providers(self, identifiers):
+        """Get providers by identifiers."""
+        status_providers = {}
+        for identifier in identifiers:
+            status_providers[identifier] = \
+                Status._PROVIDERS.get(identifier)()

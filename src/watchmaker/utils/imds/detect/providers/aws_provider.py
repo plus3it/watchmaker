@@ -14,6 +14,8 @@ from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 class AWSProvider(AbstractProvider):
     """Concrete implementation of the AWS cloud provider."""
 
+    identifier = "aws"
+
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.metadata_url = (
@@ -63,7 +65,7 @@ class AWSProvider(AbstractProvider):
 
     def __get_data_from_server(self):
         """Retrieve AWS metadata."""
-        response = utils.urlopen_retry(self.metadata_url)
+        response = utils.urlopen_retry(self.metadata_url, self.DEFAULT_TIMEOUT)
         if response.status == 200:
             return response.read()
         return None
@@ -75,7 +77,8 @@ class AWSProvider(AbstractProvider):
         # Convert a local vendor file to a URI
         file_path = utils.uri_from_filepath(file)
         try:
-            check_vendor_file = utils.urlopen_retry(file_path)
+            check_vendor_file = utils.urlopen_retry(
+                file_path, self.DEFAULT_TIMEOUT)
             return check_vendor_file.read()
         except (ValueError, utils.urllib.error.URLError):
             return None

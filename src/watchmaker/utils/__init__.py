@@ -51,9 +51,11 @@ def basename_from_uri(uri):
 
 
 @backoff.on_exception(backoff.expo, urllib.error.URLError, max_tries=5)
-def urlopen_retry(uri):
+def urlopen_retry(uri, timeout=None):
     """Retry urlopen on exception."""
     kwargs = {}
+    if timeout:
+        kwargs["timeout"] = timeout
     try:
         # trust the system's default CA certificates
         # proper way for 2.7.9+ on Linux

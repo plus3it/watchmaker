@@ -37,7 +37,7 @@ class AzureStatusProvider(AbstractStatusProvider):
             self.logger.error(
                 "Error retrieving ids from metadata service %s", ex)
 
-    def tag_resource(self, key, status, required):
+    def update_status(self, key, status, required):
         """Tag an Azure instance with the key and status provided."""
         self.logger.debug("Tagging Azure Resource")
         if HAS_AZURE and \

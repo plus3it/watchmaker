@@ -5,6 +5,9 @@ from __future__ import (absolute_import, division, print_function,
 
 import logging
 
+SUPPORTED_CLOUD_PROVIDERS = ["aws", "azure"]
+SUPPORTED_NON_CLOUD_PROVIDERS = []
+
 STATUS = {
     "RUNNING": "Running",
     "COMPLETE": "Completed",
@@ -38,7 +41,11 @@ def is_valid(config):
 
 
 def get_status(status_key):
-    """Get formatted status message for status key provided."""
+    """Get status message.
+
+    returns string: formatted status message from key provided
+                   or status_key as status
+    """
     status = STATUS.get(status_key, None)
     return status if status else status_key
 
@@ -53,10 +60,34 @@ def is_target_required(target):
     return target["required"]
 
 
-def get_targets_by_target_type(config_status, target_type):
-    """Get the targets for the target type."""
+def get_target_type(target):
+    """Get target type."""
+    return target["target_type"]
+
+
+def get_targets_by_target_types(config_status, target_type):
+    """Get the targets for the target types."""
     return [
         target
-        for target in config_status["targets"]
-        if target["target_type"].lower() == target_type.lower()
+        for target in config_status.get("targets", [])
+        if target["target_type"].lower() == target_type
     ]
+
+
+def get_supported_cloud_target_identifiers(config_status):
+    """Get unique list of cloud targets."""
+    return list(set(
+        target.get("target_type").lower()
+        for target in config_status.get("targets", [])
+        if target.get("target_type", "").lower() in SUPPORTED_CLOUD_PROVIDERS
+    ))
+
+
+def get_supported_non_cloud_target_identifiers(config_status):
+    """Get unique list of other provider targets."""
+    return list(set(
+        target.get("target_type").lower()
+        for target in config_status.get("targets", [])
+        if target.get(
+            "target_type", "").lower() in SUPPORTED_NON_CLOUD_PROVIDERS
+    ))

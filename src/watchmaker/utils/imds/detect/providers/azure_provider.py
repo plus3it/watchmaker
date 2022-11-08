@@ -13,6 +13,8 @@ from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 class AzureProvider(AbstractProvider):
     """Concrete implementation of the Azure cloud provider."""
 
+    identifier = 'azure'
+
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.metadata_url = (
@@ -46,7 +48,8 @@ class AzureProvider(AbstractProvider):
         if exists(self.vendor_file):
             vendor_file_path = utils.uri_from_filepath(self.vendor_file)
             try:
-                check_vendor_file = utils.urlopen_retry(vendor_file_path)
+                check_vendor_file = utils.urlopen_retry(
+                    vendor_file_path, self.DEFAULT_TIMEOUT)
                 if "Microsoft Corporation" in check_vendor_file.read():
                     return True
             except (ValueError, utils.urllib.error.URLError):
@@ -55,5 +58,5 @@ class AzureProvider(AbstractProvider):
 
     def __is_valid_server(self):
         """Retrieve Azure metadata."""
-        response = utils.urlopen_retry(self.metadata_url)
+        response = utils.urlopen_retry(self.metadata_url, self.DEFAULT_TIMEOUT)
         return response.status == 200

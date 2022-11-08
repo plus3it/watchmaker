@@ -34,7 +34,7 @@ class AWSStatusProvider(AbstractStatusProvider):
             self.logger.error(
                 "Error retrieving id from metadata service %s", ex)
 
-    def tag_resource(self, key, status, required):
+    def update_status(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
         self.logger.debug("Tagging AWS Resource")
         if HAS_BOTO3 and self.instance_id and status:

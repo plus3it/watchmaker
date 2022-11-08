@@ -290,7 +290,7 @@ class Client(object):
 
         self.status = Status(status_config)
 
-        self.status.tag_resource("RUNNING")
+        self.status.update_status("RUNNING")
 
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
@@ -402,7 +402,7 @@ class Client(object):
                     self.system_params["workingdir"]
                 )
                 self.log.critical(msg)
-                self.status.tag_resource("ERROR")
+                self.status.update_status("ERROR")
                 raise
 
         workers_manager = self.workers_manager(
@@ -414,7 +414,7 @@ class Client(object):
         except Exception:
             msg = "Execution of the workers cadence has failed."
             self.log.critical(msg)
-            self.status.tag_resource("ERROR")
+            self.status.update_status("ERROR")
             raise
 
         if self.no_reboot:
@@ -425,5 +425,5 @@ class Client(object):
                 "Reboot scheduled. System will reboot after the script exits."
             )
             subprocess.call(self.system_params["restart"], shell=True)
-        self.status.tag_resource("COMPLETE")
+        self.status.update_status("COMPLETE")
         self.log.info("Stop time: %s", datetime.datetime.now())
