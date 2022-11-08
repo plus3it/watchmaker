@@ -3,7 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-from watchmaker.config.status import get_supported_cloud_target_identifiers
+from watchmaker.config.status import get_cloud_identifiers
 
 
 def test_get_target_identifiers():
@@ -29,7 +29,7 @@ def test_get_target_identifiers():
             ]
         }
 
-    ids = get_supported_cloud_target_identifiers(config_status)
+    ids = get_cloud_identifiers(config_status)
 
     assert ids is not None
     assert "aws" in ids

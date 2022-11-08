@@ -36,15 +36,16 @@ def provider():
 
     if len(results) > 1:
         raise Exception("Detected more than one cloud provider")
-    elif len(results) == 0:
+
+    if len(results) == 0:
         return AbstractProvider.identifier
 
     return results[0]
 
 
-def identify(provider):
+def identify(cloud_provider):
     """Identify provider."""
-    result = provider().identify()
+    result = cloud_provider().identify()
     if result:
         log.debug("IMDS detected result is %s", result)
         return result

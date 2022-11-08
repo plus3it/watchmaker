@@ -32,10 +32,9 @@ def is_valid(config):
         if "target_type" not in target or not target["target_type"]:
             valid = False
             logging.error("Status target is missing target_type or value")
-        if "required" in target:
-            if not isinstance(target["required"], bool):
-                valid = False
-                logging.error("Status target required value is not a bool")
+        if not isinstance(target.get("required"), bool):
+            valid = False
+            logging.error("Status target required value is not a bool")
 
     return valid
 
@@ -74,7 +73,7 @@ def get_targets_by_target_types(config_status, target_type):
     ]
 
 
-def get_supported_cloud_target_identifiers(config_status):
+def get_cloud_identifiers(config_status):
     """Get unique list of cloud targets."""
     return list(set(
         target.get("target_type").lower()
@@ -83,7 +82,7 @@ def get_supported_cloud_target_identifiers(config_status):
     ))
 
 
-def get_supported_non_cloud_target_identifiers(config_status):
+def get_non_cloud_identifiers(config_status):
     """Get unique list of other provider targets."""
     return list(set(
         target.get("target_type").lower()

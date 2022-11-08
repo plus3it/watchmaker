@@ -29,18 +29,18 @@ class Status():
     def initialize(self, config=None):
         """Initialize status providers."""
         status_provider_ids = []
-        if status_config.get_supported_cloud_target_identifiers(config):
+        if status_config.get_cloud_identifiers(config):
             cloud_identifier = provider()
             if cloud_identifier != AbstractStatusProvider.identifier:
                 status_provider_ids.append(cloud_identifier)
 
         status_provider_ids += \
-            status_config.get_supported_non_cloud_target_identifiers(config)
+            status_config.get_non_cloud_identifiers(config)
 
         self.status_providers = \
             self.__get_status_providers(status_provider_ids)
 
-        for k, _v in self.status_providers:
+        for k, _v in self.status_providers:  # pylint: disable=invalid-name
             self.targets[k] = \
                 status_config.get_targets_by_target_types(
                     config, k)
@@ -64,3 +64,5 @@ class Status():
         for identifier in identifiers:
             status_providers[identifier] = \
                 Status._PROVIDERS.get(identifier)()
+
+        return status_providers
