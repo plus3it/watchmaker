@@ -17,7 +17,6 @@ MAX_WORKERS = 10
 
 def provider():
     """Identify and return identifier."""
-
     exception_list = []
     results = []
     futures = []
@@ -44,6 +43,7 @@ def provider():
 
 
 def identify(provider):
+    """Identify provider."""
     result = provider().identify()
     if result:
         log.debug("IMDS detected result is %s", result)

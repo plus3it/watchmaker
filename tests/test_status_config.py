@@ -7,7 +7,7 @@ from watchmaker.config.status import get_supported_cloud_target_identifiers
 
 
 def test_get_target_identifiers():
-
+    """Test status config allowed target_types."""
     config_status = \
         {
             "targets": [

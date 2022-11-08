@@ -14,6 +14,7 @@ class AbstractProvider():
 
     All concrete cloud providers should implement this.
     """
+
     DEFAULT_TIMEOUT = 5
     identifier = 'unknown'
 

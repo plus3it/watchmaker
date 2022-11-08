@@ -28,7 +28,6 @@ class Status():
 
     def initialize(self, config=None):
         """Initialize status providers."""
-
         status_provider_ids = []
         if status_config.get_supported_cloud_target_identifiers(config):
             cloud_identifier = provider()
@@ -41,7 +40,7 @@ class Status():
         self.status_providers = \
             self.__get_status_providers(status_provider_ids)
 
-        for k, v in self.status_providers:
+        for k, _v in self.status_providers:
             self.targets[k] = \
                 status_config.get_targets_by_target_types(
                     config, k)
