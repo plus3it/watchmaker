@@ -33,7 +33,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
     DIST_PATTERN = re.compile(
         r"^({0})"
         "(?:[^0-9]+)"
-        r"([\d]+[.][\d]+)"
+        r"([\d]|[\d]+[.][\d])"
         "(?:.*)"
         .format('|'.join(SUPPORTED_DISTS))
     )
