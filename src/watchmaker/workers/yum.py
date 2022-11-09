@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 import io
 import re
 
+import distro
 import six
 
 import watchmaker.utils
@@ -25,7 +26,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     """
 
-    SUPPORTED_DISTS = ('amazon', 'centos', 'red hat')
+    SUPPORTED_DISTS = ('amazon', 'centos', 'red hat', 'rhel')
 
     # Pattern used to match against the first line of /etc/system-release. A
     # match will contain two groups: the dist name (e.g. 'red hat' or 'amazon')
@@ -54,40 +55,15 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     def get_dist_info(self):
         """Validate the Linux distro and return info about the distribution."""
-        dist = None
-        version = None
+        dist = dist.id()
+        version = dist.version()[0]
         el_version = None
-
-        # Read first line from /etc/system-release
-        try:
-            with io.open('/etc/system-release', encoding='utf8') as fh_:
-                release = fh_.readline().strip()
-        except Exception:
-            self.log.critical(
-                'Failed to read /etc/system-release. Cannot determine system '
-                'distribution!'
-            )
-            raise
-
-        # Search the release file for a match against _supported_dists
-        matched = self.DIST_PATTERN.search(release.lower())
-        if matched is None:
-            # Release not supported, exit with error
-            msg = (
-                'Unsupported OS distribution. OS must be one of: {0}'
-                .format(', '.join(self.SUPPORTED_DISTS))
-            )
-            self.log.critical(msg)
-            raise WatchmakerError(msg)
-
-        # Assign dist,version from the match groups tuple, removing any spaces
-        dist, version = (x.replace(' ', '') for x in matched.groups())
 
         # Determine el_version
         if dist == 'amazon':
             el_version = self._get_amazon_el_version(version)
         else:
-            el_version = version.split('.')[0]
+            el_version = dist.version()[0]
 
         if el_version is None:
             msg = (
