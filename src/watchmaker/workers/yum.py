@@ -3,8 +3,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-import re
-
 import distro
 import six
 
@@ -26,17 +24,6 @@ class Yum(WorkerBase, LinuxPlatformManager):
     """
 
     SUPPORTED_DISTS = ('amazon', 'centos', 'red hat', 'rhel')
-
-    # Pattern used to match against the first line of /etc/system-release. A
-    # match will contain two groups: the dist name (e.g. 'red hat' or 'amazon')
-    # and the dist version (e.g. '6.8' or '2016.09').
-    DIST_PATTERN = re.compile(
-        r"^({0})"
-        "(?:[^0-9]+)"
-        r"([\d]|[\d]+[.][\d])"
-        "(?:.*)"
-        .format('|'.join(SUPPORTED_DISTS))
-    )
 
     def __init__(self, *args, **kwargs):
         # Pop arguments used by Yum
