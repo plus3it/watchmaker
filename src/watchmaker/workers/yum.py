@@ -59,6 +59,16 @@ class Yum(WorkerBase, LinuxPlatformManager):
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
+        # Error if 'dist' is not found in SUPPORTED_DISTS
+        if dist not in self.SUPPORTED_DISTS:
+            # Release not supported, exit with error
+            msg = (
+                'Unsupported OS distribution. OS must be one of: {0}'
+                .format(', '.join(self.SUPPORTED_DISTS))
+            )
+            self.log.critical(msg)
+            raise WatchmakerError(msg)
+
         dist_info = {
             'dist': dist,
             'el_version': el_version
