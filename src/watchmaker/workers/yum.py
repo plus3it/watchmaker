@@ -55,12 +55,12 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     def get_dist_info(self):
         """Validate the Linux distro and return info about the distribution."""
-        dist = dist.id()
+        os_dist = dist.id()
         version = dist.version()[0]
         el_version = None
 
         # Determine el_version
-        if dist == 'amazon':
+        if os_dist == 'amazon':
             el_version = self._get_amazon_el_version(version)
         else:
             el_version = dist.version()[0]
@@ -74,7 +74,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
             raise WatchmakerError(msg)
 
         dist_info = {
-            'dist': dist,
+            'dist': os_dist,
             'el_version': el_version
         }
         self.log.debug('dist_info=%s', dist_info)
