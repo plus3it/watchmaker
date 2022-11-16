@@ -45,17 +45,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     def get_dist_info(self):
         """Validate the Linux distro and return info about the distribution."""
-        # Error if 'dist' is not found in SUPPORTED_DISTS
-        try:
-            dist = self.SUPPORTED_DISTS[distro.id()]
-        except KeyError:
-            # Release not supported, exit with error
-            msg = (
-                'Unsupported OS distribution. OS must be one of: {0}'
-                .format(', '.join(self.SUPPORTED_DISTS.keys()))
-            )
-            self.log.critical(msg)
-            raise WatchmakerError(msg)
+        dist = self.get_mapped_dist_name()
         version = distro.version()[0]
         el_version = None
 
@@ -79,6 +69,20 @@ class Yum(WorkerBase, LinuxPlatformManager):
         }
         self.log.debug('dist_info=%s', dist_info)
         return dist_info
+
+    def get_mapped_dist_name(self):
+        """Return a normalized dist-name value."""
+        # Error if 'dist' is not found in SUPPORTED_DISTS
+        try:
+            return self.SUPPORTED_DISTS[distro.id()]
+        except KeyError:
+            # Release not supported, exit with error
+            msg = (
+                'Unsupported OS distribution. OS must be one of: {0}'
+                .format(', '.join(self.SUPPORTED_DISTS.keys()))
+            )
+            self.log.critical(msg)
+            raise WatchmakerError(msg)
 
     def _validate_config(self):
         """Validate the config is properly formed."""
