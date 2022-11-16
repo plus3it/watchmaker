@@ -25,7 +25,6 @@ linux:
         #SaltEL6:
         - dist:
             - redhat
-            - rhel
             - centos
           el_version: 6
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-el6.repo
@@ -35,14 +34,12 @@ linux:
         #SaltEL7:
         - dist:
             - redhat
-            - rhel
             - centos
           el_version: 7
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el7-python3.repo
         #SaltEL8:
         - dist:
             - redhat
-            - rhel
             - centos
           el_version: 8
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el8-python3.repo
