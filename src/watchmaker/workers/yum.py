@@ -23,7 +23,11 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     """
 
-    SUPPORTED_DISTS = ('amazon', 'centos', 'red hat', 'rhel')
+    SUPPORTED_DISTS = {
+        'amazon': 'amazon',
+        'centos': 'centos',
+        'rhel': 'redhat'
+    }
 
     def __init__(self, *args, **kwargs):
         # Pop arguments used by Yum
@@ -41,7 +45,17 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     def get_dist_info(self):
         """Validate the Linux distro and return info about the distribution."""
-        dist = distro.id()
+        # Error if 'dist' is not found in SUPPORTED_DISTS
+        try:
+            dist = self.SUPPORTED_DISTS[distro.id()]
+        except KeyError:
+            # Release not supported, exit with error
+            msg = (
+                'Unsupported OS distribution. OS must be one of: {0}'
+                .format(', '.join(self.SUPPORTED_DISTS.keys()))
+            )
+            self.log.critical(msg)
+            raise WatchmakerError(msg)
         version = distro.version()[0]
         el_version = None
 
@@ -55,16 +69,6 @@ class Yum(WorkerBase, LinuxPlatformManager):
             msg = (
                 'Unsupported OS version! dist = {0}, version = {1}.'
                 .format(dist, version)
-            )
-            self.log.critical(msg)
-            raise WatchmakerError(msg)
-
-        # Error if 'dist' is not found in SUPPORTED_DISTS
-        if dist not in self.SUPPORTED_DISTS:
-            # Release not supported, exit with error
-            msg = (
-                'Unsupported OS distribution. OS must be one of: {0}'
-                .format(', '.join(self.SUPPORTED_DISTS))
             )
             self.log.critical(msg)
             raise WatchmakerError(msg)
