@@ -4,6 +4,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
 import io
+import boto3  # type: ignore
 from email import message_from_string
 
 from six.moves import urllib  # type: ignore
@@ -46,7 +47,7 @@ class S3Handler(urllib.request.BaseHandler):
         except AttributeError:
             # pylint: disable=attribute-defined-outside-init
             # pylint: disable=undefined-variable
-            s3_conn = self.s3_conn = boto3.resource("s3")  # type: ignore # noqa F821
+            s3_conn = self.s3_conn = boto3.resource("s3")
 
         key = s3_conn.Object(bucket_name=bucket_name, key=key_name)
 
