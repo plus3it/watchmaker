@@ -7,6 +7,7 @@ import os
 
 from watchmaker.config import get_configs
 
+# Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
 except ImportError:

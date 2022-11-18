@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 """Detect  module."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import concurrent.futures
 import logging
 
+from watchmaker.exceptions import CloudDetectError, InvalidProviderError
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
@@ -21,21 +27,22 @@ def provider():
     results = []
     futures = []
     with concurrent.futures.ThreadPoolExecutor(
-            max_workers=MAX_WORKERS) as executor:
+        max_workers=MAX_WORKERS
+    ) as executor:
         futures.append(executor.submit(identify, AWSProvider))
         futures.append(executor.submit(identify, AzureProvider))
 
     concurrent.futures.wait(futures)
     for fut in futures:
         try:
-            result = fut.result()
-            if result != AbstractProvider.identifier:
-                results.append(result)
+            results.append(fut.result())
+        except InvalidProviderError:
+            pass
         except BaseException as ex:
             exception_list.append(str(ex))
 
     if len(results) > 1:
-        raise Exception("Detected more than one cloud provider")
+        raise CloudDetectError("Detected more than one cloud provider")
 
     if len(results) == 0:
         return AbstractProvider.identifier
@@ -45,9 +52,9 @@ def provider():
 
 def identify(cloud_provider):
     """Identify provider."""
-    result = cloud_provider().identify()
-    if result:
-        log.debug("IMDS detected result is %s", result)
-        return result
+    if cloud_provider().identify():
+        return cloud_provider.identifier
 
-    return AbstractProvider.identifier
+    raise InvalidProviderError(
+        "Environment is not " % cloud_provider.identifier
+    )

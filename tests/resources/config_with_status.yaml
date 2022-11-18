@@ -58,9 +58,9 @@ windows:
 
 status:
   targets:
-    - key: 'WatchmakerStatus'
+    - key: "WatchmakerStatus"
       required: False
-      target_type: 'aws'
-    - key: 'WatchmakerStatus'
+      target_type: "aws"
+    - key: "WatchmakerStatus"
       required: False
-      target_type: 'azure'
+      target_type: "azure"

@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 """Extends urllib with additional handlers."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import io
-import boto3  # type: ignore
 from email import message_from_string
 
+import boto3  # type: ignore
 from six.moves import urllib  # type: ignore
 
 
@@ -40,7 +45,8 @@ class S3Handler(urllib.request.BaseHandler):
 
         if not bucket_name or not key_name:
             raise urllib.error.URLError(
-                "url must be in the format s3://<bucket>/<key>")
+                "url must be in the format s3://<bucket>/<key>"
+            )
 
         try:
             s3_conn = self.s3_conn
@@ -55,7 +61,8 @@ class S3Handler(urllib.request.BaseHandler):
 
         if key is None:
             raise urllib.error.URLError(
-                "no such resource: {0}".format(origurl))
+                "no such resource: {0}".format(origurl)
+            )
 
         headers = [
             ("Content-type", key.content_type),
@@ -75,4 +82,5 @@ class S3Handler(urllib.request.BaseHandler):
         )
 
         return urllib.response.addinfourl(
-            BufferedIOS3Key(key), headers, origurl)
+            BufferedIOS3Key(key), headers, origurl
+        )

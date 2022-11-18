@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AWS Provider."""
+"""Azure Provider."""
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
@@ -25,7 +25,7 @@ class AzureProvider(AbstractProvider):
 
     def identify(self):
         """Identify Azure using all the implemented options."""
-        self.logger.info('Try to identify DO')
+        self.logger.info('Try to identify Azure')
         return self.check_vendor_file() or self.check_metadata_server()
 
     def check_metadata_server(self):

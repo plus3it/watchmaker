@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """AWS Status Provider."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import logging
 
@@ -14,12 +19,12 @@ from watchmaker.status.providers.abstract import AbstractStatusProvider
 class AWSStatusProvider(AbstractStatusProvider):
     """Concrete implementation of the AWS status cloud provider."""
 
-    identifier = 'aws'
+    identifier = "aws"
 
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.metadata_id_url = (
-            'http://169.254.169.254/latest/meta-data/instance-id'
+            "http://169.254.169.254/latest/meta-data/instance-id"
         )
         self.instance_id = None
         self.initialize()
@@ -32,7 +37,8 @@ class AWSStatusProvider(AbstractStatusProvider):
             self.__set_id_from_server()
         except BaseException as ex:
             self.logger.error(
-                "Error retrieving id from metadata service %s", ex)
+                "Error retrieving id from metadata service %s", ex
+            )
 
     def update_status(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
@@ -47,38 +53,43 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __tag_aws_instance(self, key, status):
         """Create or update instance tag with provided status."""
-        self.logger.debug("Tag Instance %s with  %s:%s",
-                          self.instance_id, key, status)
+        self.logger.debug(
+            "Tag Instance %s with  %s:%s", self.instance_id, key, status
+        )
         # pylint: disable=attribute-defined-outside-init
         # pylint: disable=undefined-variable
-        client = boto3.client('ec2')  # type: ignore # noqa F821
+        client = boto3.client("ec2")  # type: ignore # noqa F821
         client.create_tags(
             Resources=[
                 self.instance_id,
             ],
             Tags=[
-                {
-                    'Key': key,
-                    'Value': status
-                },
-            ]
+                {"Key": key, "Value": status},
+            ],
         )
 
     def __set_id_from_server(self):
         """Retrieve AWS instance id from metadata."""
-        response = utils.urlopen_retry(self.metadata_id_url)
-        self.instance_id = response.read()
+
+        self.instance_id = self.__get_id_from_server()
+
+    def __get_id_from_server(self):
+        response = utils.urlopen_retry(
+            self.metadata_id_url, self.DEFAULT_TIMEOUT
+        )
+        return response.read()
 
     def __error_on_required_status(self, required):
         """Error if tag is required."""
         if required:
             err_prefix = "Watchmaker status tag required for aws resources, "
             if not HAS_BOTO3:
-                err_msg = \
-                    "%s required python sdk was not found", err_prefix
+                err_msg = "%s required python sdk was not found", err_prefix
             else:
-                err_msg = \
+                err_msg = (
                     "%s instance id \
-                        was not found via metadata service", err_prefix
+                        was not found via metadata service",
+                    err_prefix,
+                )
             logging.error(err_msg)
             raise StatusProviderError(err_msg)

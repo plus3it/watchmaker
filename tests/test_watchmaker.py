@@ -8,6 +8,7 @@ import os
 import pytest
 import yaml
 
+# Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
 except ImportError:

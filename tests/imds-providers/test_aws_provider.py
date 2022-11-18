@@ -3,6 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
+# Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
 except ImportError:

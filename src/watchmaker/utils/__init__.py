@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Loads helper utility modules and functions."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import os
 import shutil
@@ -60,8 +65,9 @@ def urlopen_retry(uri, timeout=None):
         # trust the system's default CA certificates
         # proper way for 2.7.9+ on Linux
         if uri.startswith("https://"):
-            kwargs["context"] = \
-                ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            kwargs["context"] = ssl.create_default_context(
+                ssl.Purpose.SERVER_AUTH
+            )
     except AttributeError:
         pass
 
@@ -135,8 +141,9 @@ def copy_subdirectories(src_dir, dest_dir, log=None):
         if not subdir.startswith(".") and not os.path.exists(
             os.sep.join((dest_dir, subdir))
         ):
-            copytree(os.sep.join((src_dir, subdir)),
-                     os.sep.join((dest_dir, subdir)))
+            copytree(
+                os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir))
+            )
             if log:
                 log.info(
                     "Copied from %s to %s",
