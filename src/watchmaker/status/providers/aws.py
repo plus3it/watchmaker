@@ -78,6 +78,7 @@ class AWSStatusProvider(AbstractStatusProvider):
             )
         except Exception as ex:
             self.logger.exception(ex)
+            raise ex
 
         self.logger.debug("Create tag response %s", response)
 
