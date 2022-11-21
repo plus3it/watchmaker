@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """Status Module."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import logging
 
@@ -68,7 +63,8 @@ class Status:
                 )
 
     def get_detected_providers(self):
-        return [identifier for identifier in self.status_providers]
+        """Get detected providers."""
+        return list(self.status_providers)
 
     def __get_status_providers(self, identifiers):
         """Get providers by identifiers."""

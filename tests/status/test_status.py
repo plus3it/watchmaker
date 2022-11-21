@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """Providers main test module."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import yaml
 
@@ -17,10 +12,7 @@ except ImportError:
     from mock import patch
 
 from watchmaker.status import Status
-
 from watchmaker.status.providers.aws import AWSStatusProvider
-
-# from watchmaker.status.providers.azure import AzureStatusProvider
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 
@@ -35,7 +27,6 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
     AzureProvider, "_AzureProvider__is_valid_server", return_value=False
 )
 def test_status(aws_status_provider, aws_provider_mock, azure_provider_mock):
-
     """Test provider is AWS."""
     data = """
     status:

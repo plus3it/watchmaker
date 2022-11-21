@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """AWS Status Provider."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import logging
 
@@ -70,10 +65,10 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __set_id_from_server(self):
         """Retrieve AWS instance id from metadata."""
-
         self.instance_id = self.__get_id_from_server()
 
     def __get_id_from_server(self):
+        """Get identifier from metadata id url."""
         response = utils.urlopen_retry(
             self.metadata_id_url, self.DEFAULT_TIMEOUT
         )

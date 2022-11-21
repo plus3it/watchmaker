@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """Detect  module."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import concurrent.futures
 import logging
@@ -56,5 +51,5 @@ def identify(cloud_provider):
         return cloud_provider.identifier
 
     raise InvalidProviderError(
-        "Environment is not " % cloud_provider.identifier
+        "Environment is not %s" % cloud_provider.identifier
     )
