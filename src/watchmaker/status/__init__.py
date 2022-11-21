@@ -55,7 +55,7 @@ class Status:
 
         logging.debug(self.targets)
 
-        for identifier, targets in self.targets:
+        for identifier, targets in self.targets.items():
             status_provider = self.status_providers.get(identifier)
             for target in targets:
                 status_provider.update_status(
