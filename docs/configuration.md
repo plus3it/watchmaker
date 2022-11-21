@@ -5,6 +5,7 @@
    :align: right
    :target: https://www.plus3it.com
 ```
+
 <br>
 
 # Configuration
@@ -80,34 +81,34 @@ systems.
 Watchmaker includes the _workers_ listed below. See the corresponding sections
 for details on their configuration parameters.
 
-*   [salt](#salt-worker)
-*   [yum (linux-only)](#yum-worker-linux-only)
+* [salt](#salt-worker)
+* [yum (linux-only)](#yum-worker-linux-only)
 
 ### salt worker
 
 Parameters supported by the Salt Worker:
 
--   `admin_groups` (_list_): The group(s) that you would like the admin accounts
+* `admin_groups` (_list_): The group(s) that you would like the admin accounts
     placed within.
 
--   `admin_users` (_list_): The user(s) that would be created as admins.
+* `admin_users` (_list_): The user(s) that would be created as admins.
 
--   `computer_name` (_string_): The computer or hostname that should be applied.
+* `computer_name` (_string_): The computer or hostname that should be applied.
 
--   `environment` (_string_): Set for the environment in which the system is
+* `environment` (_string_): Set for the environment in which the system is
     being built.
 
--   `valid_environments` (_list_): The list of environments considered valid
-    for the environment parameter
+* `valid_environments` (_list_): The list of environments considered valid
+    for the environment parameter.
 
--   `ou_path` (_string_): Specifies the full DN of the OU where the computer
+* `ou_path` (_string_): Specifies the full DN of the OU where the computer
     account will be created when joining a domain.
 
     ```yaml
     ou_path: "OU=Super Cool App,DC=example,DC=com"
     ```
 
--   `pip_install` (_list_): The Python package(s) that formulas require.
+* `pip_install` (_list_): The Python package(s) that formulas require.
 
     ```yaml
     pip_install:
@@ -115,7 +116,7 @@ Parameters supported by the Salt Worker:
         - numpy
     ```
 
--   `pip_args` (_list_): Options to be passed to pip when installing package(s). Options with values should be passed with the option and value as separate list items.
+* `pip_args` (_list_): Options to be passed to pip when installing package(s). Options with values should be passed with the option and value as separate list items.
 
     Linux example where emoji is a value that corresponds to the `--progress-bar` option:
 
@@ -127,19 +128,19 @@ Parameters supported by the Salt Worker:
             - --progress-bar=emoji
     ```
 
--   `pip_index` (_string_): Base URL of Python Package Index.
+* `pip_index` (_string_): Base URL of Python Package Index.
 
--   `salt_states` (_string, comma-separated_): User-defined salt states to
+* `salt_states` (_string, comma-separated_): User-defined salt states to
     apply.
 
     ```yaml
     salt_states: highstate,foo,bar
     ```
 
--   `exclude_states` (_string, comma-separated_): States to exclude from
+* `exclude_states` (_string, comma-separated_): States to exclude from
     execution of salt states.
 
--   `user_formulas` (_dict_): Map of formula names and URLs to zip archives of
+* `user_formulas` (_dict_): Map of formula names and URLs to zip archives of
     salt formulas. These formulas will be downloaded, extracted, and added to
     the salt file roots. The zip archive must contain a top-level directory
     that, itself, contains the actual salt formula. To "overwrite" bundled
@@ -150,38 +151,38 @@ Parameters supported by the Salt Worker:
       foo-formula: https://path/to/foo.zip
     ```
 
--   `salt_debug_log` (_string_): Path to the debug logfile that salt will write
+* `salt_debug_log` (_string_): Path to the debug logfile that salt will write
     to.
 
--   `salt_content` (_string_): URL to the Salt content file that contains
+* `salt_content` (_string_): URL to the Salt content file that contains
     further configuration specific to the salt install.
 
--   `salt_content_path` (_string_): The path within the Salt content file
+* `salt_content_path` (_string_): The path within the Salt content file
     specified using `salt_content` where salt files are located.
     Can be used to provide the path within the archive file where
     the Salt configuration files are located.
 
--   `install_method` (_string_): (Linux-only) The method used to install Salt.
+* `install_method` (_string_): (Linux-only) The method used to install Salt.
     Currently supports: `yum`, `git`
 
--   `bootstrap_source` (_string_): (Linux-only) URL to the salt bootstrap
+* `bootstrap_source` (_string_): (Linux-only) URL to the salt bootstrap
     script. This is required if `install_method` is set to `git`.
 
--   `git_repo` (_string_): (Linux-only) URL to the salt git repo. This is
+* `git_repo` (_string_): (Linux-only) URL to the salt git repo. This is
     required if `install_method` is set to `git`.
 
--   `salt_version` (_string_): (Linux-only) A git reference present in
+* `salt_version` (_string_): (Linux-only) A git reference present in
     `git_repo`, such as a commit or a tag. If not specifid, the HEAD of the
     default branch will be used.
 
--   `installer_url` (_string_): (Windows-only) URL to the Salt Minion installer
+* `installer_url` (_string_): (Windows-only) URL to the Salt Minion installer
     for Windows.
 
 ### yum worker (linux-only)
 
 Parameters supported by the Yum Worker:
 
--   `repo_map` (list of maps): There be dragons here! Please be careful making
+* `repo_map` (list of maps): There be dragons here! Please be careful making
     changes to the default config. Thoroughly test your configuration. The
     default config specifies yum repos that contain the salt-minion. If the
     default repos are not included, and the salt-minion is not available, the
@@ -189,12 +190,12 @@ Parameters supported by the Yum Worker:
     but be wary of removing the default repos. Each map must contain the
     following keys:
 
-    -   `dist` (_list_): Distributions that would install this repo. Some repos
+  * `dist` (_list_): Distributions that would install this repo. Some repos
         are supported by multiple distros. (Currently supported distros are
         redhat, centos, and amazon.)
-    -   `el_version` (`_string_`): The Enterprise Linux version for this repo,
+  * `el_version` (`_string_`): The Enterprise Linux version for this repo,
         as in el6 or el7. Expected values are `'6'` or `'7'`.
-    -   `url` (_string_): URL location of the repo file to be added to the
+  * `url` (_string_): URL location of the repo file to be added to the
         system. This file will be copied to `/etc/yum.repos.d/`
 
     Example:
@@ -206,6 +207,33 @@ Parameters supported by the Yum Worker:
           - centos
         el_version: 6
         url: http://someplace.com/my.repo
+    ```
+
+### status
+
+Status targets that if supported by watchmaker will be used to post a status update.
+Watchmaker will attempt to detect the target type, if detected and the instance has the proper permissions, a status update will be posted.
+The currently supported target types are 'aws' and 'azure', invalid target types will cause the configuration validation to error.
+
+Parameters supported by status
+
+* `targets` ((list of maps)): List of targets
+
+  * `key` (_string_): Status key to use e.g. 'WatchmakerStatus'
+  * `required` (_boolean_): Required status, when set to True watchmaker will raise an error if environment matches target_type
+  * `target_type` (_string_): Environment target type e.g. 'aws' or 'azure'
+
+  Example:
+
+    ```yaml
+    status:
+        targets:
+            - key: 'WatchmakerStatus'
+            required: False
+            target_type: 'aws'
+            - key: 'WatchmakerStatus'
+            required: False
+            target_type: 'azure'
     ```
 
 ## Example config.yaml
@@ -265,6 +293,15 @@ windows:
   - salt:
       salt_debug_log: null
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
+
+status:
+  targets:
+    - key: 'WatchmakerStatus'
+      required: False
+      target_type: 'aws'
+    - key: 'WatchmakerStatus'
+      required: False
+      target_type: 'azure'
 ```
 
 [0]: https://yaml.org/spec/1.2/spec.html
