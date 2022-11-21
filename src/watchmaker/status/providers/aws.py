@@ -37,7 +37,11 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def update_status(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
-        self.logger.debug("Tagging AWS Resource")
+        self.logger.debug("Tagging AWS Resource if HAS_BOTO3")
+        self.logger.debug(
+            "HAS_BOTO3=%s instance_id=%s status=%s",
+            HAS_BOTO3, self.instance_id, status
+        )
         if HAS_BOTO3 and self.instance_id and status:
             try:
                 self.__tag_aws_instance(key, status)
