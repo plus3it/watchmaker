@@ -211,17 +211,17 @@ Parameters supported by the Yum Worker:
 
 ### status
 
-Status targets that if supported by watchmaker will be used to post a status update.
-Watchmaker will attempt to detect the target type, if detected and the instance has the proper permissions, a status update will be posted.
+Status targets supported by watchmaker to post watchmaker status.
+Watchmaker will attempt to detect the target type, if detected and the target has the proper permissions, a status update will be posted.
 The currently supported target types are 'aws' and 'azure', invalid target types will cause the configuration validation to error.
 
 Parameters supported by status
 
 * `targets` ((list of maps)): List of targets
 
-  * `key` (_string_): Status key to use e.g. 'WatchmakerStatus'
-  * `required` (_boolean_): Required status, when set to True watchmaker will raise an error if environment matches target_type
-  * `target_type` (_string_): Environment target type e.g. 'aws' or 'azure'
+  * `key` (_string_): Status key to use e.g. `WatchmakerStatus`
+  * `required` (_boolean_): Required status, when `True` and target type is detected, watchmaker raises an error if unable to update status
+  * `target_type` (_string_): Environment target type e.g. `aws` or `azure`
 
   Example:
 
