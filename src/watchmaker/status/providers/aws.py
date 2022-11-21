@@ -7,6 +7,10 @@ import logging
 
 import watchmaker.utils as utils
 from watchmaker.conditions import HAS_BOTO3
+
+if HAS_BOTO3:
+    import boto3  # type: ignore
+
 from watchmaker.exceptions import StatusProviderError
 from watchmaker.status.providers.abstract import AbstractStatusProvider
 
@@ -21,18 +25,24 @@ class AWSStatusProvider(AbstractStatusProvider):
         self.metadata_id_url = (
             "http://169.254.169.254/latest/meta-data/instance-id"
         )
+
+        self.metadata_region_url = (
+            "http://169.254.169.254/latest/meta-data/placement/region"
+        )
+
         self.instance_id = None
+        self.region = None
         self.initialize()
 
     def initialize(self):
         """Initialize instance id."""
-        if self.instance_id:
+        if self.instance_id and self.region:
             return
         try:
-            self.__set_id_from_server()
+            self.__set_details_from_server()
         except BaseException as ex:
             self.logger.error(
-                "Error retrieving id from metadata service %s", ex
+                "Error retrieving id/region from metadata service %s", ex
             )
 
     def update_status(self, key, status, required):
@@ -55,28 +65,41 @@ class AWSStatusProvider(AbstractStatusProvider):
         self.logger.debug(
             "Tag Instance %s with  %s:%s", self.instance_id, key, status
         )
-        # pylint: disable=attribute-defined-outside-init
-        # pylint: disable=undefined-variable
-        client = boto3.client("ec2")  # type: ignore # noqa F821
-        client.create_tags(
-            Resources=[
-                self.instance_id,
-            ],
-            Tags=[
-                {"Key": key, "Value": status},
-            ],
-        )
 
-    def __set_id_from_server(self):
-        """Retrieve AWS instance id from metadata."""
+        try:
+            client = boto3.client("ec2", self.region)
+            response = client.create_tags(
+                Resources=[
+                    self.instance_id,
+                ],
+                Tags=[
+                    {"Key": key, "Value": status},
+                ],
+            )
+        except Exception as ex:
+            self.logger.exception(ex)
+
+        self.logger.debug("Create tag response %s", response)
+
+    def __set_details_from_server(self):
+        """Retrieve AWS instance id and region from metadata."""
         self.instance_id = self.__get_id_from_server()
+        self.region = self.__get_region_from_server()
 
     def __get_id_from_server(self):
-        """Get identifier from metadata id url."""
+        """Get instance id from metadata id url."""
+        return self.__get_response_from_server(self.metadata_id_url)
+
+    def __get_region_from_server(self):
+        """Get region from metadata region url."""
+        return self.__get_response_from_server(self.metadata_region_url)
+
+    def __get_response_from_server(self, metadata_url):
+        """Get response for provided metadata_url."""
         response = utils.urlopen_retry(
-            self.metadata_id_url, self.DEFAULT_TIMEOUT
+            metadata_url, self.DEFAULT_TIMEOUT
         )
-        return response.read()
+        return response.read().decode("utf-8")
 
     def __error_on_required_status(self, required):
         """Error if tag is required."""
