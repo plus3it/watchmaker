@@ -219,6 +219,7 @@ Providers have the ability to detect whether the system is compatible with the p
 .. note::
 
     Note: Support for the 'azure' status provider is provisional. If you use it and encounter problems, please open an issue on the GitHub repository!
+```
 
 Parameters supported by status
 
