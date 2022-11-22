@@ -12,31 +12,26 @@ except ImportError:
     from mock import patch
 
 from watchmaker.status import Status
-from watchmaker.status.providers.aws import AWSStatusProvider
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 
 
-@patch.object(
-    AWSStatusProvider,
-    "_AWSStatusProvider__get_id_from_server",
-    return_value="i1234567891011",
-)
-@patch.object(AWSProvider, "_AWSProvider__is_valid_server", return_value=True)
-@patch.object(
-    AzureProvider, "_AzureProvider__is_valid_server", return_value=False
-)
-def test_status(aws_status_provider, aws_provider_mock, azure_provider_mock):
+@patch.object(AWSProvider, "identify", return_value=True)
+@patch.object(AzureProvider, "identify", return_value=False)
+def test_status(
+    aws_provider_mock,
+    azure_provider_mock,
+):
     """Test provider is AWS."""
     data = """
     status:
-        targets:
-            - key: "WatchmakerStatus"
-              required: False
-              target_type: "aws"
-            - key: "WatchmakerStatus"
-              required: False
-              target_type: "azure"
+      providers:
+        - key: "WatchmakerStatus"
+          required: False
+          provider_type: "aws"
+        - key: "WatchmakerStatus"
+          required: False
+          provider_type: "azure"
     """
     config = yaml.load(data, Loader=yaml.Loader)
     config_status = config.get("status", None)

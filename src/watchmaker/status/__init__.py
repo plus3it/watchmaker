@@ -23,7 +23,7 @@ class Status:
     def __init__(self, config=None, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.status_providers = {}
-        self.targets = {}
+        self.providers = {}
         self.initialize(config)
 
     def initialize(self, config=None):
@@ -44,22 +44,24 @@ class Status:
         )
 
         for identifier in self.status_providers:
-            self.targets[
+            self.providers[
                 identifier
-            ] = status_config.get_targets_by_target_types(config, identifier)
+            ] = status_config.get_providers_by_provider_types(
+                config, identifier
+            )
 
     def update_status(self, status):
         """Update status for each status provider."""
-        if not self.status_providers or not self.targets:
+        if not self.status_providers or not self.providers:
             return
 
-        for identifier, targets in self.targets.items():
+        for identifier, providers in self.providers.items():
             status_provider = self.status_providers.get(identifier)
-            for target in targets:
+            for provider_type in providers:
                 status_provider.update_status(
-                    status_config.get_target_key(target),
+                    status_config.get_provider_key(provider_type),
                     status_config.get_status(status),
-                    status_config.is_target_required(target),
+                    status_config.is_provider_required(provider_type),
                 )
 
     def get_detected_providers(self):

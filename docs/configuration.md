@@ -211,9 +211,14 @@ Parameters supported by the Yum Worker:
 
 ### status
 
-Status providers supported for posting watchmaker status.
-Watchmaker will attempt to detect the provider, if one is detected and it has the proper permissions, a status update will be posted.
-Currently supported provider_types: 'aws' and 'azure', invalid values will result in a configuration error.
+Watchmaker supports posting the watchmaker status to status providers. Watchmaker status values are one of: 'Running', 'Failed', or 'Completed'. Each status provider defines what it means to "post the status".. Currently, the supported provider types include: 'aws' and 'azure'. These status providers both post the status as a tag to the instance/VM.
+
+Providers have the ability to detect whether the system is compatible with the provider type. In order to post status, the system running watchmaker must be compatible with the status provider type. For example, the 'azure' provider will be skipped when watchmaker is running on an AWS EC2 instance, and vice versa.
+
+```{eval-rst}
+.. note::
+
+    Note: Support for the 'azure' status provider is provisional. If you use it and encounter problems, please open an issue on the GitHub repository!
 
 Parameters supported by status
 
@@ -227,13 +232,13 @@ Parameters supported by status
 
     ```yaml
     status:
-        providers:
-            - key: 'WatchmakerStatus'
-            required: False
-            provider_type: 'aws'
-            - key: 'WatchmakerStatus'
-            required: False
-            provider_type: 'azure'
+      providers:
+        - key: 'WatchmakerStatus'
+          required: False
+          provider_type: 'aws'
+        - key: 'WatchmakerStatus'
+          required: False
+          provider_type: 'azure'
     ```
 
 ### status roles for aws

@@ -6,28 +6,27 @@ from __future__ import (absolute_import, division, print_function,
 from watchmaker.config.status import get_cloud_identifiers
 
 
-def test_get_target_identifiers():
-    """Test status config allowed target_types."""
-    config_status = \
-        {
-            "targets": [
-                {
-                    "key": 'WatchmakerStatus',
-                    "required": False,
-                    "target_type": 'aws',
-                },
-                {
-                    "key": 'WatchmakerStatus',
-                    "required": False,
-                    "target_type": 'azure',
-                },
-                {
-                    "key": 'WatchmakerStatus',
-                    "required": False,
-                    "target_type": 'gcp',
-                }
-            ]
-        }
+def test_get_provider_identifiers():
+    """Test status config allowed provider_types."""
+    config_status = {
+        "providers": [
+            {
+                "key": "WatchmakerStatus",
+                "required": False,
+                "provider_type": "aws",
+            },
+            {
+                "key": "WatchmakerStatus",
+                "required": False,
+                "provider_type": "azure",
+            },
+            {
+                "key": "WatchmakerStatus",
+                "required": False,
+                "provider_type": "gcp",
+            },
+        ]
+    }
 
     ids = get_cloud_identifiers(config_status)
 

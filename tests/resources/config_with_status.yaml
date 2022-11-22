@@ -57,10 +57,10 @@ windows:
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
 
 status:
-  targets:
+  providers:
     - key: "WatchmakerStatus"
       required: False
-      target_type: "aws"
+      provider_type: "aws"
     - key: "WatchmakerStatus"
       required: False
-      target_type: "azure"
+      provider_type: "azure"

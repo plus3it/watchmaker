@@ -20,21 +20,21 @@ def is_valid(config):
     if not config:
         return True
 
-    targets = config.get("targets", None)
-    if not targets:
+    providers = config.get("providers", None)
+    if not providers:
         return False
 
     valid = True
-    for target in targets:
-        if "key" not in target or not target["key"]:
+    for provider in providers:
+        if "key" not in provider or not provider["key"]:
             valid = False
-            logging.error("Status target is missing key or value")
-        if "target_type" not in target or not target["target_type"]:
+            logging.error("Status provider is missing key or value")
+        if "provider_type" not in provider or not provider["provider_type"]:
             valid = False
-            logging.error("Status target is missing target_type or value")
-        if not isinstance(target.get("required"), bool):
+            logging.error("Status provider is missing provider_type or value")
+        if not isinstance(provider.get("required"), bool):
             valid = False
-            logging.error("Status target required value is not a bool")
+            logging.error("Status provider required value is not a bool")
 
     return valid
 
@@ -49,44 +49,49 @@ def get_status(status_key):
     return status if status else status_key
 
 
-def get_target_key(target):
-    """Get key from the target."""
-    return target["key"]
+def get_provider_key(provider):
+    """Get key from the provider."""
+    return provider["key"]
 
 
-def is_target_required(target):
-    """Get whether target required."""
-    return target["required"]
+def is_provider_required(provider):
+    """Get whether provider required."""
+    return provider["required"]
 
 
-def get_target_type(target):
-    """Get target type."""
-    return target["target_type"]
+def get_provider_type(provider):
+    """Get provider type."""
+    return provider["provider_type"]
 
 
-def get_targets_by_target_types(config_status, target_type):
-    """Get the targets for the target types."""
+def get_providers_by_provider_types(config_status, provider_type):
+    """Get the providers for the provider types."""
     return [
-        target
-        for target in config_status.get("targets", [])
-        if target["target_type"].lower() == target_type
+        provider
+        for provider in config_status.get("providers", [])
+        if provider["provider_type"].lower() == provider_type
     ]
 
 
 def get_cloud_identifiers(config_status):
-    """Get unique list of cloud targets."""
-    return list(set(
-        target.get("target_type").lower()
-        for target in config_status.get("targets", [])
-        if target.get("target_type", "").lower() in SUPPORTED_CLOUD_PROVIDERS
-    ))
+    """Get unique list of cloud providers."""
+    return list(
+        set(
+            provider.get("provider_type").lower()
+            for provider in config_status.get("providers", [])
+            if provider.get("provider_type", "").lower()
+            in SUPPORTED_CLOUD_PROVIDERS
+        )
+    )
 
 
 def get_non_cloud_identifiers(config_status):
-    """Get unique list of other provider targets."""
-    return list(set(
-        target.get("target_type").lower()
-        for target in config_status.get("targets", [])
-        if target.get(
-            "target_type", "").lower() in SUPPORTED_NON_CLOUD_PROVIDERS
-    ))
+    """Get unique list of other provider providers."""
+    return list(
+        set(
+            provider.get("provider_type").lower()
+            for provider in config_status.get("providers", [])
+            if provider.get("provider_type", "").lower()
+            in SUPPORTED_NON_CLOUD_PROVIDERS
+        )
+    )
