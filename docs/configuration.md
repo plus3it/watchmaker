@@ -211,30 +211,53 @@ Parameters supported by the Yum Worker:
 
 ### status
 
-Status targets supported by watchmaker to post watchmaker status.
-Watchmaker will attempt to detect the target type, if detected and the target has the proper permissions, a status update will be posted.
-The currently supported target types are 'aws' and 'azure', invalid target types will cause the configuration validation to error.
+Status providers supported for posting watchmaker status.
+Watchmaker will attempt to detect the provider, if one is detected and it has the proper permissions, a status update will be posted.
+Currently supported provider_types: 'aws' and 'azure', invalid values will result in a configuration error.
 
 Parameters supported by status
 
-* `targets` ((list of maps)): List of targets
+* `providers` ((list of maps)): List of providers
 
   * `key` (_string_): Status key to use e.g. `WatchmakerStatus`
-  * `required` (_boolean_): Required status, when `True` and target type is detected, watchmaker raises an error if unable to update status
-  * `target_type` (_string_): Environment target type e.g. `aws` or `azure`
+  * `required` (_boolean_): Required status, when `True` and provider_type is detected, watchmaker raises an error if unable to update status
+  * `provider_type` (_string_): Environment provider type e.g. `aws` or `azure`
 
   Example:
 
     ```yaml
     status:
-        targets:
+        providers:
             - key: 'WatchmakerStatus'
             required: False
-            target_type: 'aws'
+            provider_type: 'aws'
             - key: 'WatchmakerStatus'
             required: False
-            target_type: 'azure'
+            provider_type: 'azure'
     ```
+
+### status roles for aws
+
+IAM instance role with the following policy attached to the instance
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowInstanceToTagItselfOnly",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "ec2:SourceInstanceARN": "${ec2:SourceInstanceARN}"
+                }
+            }
+        }
+    ]
+}
+```
 
 ## Example config.yaml
 
@@ -295,13 +318,13 @@ windows:
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
 
 status:
-  targets:
+  providers:
     - key: 'WatchmakerStatus'
       required: False
-      target_type: 'aws'
+      provider_type: 'aws'
     - key: 'WatchmakerStatus'
       required: False
-      target_type: 'azure'
+      provider_type: 'azure'
 ```
 
 [0]: https://yaml.org/spec/1.2/spec.html
