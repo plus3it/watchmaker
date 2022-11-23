@@ -50,7 +50,9 @@ class AWSStatusProvider(AbstractStatusProvider):
         self.logger.debug("Tagging AWS Resource if HAS_BOTO3")
         self.logger.debug(
             "HAS_BOTO3=%s instance_id=%s status=%s",
-            HAS_BOTO3, self.instance_id, status
+            HAS_BOTO3,
+            self.instance_id,
+            status,
         )
         if HAS_BOTO3 and self.instance_id and status:
             try:
@@ -97,9 +99,7 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __get_response_from_server(self, metadata_url):
         """Get response for provided metadata_url."""
-        response = utils.urlopen_retry(
-            metadata_url, self.DEFAULT_TIMEOUT
-        )
+        response = utils.urlopen_retry(metadata_url, self.DEFAULT_TIMEOUT)
         return response.read().decode("utf-8")
 
     def __error_on_required_status(self, required):
@@ -107,12 +107,17 @@ class AWSStatusProvider(AbstractStatusProvider):
         if required:
             err_prefix = "Watchmaker status tag required for aws resources, "
             if not HAS_BOTO3:
-                err_msg = "%s required python sdk was not found", err_prefix
+                err_msg = (
+                    f"{err_prefix} required boto3 python sdk was not found"
+                )
+            elif not self.instance_id:
+                err_msg = (
+                    f"{err_prefix} instance id"
+                    "was not found via metadata service"
+                )
             else:
                 err_msg = (
-                    "%s instance id \
-                        was not found via metadata service",
-                    err_prefix,
+                    f"{err_prefix} watchmaker was unable to update status"
                 )
             logging.error(err_msg)
             raise StatusProviderError(err_msg)

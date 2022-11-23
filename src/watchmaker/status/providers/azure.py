@@ -92,16 +92,19 @@ class AzureStatusProvider(AbstractStatusProvider):
         return "update"
 
     def __error_on_required_status(self, required):
+        """Error if tag is required."""
         if required:
             err_prefix = "Watchmaker status tag required for azure resources, "
-
             if not HAS_AZURE:
-                err_msg = "%s required python sdk was not found", err_prefix
+                err_msg = f"{err_prefix} required python sdk was not found"
+            elif not self.instance_id:
+                err_msg = (
+                    f"{err_prefix} resource and subcription ids were"
+                    "not found via metadata service"
+                )
             else:
                 err_msg = (
-                    "%s resource and subcription ids \
-                        were not found via metadata service",
-                    err_prefix,
+                    f"{err_prefix} watchmaker was unable to update status"
                 )
             logging.error(err_msg)
             raise StatusProviderError(err_msg)
