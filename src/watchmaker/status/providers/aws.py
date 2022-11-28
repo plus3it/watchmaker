@@ -105,21 +105,14 @@ class AWSStatusProvider(AbstractStatusProvider):
     def __error_on_required_status(self, required):
         """Error if tag is required."""
         if required:
-            err_prefix = "Watchmaker status tag required for aws resources, "
+            err_prefix = "Watchmaker status tag required for aws resources,"
             if not HAS_BOTO3:
-                err_msg = (
-                    "%s required boto3 python sdk was not found",
-                    err_prefix,
-                )
+                err_msg = "required boto3 python sdk was not found"
             elif not self.instance_id:
-                err_msg = (
-                    "%s instance id was not found via metadata service",
-                    err_prefix,
-                )
+                err_msg = "instance id was not found via metadata service"
             else:
-                err_msg = (
-                    "%s watchmaker was unable to update status",
-                    err_prefix,
-                )
+                err_msg = "watchmaker was unable to update status"
+
+            err_msg = "{0} {1}".format(err_prefix, err_msg)
             logging.error(err_msg)
             raise StatusProviderError(err_msg)
