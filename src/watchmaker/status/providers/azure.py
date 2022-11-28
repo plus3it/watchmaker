@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Azure Status Provider."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import json
 import logging
@@ -96,15 +101,17 @@ class AzureStatusProvider(AbstractStatusProvider):
         if required:
             err_prefix = "Watchmaker status tag required for azure resources, "
             if not HAS_AZURE:
-                err_msg = f"{err_prefix} required python sdk was not found"
+                err_msg = ("%s required python sdk was not found", err_prefix)
             elif not self.resource_id or not self.subscription_id:
                 err_msg = (
-                    f"{err_prefix} resource and subcription ids were"
-                    "not found via metadata service"
+                    "%s resource and subcription ids \
+                        were not found via metadata service",
+                    err_prefix,
                 )
             else:
                 err_msg = (
-                    f"{err_prefix} watchmaker was unable to update status"
+                    "%s watchmaker was unable to update status",
+                    err_prefix,
                 )
             logging.error(err_msg)
             raise StatusProviderError(err_msg)
