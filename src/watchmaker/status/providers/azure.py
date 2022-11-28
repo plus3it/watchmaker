@@ -97,7 +97,7 @@ class AzureStatusProvider(AbstractStatusProvider):
             err_prefix = "Watchmaker status tag required for azure resources, "
             if not HAS_AZURE:
                 err_msg = f"{err_prefix} required python sdk was not found"
-            elif not self.instance_id:
+            elif not self.resource_id or not self.subscription_id:
                 err_msg = (
                     f"{err_prefix} resource and subcription ids were"
                     "not found via metadata service"
