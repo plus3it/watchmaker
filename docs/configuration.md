@@ -215,6 +215,57 @@ Watchmaker supports posting the watchmaker status to status providers. Watchmake
 
 Providers have the ability to detect whether the system is compatible with the provider type. In order to post status, the system running watchmaker must be compatible with the status provider type. For example, the 'azure' provider will be skipped when watchmaker is running on an AWS EC2 instance, and vice versa.
 
+Prerequisites for AWS:
+
+* `boto3` Python boto3 library
+
+```bash
+python3 -m pip install boto3
+```
+
+* `IAM Role and Policy` An AWS Role and Policy that allows the instance to create tags must be attached to the instance.  The minimal policy below has been tested in commercial and govcloud.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}",
+            "Condition": {
+                "StringLike": {
+                    "ec2:SourceInstanceARN": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}"
+                }
+            }
+        }
+    ]
+}
+```
+
+Prerequisites for Azure:
+
+* `azure.core` - Azure Core Python library
+
+```bash
+python3 -m pip install azure-core
+```
+
+* `azure.identity`
+
+```bash
+python3 -m pip install azure-identity
+```
+
+* `azure.mgmt.resource`
+
+```bash
+python3 -m pip install azure-mgmt-resource
+```
+
+* `Policy` Policy that allows adding or replacing tag on resource see <https://portal.azure.com/#view/Microsoft_Azure_Policy/PolicyDetailBlade/definitionId/%2Fproviders%2FMicrosoft.Authorization%2FpolicyDefinitions%2F5ffd78d9-436d-4b41-a421-5baa819e3008> for more info.
+
 ```{eval-rst}
 .. note::
 
