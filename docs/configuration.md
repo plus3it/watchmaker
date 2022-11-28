@@ -264,7 +264,7 @@ python3 -m pip install azure-identity
 python3 -m pip install azure-mgmt-resource
 ```
 
-* `Policy` Policy that allows adding or replacing tag on resource see <https://portal.azure.com/#view/Microsoft_Azure_Policy/PolicyDetailBlade/definitionId/%2Fproviders%2FMicrosoft.Authorization%2FpolicyDefinitions%2F5ffd78d9-436d-4b41-a421-5baa819e3008> for more info.
+* `Policy` Policy that allows adding or replacing tag on resource see [Microsoft Azure Tag Policy](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-policies) for more info.
 
 ```{eval-rst}
 .. note::
