@@ -24,9 +24,12 @@ class Yum(WorkerBase, LinuxPlatformManager):
     """
 
     SUPPORTED_DISTS = {
+        'almalinux': 'almalinux',
         'amazon': 'amazon',
         'centos': 'centos',
-        'rhel': 'redhat'
+        'oracle': 'oracle',
+        'rhel': 'redhat',
+        'rocky': 'rocky'
     }
 
     def __init__(self, *args, **kwargs):
