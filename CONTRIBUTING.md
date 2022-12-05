@@ -214,5 +214,5 @@ specify something like this for EC2 userdata:
 
 [0]: https://github.com/plus3it/watchmaker/issues
 [1]: https://travis-ci.org/plus3it/watchmaker/pull_requests
-[2]: https://tox.readthedocs.io/en/latest/install.html
+[2]: https://tox.wiki/en/latest/installation.html
 [3]: https://github.com/plus3it/watchmaker/tree/main/docs
