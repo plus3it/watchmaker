@@ -1,2 +1,2 @@
-gravitybee==0.4.5
+gravitybee==0.4.6
 pyinstaller==5.7.0
