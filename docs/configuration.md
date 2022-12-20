@@ -5,6 +5,7 @@
    :align: right
    :target: https://www.plus3it.com
 ```
+
 <br>
 
 # Configuration
@@ -80,34 +81,34 @@ systems.
 Watchmaker includes the _workers_ listed below. See the corresponding sections
 for details on their configuration parameters.
 
-*   [salt](#salt-worker)
-*   [yum (linux-only)](#yum-worker-linux-only)
+* [salt](#salt-worker)
+* [yum (linux-only)](#yum-worker-linux-only)
 
 ### salt worker
 
 Parameters supported by the Salt Worker:
 
--   `admin_groups` (_list_): The group(s) that you would like the admin accounts
+* `admin_groups` (_list_): The group(s) that you would like the admin accounts
     placed within.
 
--   `admin_users` (_list_): The user(s) that would be created as admins.
+* `admin_users` (_list_): The user(s) that would be created as admins.
 
--   `computer_name` (_string_): The computer or hostname that should be applied.
+* `computer_name` (_string_): The computer or hostname that should be applied.
 
--   `environment` (_string_): Set for the environment in which the system is
+* `environment` (_string_): Set for the environment in which the system is
     being built.
 
--   `valid_environments` (_list_): The list of environments considered valid
-    for the environment parameter
+* `valid_environments` (_list_): The list of environments considered valid
+    for the environment parameter.
 
--   `ou_path` (_string_): Specifies the full DN of the OU where the computer
+* `ou_path` (_string_): Specifies the full DN of the OU where the computer
     account will be created when joining a domain.
 
     ```yaml
     ou_path: "OU=Super Cool App,DC=example,DC=com"
     ```
 
--   `pip_install` (_list_): The Python package(s) that formulas require.
+* `pip_install` (_list_): The Python package(s) that formulas require.
 
     ```yaml
     pip_install:
@@ -115,7 +116,7 @@ Parameters supported by the Salt Worker:
         - numpy
     ```
 
--   `pip_args` (_list_): Options to be passed to pip when installing package(s). Options with values should be passed with the option and value as separate list items.
+* `pip_args` (_list_): Options to be passed to pip when installing package(s). Options with values should be passed with the option and value as separate list items.
 
     Linux example where emoji is a value that corresponds to the `--progress-bar` option:
 
@@ -127,19 +128,19 @@ Parameters supported by the Salt Worker:
             - --progress-bar=emoji
     ```
 
--   `pip_index` (_string_): Base URL of Python Package Index.
+* `pip_index` (_string_): Base URL of Python Package Index.
 
--   `salt_states` (_string, comma-separated_): User-defined salt states to
+* `salt_states` (_string, comma-separated_): User-defined salt states to
     apply.
 
     ```yaml
     salt_states: highstate,foo,bar
     ```
 
--   `exclude_states` (_string, comma-separated_): States to exclude from
+* `exclude_states` (_string, comma-separated_): States to exclude from
     execution of salt states.
 
--   `user_formulas` (_dict_): Map of formula names and URLs to zip archives of
+* `user_formulas` (_dict_): Map of formula names and URLs to zip archives of
     salt formulas. These formulas will be downloaded, extracted, and added to
     the salt file roots. The zip archive must contain a top-level directory
     that, itself, contains the actual salt formula. To "overwrite" bundled
@@ -150,38 +151,38 @@ Parameters supported by the Salt Worker:
       foo-formula: https://path/to/foo.zip
     ```
 
--   `salt_debug_log` (_string_): Path to the debug logfile that salt will write
+* `salt_debug_log` (_string_): Path to the debug logfile that salt will write
     to.
 
--   `salt_content` (_string_): URL to the Salt content file that contains
+* `salt_content` (_string_): URL to the Salt content file that contains
     further configuration specific to the salt install.
 
--   `salt_content_path` (_string_): The path within the Salt content file
+* `salt_content_path` (_string_): The path within the Salt content file
     specified using `salt_content` where salt files are located.
     Can be used to provide the path within the archive file where
     the Salt configuration files are located.
 
--   `install_method` (_string_): (Linux-only) The method used to install Salt.
+* `install_method` (_string_): (Linux-only) The method used to install Salt.
     Currently supports: `yum`, `git`
 
--   `bootstrap_source` (_string_): (Linux-only) URL to the salt bootstrap
+* `bootstrap_source` (_string_): (Linux-only) URL to the salt bootstrap
     script. This is required if `install_method` is set to `git`.
 
--   `git_repo` (_string_): (Linux-only) URL to the salt git repo. This is
+* `git_repo` (_string_): (Linux-only) URL to the salt git repo. This is
     required if `install_method` is set to `git`.
 
--   `salt_version` (_string_): (Linux-only) A git reference present in
+* `salt_version` (_string_): (Linux-only) A git reference present in
     `git_repo`, such as a commit or a tag. If not specifid, the HEAD of the
     default branch will be used.
 
--   `installer_url` (_string_): (Windows-only) URL to the Salt Minion installer
+* `installer_url` (_string_): (Windows-only) URL to the Salt Minion installer
     for Windows.
 
 ### yum worker (linux-only)
 
 Parameters supported by the Yum Worker:
 
--   `repo_map` (list of maps): There be dragons here! Please be careful making
+* `repo_map` (list of maps): There be dragons here! Please be careful making
     changes to the default config. Thoroughly test your configuration. The
     default config specifies yum repos that contain the salt-minion. If the
     default repos are not included, and the salt-minion is not available, the
@@ -189,12 +190,12 @@ Parameters supported by the Yum Worker:
     but be wary of removing the default repos. Each map must contain the
     following keys:
 
-    -   `dist` (_list_): Distributions that would install this repo. Some repos
+  * `dist` (_list_): Distributions that would install this repo. Some repos
         are supported by multiple distros. (Currently supported distros are
         redhat, centos, and amazon.)
-    -   `el_version` (`_string_`): The Enterprise Linux version for this repo,
+  * `el_version` (`_string_`): The Enterprise Linux version for this repo,
         as in el6 or el7. Expected values are `'6'` or `'7'`.
-    -   `url` (_string_): URL location of the repo file to be added to the
+  * `url` (_string_): URL location of the repo file to be added to the
         system. This file will be copied to `/etc/yum.repos.d/`
 
     Example:
@@ -207,6 +208,113 @@ Parameters supported by the Yum Worker:
         el_version: 6
         url: http://someplace.com/my.repo
     ```
+
+### status
+
+Watchmaker supports posting the watchmaker status to status providers. Watchmaker status values are one of: 'Running', 'Failed', or 'Completed'. Each status provider defines what it means to "post the status".. Currently, the supported provider types include: 'aws' and 'azure'. These status providers both post the status as a tag to the instance/VM.
+
+Providers have the ability to detect whether the system is compatible with the provider type. In order to post status, the system running watchmaker must be compatible with the status provider type. For example, the 'azure' provider will be skipped when watchmaker is running on an AWS EC2 instance, and vice versa.
+
+Prerequisites for AWS:
+
+* `boto3` Python boto3 library
+
+```bash
+python3 -m pip install boto3
+```
+
+* `IAM Role and Policy` An AWS Role and Policy that allows the instance to create tags must be attached to the instance.  The minimal policy below has been tested in commercial and govcloud.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}",
+            "Condition": {
+                "StringLike": {
+                    "ec2:SourceInstanceARN": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}"
+                }
+            }
+        }
+    ]
+}
+```
+
+Prerequisites for Azure:
+
+* `azure.core` - Azure Core Python library
+
+```bash
+python3 -m pip install azure-core
+```
+
+* `azure.identity`
+
+```bash
+python3 -m pip install azure-identity
+```
+
+* `azure.mgmt.resource`
+
+```bash
+python3 -m pip install azure-mgmt-resource
+```
+
+* `Policy` Policy that allows adding or replacing tag on resource see [Microsoft Azure Tag Policy](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-policies) for more info.
+
+```{eval-rst}
+.. note::
+
+    Note: Support for the 'azure' status provider is provisional. If you use it and encounter problems, please open an issue on the GitHub repository!
+```
+
+Parameters supported by status
+
+* `providers` ((list of maps)): List of providers
+
+  * `key` (_string_): Status key to use e.g. `WatchmakerStatus`
+  * `required` (_boolean_): Required status, when `True` and provider_type is detected, watchmaker raises an error if unable to update status
+  * `provider_type` (_string_): Environment provider type e.g. `aws` or `azure`
+
+  Example:
+
+    ```yaml
+    status:
+      providers:
+        - key: 'WatchmakerStatus'
+          required: False
+          provider_type: 'aws'
+        - key: 'WatchmakerStatus'
+          required: False
+          provider_type: 'azure'
+    ```
+
+### status roles for aws
+
+IAM instance role with the following policy attached to the instance
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowInstanceToTagItselfOnly",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "ec2:SourceInstanceARN": "${ec2:SourceInstanceARN}"
+                }
+            }
+        }
+    ]
+}
+```
 
 ## Example config.yaml
 
@@ -265,6 +373,15 @@ windows:
   - salt:
       salt_debug_log: null
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
+
+status:
+  providers:
+    - key: 'WatchmakerStatus'
+      required: False
+      provider_type: 'aws'
+    - key: 'WatchmakerStatus'
+      required: False
+      provider_type: 'azure'
 ```
 
 [0]: https://yaml.org/spec/1.2/spec.html

@@ -40,11 +40,8 @@ linux:
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el7-python3.repo
         #SaltEL8:
         - dist:
-            - almalinux
-            - centos
-            - oracle
             - redhat
-            - rocky
+            - centos
           el_version: 8
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el8-python3.repo
   - salt:
@@ -58,12 +55,3 @@ windows:
   - salt:
       salt_debug_log: null
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
-
-status:
-  providers:
-    - key: "WatchmakerStatus"
-      required: False
-      provider_type: "aws"
-    - key: "WatchmakerStatus"
-      required: False
-      provider_type: "azure"

@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import watchmaker.utils
 
+# Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
 except ImportError:

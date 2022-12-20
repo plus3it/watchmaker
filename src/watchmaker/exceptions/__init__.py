@@ -12,6 +12,18 @@ class InvalidValueError(WatchmakerError):
     """Passed an invalid value."""
 
 
+class StatusProviderError(WatchmakerError):
+    """Status Error."""
+
+
+class CloudDetectError(WatchmakerError):
+    """Cloud Detect Error."""
+
+
+class InvalidProviderError(WatchmakerError):
+    """Invalid Provider Error."""
+
+
 # Deprecated/renamed exceptions
 WatchmakerException = WatchmakerError
 InvalidValue = InvalidValueError

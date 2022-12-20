@@ -12,6 +12,7 @@ import pytest
 from watchmaker.exceptions import InvalidValue
 from watchmaker.workers.salt import SaltBase, SaltLinux, SaltWindows
 
+# Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import MagicMock, call, patch
 except ImportError:
