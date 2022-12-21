@@ -32,8 +32,11 @@ class Status:
             return
 
         status_provider_ids = []
-        if status_config.get_cloud_identifiers(config):
-            cloud_identifier = provider()
+        supported_providers = status_config.get_supported_cloud_identifiers(
+            config
+        )
+        if supported_providers:
+            cloud_identifier = provider(supported_providers)
             if cloud_identifier != AbstractStatusProvider.identifier:
                 status_provider_ids.append(cloud_identifier)
 

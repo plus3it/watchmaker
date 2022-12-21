@@ -15,8 +15,10 @@ log = logging.getLogger(__name__)
 
 MAX_WORKERS = 10
 
+CLOUD_PROVIDERS = {"aws": AWSProvider, "azure": AzureProvider}
 
-def provider():
+
+def provider(supported_providers=[]):
     """Identify and return identifier."""
     exception_list = []
     results = []
@@ -24,8 +26,9 @@ def provider():
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=MAX_WORKERS
     ) as executor:
-        futures.append(executor.submit(identify, AWSProvider))
-        futures.append(executor.submit(identify, AzureProvider))
+        for id in supported_providers:
+            if CLOUD_PROVIDERS.get(id, None):
+                futures.append(executor.submit(identify, CLOUD_PROVIDERS[id]))
 
     concurrent.futures.wait(futures)
     for fut in futures:

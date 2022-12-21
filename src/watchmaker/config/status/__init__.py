@@ -5,7 +5,12 @@ from __future__ import (absolute_import, division, print_function,
 
 import logging
 
-SUPPORTED_CLOUD_PROVIDERS = ["aws", "azure"]
+from watchmaker.conditions import HAS_AZURE, HAS_BOTO3
+
+SUPPORTED_CLOUD_PROVIDERS = [
+    {"provider": "aws", "has_prereq": HAS_BOTO3},
+    {"provider": "azure", "has_prereq": HAS_AZURE},
+]
 SUPPORTED_NON_CLOUD_PROVIDERS = []
 
 STATUS = {
@@ -73,15 +78,22 @@ def get_providers_by_provider_types(config_status, provider_type):
     ]
 
 
-def get_cloud_identifiers(config_status):
-    """Get unique list of cloud providers."""
+def get_supported_cloud_identifiers(config_status):
+    """Get unique list of cloud ids that are supported and we have a config."""
+    supported = get_cloud_identifiers_with_prereqs()
     return list(
         set(
             provider.get("provider_type").lower()
             for provider in config_status.get("providers", [])
-            if provider.get("provider_type", "").lower()
-            in SUPPORTED_CLOUD_PROVIDERS
+            if provider.get("provider_type", "").lower() in supported
         )
+    )
+
+
+def get_cloud_identifiers_with_prereqs():
+    """Get unique list of supported cloud identifiers where prereqs is True."""
+    return list(
+        cp["provider"] for cp in SUPPORTED_CLOUD_PROVIDERS if cp["has_prereq"]
     )
 
 

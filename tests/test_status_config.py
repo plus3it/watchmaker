@@ -3,10 +3,20 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-from watchmaker.config.status import get_cloud_identifiers
+from watchmaker.config.status import get_supported_cloud_identifiers
+
+# Supports Python2 and Python3 test mocks
+try:
+    from unittest.mock import patch
+except ImportError:
+    from mock import patch
 
 
-def test_get_provider_identifiers():
+@patch(
+    "watchmaker.config.status.get_cloud_identifiers_with_prereqs",
+    return_value=["aws", "azure"],
+)
+def test_get_provider_identifiers(prereqs):
     """Test status config allowed provider_types."""
     config_status = {
         "providers": [
@@ -28,7 +38,7 @@ def test_get_provider_identifiers():
         ]
     }
 
-    ids = get_cloud_identifiers(config_status)
+    ids = get_supported_cloud_identifiers(config_status)
 
     assert ids is not None
     assert "aws" in ids

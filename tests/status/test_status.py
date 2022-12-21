@@ -18,9 +18,12 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 
 @patch.object(AWSProvider, "identify", return_value=True)
 @patch.object(AzureProvider, "identify", return_value=False)
+@patch(
+    "watchmaker.config.status.get_cloud_identifiers_with_prereqs",
+    return_value=["aws", "azure"],
+)
 def test_status(
-    aws_provider_mock,
-    azure_provider_mock,
+    aws_provider_mock, azure_provider_mock, supported_identifiers_mock
 ):
     """Test provider is AWS."""
     data = """
