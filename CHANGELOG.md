@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.26.0
+
+**Commit Delta**: [Change from 0.25.0 release](https://github.com/plus3it/watchmaker/compare/0.25.0...0.26.0)
+
+**Released**: 2022.12.21
+
+**Summary**:
+
+*   Adds support for posting to a status provider. Initial capability supports
+    AWS and will post the Watchmaker status to an EC2 instance tag. Status values
+    include "Running", "Completed", or "Failed". For more information on this feature,
+    see <https://watchmaker.cloudarmor.io/en/stable/configuration.html#status>.
+*   [Alpha] Support posting status to Azure as a Virtual Machine tag
+*   [Alpha] Support for EL8 platforms is improving but still in development. Targeted
+    platforms include: Red Hat Enterprise Linux 8, Centos 8 Stream, Oracle Linux 8,
+    Alma Linux 8, and Rocky Linux 8
+*   ash-linux-formula
+    - Supports EL8 platforms
+*   join-domain-formula
+    - Fixes hostname logic so automatic renaming works correctly
+*   scap-formula
+    - Supports EL8 platforms
+
 ## 0.25.0
 
 **Commit Delta**: [Change from 0.24.3 release](https://github.com/plus3it/watchmaker/compare/0.24.3...0.25.0)
