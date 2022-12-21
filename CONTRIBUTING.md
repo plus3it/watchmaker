@@ -150,6 +150,10 @@ specify something like this for EC2 userdata:
 
     PYPI_URL=https://pypi.org/simple
 
+    # Setup terminal support for UTF-8
+    export LC_ALL=en_US.UTF-8
+    export LANG=en_US.UTF-8
+
     # Install pip
     python3 -m ensurepip
 

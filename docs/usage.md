@@ -184,12 +184,12 @@ $BootstrapUrl = "https://watchmaker.cloudarmor.io/releases/latest/watchmaker-boo
 $PythonUrl = "https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe"
 $PypiUrl = "https://pypi.org/simple"
 
+# Use TLS 1.2+
+[Net.ServicePointManager]::SecurityProtocol = "Tls12, Tls13"
+
 # Download bootstrap file
 $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 (New-Object System.Net.WebClient).DownloadFile("$BootstrapUrl", "$BootstrapFile")
-
-# Use TLS 1.2+
-[Net.ServicePointManager]::SecurityProtocol = "Tls12, Tls13"
 
 # Install python
 & "$BootstrapFile" -PythonUrl "$PythonUrl" -Verbose -ErrorAction Stop
