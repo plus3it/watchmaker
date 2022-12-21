@@ -293,29 +293,6 @@ Parameters supported by status
           provider_type: 'azure'
     ```
 
-### status roles for aws
-
-IAM instance role with the following policy attached to the instance
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowInstanceToTagItselfOnly",
-            "Effect": "Allow",
-            "Action": "ec2:CreateTags",
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "ec2:SourceInstanceARN": "${ec2:SourceInstanceARN}"
-                }
-            }
-        }
-    ]
-}
-```
-
 ## Example config.yaml
 
 This example can be used to construct your own `config.yaml` file. The
