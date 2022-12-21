@@ -18,17 +18,22 @@ MAX_WORKERS = 10
 CLOUD_PROVIDERS = {"aws": AWSProvider, "azure": AzureProvider}
 
 
-def provider(supported_providers=[]):
+def provider(supported_providers=None):
     """Identify and return identifier."""
     exception_list = []
     results = []
     futures = []
+    supported_providers = supported_providers if supported_providers else []
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=MAX_WORKERS
     ) as executor:
-        for id in supported_providers:
-            if CLOUD_PROVIDERS.get(id, None):
-                futures.append(executor.submit(identify, CLOUD_PROVIDERS[id]))
+        for cloud_identifier in supported_providers:
+            if CLOUD_PROVIDERS.get(cloud_identifier, None):
+                futures.append(
+                    executor.submit(
+                        identify, CLOUD_PROVIDERS[cloud_identifier]
+                    )
+                )
 
     concurrent.futures.wait(futures)
     for fut in futures:
