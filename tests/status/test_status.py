@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Providers main test module."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import yaml
 
@@ -19,7 +24,7 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 @patch.object(AWSProvider, "identify", return_value=True)
 @patch.object(AzureProvider, "identify", return_value=False)
 @patch(
-    "watchmaker.config.status.get_cloud_identifiers_with_prereqs",
+    "watchmaker.config.status.get_cloud_ids_with_prereqs",
     return_value=["aws", "azure"],
 )
 def test_status(

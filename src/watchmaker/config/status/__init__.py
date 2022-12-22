@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Status Config module."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import logging
 
@@ -80,7 +85,7 @@ def get_providers_by_provider_types(config_status, provider_type):
 
 def get_supported_cloud_identifiers(config_status):
     """Get unique list of cloud ids that are supported and we have a config."""
-    supported = get_cloud_identifiers_with_prereqs()
+    supported = get_cloud_ids_with_prereqs()
     return list(
         set(
             provider.get("provider_type").lower()
@@ -90,7 +95,7 @@ def get_supported_cloud_identifiers(config_status):
     )
 
 
-def get_cloud_identifiers_with_prereqs():
+def get_cloud_ids_with_prereqs():
     """Get unique list of supported cloud identifiers where prereqs is True."""
     return list(
         cp["provider"] for cp in SUPPORTED_CLOUD_PROVIDERS if cp["has_prereq"]
