@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Azure Provider."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import logging
 from os.path import exists
@@ -55,9 +60,9 @@ class AzureProvider(AbstractProvider):
             check_vendor_file = utils.urlopen_retry(
                 vendor_file_path, self.DEFAULT_TIMEOUT
             )
-            if "Microsoft Corporation" in check_vendor_file.read():
+            if b"Microsoft Corporation" in check_vendor_file.read():
                 return True
-        except BaseException as err:
+        except (ValueError, utils.urllib.error.URLError) as err:
             self.logger.error("Error while checking vendor file", err)
 
         return False
