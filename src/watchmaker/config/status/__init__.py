@@ -92,9 +92,18 @@ def get_supported_cloud_identifiers(config_status):
 
 def get_cloud_ids_with_prereqs():
     """Get unique list of supported cloud identifiers where prereqs is True."""
-    return list(
-        cp["provider"] for cp in SUPPORTED_CLOUD_PROVIDERS if cp["has_prereq"]
-    )
+    providers = set()
+
+    for cp in SUPPORTED_CLOUD_PROVIDERS:
+        if cp["has_prereq"]:
+            providers.add(cp["provider"])
+        else:
+            logging.debug(
+                "Skipping provider %s prereqs not found",
+                cp["provider"],
+            )
+
+    return list(providers)
 
 
 def get_non_cloud_identifiers(config_status):
