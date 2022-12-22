@@ -94,13 +94,13 @@ def get_cloud_ids_with_prereqs():
     """Get unique list of supported cloud identifiers where prereqs is True."""
     providers = set()
 
-    for cp in SUPPORTED_CLOUD_PROVIDERS:
-        if cp["has_prereq"]:
-            providers.add(cp["provider"])
+    for cloud_provider in SUPPORTED_CLOUD_PROVIDERS:
+        if cloud_provider["has_prereq"]:
+            providers.add(cloud_provider["provider"])
         else:
             logging.debug(
                 "Skipping provider %s prereqs not found",
-                cp["provider"],
+                cloud_provider["provider"],
             )
 
     return list(providers)
