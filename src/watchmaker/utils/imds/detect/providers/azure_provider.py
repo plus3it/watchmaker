@@ -45,17 +45,20 @@ class AzureProvider(AbstractProvider):
         self.logger.debug("Checking Azure vendor file")
 
         # Convert a local vendor file to a URI
-        if exists(self.vendor_file):
-            self.logger.debug("Vendor file exists")
-            vendor_file_path = utils.uri_from_filepath(self.vendor_file)
-            try:
-                check_vendor_file = utils.urlopen_retry(
-                    vendor_file_path, self.DEFAULT_TIMEOUT
-                )
-                if "Microsoft Corporation" in check_vendor_file.read():
-                    return True
-            except (ValueError, utils.urllib.error.URLError) as err:
-                self.logger.error("Error while checking vendor file", err)
+        if not exists(self.vendor_file):
+            self.logger.debug("Vendor file does not exist")
+            return False
+
+        self.logger.debug("Vendor file exists")
+        vendor_file_path = utils.uri_from_filepath(self.vendor_file)
+        try:
+            check_vendor_file = utils.urlopen_retry(
+                vendor_file_path, self.DEFAULT_TIMEOUT
+            )
+            if "Microsoft Corporation" in check_vendor_file.read():
+                return True
+        except BaseException as err:
+            self.logger.error("Error while checking vendor file", err)
 
         return False
 
