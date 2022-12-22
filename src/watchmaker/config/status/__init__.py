@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """Status Config module."""
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals, with_statement)
 
 import logging
 
