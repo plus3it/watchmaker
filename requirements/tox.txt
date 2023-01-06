@@ -1,4 +1,4 @@
 -r basics.txt
 
 tox==3.14.0;python_version<="2.7"
-tox==3.27.1;python_version>="3.6"
+tox==4.2.4;python_version>="3.6"
