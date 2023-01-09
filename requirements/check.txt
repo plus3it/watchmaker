@@ -11,6 +11,6 @@ flake8-print==5.0.0
 isort==5.11.4
 m2r==0.3.1
 pep8-naming==0.13.3
-pydocstyle==6.2.2
+pydocstyle==6.2.3
 pylint==2.15.9
 readme-renderer==37.3
