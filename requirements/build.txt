@@ -1,2 +1,3 @@
 boto3==1.26.56
+gravitybee==0.4.6
 pyinstaller==5.7.0

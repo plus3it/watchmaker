@@ -29,6 +29,7 @@ python -m pip list
 echo "Creating standalone for watchmaker v${VERSION}..."
 cp "${VIRTUAL_ENV_DIR}/bin/watchmaker" "$PYI_SCRIPT"
 pyinstaller --noconfirm --clean --onefile \
+    --debug all \
     --name "$WAM_FILENAME" \
     --runtime-tmpdir . \
     --paths src \
