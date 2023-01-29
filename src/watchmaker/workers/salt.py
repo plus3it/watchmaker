@@ -384,9 +384,9 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         return failed_states
 
     def _install_pip(self, py_exec):
-        get_pip = [
-            p for p in files('watchmaker') if 'get-pip.py' in str(p)
-        ][0].locate()
+        get_pip = resources.files('watchmaker._vendor').joinpath(
+            'pypa/get-pip/public/2.7/get-pip.py'
+        )
         self.log.info(
             'Attempting pip install using get-pip (%s)...', get_pip)
         cmd = [
