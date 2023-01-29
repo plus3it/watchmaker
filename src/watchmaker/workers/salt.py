@@ -11,8 +11,8 @@ import os
 import shutil
 
 import distro
+import importlib_resources as resources
 import yaml
-from importlib_metadata import files
 
 import watchmaker.utils
 from watchmaker import static
@@ -335,11 +335,11 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 watchmaker.utils.copy_subdirectories(
                     salt_files_dir, extract_dir, self.log)
 
-        bundled_content = os.sep.join(
-            (static.__path__[0], 'salt', 'content')
-        )
-        watchmaker.utils.copy_subdirectories(
-            bundled_content, extract_dir, self.log)
+        with resources.as_file(
+            resources.files(static) / 'salt' / 'content'
+        ) as bundled_content:
+            watchmaker.utils.copy_subdirectories(
+                bundled_content, extract_dir, self.log)
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),
