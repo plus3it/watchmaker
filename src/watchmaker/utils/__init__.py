@@ -132,6 +132,8 @@ def clean_none(value):
 
 def copy_subdirectories(src_dir, dest_dir, log=None):
     """Copy subdirectories within given src dir into dest dir."""
+    src_dir = str(src_dir)
+    dest_dir = str(dest_dir)
     for subdir in next(os.walk(src_dir))[1]:
         if not subdir.startswith(".") and not os.path.exists(
             os.sep.join((dest_dir, subdir))
