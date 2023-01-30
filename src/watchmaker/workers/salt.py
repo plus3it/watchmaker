@@ -236,14 +236,17 @@ class SaltBase(WorkerBase, PlatformManagerBase):
     def _get_formulas_conf(self):
 
         # Append Salt formulas bundled with Watchmaker package.
-        formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
-        for formula in os.listdir(formulas_path):
-            formula_path = os.path.join(self.salt_formula_root, '', formula)
-            watchmaker.utils.copytree(
-                os.sep.join((formulas_path, formula)),
-                formula_path,
-                force=True
-            )
+        with resources.as_file(
+            resources.files(static) / 'salt' / 'formulas'
+        ) as formulas_handle:
+            formulas_path = str(formulas_handle)
+            for formula in os.listdir(formulas_path):
+                formula_path = os.sep.join((self.salt_formula_root, formula))
+                watchmaker.utils.copytree(
+                    os.sep.join((formulas_path, formula)),
+                    formula_path,
+                    force=True
+                )
 
         # Obtain & extract any Salt formulas specified in user_formulas.
         for formula_name, formula_url in self.user_formulas.items():
