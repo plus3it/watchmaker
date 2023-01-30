@@ -5,13 +5,12 @@ from __future__ import (absolute_import, division, print_function,
 
 import collections
 import logging
-import os
 
 import yaml
 from compatibleversion import check_version
+from importlib_resources import files
 
 import watchmaker.utils.imds.detect
-from watchmaker import static
 from watchmaker.config.status import is_valid
 from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib
@@ -29,26 +28,26 @@ def get_configs(system, worker_args, config_path=None):
         merged with the value of the ``"All"`` key.
 
     """
+    data = ""
     if not config_path:
         log.warning("User did not supply a config. Using the default config.")
-        config_path = os.path.join(static.__path__[0], "config.yaml")
+        data = files('watchmaker.static').joinpath('config.yaml').read_text()
     else:
         log.info("User supplied config being used.")
 
-    # Convert a local config path to a URI
-    config_path = watchmaker.utils.uri_from_filepath(config_path)
+        # Convert a local config path to a URI
+        config_path = watchmaker.utils.uri_from_filepath(config_path)
 
-    # Get the raw config data
-    data = ""
-    try:
-        data = watchmaker.utils.urlopen_retry(config_path).read()
-    except (ValueError, urllib.error.URLError):
-        msg = (
-            'Could not read config file from the provided value "{0}"! '
-            "Check that the config is available.".format(config_path)
-        )
-        log.critical(msg)
-        raise
+        # Get the raw config data
+        try:
+            data = watchmaker.utils.urlopen_retry(config_path).read()
+        except (ValueError, urllib.error.URLError):
+            msg = (
+                'Could not read config file from the provided value "{0}"! '
+                "Check that the config is available.".format(config_path)
+            )
+            log.critical(msg)
+            raise
 
     config_full = yaml.safe_load(data)
     try:

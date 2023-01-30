@@ -11,6 +11,7 @@ import os
 import shutil
 
 import distro
+import importlib_resources as resources
 import yaml
 
 import watchmaker.utils
@@ -235,14 +236,17 @@ class SaltBase(WorkerBase, PlatformManagerBase):
     def _get_formulas_conf(self):
 
         # Append Salt formulas bundled with Watchmaker package.
-        formulas_path = os.sep.join((static.__path__[0], 'salt', 'formulas'))
-        for formula in os.listdir(formulas_path):
-            formula_path = os.path.join(self.salt_formula_root, '', formula)
-            watchmaker.utils.copytree(
-                os.sep.join((formulas_path, formula)),
-                formula_path,
-                force=True
-            )
+        with resources.as_file(
+            resources.files(static) / 'salt' / 'formulas'
+        ) as formulas_handle:
+            formulas_path = str(formulas_handle)
+            for formula in os.listdir(formulas_path):
+                formula_path = os.sep.join((self.salt_formula_root, formula))
+                watchmaker.utils.copytree(
+                    os.sep.join((formulas_path, formula)),
+                    formula_path,
+                    force=True
+                )
 
         # Obtain & extract any Salt formulas specified in user_formulas.
         for formula_name, formula_url in self.user_formulas.items():
@@ -334,11 +338,11 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 watchmaker.utils.copy_subdirectories(
                     salt_files_dir, extract_dir, self.log)
 
-        bundled_content = os.sep.join(
-            (static.__path__[0], 'salt', 'content')
-        )
-        watchmaker.utils.copy_subdirectories(
-            bundled_content, extract_dir, self.log)
+        with resources.as_file(
+            resources.files(static) / 'salt' / 'content'
+        ) as bundled_content:
+            watchmaker.utils.copy_subdirectories(
+                bundled_content, extract_dir, self.log)
 
         with codecs.open(
             os.path.join(self.salt_conf_path, 'minion'),
@@ -383,15 +387,9 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         return failed_states
 
     def _install_pip(self, py_exec):
-        get_pip = os.path.join(
-            os.path.abspath(
-                os.path.join(os.path.dirname(__file__), '..', '..')),
-            'vendor',
-            'pypa',
-            'get-pip',
-            'public',
-            '2.7',
-            'get-pip.py')
+        get_pip = resources.files('watchmaker._vendor').joinpath(
+            'pypa/get-pip/public/2.7/get-pip.py'
+        )
         self.log.info(
             'Attempting pip install using get-pip (%s)...', get_pip)
         cmd = [

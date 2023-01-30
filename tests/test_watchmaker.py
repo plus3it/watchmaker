@@ -3,8 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-import os
-
+import importlib_resources as resources
 import pytest
 import yaml
 
@@ -48,7 +47,7 @@ def watchmaker_client(watchmaker_arguments):
 @pytest.fixture
 def default_config():
     """Return default configuration for watchmaker."""
-    config_path = os.path.join(static.__path__[0], 'config.yaml')
+    config_path = str(resources.files(static) / 'config.yaml')
 
     with open(config_path, 'r') as stream:
         return yaml.safe_load(stream)
