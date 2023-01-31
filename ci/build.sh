@@ -16,6 +16,9 @@ WAM_SCRIPT="./src/watchmaker/__main__.py"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 WAM_LATEST="watchmaker-latest-standalone-linux-x86_64"
 
+SATS_TEMPLATE="./ci/pyinstaller/sats-template.json.template"
+SATS_FILE=".pyinstaller/satsuki-files.json"
+
 virtualenv --python=python3 $VIRTUAL_ENV_DIR
 source "${VIRTUAL_ENV_DIR}/bin/activate"
 
@@ -55,6 +58,16 @@ cp "${PYI_DIST_DIR}/${WAM_FILENAME}" "${PYI_DIST_LATEST}/${WAM_LATEST}"
 echo "Creating sha256 hashes of standalone binary..."
 (cd "$PYI_DIST_DIR"; sha256sum "$WAM_FILENAME" > "${WAM_FILENAME}.sha256")
 (cd "$PYI_DIST_LATEST"; sha256sum "$WAM_LATEST" > "${WAM_LATEST}.sha256")
+
+echo "Creating satsuki file..."
+jq -n \
+    --arg wam_filename "$WAM_FILENAME" \
+    --arg wam_path "${PYI_DIST_DIR}/${WAM_FILENAME}" \
+    --arg wam_label "Watchmaker ${VERSION} Standalone Executable for Linux" \
+    --arg wam_sha_filename "${WAM_FILENAME}.sha256" \
+    --arg wam_sha_path "${PYI_DIST_DIR}/${WAM_FILENAME}.sha256" \
+    --arg wam_sha_label "Watchmaker ${VERSION} Standalone Executable SHA256 Hash for Linux" \
+    -f "$SATS_TEMPLATE" > "$SATS_FILE"
 
 echo "Checking standalone binary version..."
 eval "${PYI_DIST_DIR}/${WAM_FILENAME}" --version

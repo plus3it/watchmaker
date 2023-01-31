@@ -80,11 +80,16 @@ jobs:
       script: ci/prep_docker.sh
       before_deploy:
         # prepare deployment envs
-        - source .gravitybee/gravitybee-environs.sh
-        - export SATS_TAG=$GB_ENV_APP_VERSION
-        - export SATS_BODY="$(echo -e '* ['$GB_ENV_APP_NAME' v'$GB_ENV_APP_VERSION' CHANGELOG](https://github.com/plus3it/'$GB_ENV_APP_NAME'/blob/'$GB_ENV_APP_VERSION'/CHANGELOG.md)\n* ['$GB_ENV_APP_NAME' v'$GB_ENV_APP_VERSION' SCAP REPORTS](https://watchmaker.cloudarmor.io/list.html#releases/'$GB_ENV_APP_VERSION'/scans/)')"
-        - export SATS_REL_NAME="Release v$GB_ENV_APP_VERSION"
-        - echo Tag name is $SATS_TAG
+        - export APP_VERSION="$(grep "version =" setup.cfg | sed 's/^.*= //')"
+        - export APP_NAME="watchmaker"
+        - export STAGING_DIR=".pyinstaller/dist"
+        - export SATS_SLUG="plus3it/watchmaker"
+        - export SATS_TAG="$APP_VERSION"
+        - export SATS_COMMITTISH="$TRAVIS_COMMIT"
+        - export SATS_BODY="$(echo -e '* ['$APP_NAME' v'$APP_VERSION' CHANGELOG](https://github.com/plus3it/'$APP_NAME'/blob/'$APP_VERSION'/CHANGELOG.md)\n* ['$APP_NAME' v'$APP_VERSION' SCAP REPORTS](https://watchmaker.cloudarmor.io/list.html#releases/'$APP_VERSION'/scans/)')"
+        - export SATS_REL_NAME="Release v$APP_VERSION"
+        - export SATS_FILES_FILE=".pyinstaller/satsuki-files.json"
+        - echo Tag name is "$SATS_TAG"
         - pip install -r requirements/deploy.txt
         - echo Deploying "$(grep 'version = ' setup.cfg)"
       after_deploy: echo Deployed "$(grep 'version = ' setup.cfg)"
@@ -99,26 +104,26 @@ jobs:
         - provider: s3
           bucket: $DEV_BUCKET
           upload_dir: $S3_KEYFIX
-          local_dir: $GB_ENV_STAGING_DIR
+          local_dir: $STAGING_DIR
           skip_cleanup: true
           on:
             branch: main
         - provider: s3
           bucket: $RELEASE_BUCKET
           upload_dir: $S3_KEYFIX
-          local_dir: $GB_ENV_STAGING_DIR
+          local_dir: $STAGING_DIR
           skip_cleanup: true
           on:
             tags: true
         - provider: script
           # publish dev scap reports
-          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$DEV_BUCKET/$S3_KEYFIX/$GB_ENV_APP_VERSION/scans
+          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$DEV_BUCKET/$S3_KEYFIX/$APP_VERSION/scans
           skip_cleanup: true
           on:
             branch: main
         - provider: script
           # publish release scap reports
-          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$RELEASE_BUCKET/$S3_KEYFIX/$GB_ENV_APP_VERSION/scans
+          script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$RELEASE_BUCKET/$S3_KEYFIX/$APP_VERSION/scans
           skip_cleanup: true
           on:
             tags: true
