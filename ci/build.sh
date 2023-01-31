@@ -8,7 +8,7 @@ VERSION=$(grep "version =" setup.cfg | sed 's/^.*= //')
 DIST_DIR="dist/${VERSION}"
 DIST_LATEST="dist/latest"
 PYI_DIR="ci/pyinstaller"
-PYI_SCRIPT="${PYI_DIR}/watchmaker-entrypoint.py"
+PYI_SCRIPT="src/watchmaker/__main__.py"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 WAM_LATEST="watchmaker-latest-standalone-linux-x86_64"
 
@@ -27,14 +27,12 @@ python -m pip install --editable .
 python -m pip list
 
 echo "Creating standalone for watchmaker v${VERSION}..."
-cp "${VIRTUAL_ENV_DIR}/bin/watchmaker" "$PYI_SCRIPT"
+# Add debug argument to pyinstaller command to build standalone with debug flags
+#    --debug all \
 pyinstaller --noconfirm --clean --onefile \
-    --debug all \
     --name "$WAM_FILENAME" \
     --runtime-tmpdir . \
     --paths src \
-    --hidden-import boto3 \
-    --hidden-import watchmaker \
     --additional-hooks-dir "$PYI_DIR" \
     --specpath "$PYI_DIR" \
     --distpath "$DIST_DIR" \
