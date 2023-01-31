@@ -75,8 +75,7 @@ lib
 lib64
 venv*/
 pyvenv*/
-ci/pyinstaller/*.spec
-ci/pyinstaller/watchmaker-entrypoint.py
+.pyinstaller/
 
 # Installer logs
 pip-log.txt

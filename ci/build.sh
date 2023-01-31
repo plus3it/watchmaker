@@ -1,14 +1,17 @@
 #!/bin/bash
 set -eu -o pipefail
 
-export VIRTUAL_ENV_DIR=venv
+export VIRTUAL_ENV_DIR=.pyinstaller/venv
 
 VERSION=$(grep "version =" setup.cfg | sed 's/^.*= //')
 
-DIST_DIR="dist/${VERSION}"
-DIST_LATEST="dist/latest"
-PYI_DIR="ci/pyinstaller"
-PYI_SCRIPT="src/watchmaker/__main__.py"
+PYI_DIST_DIR=".pyinstaller/dist/${VERSION}"
+PYI_DIST_LATEST=".pyinstaller/dist/latest"
+PYI_SPEC_DIR=".pyinstaller/spec/"
+PYI_WORK_DIR=".pyinstaller/build/"
+
+PYI_HOOK_DIR="./ci/pyinstaller"
+PYI_SCRIPT="./src/watchmaker/__main__.py"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 WAM_LATEST="watchmaker-latest-standalone-linux-x86_64"
 
@@ -33,28 +36,29 @@ pyinstaller --noconfirm --clean --onefile \
     --name "$WAM_FILENAME" \
     --runtime-tmpdir . \
     --paths src \
-    --additional-hooks-dir "$PYI_DIR" \
-    --specpath "$PYI_DIR" \
-    --distpath "$DIST_DIR" \
+    --additional-hooks-dir "$PYI_HOOK_DIR" \
+    --distpath "$PYI_DIST_DIR" \
+    --specpath "$PYI_SPEC_DIR" \
+    --workpath "$PYI_WORK_DIR" \
     "$PYI_SCRIPT"
 
 # Uncomment this to list the files in the standalone; can help when debugging
 # echo "Listing files in standalone..."
 # pyi-archive_viewer --log --brief --recursive "${DIST_DIR}/${WAM_FILENAME}"
 
-mkdir -p "dist/latest"
-cp "${DIST_DIR}/${WAM_FILENAME}" "${DIST_LATEST}/${WAM_LATEST}"
+mkdir -p "$PYI_DIST_LATEST"
+cp "${PYI_DIST_DIR}/${WAM_FILENAME}" "${PYI_DIST_LATEST}/${WAM_LATEST}"
 
 echo "Creating sha256 hashes of standalone binary..."
-(cd "$DIST_DIR"; sha256sum "$WAM_FILENAME" > "${WAM_FILENAME}.sha256")
-(cd "$DIST_LATEST"; sha256sum "$WAM_LATEST" > "${WAM_LATEST}.sha256")
+(cd "$PYI_DIST_DIR"; sha256sum "$WAM_FILENAME" > "${WAM_FILENAME}.sha256")
+(cd "$PYI_DIST_LATEST"; sha256sum "$WAM_LATEST" > "${WAM_LATEST}.sha256")
 
 echo "Checking standalone binary version..."
-eval "${DIST_DIR}/${WAM_FILENAME}" --version
+eval "${PYI_DIST_DIR}/${WAM_FILENAME}" --version
 
 echo "Copying bootstrap script to dist dirs..."
-cp docs/files/bootstrap/watchmaker-bootstrap.ps1 "$DIST_DIR"
-cp docs/files/bootstrap/watchmaker-bootstrap.ps1 "$DIST_LATEST"
+cp docs/files/bootstrap/watchmaker-bootstrap.ps1 "$PYI_DIST_DIR"
+cp docs/files/bootstrap/watchmaker-bootstrap.ps1 "$PYI_DIST_LATEST"
 
 echo "Listing files in dist dirs..."
-ls -alRh "$DIST_DIR"/* "$DIST_LATEST"/*
+ls -alRh "$PYI_DIST_DIR"/* "$PYI_DIST_LATEST"/*
