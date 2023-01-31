@@ -7,11 +7,12 @@ VERSION=$(grep "version =" setup.cfg | sed 's/^.*= //')
 
 PYI_DIST_DIR=".pyinstaller/dist/${VERSION}"
 PYI_DIST_LATEST=".pyinstaller/dist/latest"
-PYI_SPEC_DIR=".pyinstaller/spec/"
-PYI_WORK_DIR=".pyinstaller/build/"
+PYI_SPEC_DIR=".pyinstaller/spec"
+PYI_WORK_DIR=".pyinstaller/build"
 
 PYI_HOOK_DIR="./ci/pyinstaller"
-PYI_SCRIPT="./src/watchmaker/__main__.py"
+PYI_SCRIPT="${PYI_SPEC_DIR}/watchmaker-standalone.py"
+WAM_SCRIPT="./src/watchmaker/__main__.py"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 WAM_LATEST="watchmaker-latest-standalone-linux-x86_64"
 
@@ -30,6 +31,8 @@ python -m pip install --editable .
 python -m pip list
 
 echo "Creating standalone for watchmaker v${VERSION}..."
+mkdir -p "$PYI_SPEC_DIR"
+cp "$WAM_SCRIPT" "$PYI_SCRIPT"
 # Add debug argument to pyinstaller command to build standalone with debug flags
 #    --debug all \
 pyinstaller --noconfirm --clean --onefile \
