@@ -12,8 +12,7 @@ pr:
     - main
 
 variables:
-  # satsuki looks by default for dir named .gravitybee, using that name simplifies
-  artifactDir: .gravitybee
+  artifactDir: .pyinstaller
 
 jobs:
 - template: ci/azure-pipelines-template.yml
@@ -80,13 +79,13 @@ jobs:
       $BuildVersion = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
       echo "version = $BuildVersion"
     displayName: mark dev version if needed
-  - script: $(buildPython.pythonLocation)\python -m pip install -r requirements/basics.txt
+  - script: $(buildPython.pythonLocation)\python -m pip install -r requirements\pip.txt
+    displayName: install python pip
+  - script: $(buildPython.pythonLocation)\python -m pip install -r requirements\basics.txt
     displayName: install python basics
   - script: $(buildPython.pythonLocation)\python -m virtualenv $(venv)
     displayName: setup virtual environment
-  - script: |
-      call $(venv)\Scripts\activate.bat
-      call ci/build.cmd
+  - powershell: ci/build.ps1
     displayName: build standalone
   - script: move requirements\deploy.txt $(artifactDirFull)
     displayName: include requirements.txt for deploy
@@ -139,12 +138,17 @@ jobs:
             targetFolder: $(keyPrefix)
             bucketName: $(releaseBucket)
             sourceFolder: $(artifactDirFull)\dist\
-        - script: |
-            call $(artifactDir)\gravitybee-environs.bat
-            set SATS_TAG=%GB_ENV_APP_VERSION%
-            set SATS_BODY=* [%GB_ENV_APP_NAME% v%GB_ENV_APP_VERSION% CHANGELOG](https://github.com/plus3it/%GB_ENV_APP_NAME%/blob/%GB_ENV_APP_VERSION%/CHANGELOG.md)
-            set SATS_REL_NAME=Release v%GB_ENV_APP_VERSION%
-            set
+        - powershell: |
+            $ErrorActionPreference = "Stop"
+            $APP_VERSION = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
+            $APP_NAME = "watchmaker"
+
+            $env:SATS_SLUG = "plus3it/watcmaker"
+            $env:SATS_TAG = $APP_VERSION
+            $env:SATS_COMMITTISH = $env:BUILD_SOURCEVERSION
+            $env:SATS_BODY = "* [${APP_NAME} v${APP_VERSION} CHANGELOG](https://github.com/plus3it/${APP_NAME}/blob/${APP_VERSION}/CHANGELOG.md)"
+            $env:SATS_REL_NAME = "Release v${APP_VERSION}"
+            $env:SATS_FILES_FILE = "$(artifactDir)\satsuki-files.json"
             python -m pip install -r $(artifactDir)\deploy.txt
             satsuki
           displayName: deploy to github with satsuki
