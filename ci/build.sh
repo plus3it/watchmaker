@@ -58,6 +58,7 @@ cp "${PYI_DIST_DIR}/${WAM_FILENAME}" "${PYI_DIST_LATEST}/${WAM_LATEST}"
 echo "Creating sha256 hashes of standalone binary..."
 (cd "$PYI_DIST_DIR"; sha256sum "$WAM_FILENAME" > "${WAM_FILENAME}.sha256")
 (cd "$PYI_DIST_LATEST"; sha256sum "$WAM_LATEST" > "${WAM_LATEST}.sha256")
+cat "${PYI_DIST_DIR}/${WAM_FILENAME}.sha256"
 
 echo "Creating satsuki file..."
 jq -n \
@@ -68,6 +69,7 @@ jq -n \
     --arg wam_sha_path "${PYI_DIST_DIR}/${WAM_FILENAME}.sha256" \
     --arg wam_sha_label "Watchmaker ${VERSION} Standalone Executable SHA256 Hash for Linux" \
     -f "$SATS_TEMPLATE" > "$SATS_FILE"
+cat "$SATS_FILE"
 
 echo "Checking standalone binary version..."
 eval "${PYI_DIST_DIR}/${WAM_FILENAME}" --version
