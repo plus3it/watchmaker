@@ -113,6 +113,7 @@ jobs:
       deploy:
         steps:
         - checkout: none
+        - download: none
         - task: DownloadBuildArtifacts@1
           displayName: download standalone artifacts
           inputs:
