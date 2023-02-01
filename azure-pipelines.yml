@@ -113,7 +113,7 @@ jobs:
       deploy:
         steps:
         - checkout: none
-        - task: DownloadBuildArtifacts@0
+        - task: DownloadBuildArtifacts@1
           displayName: download standalone artifacts
           inputs:
             artifactName: $(artifactDir)
@@ -142,7 +142,6 @@ jobs:
             $ErrorActionPreference = "Stop"
             $APP_VERSION = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
             $APP_NAME = "watchmaker"
-
             $env:SATS_SLUG = "plus3it/watcmaker"
             $env:SATS_TAG = $APP_VERSION
             $env:SATS_COMMITTISH = $env:BUILD_SOURCEVERSION
