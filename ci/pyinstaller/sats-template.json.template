@@ -8,7 +8,7 @@
     {
         "filename": $wam_sha_filename,
         "path": $wam_sha_path,
-        "mime-type": "application/json",
+        "mime-type": "text/plain",
         "label": $wam_sha_label
     }
 ]
