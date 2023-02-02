@@ -85,7 +85,9 @@ jobs:
     displayName: install python basics
   - script: $(buildPython.pythonLocation)\python -m virtualenv $(venv)
     displayName: setup virtual environment
-  - powershell: ci/build.ps1
+  - powershell: |
+      & $(venv)\Scripts\activate
+      ci/build.ps1
     displayName: build standalone
   - script: move requirements\deploy.txt $(artifactDirFull)
     displayName: include requirements.txt for deploy

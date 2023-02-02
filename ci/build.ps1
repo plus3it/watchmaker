@@ -1,7 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-$VIRTUAL_ENV_DIR = ".\venv"
-
 $VERSION = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
 
 $PYI_DIST_DIR = ".pyinstaller\dist\${VERSION}"
@@ -17,8 +15,6 @@ $WAM_LATEST = "watchmaker-latest-standalone-windows-amd64"
 
 $SATS_TEMPLATE = ".\ci\pyinstaller\sats-template.json.template"
 $SATS_FILE = ".pyinstaller\satsuki-files.json"
-
-& ${VIRTUAL_ENV_DIR}\Scripts\activate
 
 python -m pip install -r requirements/pip.txt
 
