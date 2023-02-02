@@ -1,2 +1,2 @@
-gravitybee==0.4.6
+boto3==1.26.56
 pyinstaller==5.7.0

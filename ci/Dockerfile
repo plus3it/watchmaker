@@ -20,6 +20,9 @@ RUN python3 -m ensurepip --upgrade --default-pip \
     && python3 -m pip install -r /requirements/basics.txt \
     && python3 -m pip list
 
+RUN yum -y install epel-release \
+    && yum -y install jq
+
 USER ${USER}
 
 ENV LC_ALL=en_US.UTF-8
