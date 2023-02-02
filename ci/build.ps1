@@ -27,9 +27,6 @@ python --version
 python -m pip --version
 Write-Host "-----------------------------------------------------------------------"
 
-# Remove when addressed: https://github.com/plus3it/gravitybee/issues/486
-git rm pyproject.toml
-
 python -m pip install -r requirements/build.txt
 python -m pip install --editable .
 python -m pip list
@@ -52,9 +49,6 @@ pyinstaller --noconfirm --clean --onefile `
 # Uncomment this to list the files in the standalone; can help when debugging
 # echo "Listing files in standalone..."
 # pyi-archive_viewer --log --brief --recursive "${DIST_DIR}/${WAM_FILENAME}.exe"
-
-git restore --staged pyproject.toml
-git restore pyproject.toml
 
 New-Item -Path "$PYI_DIST_LATEST" -Force -ItemType "directory"
 Copy-Item "${PYI_DIST_DIR}\${WAM_FILENAME}.exe" -Destination "${PYI_DIST_LATEST}\${WAM_LATEST}.exe"
