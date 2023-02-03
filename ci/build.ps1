@@ -1,7 +1,5 @@
 $ErrorActionPreference = "Stop"
 
-$VIRTUAL_ENV_DIR = ".\venv"
-
 $VERSION = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
 
 $PYI_DIST_DIR = ".pyinstaller\dist\${VERSION}"
@@ -12,13 +10,11 @@ $PYI_WORK_DIR = ".pyinstaller\build"
 $PYI_HOOK_DIR = ".\ci\pyinstaller"
 $PYI_SCRIPT = "${PYI_SPEC_DIR}\watchmaker-standalone.py"
 $WAM_SCRIPT = ".\src\watchmaker\__main__.py"
-$WAM_FILENAME = "watchmaker-${VERSION}-standalone-windows-x86_64"
-$WAM_LATEST = "watchmaker-latest-standalone-windows-x86_64"
+$WAM_FILENAME = "watchmaker-${VERSION}-standalone-windows-amd64"
+$WAM_LATEST = "watchmaker-latest-standalone-windows-amd64"
 
 $SATS_TEMPLATE = ".\ci\pyinstaller\sats-template.json.template"
 $SATS_FILE = ".pyinstaller\satsuki-files.json"
-
-& ${VIRTUAL_ENV_DIR}\Scripts\activate
 
 python -m pip install -r requirements/pip.txt
 
@@ -26,9 +22,6 @@ Write-Host "--------------------------------------------------------------------
 python --version
 python -m pip --version
 Write-Host "-----------------------------------------------------------------------"
-
-# Remove when addressed: https://github.com/plus3it/gravitybee/issues/486
-git rm pyproject.toml
 
 python -m pip install -r requirements/build.txt
 python -m pip install --editable .
@@ -52,9 +45,6 @@ pyinstaller --noconfirm --clean --onefile `
 # Uncomment this to list the files in the standalone; can help when debugging
 # echo "Listing files in standalone..."
 # pyi-archive_viewer --log --brief --recursive "${DIST_DIR}/${WAM_FILENAME}.exe"
-
-git restore --staged pyproject.toml
-git restore pyproject.toml
 
 New-Item -Path "$PYI_DIST_LATEST" -Force -ItemType "directory"
 Copy-Item "${PYI_DIST_DIR}\${WAM_FILENAME}.exe" -Destination "${PYI_DIST_LATEST}\${WAM_LATEST}.exe"
