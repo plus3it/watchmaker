@@ -6,7 +6,13 @@ from __future__ import (absolute_import, division, print_function,
 from PyInstaller.utils.hooks import (collect_data_files, collect_dynamic_libs,
                                      collect_submodules, copy_metadata)
 
-datas = []
+datas = [
+    ("src/watchmaker/static", "watchmaker/static"),
+    (
+        "src/watchmaker/_vendor/pypa/get-pip/public/2.7",
+        "watchmaker/_vendor/pypa/get-pip/public/2.7",
+    ),
+]
 binaries = []
 hiddenimports = [
     "boto3",
