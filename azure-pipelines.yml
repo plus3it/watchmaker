@@ -89,8 +89,10 @@ jobs:
       & $(venv)\Scripts\activate
       ci/build.ps1
     displayName: build standalone
-  - script: move requirements\deploy.txt $(artifactDirFull)
+  - script: copy requirements\deploy.txt $(artifactDirFull)
     displayName: include requirements.txt for deploy
+  - script: copy setup.cfg $(artifactDirFull)
+    displayName: include setup.cfg for deploy
   - script: dir $(artifactDirFull)
     displayName: see directory
   - task: PublishBuildArtifacts@1
@@ -143,7 +145,7 @@ jobs:
             sourceFolder: $(artifactDirFull)\dist\
         - powershell: |
             $ErrorActionPreference = "Stop"
-            $APP_VERSION = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
+            $APP_VERSION = (Select-String -Path "$(artifactDir)\setup.cfg" -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
             $APP_NAME = "watchmaker"
             $env:SATS_SLUG = "plus3it/watcmaker"
             $env:SATS_TAG = $APP_VERSION
