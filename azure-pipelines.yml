@@ -89,8 +89,10 @@ jobs:
       & $(venv)\Scripts\activate
       ci/build.ps1
     displayName: build standalone
-  - script: move requirements\deploy.txt $(artifactDirFull)
+  - script: copy requirements\deploy.txt $(artifactDirFull)
     displayName: include requirements.txt for deploy
+  - script: copy setup.cfg $(artifactDirFull)
+    displayName: include setup.cfg for deploy
   - script: dir $(artifactDirFull)
     displayName: see directory
   - task: PublishBuildArtifacts@1
@@ -143,15 +145,15 @@ jobs:
             sourceFolder: $(artifactDirFull)\dist\
         - powershell: |
             $ErrorActionPreference = "Stop"
-            $APP_VERSION = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
+            $APP_VERSION = (Select-String -Path "$(artifactDirFull)\setup.cfg" -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
             $APP_NAME = "watchmaker"
             $env:SATS_SLUG = "plus3it/watcmaker"
             $env:SATS_TAG = $APP_VERSION
             $env:SATS_COMMITTISH = $env:BUILD_SOURCEVERSION
             $env:SATS_BODY = "* [${APP_NAME} v${APP_VERSION} CHANGELOG](https://github.com/plus3it/${APP_NAME}/blob/${APP_VERSION}/CHANGELOG.md)"
             $env:SATS_REL_NAME = "Release v${APP_VERSION}"
-            $env:SATS_FILES_FILE = "$(artifactDir)\satsuki-files.json"
-            python -m pip install -r $(artifactDir)\deploy.txt
+            $env:SATS_FILES_FILE = "$(artifactDirFull)\satsuki-files.json"
+            python -m pip install -r "$(artifactDirFull)\deploy.txt"
             satsuki
           displayName: deploy to github with satsuki
           condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
