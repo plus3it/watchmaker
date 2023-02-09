@@ -1,2 +1,2 @@
-boto3==1.26.66
+boto3==1.26.67
 pyinstaller==5.7.0
