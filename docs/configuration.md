@@ -211,19 +211,22 @@ Parameters supported by the Yum Worker:
 
 ### status
 
-Watchmaker supports posting the watchmaker status to status providers. Watchmaker status values are one of: 'Running', 'Failed', or 'Completed'. Each status provider defines what it means to "post the status".. Currently, the supported provider types include: 'aws' and 'azure'. These status providers both post the status as a tag to the instance/VM.
+Watchmaker supports posting the watchmaker status to status providers. Watchmaker
+status values are one of: 'Running', 'Failed', or 'Completed'. Each status provider
+defines what it means to "post the status". Currently, the supported provider
+types include: 'aws' and 'azure'. These status providers both post the status as
+a tag to the instance/VM.
 
-Providers have the ability to detect whether the system is compatible with the provider type. In order to post status, the system running watchmaker must be compatible with the status provider type. For example, the 'azure' provider will be skipped when watchmaker is running on an AWS EC2 instance, and vice versa.
+Providers have the ability to detect whether the system is compatible with the
+provider type. In order to post status, the system running watchmaker must be compatible
+with the status provider type. For example, the 'azure' provider will be skipped
+when watchmaker is running on an AWS EC2 instance, and vice versa.
 
-Prerequisites for AWS:
+See the [installation](installation) page for prerequisites for using this feature.
 
-* `boto3` Python boto3 library
-
-```bash
-python3 -m pip install boto3
-```
-
-* `IAM Role and Policy` An AWS Role and Policy that allows the instance to create tags must be attached to the instance.  The minimal policy below has been tested in commercial and govcloud.
+* `IAM Role and Policy` An AWS Role and Policy that allows the instance to create
+  tags must be attached to the instance. The minimal policy below has been tested
+  in commercial and govcloud.
 
 ```json
 {
@@ -242,26 +245,6 @@ python3 -m pip install boto3
         }
     ]
 }
-```
-
-Prerequisites for Azure:
-
-* `azure.core` - Azure Core Python library
-
-```bash
-python3 -m pip install azure-core
-```
-
-* `azure.identity`
-
-```bash
-python3 -m pip install azure-identity
-```
-
-* `azure.mgmt.resource`
-
-```bash
-python3 -m pip install azure-mgmt-resource
 ```
 
 * `Policy` Policy that allows adding or replacing tag on resource see [Microsoft Azure Tag Policy](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-policies) for more info.
@@ -314,6 +297,30 @@ IAM instance role with the following policy attached to the instance
         }
     ]
 }
+```
+
+## Downloading config files from Amazon S3
+
+Watchmaker has support for downloading files from Amazon S3. This is useful for
+implementations where parts of the Watchmaker config are hosted privately. In order
+to use this feature, be sure the necessary prerequisites are installed (see the
+[installation page](installation)).
+
+This feature simply uses the "S3 URL" of the object in the S3 bucket. Such URLs
+take the form: `s3://<bucket>/<key>`. For example, if you wanted to host a custom
+config and custom salt content, you could include the salt-content S3 URL in your
+Watchmaker config:
+
+```yaml
+all:
+  - salt:
+      salt_content: s3://path/to/salt-content.zip
+```
+
+And then call Watchmaker on the CLI with the `--config` argument:
+
+```console
+watchmaker --config s3://path/to/config.yaml
 ```
 
 ## Example config.yaml
