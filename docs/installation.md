@@ -139,6 +139,32 @@ are available for Windows and Linux.
     # chmod +x watchmaker-latest-standalone-linux-x86_64
     ```
 
+## Prerequisites for features specific to AWS and Azure
+
+Watchmaker has some features specific to AWS and Azure:
+
+    * AWS:
+        * Download files in config references from Amazon S3
+        * Tag Amazon EC2 instances with Watchmaker status
+    * Azure:
+        * Tag Azure Virtual Machines with Watchmaker status
+
+If you are using the source install from PyPi, and if your config uses any of those
+features, be sure to also install the SDKs those features are built on. If you are
+using the standalone package, these dependencies are part of the package and no
+further action or install is needed.
+
+For AWS features, install the `boto3` library:
+
+```console
+# python3 pip -m install boto3
+```
+
+For Azure features, install the `azure` libraries:
+
+```console
+# python3 pip -m install azure-core azure-identity azure-mgmt-resource
+```
 
 [0]: https://pip.pypa.io/en/stable/
 [1]: https://python-guide.readthedocs.io/en/latest/starting/installation/
