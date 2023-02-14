@@ -64,9 +64,9 @@ jq -n `
     --arg wam_sha_filename "${WAM_FILENAME}.sha256" `
     --arg wam_sha_path "${PYI_DIST_DIR}\${WAM_FILENAME}.sha256" `
     --arg wam_sha_label "Watchmaker ${VERSION} Standalone Executable SHA256 Hash for Windows" `
-    -f "$SATS_TEMPLATE" > "$SATS_FILE"
+    -f "$SATS_TEMPLATE" | Out-File -Encoding utf8 "$SATS_FILE"
 
-Get-Content "$SATS_FILE"
+jq -r . "$SATS_FILE"
 
 Write-Host "Checking standalone binary version..."
 & "${PYI_DIST_DIR}/${WAM_FILENAME}.exe" --version
