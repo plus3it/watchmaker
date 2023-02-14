@@ -69,7 +69,7 @@ jq -n \
     --arg wam_sha_path "${PYI_DIST_DIR}/${WAM_FILENAME}.sha256" \
     --arg wam_sha_label "Watchmaker ${VERSION} Standalone Executable SHA256 Hash for Linux" \
     -f "$SATS_TEMPLATE" > "$SATS_FILE"
-cat "$SATS_FILE"
+jq -r . "$SATS_FILE"
 
 echo "Checking standalone binary version..."
 eval "${PYI_DIST_DIR}/${WAM_FILENAME}" --version
