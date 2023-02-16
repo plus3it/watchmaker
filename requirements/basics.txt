@@ -1,6 +1,6 @@
 setuptools==43.0.0;python_version<="2.7"
 setuptools==59.6.0;python_version<="3.6" and python_version>"2.7"
-setuptools==67.3.1;python_version>="3.7"
+setuptools==67.3.2;python_version>="3.7"
 virtualenv==20.15.1;python_version<="2.7"
 virtualenv==20.17.1;python_version>"2.7"
 wheel==0.33.6;python_version<="2.7"
