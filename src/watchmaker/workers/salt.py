@@ -14,6 +14,7 @@ import glob
 import json
 import os
 import shutil
+import logging
 
 import distro
 import importlib_resources as resources
@@ -29,6 +30,19 @@ from watchmaker.managers.platform import (
 )
 from watchmaker.workers.base import WorkerBase
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(formatter)
+
+logger.addHandler(console_handler)
+print ('this is working')
+# add a logging statement
+logger.info('Starting Watchmaker...')
 
 class SaltBase(WorkerBase, PlatformManagerBase):
     r"""
@@ -778,6 +792,14 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
+            current_salt_version = self.call_process(['salt-call', '--version'])
+            if '3004.2' in current_salt_version:
+                self.log.info('Salt is already installed with the correct version, Skipping Installation')
+                return
+            else: 
+                self.log.info(f"salt is not installed with different version: {current_salt_version}")
+            
+            self.log.info('starting salt installation')
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
                 watchmaker.utils.basename_from_uri(self.bootstrap_source)
