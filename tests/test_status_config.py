@@ -3,7 +3,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-from watchmaker.config.status import get_supported_cloud_identifiers
+from watchmaker.config.status import get_supported_cloud_identifiers_with_prereqs
 
 # Supports Python2 and Python3 test mocks
 try:
@@ -38,7 +38,7 @@ def test_get_provider_identifiers(prereqs):
         ]
     }
 
-    ids = get_supported_cloud_identifiers(config_status)
+    ids = get_supported_cloud_identifiers_with_prereqs(config_status)
 
     assert ids is not None
     assert "aws" in ids
