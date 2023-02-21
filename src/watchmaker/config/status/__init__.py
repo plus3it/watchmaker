@@ -3,7 +3,6 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals, with_statement)
 
-
 import logging
 
 from watchmaker.conditions import HAS_AZURE, HAS_BOTO3
@@ -16,7 +15,7 @@ SUPPORTED_NON_CLOUD_PROVIDERS = []
 
 STATUS = {
     "RUNNING": "Running",
-    "COMPLETE": "Completed",
+    "COMPLETE": "Completed", 
     "ERROR": "Error",
 }
 
@@ -80,7 +79,7 @@ def get_providers_by_provider_types(config_status, provider_type):
 
 
 def get_supported_cloud_identifiers_with_prereqs(config_status):
-    """Get unique list of cloud ids that are supported, prereqs are present and are in config."""
+    """Get supported cloud providers with prereqs and in config."""
     supported = get_cloud_ids_with_prereqs()
     return list(
         set(
@@ -92,7 +91,7 @@ def get_supported_cloud_identifiers_with_prereqs(config_status):
 
 
 def get_required_cloud_identifiers_missing_prereqs(config_status):
-    """Get unique list of cloud ids that are required, missing their prereqs, and are in config."""
+    """Get supported cloud providers without prereqs and in config."""
     missing_prereqs = get_cloud_ids_missing_prereqs()
     return list(
         set(
@@ -105,7 +104,7 @@ def get_required_cloud_identifiers_missing_prereqs(config_status):
 
 
 def get_cloud_ids_with_prereqs():
-    """Get unique list of supported cloud identifiers where has_prereq is True."""
+    """Get supported cloud providers with prereqs."""
     providers = set()
 
     for cloud_provider in SUPPORTED_CLOUD_PROVIDERS:
@@ -121,7 +120,7 @@ def get_cloud_ids_with_prereqs():
 
 
 def get_cloud_ids_missing_prereqs():
-    """Get unique list of supported cloud identifiers where has_prereq is False."""
+    """Get supported cloud providers without prereqs."""
     providers = set()
 
     for cloud_provider in SUPPORTED_CLOUD_PROVIDERS:
