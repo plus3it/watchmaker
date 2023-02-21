@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
 import logging
 
 import watchmaker.config.status as status_config
+from watchmaker.exceptions import StatusProviderError
 from watchmaker.status.providers.abstract import AbstractStatusProvider
 from watchmaker.status.providers.aws import AWSStatusProvider
 from watchmaker.status.providers.azure import AzureStatusProvider
@@ -32,13 +33,39 @@ class Status:
             return
 
         status_provider_ids = []
-        supported_providers = status_config.get_supported_cloud_identifiers(
-            config
+        # get supported providers with prereqs
+        supported_providers = (
+            status_config.get_supported_cloud_identifiers_with_prereqs(config)
         )
+
         if supported_providers:
+            # Detect Provider
             cloud_identifier = provider(supported_providers)
             if cloud_identifier != AbstractStatusProvider.identifier:
                 status_provider_ids.append(cloud_identifier)
+
+        if not status_provider_ids:
+            # Supported provider doesn't exist or not detected
+            # Check for supported providers missing prereqs
+            get_missing_prereq_cloud_identifiers = (
+                status_config.get_required_cloud_identifiers_missing_prereqs(
+                    config
+                )
+            )
+
+            if get_missing_prereq_cloud_identifiers:
+                # Detect provider
+                cloud_identifier = provider(
+                    get_missing_prereq_cloud_identifiers
+                )
+
+                if cloud_identifier != AbstractStatusProvider.identifier:
+                    # We found a provider without prereqs
+                    # error out since it is required
+                    raise StatusProviderError(
+                        "Missing prereqs for required provider %s"
+                        % cloud_identifier
+                    )
 
         status_provider_ids += status_config.get_non_cloud_identifiers(config)
 
