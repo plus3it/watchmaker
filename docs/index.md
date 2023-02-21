@@ -47,11 +47,9 @@ changelog.md
 ## Supported Operating Systems
 
 *   Enterprise Linux 7 (RHEL/CentOS/etc)
-*   Enterprise Linux 6 (RHEL/CentOS/etc)
 *   Windows Server 2019
 *   Windows Server 2016
 *   Windows Server 2012 R2
-*   Windows Server 2008 R2
 *   Windows 10
 *   Windows 8.1
 
@@ -59,9 +57,6 @@ changelog.md
 
 *   Python 3.6 and later
 *   Python 2.7 and later
-
-NOTE: If you really need Python 2.6, see the relevant [FAQ](faq) for details on
-installing ``watchmaker`` in Python 2.6.
 
 ## Supported Salt Versions
 

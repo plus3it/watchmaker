@@ -10,9 +10,8 @@ import platform
 import re
 import subprocess
 
+import importlib_metadata
 import oschmod
-import pkg_resources
-import setuptools
 import yaml
 
 import watchmaker.utils
@@ -25,16 +24,7 @@ from watchmaker.status import Status
 
 
 def _extract_version(package_name):
-    try:
-        return pkg_resources.get_distribution(package_name).version
-    except pkg_resources.DistributionNotFound:
-        _conf = setuptools.config.read_configuration(
-            os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
-                "setup.cfg"
-            )
-        )
-        return _conf["metadata"]["version"]
+    return importlib_metadata.version(package_name)
 
 
 def _version_info(app_name, version):

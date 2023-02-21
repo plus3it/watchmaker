@@ -48,11 +48,6 @@ Options:
                                   apply. A value of 'None' will not apply any
                                   salt states. A value of 'Highstate' will
                                   apply the salt highstate.
-  --s3-source                     Use S3 utilities to retrieve content instead
-                                  of http/s utilities. Boto3 must be
-                                  installed, and boto3 credentials must be
-                                  configured that allow access to the S3
-                                  bucket.
   -A, --admin-groups TEXT         Set a salt grain that specifies the domain
                                   groups that should have root privileges on
                                   Linux or admin privileges on Windows. Value
@@ -320,7 +315,6 @@ arguments = watchmaker.Arguments()
 arguments.config_path = None
 arguments.no_reboot = False
 arguments.salt_states = None
-arguments.s3_source = False
 
 client = watchhmaker.Client(arguments)
 client.install()

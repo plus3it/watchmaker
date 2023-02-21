@@ -1,4 +1,4 @@
-FROM quay.io/centos7/python-38-centos7:centos7@sha256:cf74498758e6511c40b6b58450c09e1c2863a3125152b424ae2f435ed4f803ca
+FROM quay.io/centos7/python-38-centos7:centos7@sha256:192879ef137f5ae17c8b24b0d1e1ec0a0f76164352448476728047aaad2c35d1
 
 ARG USER=wam-builder
 ARG USER_UID
@@ -19,6 +19,9 @@ RUN python3 -m ensurepip --upgrade --default-pip \
     && python3 -m pip --version \
     && python3 -m pip install -r /requirements/basics.txt \
     && python3 -m pip list
+
+RUN yum -y install epel-release \
+    && yum -y install jq
 
 USER ${USER}
 

@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.26.2](https://github.com/plus3it/watchmaker/releases/tag/0.26.2)
+
+**Released**: 2023.02.13
+
+**Summary**:
+
+*   Fixes publishing of Windows standalone to GitHub Releases
+*   docs
+    - Provides guidance on using S3 URL feature in config references
+    - Describes prerequisites for using AWS and Azure features
+    - Removes references to EL6 and Python 2.6
+    - Removes references to deprecated `--s3-url` argument
+*   join-domain-formula
+    - Adds support for EL8, using `sssd` to perform the domain-join
+
+## [0.26.1](https://github.com/plus3it/watchmaker/releases/tag/0.26.1)
+
+**Released**: 2023.02.08
+
+**Summary**:
+
+*   Uses pyinstaller directly to build standalone packages, eliminating dependency
+    on gravitybee
+*   Uses new python apis to reference package metadata and resources, improving
+    support for alternative packaging methods, like in-memory runtimes (pyoxidizer)
+    or ziparchives
+*   Adds PEP517 package metadata
+*   [Alpha] Allows watchmaker to run on Red Hat Enterprise Linux 8, Centos 8 Stream,
+    Oracle Linux 8, Alma Linux 8, and Rocky Linux 8. Currently on the ash-linux
+    hardening formula will work; none of the other salt formulas have yet been
+    updated for EL8 support
+*   ash-windows
+    - Fixes warning in `lgpo` module about using `is` instead of `==` to compare
+      string-literal values
+
 ## 0.26.0
 
 **Commit Delta**: [Change from 0.25.0 release](https://github.com/plus3it/watchmaker/compare/0.25.0...0.26.0)

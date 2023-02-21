@@ -1,0 +1,14 @@
+[
+    {
+        "filename": $wam_filename,
+        "path": $wam_path,
+        "mime-type": "application/x-executable",
+        "label": $wam_label
+    },
+    {
+        "filename": $wam_sha_filename,
+        "path": $wam_sha_path,
+        "mime-type": "text/plain",
+        "label": $wam_sha_label
+    }
+]
