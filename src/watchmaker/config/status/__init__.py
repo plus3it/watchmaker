@@ -15,7 +15,7 @@ SUPPORTED_NON_CLOUD_PROVIDERS = []
 
 STATUS = {
     "RUNNING": "Running",
-    "COMPLETE": "Completed", 
+    "COMPLETE": "Completed",
     "ERROR": "Error",
 }
 
