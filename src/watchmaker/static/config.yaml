@@ -58,6 +58,7 @@ windows:
   - salt:
       salt_debug_log: null
       installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
+      salt_version: "3004.2"
 
 status:
   providers:
