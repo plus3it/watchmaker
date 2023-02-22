@@ -270,6 +270,30 @@ Parameters supported by the Yum Worker:
         url: http://someplace.com/my.repo
     ```
 
+## Downloading config files from Amazon S3
+
+Watchmaker has support for downloading files from Amazon S3. This is useful for
+implementations where parts of the Watchmaker config are hosted privately. In order
+to use this feature, be sure the necessary prerequisites are installed (see the
+[installation page](installation)).
+
+This feature simply uses the "S3 URL" of the object in the S3 bucket. Such URLs
+take the form: `s3://<bucket>/<key>`. For example, if you wanted to host a custom
+config and custom salt content, you could include the salt-content S3 URL in your
+Watchmaker config:
+
+```yaml
+all:
+  - salt:
+      salt_content: s3://path/to/salt-content.zip
+```
+
+And then call Watchmaker on the CLI with the `--config` argument:
+
+```console
+watchmaker --config s3://path/to/config.yaml
+```
+
 ## Example config.yaml
 
 This example can be used to construct your own `config.yaml` file. The
