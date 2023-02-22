@@ -10,9 +10,12 @@ except ImportError:
     from mock import patch
 
 from watchmaker.config.status import (
-    get_cloud_ids_missing_prereqs, get_cloud_ids_with_prereqs,
-    get_non_cloud_identifiers, get_required_cloud_identifiers_missing_prereqs,
-    get_supported_cloud_identifiers_with_prereqs)
+    get_cloud_ids_missing_prereqs,
+    get_cloud_ids_with_prereqs,
+    get_non_cloud_identifiers,
+    get_req_cloud_ids_wo_prereqs,
+    get_sup_cloud_ids_w_prereqs,
+)
 
 
 @patch(
@@ -41,7 +44,7 @@ def test_get_supported_cloud_identifiers_with_prereqs(prereqs):
         ]
     }
 
-    ids = get_supported_cloud_identifiers_with_prereqs(config_status)
+    ids = get_sup_cloud_ids_w_prereqs(config_status)
 
     assert ids is not None
     assert "aws" in ids
@@ -76,7 +79,7 @@ def test_get_required_cloud_identifiers_missing_prereqs(prereqs):
         ]
     }
 
-    ids = get_required_cloud_identifiers_missing_prereqs(config_status)
+    ids = get_req_cloud_ids_wo_prereqs(config_status)
 
     assert ids is not None
     assert "aws" not in ids

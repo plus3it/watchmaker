@@ -78,7 +78,7 @@ def get_providers_by_provider_types(config_status, provider_type):
     ]
 
 
-def get_supported_cloud_identifiers_with_prereqs(config_status):
+def get_sup_cloud_ids_w_prereqs(config_status):
     """Get supported cloud providers with prereqs and in config."""
     supported = get_cloud_ids_with_prereqs()
     return list(
@@ -90,7 +90,7 @@ def get_supported_cloud_identifiers_with_prereqs(config_status):
     )
 
 
-def get_required_cloud_identifiers_missing_prereqs(config_status):
+def get_req_cloud_ids_wo_prereqs(config_status):
     """Get supported cloud providers without prereqs and in config."""
     missing_prereqs = get_cloud_ids_missing_prereqs()
     return list(
@@ -137,11 +137,17 @@ def get_cloud_ids_missing_prereqs():
 
 def get_non_cloud_identifiers(config_status):
     """Get unique list of other provider providers."""
+    providers = set()
+    for provider in SUPPORTED_NON_CLOUD_PROVIDERS:
+        providers.add(provider["provider"])
+
+    non_cloud_provider_list = list(providers)
+
     return list(
         set(
             provider.get("provider_type").lower()
             for provider in config_status.get("providers", [])
             if provider.get("provider_type", "").lower()
-            in SUPPORTED_NON_CLOUD_PROVIDERS
+            in non_cloud_provider_list
         )
     )

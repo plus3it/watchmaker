@@ -34,9 +34,7 @@ class Status:
 
         status_provider_ids = []
         # get supported providers with prereqs
-        supported_providers = (
-            status_config.get_supported_cloud_identifiers_with_prereqs(config)
-        )
+        supported_providers = status_config.get_sup_cloud_ids_w_prereqs(config)
 
         if supported_providers:
             # Detect Provider
@@ -48,9 +46,7 @@ class Status:
             # Supported provider doesn't exist or not detected
             # Check for supported providers missing prereqs
             get_missing_prereq_cloud_identifiers = (
-                status_config.get_required_cloud_identifiers_missing_prereqs(
-                    config
-                )
+                status_config.get_req_cloud_ids_wo_prereqs(config)
             )
 
             if get_missing_prereq_cloud_identifiers:
