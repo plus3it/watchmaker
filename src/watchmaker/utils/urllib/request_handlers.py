@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Extends urllib with additional handlers."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import io
 from email import message_from_string
