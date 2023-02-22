@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Watchmaker yum worker."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import distro
 import six

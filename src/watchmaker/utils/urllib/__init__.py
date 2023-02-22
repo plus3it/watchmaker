@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Exposes urllib imports with additional request handlers."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 # pylint: disable=import-error
 from six.moves.urllib import error, parse, request  # type:ignore # noqa F401

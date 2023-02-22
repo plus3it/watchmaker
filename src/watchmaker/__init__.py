@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 """Watchmaker module."""
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals, with_statement)
+from __future__ import (
+    absolute_import,
+    division,
+    print_function,
+    unicode_literals,
+    with_statement,
+)
 
 import datetime
 import logging
@@ -18,8 +23,10 @@ import watchmaker.utils
 from watchmaker.config import get_configs
 from watchmaker.exceptions import InvalidValueError, WatchmakerError
 from watchmaker.logger import log_system_details
-from watchmaker.managers.worker_manager import (LinuxWorkersManager,
-                                                WindowsWorkersManager)
+from watchmaker.managers.worker_manager import (
+    LinuxWorkersManager,
+    WindowsWorkersManager,
+)
 from watchmaker.status import Status
 
 
