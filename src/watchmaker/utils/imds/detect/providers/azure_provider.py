@@ -58,7 +58,7 @@ class AzureProvider(AbstractProvider):
             if b"Microsoft Corporation" in check_vendor_file.read():
                 return True
         except (ValueError, utils.urllib.error.URLError) as err:
-            self.logger.error("Error while checking vendor file", err)
+            self.logger.error("Error while checking vendor file %s", err)
 
         return False
 
