@@ -78,6 +78,8 @@ systems.
 
 ### status
 
+Watchmaker supports posting the watchmaker status to status providers. Watchmaker status values are one of: 'Running', 'Failed', or 'Completed'. Each status provider defines what it means to "post the status". Currently, the supported provider types include: 'aws' and 'azure'. These status providers both post the status as a tag to the instance/VM.
+
 Providers have the ability to detect whether the system is compatible with the
 provider type. In order to post status, the system running watchmaker must be compatible
 with the status provider type. For example, the 'azure' provider will be skipped
