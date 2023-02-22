@@ -9,13 +9,11 @@ try:
 except ImportError:
     from mock import patch
 
-from watchmaker.config.status import (
-    get_cloud_ids_missing_prereqs,
-    get_cloud_ids_with_prereqs,
-    get_non_cloud_identifiers,
-    get_req_cloud_ids_wo_prereqs,
-    get_sup_cloud_ids_w_prereqs,
-)
+from watchmaker.config.status import (get_cloud_ids_missing_prereqs,
+                                      get_cloud_ids_with_prereqs,
+                                      get_non_cloud_identifiers,
+                                      get_req_cloud_ids_wo_prereqs,
+                                      get_sup_cloud_ids_w_prereqs)
 
 
 @patch(
