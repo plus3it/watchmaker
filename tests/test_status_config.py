@@ -10,12 +10,9 @@ except ImportError:
     from mock import patch
 
 from watchmaker.config.status import (
-    get_supported_cloud_identifiers_with_prereqs,
-    get_required_cloud_identifiers_missing_prereqs,
-    get_cloud_ids_with_prereqs,
-    get_cloud_ids_missing_prereqs,
-    get_non_cloud_identifiers,
-)
+    get_cloud_ids_missing_prereqs, get_cloud_ids_with_prereqs,
+    get_non_cloud_identifiers, get_required_cloud_identifiers_missing_prereqs,
+    get_supported_cloud_identifiers_with_prereqs)
 
 
 @patch(
@@ -97,7 +94,6 @@ def test_get_required_cloud_identifiers_missing_prereqs(prereqs):
 )
 def test_get_cloud_ids_with_prereqs():
     """Test get ids with prereqs."""
-
     ids = get_cloud_ids_with_prereqs()
 
     assert ids is not None
@@ -114,7 +110,6 @@ def test_get_cloud_ids_with_prereqs():
 )
 def test_get_cloud_ids_missing_prereqs():
     """Test get ids missing prereqs."""
-
     ids = get_cloud_ids_missing_prereqs()
 
     assert ids is not None
@@ -131,7 +126,6 @@ def test_get_cloud_ids_missing_prereqs():
 )
 def test_get_non_cloud_identifiers():
     """Test get non cloud identifiers matching config."""
-
     config_status = {
         "providers": [
             {
@@ -158,9 +152,8 @@ def test_get_non_cloud_identifiers():
     "watchmaker.config.status.SUPPORTED_NON_CLOUD_PROVIDERS",
     [],
 )
-def test_get_non_cloud_identifiers():
+def test_get_empty_non_cloud_identifiers():
     """Test empty SUPPORTED_NON_CLOUD_PROVIDERS."""
-
     config_status = {
         "providers": [
             {
