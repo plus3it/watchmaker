@@ -45,6 +45,13 @@ def test_provider_not_aws_or_azure(aws_provider_mock, azure_provider_mock):
     assert provider(["aws", "azure"]) == "unknown"
 
 
+@patch.object(AWSProvider, "identify", return_value=False)
+@patch.object(AzureProvider, "identify", return_value=False)
+def test_none_provider(aws_provider_mock, azure_provider_mock):
+    """Test provider is unknown."""
+    assert provider(None) == "unknown"
+
+
 @pytest.mark.skipif(True, reason="Test should be manually run.")
 def test_provider_detect():
     """Test provider is unknown."""

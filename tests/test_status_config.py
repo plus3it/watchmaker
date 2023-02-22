@@ -94,6 +94,37 @@ def test_get_required_cloud_identifiers_missing_prereqs(prereqs):
 
 
 @patch(
+    "watchmaker.config.status.get_cloud_ids_missing_prereqs",
+    return_value=[],
+)
+def test_no_required_cloud_identifiers_missing_prereqs(prereqs):
+    """Test get required ids that are missing prereqs."""
+    config_status = {
+        "providers": [
+            {
+                "key": "WatchmakerStatus",
+                "required": True,
+                "provider_type": "aws",
+            },
+            {
+                "key": "WatchmakerStatus",
+                "required": True,
+                "provider_type": "azure",
+            },
+            {
+                "key": "WatchmakerStatus",
+                "required": False,
+                "provider_type": "gcp",
+            },
+        ]
+    }
+
+    ids = get_req_cloud_ids_wo_prereqs(config_status)
+
+    assert ids == []
+
+
+@patch(
     "watchmaker.config.status.SUPPORTED_CLOUD_PROVIDERS",
     [
         {"provider": "aws", "has_prereq": True},
