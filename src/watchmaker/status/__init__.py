@@ -45,15 +45,13 @@ class Status:
         if not status_provider_ids:
             # Supported provider doesn't exist or not detected
             # Check for supported providers missing prereqs
-            get_missing_prereq_cloud_identifiers = (
+            missing_prereq_cloud_ids = (
                 status_config.get_req_cloud_ids_wo_prereqs(config)
             )
 
-            if get_missing_prereq_cloud_identifiers:
+            if missing_prereq_cloud_ids:
                 # Detect provider
-                cloud_identifier = provider(
-                    get_missing_prereq_cloud_identifiers
-                )
+                cloud_identifier = provider(missing_prereq_cloud_ids)
 
                 if cloud_identifier != AbstractStatusProvider.identifier:
                     # We found a provider without prereqs
