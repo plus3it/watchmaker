@@ -9,6 +9,7 @@ from __future__ import (
 )
 
 import yaml
+
 from watchmaker.exceptions import StatusProviderError
 
 # Supports Python2 and Python3 test mocks
