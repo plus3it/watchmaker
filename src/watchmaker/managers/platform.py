@@ -326,7 +326,7 @@ class LinuxPlatformManager(PlatformManagerBase):
     """
     Base class for Linux Platforms.
 
-    Serves as a foundational class to keep OS consitency.
+    Serves as a foundational class to keep OS consistency.
     """
 
     def _install_from_yum(self, packages):
@@ -343,5 +343,5 @@ class WindowsPlatformManager(PlatformManagerBase):
     """
     Base class for Windows Platform.
 
-    Serves as a foundational class to keep OS consitency.
+    Serves as a foundational class to keep OS consistency.
     """
