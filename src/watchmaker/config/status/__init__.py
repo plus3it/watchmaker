@@ -61,7 +61,7 @@ def get_provider_key(provider):
 
 def is_provider_required(provider):
     """Get whether provider required."""
-    return provider.get("required", "false")
+    return provider.get("required", False)
 
 
 def get_provider_type(provider):
@@ -98,7 +98,7 @@ def get_required_cloud_identifiers_missing_prereqs(config_status):
             provider.get("provider_type").lower()
             for provider in config_status.get("providers", [])
             if provider.get("provider_type", "").lower() in missing_prereqs
-            and provider.get("required", "false")
+            and provider.get("required", False)
         )
     )
 
