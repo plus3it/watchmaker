@@ -114,6 +114,10 @@ def get_cloud_ids_with_prereqs():
 
     for cloud_provider in SUPPORTED_CLOUD_PROVIDERS:
         if cloud_provider["has_prereq"]:
+            logging.debug(
+                "Adding %s to list of providers with prereqs",
+                cloud_provider["provider"],
+            )
             providers.add(cloud_provider["provider"])
         else:
             logging.debug(
@@ -130,12 +134,11 @@ def get_cloud_ids_missing_prereqs():
 
     for cloud_provider in SUPPORTED_CLOUD_PROVIDERS:
         if not cloud_provider["has_prereq"]:
-            providers.add(cloud_provider["provider"])
-        else:
             logging.debug(
-                "Skipping provider %s prereqs were found",
+                "Adding required provider %s to list of prereqs not found",
                 cloud_provider["provider"],
             )
+            providers.add(cloud_provider["provider"])
 
     return list(providers)
 
