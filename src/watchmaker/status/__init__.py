@@ -112,5 +112,6 @@ class Status:
         # If a req provider is found raise StatusProviderError
         if cloud_identifier != AbstractStatusProvider.identifier:
             raise StatusProviderError(
-                "Missing prereqs for required provider %s" % cloud_identifier
+                "Required Provider detected that is missing prereqs: %s"
+                % cloud_identifier
             )
