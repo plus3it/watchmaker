@@ -122,7 +122,7 @@ def config_none_deprecate(check_value, log):
             "`null` instead."
         )
         log.warn(deprecate_msg)
-        warnings.warn(deprecate_msg, DeprecationWarning)
+        warnings.warn(deprecate_msg, DeprecationWarning, stacklevel=2)
 
     return value
 
