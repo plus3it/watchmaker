@@ -39,7 +39,7 @@ class AzureProvider(AbstractProvider):
         try:
             return self.__is_valid_server()
         except BaseException as ex:
-            self.logger.warn("Error while checking server %s", str(ex))
+            self.logger.warning("Error while checking server %s", str(ex))
             return False
 
     def check_vendor_file(self):
@@ -63,7 +63,9 @@ class AzureProvider(AbstractProvider):
             if b"Microsoft Corporation" in check_vendor_file.read():
                 return True
         except (ValueError, utils.urllib.error.URLError) as err:
-            self.logger.warn("Error while checking vendor file %s", str(err))
+            self.logger.warning(
+                "Error while checking vendor file %s", str(err)
+            )
 
         return False
 
