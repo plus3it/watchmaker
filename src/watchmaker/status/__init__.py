@@ -80,10 +80,10 @@ class Status:
 
         identifier = self.__detect_provider_with_prereqs(config)
 
-        if not identifier:
+        if identifier:
+            detected_providers.append(identifier)
+        else:
             self.__error_on_required_provider(config)
-
-        detected_providers.append(identifier)
 
         detected_providers.extend(
             status_config.get_non_cloud_identifiers(config)
