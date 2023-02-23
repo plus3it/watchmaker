@@ -754,7 +754,11 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
             'hash_type': 'sha512',
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
             'pillar_merge_lists': True,
-            'conf_dir': self.salt_conf_path
+            'conf_dir': self.salt_conf_path,
+            'log_granular_levels': {
+                'salt.template': 'info',
+                'salt.loaded.int.render.yaml': 'info'
+            }
         }
 
     def _configuration_validation(self):
@@ -916,6 +920,10 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
             'pillar_merge_lists': True,
             'conf_dir': self.salt_conf_path,
+            'log_granular_levels': {
+                'salt.template': 'info',
+                'salt.loaded.int.render.yaml': 'info'
+            },
             'winrepo_source_dir': 'salt://winrepo',
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
