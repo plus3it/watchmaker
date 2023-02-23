@@ -28,9 +28,7 @@ def _print_version(ctx, _param, value):
     ctx.exit()
 
 
-@click.command(context_settings=dict(
-    ignore_unknown_options=True,
-))
+@click.command(context_settings={"ignore_unknown_options": True})
 @click.option(
     '--version', is_flag=True, callback=_print_version, expose_value=False,
     is_eager=True)
@@ -102,7 +100,9 @@ def main(extra_arguments=None, **kwargs):
 
     sys.excepthook = exception_hook
 
-    watchmaker_arguments = watchmaker.Arguments(**dict(
+    # It is necessary to use `**dict()` with Python 2.7. Revisit when support
+    # for Python 2 (EL7) is dropped.
+    watchmaker_arguments = watchmaker.Arguments(**dict(  # pylint: disable=use-dict-literal # noqa: E501
         extra_arguments=extra_arguments,
         **kwargs
     ))
