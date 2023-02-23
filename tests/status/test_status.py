@@ -84,4 +84,7 @@ def test_req_status_provider(
     try:
         Status(config_status)
     except StatusProviderError as e:
-        assert str(e) == "Missing prereqs for required provider azure"
+        assert (
+            str(e)
+            == "Required Provider detected that is missing prereqs: azure"
+        )
