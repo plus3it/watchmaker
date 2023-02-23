@@ -81,6 +81,7 @@ class Status:
         identifier = self.__detect_provider_with_prereqs(config)
 
         if identifier:
+            self.logger.debug("Detected provider %s", identifier)
             detected_providers.append(identifier)
         else:
             self.__error_on_required_provider(config)
