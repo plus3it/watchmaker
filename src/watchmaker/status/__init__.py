@@ -107,6 +107,11 @@ class Status:
         req_providers_missing_prereqs = (
             status_config.get_req_cloud_ids_wo_prereqs(config)
         )
+        self.logger.debug(
+            "For each required provider missing \
+                prereqs, attempt to detect provider: %s",
+            req_providers_missing_prereqs,
+        )
         cloud_identifier = provider(req_providers_missing_prereqs)
 
         # If a req provider is found raise StatusProviderError
