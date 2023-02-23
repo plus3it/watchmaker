@@ -229,7 +229,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 os.makedirs(salt_dir)
             except OSError:
                 if not os.path.isdir(salt_dir):
-                    msg = ('Unable to create directory - {0}'.format(salt_dir))
+                    msg = 'Unable to create directory - {0}'.format(salt_dir)
                     self.log.error(msg)
                     raise SystemError(msg)
 
