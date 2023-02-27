@@ -16,8 +16,9 @@ import os
 import shutil
 import json
 import distro
-import yaml
+
 import importlib_resources as resources
+import yaml
 
 import watchmaker.utils
 from watchmaker import static
