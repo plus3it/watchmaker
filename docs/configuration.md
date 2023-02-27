@@ -76,6 +76,67 @@ systems.
 Section for Worker configurations that should only be applied to Windows-based
 systems.
 
+### status
+
+Watchmaker supports posting the watchmaker status to status providers. Watchmaker status values are one of: 'Running', 'Failed', or 'Completed'. Each status provider defines what it means to "post the status". Currently, the supported provider types include: 'aws' and 'azure'. These status providers both post the status as a tag to the instance/VM.
+
+Providers have the ability to detect whether the system is compatible with the
+provider type. In order to post status, the system running watchmaker must be compatible
+with the status provider type. For example, the 'azure' provider will be skipped
+when watchmaker is running on an AWS EC2 instance, and vice versa.
+
+See the [installation](installation) page for prerequisites for using this feature.
+
+* `IAM Role and Policy` An AWS Role and Policy that allows the instance to create tags must be attached to the instance.  The minimal policy below has been tested in commercial and govcloud.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "ec2:CreateTags",
+            "Resource": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}",
+            "Condition": {
+                "StringLike": {
+                    "ec2:SourceInstanceARN": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}"
+                }
+            }
+        }
+    ]
+}
+```
+
+* `Policy` Policy that allows adding or replacing tag on resource see [Microsoft Azure Tag Policy](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-policies) for more info.
+
+```{eval-rst}
+.. note::
+
+    Note: Support for the 'azure' status provider is provisional. If you use it and encounter problems, please open an issue on the GitHub repository!
+```
+
+Parameters supported by status
+
+* `providers` ((list of maps)): List of providers
+
+  * `key` (_string_): Status key to use e.g. `WatchmakerStatus`
+  * `required` (_boolean_): Required status, when `True` and provider_type is detected, watchmaker raises an error if unable to update status
+  * `provider_type` (_string_): Environment provider type e.g. `aws` or `azure`
+
+  Example:
+
+    ```yaml
+    status:
+      providers:
+        - key: 'WatchmakerStatus'
+          required: False
+          provider_type: 'aws'
+        - key: 'WatchmakerStatus'
+          required: False
+          provider_type: 'azure'
+    ```
+
 ## Config.yaml Worker Nodes
 
 Watchmaker includes the _workers_ listed below. See the corresponding sections
@@ -208,96 +269,6 @@ Parameters supported by the Yum Worker:
         el_version: 6
         url: http://someplace.com/my.repo
     ```
-
-### status
-
-Watchmaker supports posting the watchmaker status to status providers. Watchmaker
-status values are one of: 'Running', 'Failed', or 'Completed'. Each status provider
-defines what it means to "post the status". Currently, the supported provider
-types include: 'aws' and 'azure'. These status providers both post the status as
-a tag to the instance/VM.
-
-Providers have the ability to detect whether the system is compatible with the
-provider type. In order to post status, the system running watchmaker must be compatible
-with the status provider type. For example, the 'azure' provider will be skipped
-when watchmaker is running on an AWS EC2 instance, and vice versa.
-
-See the [installation](installation) page for prerequisites for using this feature.
-
-* `IAM Role and Policy` An AWS Role and Policy that allows the instance to create
-  tags must be attached to the instance. The minimal policy below has been tested
-  in commercial and govcloud.
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "VisualEditor0",
-            "Effect": "Allow",
-            "Action": "ec2:CreateTags",
-            "Resource": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}",
-            "Condition": {
-                "StringLike": {
-                    "ec2:SourceInstanceARN": "arn:<PARTITION>:ec2:<REGION>:<ACCOUNT_ID>:instance/${ec2:InstanceID}"
-                }
-            }
-        }
-    ]
-}
-```
-
-* `Policy` Policy that allows adding or replacing tag on resource see [Microsoft Azure Tag Policy](https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/tag-policies) for more info.
-
-```{eval-rst}
-.. note::
-
-    Note: Support for the 'azure' status provider is provisional. If you use it and encounter problems, please open an issue on the GitHub repository!
-```
-
-Parameters supported by status
-
-* `providers` ((list of maps)): List of providers
-
-  * `key` (_string_): Status key to use e.g. `WatchmakerStatus`
-  * `required` (_boolean_): Required status, when `True` and provider_type is detected, watchmaker raises an error if unable to update status
-  * `provider_type` (_string_): Environment provider type e.g. `aws` or `azure`
-
-  Example:
-
-    ```yaml
-    status:
-      providers:
-        - key: 'WatchmakerStatus'
-          required: False
-          provider_type: 'aws'
-        - key: 'WatchmakerStatus'
-          required: False
-          provider_type: 'azure'
-    ```
-
-### status roles for aws
-
-IAM instance role with the following policy attached to the instance
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowInstanceToTagItselfOnly",
-            "Effect": "Allow",
-            "Action": "ec2:CreateTags",
-            "Resource": "*",
-            "Condition": {
-                "StringLike": {
-                    "ec2:SourceInstanceARN": "${ec2:SourceInstanceARN}"
-                }
-            }
-        }
-    ]
-}
-```
 
 ## Downloading config files from Amazon S3
 

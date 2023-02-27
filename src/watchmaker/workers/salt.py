@@ -243,7 +243,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 os.makedirs(salt_dir)
             except OSError:
                 if not os.path.isdir(salt_dir):
-                    msg = ('Unable to create directory - {0}'.format(salt_dir))
+                    msg = 'Unable to create directory - {0}'.format(salt_dir)
                     self.log.error(msg)
                     raise SystemError(msg)
 
@@ -768,7 +768,11 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
             'hash_type': 'sha512',
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
             'pillar_merge_lists': True,
-            'conf_dir': self.salt_conf_path
+            'conf_dir': self.salt_conf_path,
+            'log_granular_levels': {
+                'salt.template': 'info',
+                'salt.loaded.int.render.yaml': 'info'
+            }
         }
 
     def _configuration_validation(self):
@@ -938,6 +942,10 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             'pillar_roots': {'base': [str(self.salt_pillar_root)]},
             'pillar_merge_lists': True,
             'conf_dir': self.salt_conf_path,
+            'log_granular_levels': {
+                'salt.template': 'info',
+                'salt.loaded.int.render.yaml': 'info'
+            },
             'winrepo_source_dir': 'salt://winrepo',
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }

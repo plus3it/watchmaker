@@ -54,7 +54,8 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS vendor file")
         for vendor_file in self.vendor_files:
             data = self.__get_file_contents(vendor_file)
-            return bool(data and "amazon" in data.lower())
+            if bool(data and b"amazon" in data.lower()):
+                return True
         return False
 
     def __is_valid_server(self):
@@ -62,7 +63,9 @@ class AWSProvider(AbstractProvider):
         data = self.__get_data_from_server()
         if data:
             response = json.loads(data.decode("utf-8"))
-            if response["imageId"].startswith("ami-",) and response[
+            if response["imageId"].startswith(
+                "ami-",
+            ) and response[
                 "instanceId"
             ].startswith("i-"):
                 return True
@@ -83,7 +86,8 @@ class AWSProvider(AbstractProvider):
         file_path = utils.uri_from_filepath(file)
         try:
             check_vendor_file = utils.urlopen_retry(
-                file_path, self.DEFAULT_TIMEOUT)
+                file_path, self.DEFAULT_TIMEOUT
+            )
             return check_vendor_file.read()
         except (ValueError, utils.urllib.error.URLError):
             return None
