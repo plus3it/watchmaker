@@ -10,14 +10,13 @@ from __future__ import (
 
 import ast
 import codecs
-import glob
-import json
-import os
-import logging
-import shutil
-
 import distro
+import glob
 import importlib_resources as resources
+import json
+import logging
+import os
+import shutil
 import yaml
 
 import watchmaker.utils
@@ -42,7 +41,6 @@ console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
-print('this is working')
 # add a logging statement
 logger.info('Starting Watchmaker...')
 
@@ -799,8 +797,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                 ['salt-call', '--version']
             )
             if '3004.2' in current_salt_version:
-                self.log.info('Salt is already installed with the correct version, '
-                             'Skipping Installation')
+                self.log.info('Salt is already installed.')
                 return
             else:
                 self.log.info("salt is not installed with version")
@@ -1011,7 +1008,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         self.salt_call = SaltWindows._get_salt_call()
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
-            self.log.info('Skipping Salt installation as Salt minion is already installed.')
+            self.log.info('Skipping installation, already installed.')
         else:
             self.log.info('Installing Salt minion...')
             self._install_package()
