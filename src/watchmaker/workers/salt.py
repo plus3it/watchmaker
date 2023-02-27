@@ -12,12 +12,14 @@ import ast
 import codecs
 import distro
 import glob
-import importlib_resources as resources
 import json
 import logging
 import os
 import shutil
+
 import yaml
+
+import importlib_resources as resources
 
 import watchmaker.utils
 from watchmaker import static
