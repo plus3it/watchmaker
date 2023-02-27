@@ -13,8 +13,8 @@ import codecs
 import glob
 import json
 import os
-import shutil
 import logging
+import shutil
 
 import distro
 import importlib_resources as resources
@@ -33,16 +33,19 @@ from watchmaker.workers.base import WorkerBase
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
-print ('this is working')
+print('this is working')
 # add a logging statement
 logger.info('Starting Watchmaker...')
+
 
 class SaltBase(WorkerBase, PlatformManagerBase):
     r"""
@@ -792,13 +795,16 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
-            current_salt_version = self.call_process(['salt-call', '--version'])
+            current_salt_version = self.call_process(
+                ['salt-call', '--version']
+            )
             if '3004.2' in current_salt_version:
-                self.log.info('Salt is already installed with the correct version, Skipping Installation')
+                self.log.info('Salt is already installed with the correct version, '
+                             'Skipping Installation')
                 return
-            else: 
+            else:
                 self.log.info("salt is not installed with version")
-            
+
             self.log.info('starting salt installation')
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
@@ -1005,14 +1011,14 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         self.salt_call = SaltWindows._get_salt_call()
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
-            print('Skipping Salt installation as Salt minion is already installed.')
+            self.log.info('Skipping Salt installation as Salt minion is already installed.')
         else:
-            print('Installing Salt minion...')
+            self.log.info('Installing Salt minion...')
             self._install_package()
             if self.pip_install:
                 self._install_pip_packages()
             self.salt_call = SaltWindows._get_salt_call()
-            print('Salt minion installation completed successfully.')
+            self.log.info("Salt minion installation completed successfully.")
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
