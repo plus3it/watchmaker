@@ -10,12 +10,12 @@ from __future__ import (
 
 import ast
 import codecs
-import distro
 import glob
-import json
 import logging
 import os
 import shutil
+import json
+import distro
 
 import yaml
 
