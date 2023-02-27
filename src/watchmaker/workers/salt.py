@@ -980,12 +980,17 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         salt_running = False
         salt_enabled = False
         salt_svc = 'salt-minion'
+        self.salt_call = SaltWindows._get_salt_call()
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
-        self._install_package()
-        if self.pip_install:
-            self._install_pip_packages()
-        self.salt_call = SaltWindows._get_salt_call()
+            print('Skipping Salt installation as Salt minion is already installed.')
+        else:
+            print('Installing Salt minion...')
+            self._install_package()
+            if self.pip_install:
+                self._install_pip_packages()
+            self.salt_call = SaltWindows._get_salt_call()
+            print('Salt minion installation completed successfully.')
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
