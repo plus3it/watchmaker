@@ -800,8 +800,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
             if '3004.2' in current_salt_version:
                 self.log.info('Salt is already installed.')
                 return
-            else:
-                self.log.info("salt is not installed with version")
+            self.log.info("salt is not installed with version")
 
             self.log.info('starting salt installation')
             salt_bootstrap_filename = os.sep.join((
