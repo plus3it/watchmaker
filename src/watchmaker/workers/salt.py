@@ -797,7 +797,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                 self.log.info('Salt is already installed with the correct version, Skipping Installation')
                 return
             else: 
-                self.log.info(f"salt is not installed with different version: {current_salt_version}")
+                self.log.info("salt is not installed with version")
             
             self.log.info('starting salt installation')
             salt_bootstrap_filename = os.sep.join((
