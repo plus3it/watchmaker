@@ -23,21 +23,12 @@ all:
 linux:
   - yum:
       repo_map:
-        #SaltEL6:
-        - dist:
-            - redhat
-            - centos
-          el_version: 6
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-el6.repo
-        - dist: amazon
-          el_version: 6
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-amzn.repo
         #SaltEL7:
         - dist:
             - redhat
             - centos
           el_version: 7
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el7-python3.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3005.1/salt-reposync-el7-python3.repo
         #SaltEL8:
         - dist:
             - almalinux
@@ -46,7 +37,7 @@ linux:
             - redhat
             - rocky
           el_version: 8
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el8-python3.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3005.1/salt-reposync-el8-python3.repo
   - salt:
       salt_debug_log: null
       install_method: yum
@@ -57,7 +48,7 @@ linux:
 windows:
   - salt:
       salt_debug_log: null
-      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
+      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/salt-3005.1-2-windows-amd64.exe
 
 status:
   providers:
