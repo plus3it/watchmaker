@@ -53,16 +53,7 @@ linux:
       bootstrap_source: null
       git_repo: null
       salt_version: "3004.2"
-      watch:
-        - cmd:   
-            name: "salt-call --version | grep salt-call | awk '{print $2}'"
-            require: 
-              - cmd: install salt
-            onchanges:
-              - file: /etc/salt/minion
-            onfail: salt.install
-            unless: "test -z {{ salt_version }} || `salt-call --version | grep salt-call | awk '{print $2}'` == {{ salt_version }}"
-
+ 
 windows:
   - salt:
       salt_debug_log: null

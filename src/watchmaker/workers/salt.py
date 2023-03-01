@@ -30,22 +30,6 @@ from watchmaker.managers.platform import (
 )
 from watchmaker.workers.base import WorkerBase
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-console_handler.setFormatter(formatter)
-
-logger.addHandler(console_handler)
-# add a logging statement
-logger.info('Starting Watchmaker...')
-
-
 class SaltBase(WorkerBase, PlatformManagerBase):
     r"""
     Cross-platform worker for running salt.
@@ -736,6 +720,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         self.bootstrap_source = \
             kwargs.pop('bootstrap_source', None) or ''
         self.git_repo = kwargs.pop('git_repo', None) or ''
+        self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
         self.salt_version = kwargs.pop('salt_version', None) or ''
 
         # Enforce lowercase and replace spaces with ^ in Linux
@@ -790,19 +775,23 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                     'parameter `git_repo` was not provided.'
                 )
 
+    def _check_salt_version(self):
+        current_salt_version = self.call_process(['salt-call', '--version'])
+        if self.salt_version and self.salt_version in current_salt_version:
+            self.log.info(f'Salt version {self.salt_version} is already installed.')
+            return True
+        else:
+            self.log.info(f"Salt is not installed with version {current_salt_version}")
+            return False
+
     def _install_package(self):
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
-            current_salt_version = self.call_process(
-                ['salt-call', '--version']
-            )
-            if '3004.2' in current_salt_version:
-                self.log.info('Salt is already installed.')
+            if self._check_salt_version():
                 return
-            self.log.info("salt is not installed with version")
 
-            self.log.info('starting salt installation')
+            self.log.info('Starting Salt installation')
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
                 watchmaker.utils.basename_from_uri(self.bootstrap_source)
@@ -818,7 +807,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                 bootstrap_cmd.append('git')
                 bootstrap_cmd.append(self.salt_version)
             else:
-                self.log.debug('No salt version defined in config.')
+                self.log.debug('No Salt version defined in config.')
             self.call_process(bootstrap_cmd)
 
     def _build_salt_formula(self, extract_dir):
