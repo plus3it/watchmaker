@@ -23,15 +23,6 @@ all:
 linux:
   - yum:
       repo_map:
-        #SaltEL6:
-        - dist:
-            - redhat
-            - centos
-          el_version: 6
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-el6.repo
-        - dist: amazon
-          el_version: 6
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-amzn.repo
         #SaltEL7:
         - dist:
             - redhat
