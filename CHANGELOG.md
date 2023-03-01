@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.26.3](https://github.com/plus3it/watchmaker/releases/tag/0.26.3)
+
+**Released**: 2023.02.27
+
+**Summary**:
+
+*   Skips provider detection when provider requirements are not installed
+*   Updates watchmaker salt log config to avoid capturing senstive data in salt log
+*   forescout-secure-connector-formula
+    - Adds support for EL8 when FIPS is enabled
+*   name-computer-formula
+    - Sets hostname as fqdn when `dns_domain` is provided
+*   join-domain-formula
+    - Runs fix-collision script when using sssd
+    - Updates fix-collision to avoid capturing sensitive values in salt log
+    - Updates sssd method to set extra os attributes only when requested
+    - Updates windows join script to avoid capturing sensitive values in salt log
+
 ## [0.26.2](https://github.com/plus3it/watchmaker/releases/tag/0.26.2)
 
 **Released**: 2023.02.13

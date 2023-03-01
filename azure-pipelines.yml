@@ -69,7 +69,7 @@ jobs:
       versionSpec: $(py)
       architecture: $(architecture)
     name: buildPython
-  - powershell: |
+  - pwsh: |
       $releaseVersion = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(\d+\.\d+\.\d+).*$', '$2'
       $priorVersion = (git describe --abbrev=0 --tags)
       $isTag = "$(build.sourceBranch)" -match "refs/tags/"
@@ -85,7 +85,7 @@ jobs:
     displayName: install python basics
   - script: $(buildPython.pythonLocation)\python -m virtualenv $(venv)
     displayName: setup virtual environment
-  - powershell: |
+  - pwsh: |
       & $(venv)\Scripts\activate
       ci/build.ps1
     displayName: build standalone
@@ -143,7 +143,7 @@ jobs:
             targetFolder: $(keyPrefix)
             bucketName: $(releaseBucket)
             sourceFolder: $(artifactDirFull)\dist\
-        - powershell: |
+        - pwsh: |
             $ErrorActionPreference = "Stop"
             $APP_VERSION = (Select-String -Path "$(artifactDirFull)\setup.cfg" -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
             $APP_NAME = "watchmaker"
