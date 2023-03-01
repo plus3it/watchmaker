@@ -30,6 +30,7 @@ from watchmaker.managers.platform import (
 )
 from watchmaker.workers.base import WorkerBase
 
+
 class SaltBase(WorkerBase, PlatformManagerBase):
     r"""
     Cross-platform worker for running salt.
