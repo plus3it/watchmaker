@@ -28,7 +28,7 @@ linux:
             - redhat
             - centos
           el_version: 7
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3005.1/salt-reposync-el7-python3.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3005.1-4/salt-reposync-el7-onedir.repo
         #SaltEL8:
         - dist:
             - almalinux
@@ -37,7 +37,7 @@ linux:
             - redhat
             - rocky
           el_version: 8
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3005.1/salt-reposync-el8-python3.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3005.1-4/salt-reposync-el8-onedir.repo
   - salt:
       salt_debug_log: null
       install_method: yum
