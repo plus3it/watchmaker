@@ -780,9 +780,6 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         if self.salt_version and self.salt_version in current_salt_version:
             self.log.info('Salt is already installed.')
             return True
-        else:
-            self.log.info("Salt is not installed")
-            return False
 
     def _install_package(self):
         if self.install_method.lower() == 'yum':
