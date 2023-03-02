@@ -994,7 +994,6 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         salt_running = False
         salt_enabled = False
         salt_svc = 'salt-minion'
-        self.salt_call = SaltWindows._get_salt_call()
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
             self.log.info('Skipping installation, already installed.')
