@@ -12,7 +12,6 @@ import ast
 import codecs
 import glob
 import json
-import logging
 import os
 import shutil
 
@@ -779,10 +778,10 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
     def _check_salt_version(self):
         current_salt_version = self.call_process(['salt-call', '--version'])
         if self.salt_version and self.salt_version in current_salt_version:
-            self.log.info(f'Salt version {self.salt_version} is already installed.')
+            self.log.info(f'Salt is already installed.')
             return True
         else:
-            self.log.info(f"Salt is not installed with version {current_salt_version}")
+            self.log.info(f"Salt is not installed")
             return False
 
     def _install_package(self):
