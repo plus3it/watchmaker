@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.26.4](https://github.com/plus3it/watchmaker/releases/tag/0.26.4)
+
+**Released**: 2023.03.03
+
+**Summary**:
+
+*   Attempts to fix the release automation so the Windows standalone is published
+    to GitHub Releases
+*   Validates functionality with salt 3005.1 and updates default config to use
+    salt 3005.1
+*   join-domain-formula
+    -   Windows: Provides pillar options to configure DNS registration settings,
+        to support registration of reverse DNS records
+
 ## [0.26.3](https://github.com/plus3it/watchmaker/releases/tag/0.26.3)
 
 **Released**: 2023.02.27
