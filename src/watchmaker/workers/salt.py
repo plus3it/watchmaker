@@ -778,7 +778,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
     def _check_salt_version(self):
         current_salt_version = self.call_process(['salt-call', '--version'])
         if self.salt_version and self.salt_version in current_salt_version:
-            self.log.info('Salt is already installed.')
+            self.log.info('Salt is installed.')
             return True
         self.log.info('salt version is not installed')
         return False
