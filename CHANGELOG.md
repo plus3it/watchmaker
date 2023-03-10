@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.26.5](https://github.com/plus3it/watchmaker/releases/tag/0.26.5)
+
+**Released**: 2023.03.10
+
+**Summary**:
+
+*   join-domain-formula
+    -   Linux: Output journald logs on join-domain failures
+    -   Linux: Re-order sssd conf file Salt states and explicitly set replace setting to false
+    -   Linux: Patch find-collision.sh script to fix computer-object search
+
 ## [0.26.4](https://github.com/plus3it/watchmaker/releases/tag/0.26.4)
 
 **Released**: 2023.03.03
