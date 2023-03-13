@@ -720,6 +720,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         self.bootstrap_source = \
             kwargs.pop('bootstrap_source', None) or ''
         self.git_repo = kwargs.pop('git_repo', None) or ''
+        self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
         self.salt_version = kwargs.pop('salt_version', None) or ''
 
         # Enforce lowercase and replace spaces with ^ in Linux
@@ -774,10 +775,22 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                     'parameter `git_repo` was not provided.'
                 )
 
+    def _check_salt_version(self):
+        current_salt_version = self.call_process(['salt-call', '--version'])
+        if self.salt_version and self.salt_version in current_salt_version:
+            self.log.info('Salt is already installed.')
+            return True
+        self.log.info('salt version is not installed')
+        return False
+
     def _install_package(self):
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
+            if self._check_salt_version():
+                return
+
+            self.log.info('Starting Salt installation')
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
                 watchmaker.utils.basename_from_uri(self.bootstrap_source)
@@ -982,10 +995,14 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         salt_svc = 'salt-minion'
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
-        self._install_package()
-        if self.pip_install:
-            self._install_pip_packages()
-        self.salt_call = SaltWindows._get_salt_call()
+            self.log.info('Skipping installation, already installed.')
+        else:
+            self.log.info('Installing Salt minion...')
+            self._install_package()
+            if self.pip_install:
+                self._install_pip_packages()
+            self.salt_call = SaltWindows._get_salt_call()
+            self.log.info("Salt minion installation completed successfully.")
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
