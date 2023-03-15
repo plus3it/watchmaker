@@ -788,6 +788,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                 )
 
     def call_salt(self, command):
+        """Call a Salt command."""
         return self.call_process(command)
 
     def _install_package(self):
@@ -955,6 +956,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         }
 
     def call_salt(self, command):
+        """Call a Salt command."""
         return self.call_process(command)
 
     def _install_package(self):
