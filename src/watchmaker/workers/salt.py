@@ -240,6 +240,17 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ) as fh_:
             yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
 
+    def call_salt(self, command):
+        raise NotImplementedError
+
+    def _check_salt_version(self):
+        current_salt_version = self.call_process(['salt-call', '--version'])
+        if self.salt_version and self.salt_version in current_salt_version:
+            self.log.info('Salt version %s is already installed.', self.salt_version)
+            return True
+        self.log.info('Salt version was not specified or does not match.')
+        return False
+    
     def _get_formulas_conf(self):
 
         # Append Salt formulas bundled with Watchmaker package.
@@ -774,22 +785,19 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                     'parameter `git_repo` was not provided.'
                 )
 
-    def _check_salt_version(self):
-        current_salt_version = self.call_process(['salt-call', '--version'])
-        if self.salt_version and self.salt_version in current_salt_version:
-            self.log.info('Salt is already installed.')
-            return True
-        self.log.info('salt version is not installed')
-        return False
-
     def _install_package(self):
         if os.path.exists(self.salt_call) and self._check_salt_version():
             return
+        
+        if self._check_salt_version():
+            self.log.info('Salt version %s is already installed.', self.salt_version)
+            return
+    
+        self.log.info('Starting Salt installation')
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
 
-            self.log.info('Starting Salt installation')
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
                 watchmaker.utils.basename_from_uri(self.bootstrap_source)
@@ -941,6 +949,13 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         }
 
     def _install_package(self):
+       if os.path.exists(self.salt_call) and self._check_salt_version():
+        return
+
+        if self._check_salt_version():
+            self.log.info('Salt version %s is already installed.', self.salt_version)
+            return
+
         installer_name = os.sep.join((
             self.working_dir,
             watchmaker.utils.basename_from_uri(self.installer_url)
@@ -998,7 +1013,6 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         if self.pip_install:
             self._install_pip_packages()
         self.salt_call = SaltWindows._get_salt_call()
-        self.log.info("Salt minion installation completed successfully.")
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
