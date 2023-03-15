@@ -720,7 +720,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         self.bootstrap_source = \
             kwargs.pop('bootstrap_source', None) or ''
         self.git_repo = kwargs.pop('git_repo', None) or ''
-        self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
+        #self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
         self.salt_version = kwargs.pop('salt_version', None) or ''
 
         # Enforce lowercase and replace spaces with ^ in Linux
@@ -784,11 +784,11 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         return False
 
     def _install_package(self):
+        if os.path.exists(self.salt_call) and self._check_salt_version():
+            return
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
-            if self._check_salt_version():
-                return
 
             self.log.info('Starting Salt installation')
             salt_bootstrap_filename = os.sep.join((
@@ -995,14 +995,11 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         salt_svc = 'salt-minion'
         if os.path.exists(self.salt_call):
             salt_running, salt_enabled = self.service_status(salt_svc)
-            self.log.info('Skipping installation, already installed.')
-        else:
-            self.log.info('Installing Salt minion...')
-            self._install_package()
-            if self.pip_install:
-                self._install_pip_packages()
-            self.salt_call = SaltWindows._get_salt_call()
-            self.log.info("Salt minion installation completed successfully.")
+        self._install_package()
+        if self.pip_install:
+            self._install_pip_packages()
+        self.salt_call = SaltWindows._get_salt_call()
+        self.log.info("Salt minion installation completed successfully.")
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
         if salt_enabled:
