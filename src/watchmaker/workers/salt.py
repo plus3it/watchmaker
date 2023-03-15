@@ -720,7 +720,6 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         self.bootstrap_source = \
             kwargs.pop('bootstrap_source', None) or ''
         self.git_repo = kwargs.pop('git_repo', None) or ''
-        #self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
         self.salt_version = kwargs.pop('salt_version', None) or ''
 
         # Enforce lowercase and replace spaces with ^ in Linux
