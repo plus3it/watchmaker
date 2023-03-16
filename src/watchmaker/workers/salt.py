@@ -241,12 +241,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ) as fh_:
             yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
 
-    def call_salt(self, command):
-        """Call a Salt command."""
-        raise NotImplementedError
-
     def _check_salt_version(self):
-        current_salt_version = self.call_process(['salt-call', '--version'])
+        current_salt_version = self.call_process([self.salt_call, '--version'])
         if self.salt_version and self.salt_version in current_salt_version:
             self.log.info('Salt version %s is already installed.',
                           self.salt_version)
@@ -787,17 +783,8 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                     'parameter `git_repo` was not provided.'
                 )
 
-    def call_salt(self, command):
-        """Call a Salt command."""
-        return self.call_process(command)
-
     def _install_package(self):
         if os.path.exists(self.salt_call) and self._check_salt_version():
-            return
-
-        if self._check_salt_version():
-            self.log.info('Salt version %s is already installed.',
-                          self.salt_version)
             return
 
         self.log.info('Starting Salt installation')
@@ -955,17 +942,8 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             'winrepo_dir': os.sep.join((self.salt_win_repo, 'winrepo'))
         }
 
-    def call_salt(self, command):
-        """Call a Salt command."""
-        return self.call_process(command)
-
     def _install_package(self):
         if os.path.exists(self.salt_call) and self._check_salt_version():
-            return
-
-        if self._check_salt_version():
-            self.log.info('Salt version %s is already installed.',
-                          self.salt_version)
             return
 
         installer_name = os.sep.join((
