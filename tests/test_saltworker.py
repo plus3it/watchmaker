@@ -44,6 +44,7 @@ def saltworker_base_salt_args():
         '--return', 'local'
     ]
 
+
 @patch.object(SaltBase, "call_process", return_value="3005.1")
 def test_check_salt_version_matches(call_process_mock):
     """Return salt worker arguments."""
@@ -52,7 +53,7 @@ def test_check_salt_version_matches(call_process_mock):
         "salt_version": "3005.1"
     }
     saltworker_client = SaltBase(system_params, **salt_config)
-    assert saltworker_client._check_salt_version() == True
+    assert saltworker_client._check_salt_version() is True
 
 
 @patch.object(SaltBase, "call_process", return_value="3004.1")
@@ -63,10 +64,8 @@ def test_check_salt_version_does_not_matches(call_process_mock):
         "salt_version": "3005.1"
     }
     saltworker_client = SaltBase(system_params, **salt_config)
-    assert saltworker_client._check_salt_version() == False
+    assert saltworker_client._check_salt_version() is False
 
-
-        
 
 def test_default_valid_environments(saltworker_client):
     """
