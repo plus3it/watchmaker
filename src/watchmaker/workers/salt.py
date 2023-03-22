@@ -138,6 +138,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.pip_args = kwargs.pop('pip_args', None) or []
         self.pip_index = kwargs.pop('pip_index', None) or \
             'https://pypi.org/simple'
+        self.salt_version = kwargs.pop('salt_version', None) or ''
         self.salt_states = kwargs.pop('salt_states', 'highstate') or ''
         self.exclude_states = kwargs.pop('exclude_states', None) or ''
 
@@ -239,6 +240,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             encoding="utf-8"
         ) as fh_:
             yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
+
+    def _check_salt_version(self):
+        current_salt_version = self.call_process([self.salt_call, '--version'])
+        if self.salt_version and self.salt_version in current_salt_version:
+            self.log.info('Salt version %s is already installed.',
+                          self.salt_version)
+            return True
+        self.log.info('Salt version was not specified or does not match.')
+        return False
 
     def _get_formulas_conf(self):
 
@@ -720,7 +730,6 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         self.bootstrap_source = \
             kwargs.pop('bootstrap_source', None) or ''
         self.git_repo = kwargs.pop('git_repo', None) or ''
-        self.salt_version = kwargs.pop('salt_version', None) or ''
 
         # Enforce lowercase and replace spaces with ^ in Linux
         if self.admin_groups:
@@ -775,9 +784,14 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                 )
 
     def _install_package(self):
+        if os.path.exists(self.salt_call) and self._check_salt_version():
+            return
+
+        self.log.info('Starting Salt installation')
         if self.install_method.lower() == 'yum':
             self._install_from_yum(self.yum_pkgs)
         elif self.install_method.lower() == 'git':
+
             salt_bootstrap_filename = os.sep.join((
                 self.working_dir,
                 watchmaker.utils.basename_from_uri(self.bootstrap_source)
@@ -929,6 +943,9 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         }
 
     def _install_package(self):
+        if os.path.exists(self.salt_call) and self._check_salt_version():
+            return
+
         installer_name = os.sep.join((
             self.working_dir,
             watchmaker.utils.basename_from_uri(self.installer_url)
