@@ -403,66 +403,16 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             failed_states = state_ret
         return failed_states
 
-    def _install_pip(self, py_exec):
-        get_pip = resources.files('watchmaker._vendor').joinpath(
-            'pypa/get-pip/public/2.7/get-pip.py'
-        )
-        self.log.info(
-            'Attempting pip install using get-pip (%s)...', get_pip)
-        cmd = [
-            py_exec,
-            get_pip,
-            "--index-url",
-            self.pip_index
-        ]
-        self.call_process(cmd)
-
-    def _upgrade_pip(self, py_exec):
-        self.log.debug('Attempting to upgrade pip...')
-        cmd = [
-            py_exec,
-            "-m",
-            "pip",
-            "install",
-            "--upgrade",
-            "pip",
-            "--index-url",
-            self.pip_index
-        ]
-        self.call_process(cmd, raise_error=False)
-
-        ver = self.call_process([py_exec, '-m', 'pip', '--version'])
-        self.log.debug('Pip version: %s', ver['stdout'])
-
     def _install_pip_packages(self):
-        py_exec = self._get_grain('pythonexecutable')
-        self.log.debug('Salt Python interpreter: `%s`', py_exec)
-
-        try:
-            ver = self.call_process([
-                py_exec,
-                '-m',
-                'pip',
-                '--version'])
-            self.log.debug('Pip version: %s', ver['stdout'])
-        except WatchmakerError:
-            self.log.debug('Pip not installed for Salt interpreter!')
-            self._install_pip(py_exec)
-
-        self._upgrade_pip(py_exec)
-
         self.log.info(
             'Pip installing module(s): `%s`', " ".join(self.pip_install))
         pip_cmd = [
-            py_exec,
-            '-m',
-            'pip',
-            'install'
+            'pip.install',
         ]
-        pip_cmd.extend(self.pip_install)
-        pip_cmd.extend(['--index-url', self.pip_index])
+        pip_cmd.extend([','.join(self.pip_install)])
+        pip_cmd.extend(['index_url={0}'.format(self.pip_index)])
         pip_cmd.extend(self.pip_args)
-        self.call_process(pip_cmd)
+        self.run_salt(pip_cmd)
 
     def run_salt(self, command, **kwargs):
         """
