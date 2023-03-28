@@ -47,7 +47,7 @@ def saltworker_base_salt_args():
 
 @patch.object(SaltBase, "call_process", return_value="3005.1")
 def test_check_salt_version_matches(call_process_mock):
-    """Return salt worker arguments."""
+    """Check matching salt version."""
     system_params = {}
     salt_config = {
         "salt_version": "3005.1"
@@ -58,13 +58,30 @@ def test_check_salt_version_matches(call_process_mock):
 
 @patch.object(SaltBase, "call_process", return_value="3004.1")
 def test_check_salt_version_does_not_matches(call_process_mock):
-    """Return salt worker arguments."""
+    """Check not matching salt version."""
     system_params = {}
     salt_config = {
         "salt_version": "3005.1"
     }
     saltworker_client = SaltBase(system_params, **salt_config)
     assert saltworker_client._check_salt_version() is False
+
+
+def test_pip_package_installed(saltworker_client):
+    """Ensure pip package is installed with run_salt and correct arguments."""
+    saltworker_client.pip_install = ["dnspython"]
+    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+
+    expected = [
+        'pip.install',
+        'dnspython',
+        'index_url=https://pypi.org/simple'
+    ]
+
+    saltworker_client._install_pip_packages()
+
+    saltworker_client.run_salt.assert_called_with(expected)
+    assert saltworker_client.run_salt.call_count == 1
 
 
 def test_default_valid_environments(saltworker_client):
