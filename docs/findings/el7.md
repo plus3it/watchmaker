@@ -25,7 +25,7 @@
   .. _Verify and Correct File Permissions with RPM: #verify-and-correct-file-permissions-with-rpm
   .. _Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD: #ensure-users-re-authenticate-for-privilege-escalation---sudo-nopasswd
   .. _Operating system must display the date and time of the last successful account login upon logon: #operating-system-must-display-the-date-and-time-of-the-last-successful-account-logon-upon-logon
-  .. _Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full #configure-audit-storage-full-action
+  .. _Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full: #operating-system-must-be-configured-so-that-the-audit-system-takes-appropriate-action-when-the-audit-storage-volume-is-full
 
 
 
@@ -195,7 +195,7 @@ session    optional       pam_lastlog.so silent noupdate showfailed
 
 If the scanner does not properly handle this multi-line output, it will report a failure even though the required configuration-fixes are actually in place and functioning as desired.
 
-# Configure Audit Storage-Full Action
+# Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full
 
 Invalid Finding: The `disk_full_action` _is_ configured. However, it is not configured where scanners may be configured to look for it. The STIG-prescribed method expects configuration through the `audisp-remote` subsystem. However, watchmaker handles this configuration-item via the _main_ audit subsystem. This can be confirmed by executing:
 
