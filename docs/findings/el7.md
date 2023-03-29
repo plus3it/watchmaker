@@ -197,13 +197,13 @@ If the scanner does not properly handle this multi-line output, it will report a
 
 # Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full
 
-Invalid Finding: The `disk_full_action` _is_ configured. However, it is not configured where scanners may be configured to look for it. The STIG-prescribed method expects configuration through the `audisp-remote` subsystem. However, watchmaker handles this configuration-item via the _main_ audit subsystem. This can be confirmed by executing:
+Invalid Finding: The `disk_full_action` _is_ configured. However, it is not configured where scanners may be configured to look for it. The STIG-prescribed method expects configuration through the `audisp-remote` subsystem. Since configuration of the `audisp-remote` subsystem is inherently site-specific, generic executions of watchmaker do not attempt to configure it. Instead, watchmaker handles the `disk_full_action` configuration-item via the _main_ audit subsystem. This can be confirmed by executing:
 
 ```
 ( find /etc/audisp -type f ; find /etc/audit -type f ) | xargs grep disk_full_action
 ```
 
-This _should_ return the result:
+Executing the above _should_ return something like:
 
 ```
 /etc/audit/auditd.conf:disk_full_action = SUSPEND
