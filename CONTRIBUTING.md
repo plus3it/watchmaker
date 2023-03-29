@@ -82,6 +82,11 @@ To set up `watchmaker` for local development:
     tox -e docs
     ```
 
+    Note: depending on your development environment, your browser may not be
+    able to locate to above-created, rendered content. If so, it will be
+    necessary to copy or relocate the documentation to location that your
+    preferred-browser *can* access them.
+
 7.  Commit your changes and push your branch to GitHub:
 
     ```shell
