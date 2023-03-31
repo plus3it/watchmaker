@@ -177,16 +177,13 @@ Parameters supported by the Salt Worker:
         - numpy
     ```
 
-* `pip_args` (_list_): Options to be passed to pip when installing package(s). Options with values should be passed with the option and value as separate list items.
-
-    Linux example where emoji is a value that corresponds to the `--progress-bar` option:
+* `pip_args` (_list_): Options to pass to salt `pip.install` when installing python packages. See the [salt docs][3] for all options.
 
     ```yaml
     linux:
       - salt:
           pip_args:
-            - --ignore-installed
-            - --progress-bar=emoji
+            - pre_releases=True
     ```
 
 * `pip_index` (_string_): Base URL of Python Package Index.
@@ -365,3 +362,4 @@ status:
 [0]: https://yaml.org/spec/1.2/spec.html
 [1]: https://github.com/plus3it/watchmaker/blob/main/src/watchmaker/static/config.yaml
 [2]: https://watchmaker.cloudarmor.io/list.html
+[3]: https://docs.saltproject.io/en/latest/ref/modules/all/salt.modules.pip.html#salt.modules.pip.install
