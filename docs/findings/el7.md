@@ -25,78 +25,90 @@
   .. _Verify and Correct File Permissions with RPM: #verify-and-correct-file-permissions-with-rpm
   .. _Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD: #ensure-users-re-authenticate-for-privilege-escalation---sudo-nopasswd
   .. _Operating system must display the date and time of the last successful account login upon logon: #operating-system-must-display-the-date-and-time-of-the-last-successful-account-logon-upon-logon
+  .. _Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full: #operating-system-must-be-configured-so-that-the-audit-system-takes-appropriate-action-when-the-audit-storage-volume-is-full
+  .. _Operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited: #operating-system-must-be-configured-to-off-load-audit-logs-onto-a-different-system-or-storage-media-from-the-system-being-audited
 
 
 
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | Finding Summary                                                                                    | Finding Identifiers |
-  +====================================================================================================+=====================+
-  | `Use Only FIPS 140-2 Validated Ciphers`_                                                           | SV-86845            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-040110      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Use Only FIPS 140-2 Validated MACs`_                                                              | SV-86877            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-040400      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Modify the System Login Banner`_                                                                  | SV-86487            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-010050      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Enable Smart Card Login`_                                                                         | SV-86589            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-010500      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Configure the Firewalld Ports`_                                                                   | SV-86843            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-040100      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Set Default firewalld Zone for Incoming Packets`_                                                 | SV-86939            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-040810      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Disable Kernel Parameter for IP Forwarding`_                                                      | SV-86933            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-040740      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `The Installed Operating System Is Vendor Supported`_                                              | SV-86621            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-020250      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Install McAfee Virus Scanning Software`_                                                          | SV-86837            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-032000      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Enable FIPS Mode in GRUB2`_                                                                       | SV-86691            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-021350      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Configure AIDE to Use FIPS 140-2 for Validating Hashes`_                                          | SV-86697            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-021620      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Verify and Correct Ownership with RPM`_                                                           | SV-86473            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-010010      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Verify and Correct File Permissions with RPM`_                                                    | SV-86473            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-010010      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD`_                           | SV-86571            |
-  |                                                                                                    |                     |
-  |                                                                                                    | RHEL-07-010340      |
-  +----------------------------------------------------------------------------------------------------+---------------------+
-  | `Operating system must display the date and time of the last successful account logon upon logon`_ | RHEL-07-040530      |
-  |                                                                                                    |                     |
-  |                                                                                                    | SV-86899            |
-  +----------------------------------------------------------------------------------------------------+---------------------+
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | Finding Summary                                                                                                                      | Finding Identifiers |
+  +======================================================================================================================================+=====================+
+  | `Use Only FIPS 140-2 Validated Ciphers`_                                                                                             | SV-86845            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-040110      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Use Only FIPS 140-2 Validated MACs`_                                                                                                | SV-86877            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-040400      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Modify the System Login Banner`_                                                                                                    | SV-86487            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010050      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Enable Smart Card Login`_                                                                                                           | SV-86589            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010500      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Configure the Firewalld Ports`_                                                                                                     | SV-86843            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-040100      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Set Default firewalld Zone for Incoming Packets`_                                                                                   | SV-86939            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-040810      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Disable Kernel Parameter for IP Forwarding`_                                                                                        | SV-86933            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-040740      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `The Installed Operating System Is Vendor Supported`_                                                                                | SV-86621            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-020250      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Install McAfee Virus Scanning Software`_                                                                                            | SV-86837            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-032000      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Enable FIPS Mode in GRUB2`_                                                                                                         | SV-86691            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-021350      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Configure AIDE to Use FIPS 140-2 for Validating Hashes`_                                                                            | SV-86697            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-021620      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Verify and Correct Ownership with RPM`_                                                                                             | SV-86473            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010010      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Verify and Correct File Permissions with RPM`_                                                                                      | SV-86473            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010010      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD`_                                                             | SV-86571            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010340      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Operating system must display the date and time of the last successful account logon upon logon`_                                   | SV-86899            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-040530      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full`_       | SV-86711            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-030320      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited`_ | SV-95729            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-030201      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 
 ```
 
 # Use Only FIPS 140-2 Validated Ciphers
 
-Invalid Finding: Watchmaker implements setting valid through EL7 STIGv2R6 (released: October 2019)
+**Invalid Finding:**
+
+Watchmaker implements setting valid through EL7 STIGv2R6 (released: October 2019)
 
 # Use Only FIPS 140-2 Validated MACs 
 
@@ -104,31 +116,43 @@ Invalid Finding:  Watchmaker implements setting valid through EL7 STIGv2R6 (rele
 
 # Modify the System Login Banner
 
-Invalid Finding: Watchmaker implements site-prescribed banner. Scan-profile's regex may not be flexible enough to match the site-prescribed banner as implemented by watchmaker.
+**Invalid Finding:**
+
+Watchmaker implements site-prescribed banner. Scan-profile's regex may not be flexible enough to match the site-prescribed banner as implemented by watchmaker.
 
 # Enable Smart Card Login
 
-Conditionally-Valid Finding: Smart Card Login use and configuration is site-specific. Site has not provided specification for implementing this setting within scanned context.
+**Conditionally-Valid Finding:**
+
+Smart Card Login use and configuration is site-specific. Site has not provided specification for implementing this setting within scanned context.
 
 # Configure the Firewalld Ports
 
-Invalid Finding: Watchmaker implements setting. However, scanner regex may not be sufficiently-flexible in its specification.
+**Invalid Finding:**
+
+Watchmaker implements setting. However, scanner regex may not be sufficiently-flexible in its specification.
 
 # Set Default firewalld Zone for Incoming Packets
 
-Conditionally-Valid Finding: enabling "drop" as the default firewald zone breaks things like ping-sweeps (used by some IPAM solutions, security-scanners, etc.). Some sites will request the "drop" zone not be used. Scan-profiles should be updated to reflect the need to not have "drop" be the active zone.
+**Conditionally-Valid Finding:**
+
+Enabling "drop" as the default firewald zone breaks things like ping-sweeps (used by some IPAM solutions, security-scanners, etc.). Some sites will request the "drop" zone not be used. Scan-profiles should be updated to reflect the need to not have "drop" be the active zone.
 
 # Disable Kernel Parameter for IP Forwarding
 
-Invalid Finding: The prescribed `net.ipv4.ip_forward` value is set by watchmaker in `/etc/sysctl.d/99-sysctl.conf`. Executing `sysctl net.ipv4.ip_forward` on watchmaker-hardened system returns expected `net.ipv4.ip_forward = 0` result
+**Invalid Finding:**
+
+The prescribed `net.ipv4.ip_forward` value is set by watchmaker in `/etc/sysctl.d/99-sysctl.conf`. Executing `sysctl net.ipv4.ip_forward` on watchmaker-hardened system returns expected `net.ipv4.ip_forward = 0` result
 
 # The Installed Operating System Is Vendor Supported
 
-Invalid Finding: No programmatic validation or remediation prescribed or universally-implementable: requires manual validation with OS-vendor lifecycle information page(s). 
+**Invalid Finding:**
+
+No programmatic validation or remediation prescribed or universally-implementable: requires manual validation with OS-vendor lifecycle information page(s). 
 
 # Install McAfee Virus Scanning Software
 
-Conditionally-Valid Finding: 
+**Conditionally-Valid Finding:**
 
 * Where configured to do so, watchmaker will install HBSS or VSEL. Any scan-findings on systems watchmaker has been configured to install HBSS or VSEL are typically due to version mismatches between installed and scanned-for versions
 * Where required/scanned for but not installed, site will need to specify automatable installation-method that will produce match againste scanned-for configuration
@@ -136,25 +160,29 @@ Conditionally-Valid Finding:
 
 # Enable FIPS Mode in GRUB2
 
-Conditionally-Valid Finding: Both spel and watchmaker implement `fips=1` by default. If finding occurs, either:
+**Conditionally-Valid Finding:**
+
+Both spel and watchmaker implement `fips=1` by default. If finding occurs, either:
 
 * There is an error in scanner's validation-method
 * System has been intentionally de-configured for FIPS &mdash; typically due to hosted-software's requirements &mdash; and scanned-system will need to be granted a deployment security-exception.
 
 # Configure AIDE to Use FIPS 140-2 for Validating Hashes
 
-Invalid Finding: Because there is more than one way to implement this setting, scanners typically do not perform a real scan for this setting. Instead some scanners implement a null-test to flag the configuration-item to try to force a manual review. Watchmaker implements this configuration-titem by setting `NORMAL = FIPSR+sha512` in the `/etc/aide.conf` file: may be manually validated by executing `grep NORMAL\ = /etc/aide.conf`.
+**Invalid Finding:**
+
+Because there is more than one way to implement this setting, scanners typically do not perform a real scan for this setting. Instead some scanners implement a null-test to flag the configuration-item to try to force a manual review. Watchmaker implements this configuration-titem by setting `NORMAL = FIPSR+sha512` in the `/etc/aide.conf` file: may be manually validated by executing `grep NORMAL\ = /etc/aide.conf`.
 
 # Verify and Correct Ownership with RPM
 
-Invalid Finding:
+**Invalid Finding:**
 
 * Flags on system-journal ownership: Journal ownership settings are automatically reset by systemd (upon reboot) after hardening has run. Currently, no means of permanently remediating is possible.
 * Similarly, if HBSS or VSEL is installed, scan may flag on user-ownership depending on how site specifies installation of HBSS or VSEL. One would reasonably expect similar for other, third-party packages.  "Fixing" (per STIG guidance) would likely break the functioning of the HBSS/VSEL (or third-party) software
 
 # Verify and Correct File Permissions with RPM
 
-Invalid Finding:
+**Invalid Finding:**
 
 * Flags on system-journal ownership: Journal ownership settings are automatically reset by systemd (upon reboot) after hardening has run. Currently, no means of permanently remediating is possible.
 * May also flag on vendor-delivered CA-trust files which are dynamicly-injected into relevant trust-stores. Currently, no known means of permanently remediating is possible.
@@ -162,11 +190,13 @@ Invalid Finding:
 
 # Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
 
-Conditionally-Valid Finding: Flagged-configuration is frequently required for properly enabling a "break-glass" account at provisioning-time. This is especially so in consoleless environments (like AWS). Disable scan or ignore scan-findings when such accounts are required.
+**Conditionally-Valid Finding:**
+
+Flagged-configuration is frequently required for properly enabling a "break-glass" account at provisioning-time. This is especially so in consoleless environments (like AWS). Disable scan or ignore scan-findings when such accounts are required.
 
 # Operating system must display the date and time of the last successful account logon upon logon
 
-Invalid Finding:
+**Invalid Finding:**
 
 Some scanners implement a scan equivalent to:
 
@@ -189,3 +219,24 @@ session    optional       pam_lastlog.so silent noupdate showfailed
 ```
 
 If the scanner does not properly handle this multi-line output, it will report a failure even though the required configuration-fixes are actually in place and functioning as desired.
+
+# Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full
+
+**Invalid Finding:**
+
+The `disk_full_action` _is_ configured. However, it is not configured where scanners may be configured to look for it. The STIG-prescribed method expects configuration through the `audisp-remote` subsystem. Since configuration of the `audisp-remote` subsystem is inherently site-specific, generic executions of watchmaker do not attempt to configure it. Instead, watchmaker handles the `disk_full_action` configuration-item via the _main_ audit subsystem. This can be confirmed by executing:
+
+```
+( find /etc/audisp -type f ; find /etc/audit -type f ) | xargs grep disk_full_action
+```
+
+Executing the above _should_ return something like:
+
+```
+/etc/audit/auditd.conf:disk_full_action = SUSPEND
+```
+# Operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited
+
+**Invalid Finding:**
+
+Configuration of the `audisp-remote` subsystem is inherently site-specific: quite frequently, the `audisp-remote` subsystem is wholly supplanted by other offload-methods (e.g., Splunk, FluentBit, CloudWatch Logs, etc.). Therefore, neither generic executions of watchmaker nor executions that include configuration of `audisp-remote` alternatives will attempt to configure it.
