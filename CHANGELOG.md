@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.27.0](https://github.com/plus3it/watchmaker/releases/tag/0.27.0)
+
+**Released**: 2023.03.31
+
+**Summary**:
+
+*   Releases support for EL8 platforms, to include Red Hat 8, CentOS 8 Stream, and
+    Oracle Linux 8. Future work may also add support for Rocky Linux 8 and Alma
+    Linux 8
+    -   CAVEAT: With this release, the Watchmaker standalone binary for EL8
+        **does not** work when the system is FIPS-enabled. The problem is not yet
+        entirely understood. Further investigation is needed before this issue
+        can be resolved
+*   Updates salt worker to avoid re-installing salt when `salt-call --version`
+    matches the `salt_version` in the Watchmaker config
+*   Updates EL7 findings documentation to line up with latest stig version
+*   Installs `dnspython` package when using default Watchmaker config, to support
+    the join-domain `nsupdate` state
+*   ash-linux-formula
+    -   Adds handlers to address findings in latest stig versions and increase coverage
+*   mcafee-agent-formula
+    -   Adds a `trellix-agent` salt state to support the new name for the software
+*   join-domain-formula
+    -   Linux: Adds an `nsupdate` salt state that will register forward and reverse
+        dns records
+    -   Windows: Updates collision handling and join actions to use the same domain
+        controller
+    -   Windows: Supports collision handling where an existing computer object
+        was created by a different service account than is now specified for the
+        join action
+*   winrepo: Adds a `trellix-agent` package definition
+
+
 ## [0.26.5](https://github.com/plus3it/watchmaker/releases/tag/0.26.5)
 
 **Released**: 2023.03.10
