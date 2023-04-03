@@ -46,7 +46,8 @@ changelog.md
 
 ## Supported Operating Systems
 
-*   Enterprise Linux 7 (RHEL/CentOS/etc)
+*   Enterprise Linux 8 (RHEL/CentOS Stream/Oracle Linux)
+*   Enterprise Linux 7 (RHEL/CentOS)
 *   Windows Server 2019
 *   Windows Server 2016
 *   Windows Server 2012 R2

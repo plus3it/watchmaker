@@ -21,8 +21,8 @@
 
 ## Linux
 
-- Red Hat Enterprise Linux STIG Benchmark (EL7) (EL8 work in progress)
-- OpenSCAP Security Guide (EL7) (EL8 work in progress)
+- Red Hat Enterprise Linux STIG Benchmark (EL7 and EL8)
+- OpenSCAP Security Guide (EL7 and EL8)
 
 <br>
 

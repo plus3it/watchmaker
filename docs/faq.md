@@ -64,6 +64,11 @@ label may not be related to the error you are encountering.
 Watchmaker is supported on RedHat 7 and CentOS 7. See the [index](index)
 page for a list of all supported operating systems.
 
+## Does watchmaker support Enterprise Linux 8?
+
+Watchmaker is supported on RedHat 8, CentOS 8 Stream, and Oracle Linux 8. See the
+[index](index) page for a list of all supported operating systems.
+
 ## How can I exclude salt states when executing watchmaker?
 
 The Salt worker in Watchmaker supports an `exclude_states` argument. When
