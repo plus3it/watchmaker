@@ -31,9 +31,20 @@ before_install:
 install:
   - pip install -r requirements/pip.txt
   - pip install -r requirements/tox.txt
+  # Install codecov uploader
+  - curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
+  - gpgv codecov.SHA256SUM.sig codecov.SHA256SUM
+  - shasum -a 256 -c codecov.SHA256SUM
+  - chmod +x codecov
+  - sudo mv codecov /usr/local/bin
+  # Check versions
   - virtualenv --version
   - pip --version
   - tox --version
+  - codecov --version
 script:
   - tox -v
 before_script:
