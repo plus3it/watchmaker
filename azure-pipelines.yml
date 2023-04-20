@@ -147,7 +147,7 @@ jobs:
             $ErrorActionPreference = "Stop"
             $APP_VERSION = (Select-String -Path "$(artifactDirFull)\setup.cfg" -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
             $APP_NAME = "watchmaker"
-            $env:SATS_SLUG = "plus3it/watcmaker"
+            $env:SATS_SLUG = "plus3it/watchmaker"
             $env:SATS_TAG = $APP_VERSION
             $env:SATS_COMMITTISH = $env:BUILD_SOURCEVERSION
             $env:SATS_BODY = "* [${APP_NAME} v${APP_VERSION} CHANGELOG](https://github.com/plus3it/${APP_NAME}/blob/${APP_VERSION}/CHANGELOG.md)"
