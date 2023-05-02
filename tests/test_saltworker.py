@@ -45,7 +45,13 @@ def saltworker_base_salt_args():
     ]
 
 
-@patch.object(SaltBase, "call_process", return_value="3005.1")
+@patch.object(
+    SaltBase,
+    "call_process",
+    return_value={
+        "retcode": 0, "stdout": b"salt-call 3005.1\r\n", "stderr": b""
+    },
+)
 def test_check_salt_version_matches(call_process_mock):
     """Check matching salt version."""
     system_params = {}
@@ -56,7 +62,13 @@ def test_check_salt_version_matches(call_process_mock):
     assert saltworker_client._check_salt_version() is True
 
 
-@patch.object(SaltBase, "call_process", return_value="3004.1")
+@patch.object(
+    SaltBase,
+    "call_process",
+    return_value={
+        "retcode": 0, "stdout": b"salt-call 3004.1\r\n", "stderr": b""
+    },
+)
 def test_check_salt_version_does_not_matches(call_process_mock):
     """Check not matching salt version."""
     system_params = {}
