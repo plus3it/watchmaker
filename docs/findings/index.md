@@ -22,3 +22,11 @@ configuration-state.
 
 el7.md
 ```
+
+## Common Scan Findings for EL8
+
+```{toctree}
+:maxdepth: 1
+
+el8.md
+```
