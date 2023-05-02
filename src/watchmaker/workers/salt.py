@@ -243,7 +243,10 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
     def _check_salt_version(self):
         current_salt_version = self.call_process([self.salt_call, '--version'])
-        if self.salt_version and self.salt_version in current_salt_version:
+        if (
+            self.salt_version
+            and self.salt_version in current_salt_version["stdout"].decode()
+        ):
             self.log.info('Salt version %s is already installed.',
                           self.salt_version)
             return True
