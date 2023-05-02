@@ -10,13 +10,13 @@
 # Findings Summary-Table
 
 ```{eval-rst}
-  .. _Prevent system daemons from using Kerberos for authentication: #prevent-system-daemons-from-using-Kerberos-for-authentication
+  .. _Prevent System Daemons From Using Kerberos For Authentication: #prevent-system-daemons-from-using-kerberos-for-authentication
 
   +-------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                     | Finding Identifiers |
   +=====================================================================================+=====================+
-  | Prevent System Daemons From Using Kerberos For Authentication                       | V-230238	          |
-  |                                                                                     |         	          |
+  | `Prevent System Daemons From Using Kerberos For Authentication`_                    | V-230238            |
+  |                                                                                     |                     |
   |                                                                                     | RHEL-08-010161      |
   +-------------------------------------------------------------------------------------+---------------------+
 ```
