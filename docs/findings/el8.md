@@ -18,6 +18,7 @@
   .. _The OS must mount <tt>/tmp</tt> with the <tt>noexec</tt> option: #the-os-must-mount-`/tmp`-with-the-noexec-option
   .. _The OS Must Ensure Session Control Is Automatically Started At Shell Initialization: #the-os-must-ensure-session-control-is-automatically-started-at-shell-initialization
   .. _User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime: #user-account-passwords-must-be-restricted-to-a-60-day-maximum-lifetime
+  .. _OS Must Be Configured In The Password-Auth File To Prohibit Password Reuse For A Minimum Of Five Generations: #os-must-prohibit-password-reuse-for-a-minimum-of-five-generations
 
 
   +----------------------------------------------------------------------------------------+---------------------+
@@ -54,6 +55,10 @@
   | `User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime`_              | V-230367            |
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-020210      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `OS Must Prohibit Password Reuse For A Minimum Of Five Generations`_                   | V-230368            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-020220      |
   +----------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -187,3 +192,27 @@ awk -F: '$2 !~ /^[!*]*/ && ( $5 > 60 || $5 <= 0 ) { print $0 }' /etc/shadow
 ~~~
 
 The above adds the further check of each line of the `/etc/shadow` file's second field (hashed password string) for the tokens indicating a locked-password account (`!` and/or `*`). Adding this further check should yield a null return
+
+# OS Must Prohibit Password Reuse For A Minimum Of Five Generations
+
+This is a spurious finding. Per the STIG, `watchmaker` updates the `/etc/pam.d/password-auth` file to ensure the presence of a `remember=5` token on the file's `password required pam_pwhistory.so` line:
+
+* If the a line exists starting with `pasword required pam_pwhistory.so` but has a non-conformant value for the `remember=` token, the non-conformant value is replaced with `5`
+* If the a line exists starting with `pasword required pam_pwhistory.so` but has no `remember=` token, one with a suitable value is appended
+* If the a line starting with `pasword required pam_pwhistory.so` does not exist, one is created with _only_ the `remember=5` token present
+
+Some scanners _may_ be configured to look for a greater number of tokens set than _just_ the `remember=5` token. E.g., some may look for something more like:
+
+~~~
+password required pam_pwhistory.so use_authtok remember=5 retry=3
+~~~
+
+**Proof of Correctness:**
+
+To validate that the required `remember=5` is present, execute:
+
+~~~
+grep -l -n remember=5 $( readlink -f /etc/pam.d/password-auth )
+~~~
+
+The above _should_ return either `/etc/authselect/password-auth` or `/etc/pam.d/password-auth`; if the above has a null return, re-execute the `ash-linux.el8.STIGbyID.cat2.RHEL-08-020221` Saltstack state and re-validate.
