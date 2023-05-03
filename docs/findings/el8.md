@@ -186,4 +186,4 @@ To validate that passwordless accounts are properly configured, instead execute:
 awk -F: '$2 !~ /^[!*]*/ && ( $5 > 60 || $5 <= 0 ) { print $0 }' /etc/shadow
 ~~~
 
-The above adds the further check of each line of the `/etc/shadow` file's second field (hashed password string) for the tokens indicating a locked-password account (`!` and/or `*`). Adding this further check should yeild a null return
+The above adds the further check of each line of the `/etc/shadow` file's second field (hashed password string) for the tokens indicating a locked-password account (`!` and/or `*`). Adding this further check should yield a null return
