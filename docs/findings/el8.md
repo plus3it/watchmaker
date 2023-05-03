@@ -17,6 +17,8 @@
   .. _The OS must mount <tt>/tmp</tt> with the <tt>nosuid</tt> option: #the-os-must-mount-`/tmp`-with-the-nosuid-option
   .. _The OS must mount <tt>/tmp</tt> with the <tt>noexec</tt> option: #the-os-must-mount-`/tmp`-with-the-noexec-option
   .. _The OS Must Ensure Session Control Is Automatically Started At Shell Initialization: #the-os-must-ensure-session-control-is-automatically-started-at-shell-initialization
+  .. _User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime: #user-account-passwords-must-be-restricted-to-a-60-day-maximum-lifetime
+
 
   +----------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                        | Finding Identifiers |
@@ -48,6 +50,10 @@
   | `The OS Must Ensure Session Control Is Automatically Started At Shell Initialization`_ | V-230349            |
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-020041      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime`_              | V-230367            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-020210      |
   +----------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -152,3 +158,32 @@ fi
 ~~~
 
 This file addresses the concerns of the STIG finding-ID, but does so in a functionally-safer way. The additional 'safing' included in the watchmaker-placed script may cause scanners that are too-inflexibly coded to spuriously declare a finding.
+
+# User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime
+
+Some, locally-managed user's accounts are configured _only_ for token-based logins (SSH keys, GSSAPI, etc.). The accounts are typically configured with no passwords. Some of these accounts also serve a "break-glass" function. If passwordless accounts are configured with password-expiry enabled, they may become no longer fit for purpose once they've reached their expiry.
+
+Many scanners are not adequately configured to differentiate between passwordless and password-enabled locally-managed accounts. Typically, poorly-configured scanners will execute a compliance-test equivalent to:
+
+~~~
+awk -F: '$5 > 60 { print $1 " " $5 }' /etc/shadow
+awk -F: '$5 <= 0 { print $1 " " $5 }' /etc/shadow
+~~~
+
+Or, expressed more compactly:
+
+~~~
+awk -F: '$5 > 60 || $5 <= 0 { print $0 }' /etc/shadow
+~~~
+
+If so, such scanners will assert a finding that is not actually valid for locked-password accounts. 
+
+**Proof of Correctness:**
+
+To validate that passwordless accounts are properly configured, instead execute:
+
+~~~
+awk -F: '$2 !~ /^[!*]*/ && ( $5 > 60 || $5 <= 0 ) { print $0 }' /etc/shadow
+~~~
+
+The above adds the further check of each line of the `/etc/shadow` file's second field (hashed password string) for the tokens indicating a locked-password account (`!` and/or `*`). Adding this further check should yeild a null return
