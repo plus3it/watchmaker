@@ -15,6 +15,7 @@
   .. _A Separate Filesystem Must Be Used For the <tt>/tmp</tt> Directory: #a-separate-filesystem-must-be-used-for-the-tmp-directory
   .. _The OS must mount <tt>/tmp</tt> with the nodev option: #the-os-must-mount-`/tmp`-with-the-nodev-option
   .. _The OS must mount <tt>/tmp</tt> with the <tt>nosuid</tt> option: #the-os-must-mount-`/tmp`-with-the-nosuid-option
+  .. _The OS must mount <tt>/tmp</tt> with the <tt>noexec</tt> option: #the-os-must-mount-`/tmp`-with-the-noexec-option
 
   +-------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                     | Finding Identifiers |
@@ -38,6 +39,10 @@
   | `The OS must mount /tmp with the nosuid option`_                                    | V-230512            |
   |                                                                                     |                     |
   |                                                                                     | RHEL-08-040124      |
+  +-------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the noexec option`_                                    | V-230514            |
+  |                                                                                     |                     |
+  |                                                                                     | RHEL-08-040125      |
   +-------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -74,7 +79,7 @@ grep -w /tmp /proc/mounts
 
 If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
 
-# The OS must mount `/tmp` with the nodev option
+# The OS must mount `/tmp` with the `nodev` option
 
 When using Amazon Machine Images, Azure VM-templates, or the like, that have been built using the [spel automation](https://github.com/plus3it/spel), the `tmp.mount` systemd unit is used to manage mounting of the `tmpfs`-based `/tmp` directory. Mount options &ndash; such as `nodev` &ndash; are defined through two files:
 
@@ -93,7 +98,7 @@ grep -w /tmp /proc/mounts | grep nodev
 
 If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
 
-# The OS must mount /tmp with the nosuid option
+# The OS must mount `/tmp` with the `nosuid` option
 
 As with the "<i><a href="#the-os-must-mount-`/tmp`-with-the-nodev-option">The OS must mount `/tmp` with the nodev option</a></i>" finding, this finding is due to an incompatibility between how the scanner checks for the setting and how the setting is actually implemented.
 
@@ -103,6 +108,20 @@ To validate that the required-setting is _actually_ present, execute:
 
 ~~~
 grep -w /tmp /proc/mounts | grep nosuid
+~~~
+
+If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
+
+# The OS must mount `/tmp` with the `noexec` option
+
+As with the "<i><a href="#the-os-must-mount-`/tmp`-with-the-nodev-option">The OS must mount `/tmp` with the nodev option</a></i>" finding, this finding is due to an incompatibility between how the scanner checks for the setting and how the setting is actually implemented.
+
+**Proof of Correctness:**
+
+To validate that the required-setting is _actually_ present, execute:
+
+~~~
+grep -w /tmp /proc/mounts | grep noexec
 ~~~
 
 If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
