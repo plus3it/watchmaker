@@ -197,9 +197,9 @@ The above adds the further check of each line of the `/etc/shadow` file's second
 
 This is a spurious finding. Per the STIG, `watchmaker` updates the `/etc/pam.d/password-auth` file to ensure the presence of a `remember=5` token on the file's `password required pam_pwhistory.so` line:
 
-* If a line exists starting with `pasword required pam_pwhistory.so` but has a non-conformant value for the `remember=` token, the non-conformant value is replaced with `5`
-* If a line exists starting with `pasword required pam_pwhistory.so` but has no `remember=` token, one with a suitable value is appended
-* If a line starting with `pasword required pam_pwhistory.so` does not exist, one is created with _only_ the `remember=5` token present
+* If a line exists starting with `password required pam_pwhistory.so` but has a non-conformant value for the `remember=` token, the non-conformant value is replaced with `5`
+* If a line exists starting with `password required pam_pwhistory.so` but has no `remember=` token, one with a suitable value is appended
+* If a line starting with `password required pam_pwhistory.so` does not exist, one is created with _only_ the `remember=5` token present
 
 Some scanners _may_ be configured to look for a greater number of tokens set than _just_ the `remember=5` token. E.g., some may look for something more like:
 
