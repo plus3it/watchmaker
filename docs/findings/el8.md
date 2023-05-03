@@ -14,6 +14,7 @@
   .. _Users Must Provide A Password For Privilege Escalation: #users-must-provide-a-password-for-privilege-escalation
   .. _A Separate Filesystem Must Be Used For the <tt>/tmp</tt> Directory: #a-separate-filesystem-must-be-used-for-the-tmp-directory
   .. _The OS must mount <tt>/tmp</tt> with the nodev option: #the-os-must-mount-`/tmp`-with-the-nodev-option
+  .. _The OS must mount <tt>/tmp</tt> with the <tt>nosuid</tt> option: #the-os-must-mount-`/tmp`-with-the-nosuid-option
 
   +-------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                     | Finding Identifiers |
@@ -33,6 +34,10 @@
   | `The OS must mount /tmp with the nodev option`_                                     | V-230511            |
   |                                                                                     |                     |
   |                                                                                     | RHEL-08-040123      |
+  +-------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the nosuid option`_                                    | V-230512            |
+  |                                                                                     |                     |
+  |                                                                                     | RHEL-08-040124      |
   +-------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -59,6 +64,16 @@ If a `sudo`-enabled user is _not_ password-enabled (e.g, if the user is used onl
 
 When using Amazon Machine Images, Azure VM-templates, or the like, that have been built using the [spel automation](https://github.com/plus3it/spel), the `/tmp` directory in the resultant EC2 (VM, etc.) is hosted on a psuedo-filesystem of type `tmpfs`. This is done using the `tmp.mount` systemd unit. Many security-scanning tools that look for `/tmp`-related mount-information do not know how to properly scan when `tmp` is used this way and will, as a result, report a (spurious) finding.
 
+**Proof of Correctness:**
+
+To validate that the required-setting is _actually_ present, execute:
+
+~~~
+grep -w /tmp /proc/mounts
+~~~
+
+If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
+
 # The OS must mount `/tmp` with the nodev option
 
 When using Amazon Machine Images, Azure VM-templates, or the like, that have been built using the [spel automation](https://github.com/plus3it/spel), the `tmp.mount` systemd unit is used to manage mounting of the `tmpfs`-based `/tmp` directory. Mount options &ndash; such as `nodev` &ndash; are defined through two files:
@@ -67,3 +82,27 @@ When using Amazon Machine Images, Azure VM-templates, or the like, that have bee
 - `/etc/systemd/system/tmp.mount.d/options.conf`: This file is installed via watchmaker's state-handler, `ash-linux.el8.STIGbyID.cat2.RHEL-08-040123`. This file overrides the values held in the vendor-managed `systemd` RPM's file
 
 Many security-scanners do not know how to find the mount-options for the `/tmp` (pseudo) filesystem when it is managed via systemd and uses these files to set the mount options. As a result, such scanners will report a (spurious) finding
+
+**Proof of Correctness:**
+
+To validate that the required-setting is _actually_ present, execute:
+
+~~~
+grep -w /tmp /proc/mounts | grep nodev
+~~~
+
+If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
+
+# The OS must mount /tmp with the nosuid option
+
+As with the "<i><a href="#the-os-must-mount-`/tmp`-with-the-nodev-option">The OS must mount `/tmp` with the nodev option</a></i>" finding, this finding is due to an incompatibility between how the scanner checks for the setting and how the setting is actually implemented.
+
+**Proof of Correctness:**
+
+To validate that the required-setting is _actually_ present, execute:
+
+~~~
+grep -w /tmp /proc/mounts | grep nosuid
+~~~
+
+If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
