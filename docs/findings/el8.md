@@ -16,34 +16,39 @@
   .. _The OS must mount <tt>/tmp</tt> with the nodev option: #the-os-must-mount-`/tmp`-with-the-nodev-option
   .. _The OS must mount <tt>/tmp</tt> with the <tt>nosuid</tt> option: #the-os-must-mount-`/tmp`-with-the-nosuid-option
   .. _The OS must mount <tt>/tmp</tt> with the <tt>noexec</tt> option: #the-os-must-mount-`/tmp`-with-the-noexec-option
+  .. _The OS Must Ensure Session Control Is Automatically Started At Shell Initialization: #the-os-must-ensure-session-control-is-automatically-started-at-shell-initialization
 
-  +-------------------------------------------------------------------------------------+---------------------+
-  | Finding Summary                                                                     | Finding Identifiers |
-  +=====================================================================================+=====================+
-  | `Prevent System Daemons From Using Kerberos For Authentication`_                    | V-230238            |
-  |                                                                                     |                     |
-  |                                                                                     | RHEL-08-010161      |
-  +-------------------------------------------------------------------------------------+---------------------+
-  | `Users Must Provide A Password For Privilege Escalation`_                           | V-230271            |
-  |                                                                                     |                     |
-  |                                                                                     | RHEL-08-010380      |
-  +-------------------------------------------------------------------------------------+---------------------+
-  | `A Separate Filesystem Must Be Used For the /tmp Directory`_                        | V-230295            |
-  |                                                                                     |                     |
-  |                                                                                     | RHEL-08-010543      |
-  +-------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the nodev option`_                                     | V-230511            |
-  |                                                                                     |                     |
-  |                                                                                     | RHEL-08-040123      |
-  +-------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the nosuid option`_                                    | V-230512            |
-  |                                                                                     |                     |
-  |                                                                                     | RHEL-08-040124      |
-  +-------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the noexec option`_                                    | V-230514            |
-  |                                                                                     |                     |
-  |                                                                                     | RHEL-08-040125      |
-  +-------------------------------------------------------------------------------------+---------------------+
+  +----------------------------------------------------------------------------------------+---------------------+
+  | Finding Summary                                                                        | Finding Identifiers |
+  +========================================================================================+=====================+
+  | `Prevent System Daemons From Using Kerberos For Authentication`_                       | V-230238            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-010161      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `Users Must Provide A Password For Privilege Escalation`_                              | V-230271            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-010380      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `A Separate Filesystem Must Be Used For the /tmp Directory`_                           | V-230295            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-010543      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the nodev option`_                                        | V-230511            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-040123      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the nosuid option`_                                       | V-230512            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-040124      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the noexec option`_                                       | V-230514            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-040125      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `The OS Must Ensure Session Control Is Automatically Started At Shell Initialization`_ | V-230349            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-020041      |
+  +----------------------------------------------------------------------------------------+---------------------+
 ```
 
 
@@ -125,3 +130,25 @@ grep -w /tmp /proc/mounts | grep noexec
 ~~~
 
 If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
+
+# The OS Must Ensure Session Control Is Automatically Started At Shell Initialization
+
+As implemented, watchmaker places an `/etc/profile.d/tmux.sh` file that looks like:
+
+~~~
+# Check if shell is interactive
+if [[ $- == *i* ]] && [[ $( rpm --quiet -q tmux )$? -eq 0 ]]
+then
+   parent=$( ps -o ppid= -p $$ )
+   name=$( ps -o comm= -p $parent )
+
+   # Check if controlling-process is target-value
+   case "$name" in
+      sshd|login)
+         exec tmux
+         ;;
+   esac
+fi
+~~~
+
+This file addresses the concerns of the STIG finding-ID, but does so in a functionally-safer way. The additional 'safing' included in the watchmaker-placed script may cause scanners that are too-inflexibly coded to spuriously declare a finding.
