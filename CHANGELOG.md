@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.27.1](https://github.com/plus3it/watchmaker/releases/tag/0.27.1)
+
+**Released**: 2023.05.08
+
+**Summary**:
+
+*   Fixes typo in upload of Windows standalone binary to GitHub Releases
+*   Documents known/spurious EL8 findings that scanning utilities may flag
+    erroneously
+*   Fixes the check that skips reinstalling salt when the correct version is
+    already installed
+*   Publishes EL8 scap scans as a release artifact to `watchmaker.cloudarmor.io`,
+    alongside the standalone binaries
+*   Updates scap pillar in default salt content to run scans properly on CentOS
+    Stream and scap version 1.3
+*   ash-linux-formula
+    -   Fixes oscap remediation on CentOS Stream 8 and Oracle Linux 8
+    -   Addresses numerous additional STIG findings on EL8 systems that were not
+        addressed with oscap remediation
+    -   Attempts to address EL8 issue with aws-cli, where fapolicyd blocks execution
+*   forescout-secure-connector-formula
+    -   Establishes symlink so logs are written to `/var/log` partition
+*   scap-formula
+    - Updates openscap content to v0.1.67, using scap 1.3 datastreams
+
 ## [0.27.0](https://github.com/plus3it/watchmaker/releases/tag/0.27.0)
 
 **Released**: 2023.03.31
@@ -9,10 +34,11 @@
 *   Releases support for EL8 platforms, to include Red Hat 8, CentOS 8 Stream, and
     Oracle Linux 8. Future work may also add support for Rocky Linux 8 and Alma
     Linux 8
-    -   CAVEAT: With this release, the Watchmaker standalone binary for EL8
-        **does not** work when the system is FIPS-enabled. The problem is not yet
-        entirely understood. Further investigation is needed before this issue
-        can be resolved
+    -   CAVEAT: With this release, on FIPS-enabled EL8 systems, please use the
+        [PyPi install or the source install methods](https://watchmaker.cloudarmor.io/en/stable/installation.html).
+        Currently, the standalone method for EL8 **does not** work when the system
+        is FIPS-enabled. The problem is not yet entirely understood. Further investigation
+        is needed before this issue can be resolved
 *   Updates salt worker to avoid re-installing salt when `salt-call --version`
     matches the `salt_version` in the Watchmaker config
 *   Updates EL7 findings documentation to line up with latest stig version
