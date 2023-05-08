@@ -19,6 +19,7 @@
   .. _The OS Must Ensure Session Control Is Automatically Started At Shell Initialization: #the-os-must-ensure-session-control-is-automatically-started-at-shell-initialization
   .. _User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime: #user-account-passwords-must-be-restricted-to-a-60-day-maximum-lifetime
   .. _OS Must Be Configured In The Password-Auth File To Prohibit Password Reuse For A Minimum Of Five Generations: #os-must-prohibit-password-reuse-for-a-minimum-of-five-generations
+  .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
 
 
   +----------------------------------------------------------------------------------------+---------------------+
@@ -60,6 +61,10 @@
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-020220      |
   +----------------------------------------------------------------------------------------+---------------------+
+  | `The Installed Operating System Is Not Vendor Supported`_                              | V-230221            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-010000      |
+  +----------------------------------------------------------------------------------------+---------------------+
 ```
 
 
@@ -97,6 +102,8 @@ If this returns null, the scan-result is valid; otherwise the scan-result is _in
 
 # The OS must mount `/tmp` with the `nodev` option
 
+**Invalid Finding:**
+
 When using Amazon Machine Images, Azure VM-templates, or the like, that have been built using the [spel automation](https://github.com/plus3it/spel), the `tmp.mount` systemd unit is used to manage mounting of the `tmpfs`-based `/tmp` directory. Mount options &ndash; such as `nodev` &ndash; are defined through two files:
 
 - `/usr/lib/systemd/system/tmp.mount`: This file contains the vendor-defined defaults and is installed via the `systemd` RPM
@@ -116,6 +123,8 @@ If this returns null, the scan-result is valid; otherwise the scan-result is _in
 
 # The OS must mount `/tmp` with the `nosuid` option
 
+**Invalid Finding:**
+
 As with the "<i><a href="#the-os-must-mount-`/tmp`-with-the-nodev-option">The OS must mount `/tmp` with the nodev option</a></i>" finding, this finding is due to an incompatibility between how the scanner checks for the setting and how the setting is actually implemented.
 
 **Proof of Correctness:**
@@ -130,6 +139,8 @@ If this returns null, the scan-result is valid; otherwise the scan-result is _in
 
 # The OS must mount `/tmp` with the `noexec` option
 
+**Invalid Finding:**
+
 As with the "<i><a href="#the-os-must-mount-`/tmp`-with-the-nodev-option">The OS must mount `/tmp` with the nodev option</a></i>" finding, this finding is due to an incompatibility between how the scanner checks for the setting and how the setting is actually implemented.
 
 **Proof of Correctness:**
@@ -143,6 +154,8 @@ grep -w /tmp /proc/mounts | grep noexec
 If this returns null, the scan-result is valid; otherwise the scan-result is _invalid_.
 
 # The OS Must Ensure Session Control Is Automatically Started At Shell Initialization
+
+**Invalid Finding:**
 
 As implemented, watchmaker places an `/etc/profile.d/tmux.sh` file that looks like:
 
@@ -165,6 +178,8 @@ fi
 This file addresses the concerns of the STIG finding-ID, but does so in a functionally-safer way. The additional 'safing' included in the watchmaker-placed script may cause scanners that are too-inflexibly coded to spuriously declare a finding.
 
 # User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime
+
+**Invalid Finding:**
 
 Some, locally-managed user's accounts are configured _only_ for token-based logins (SSH keys, GSSAPI, etc.). The accounts are typically configured with no passwords. Some of these accounts also serve a "break-glass" function. If passwordless accounts are configured with password-expiry enabled, they may become no longer fit for purpose once they've reached their expiry.
 
@@ -195,6 +210,8 @@ The above adds the further check of each line of the `/etc/shadow` file's second
 
 # OS Must Prohibit Password Reuse For A Minimum Of Five Generations
 
+**Invalid Finding:**
+
 This is a spurious finding. Per the STIG, `watchmaker` updates the `/etc/pam.d/password-auth` file to ensure the presence of a `remember=5` token on the file's `password required pam_pwhistory.so` line:
 
 * If a line exists starting with `password required pam_pwhistory.so` but has a non-conformant value for the `remember=` token, the non-conformant value is replaced with `5`
@@ -216,3 +233,22 @@ grep -l -n remember=5 $( readlink -f /etc/pam.d/password-auth )
 ~~~
 
 The above _should_ return either `/etc/authselect/password-auth` or `/etc/pam.d/password-auth`; if the above has a null return, re-execute the `ash-linux.el8.STIGbyID.cat2.RHEL-08-020221` Saltstack state and re-validate.
+
+# The Installed Operating System Is Not Vendor Supported
+
+**Expected Finding:**
+
+This rule effects primarily "free" versions of the Red Hat Enterprise Linux operating system. This result is expected on the CentOS 8 &ndash; "Core" or "Stream" &ndash; Rocky and Alma linux distributions. Scanners that highlight this finding are looking for the presence of any _one_ of the following RPMs:
+
+* `redhat-release-client`
+* `redhat-release-server`
+* `redhat-release-workstation`
+* `redhat-release-computenode`
+* `redhat-release-virtualization-host`
+* `oraclelinux-release`
+* `sled-release`
+* `sles-release`
+
+And an `/etc/redhat-release` file with contents that aligns to one that's delivered with any of the preceding RPM. The various "free" versions of the Red Hat Enterprise Linux operating system will not have any of the above RPMs present.
+
+If using a vendor-supported Linux and this scan finding occurs, it's likely that either the `release-` RPM is missing or damaged, something has unexpectedly altered the target's `/etc/redhat-release` file or the scanner is looking for a wildcarded `release` file under the `/etc`  directory and there's an unexpected filename found.
