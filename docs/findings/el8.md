@@ -66,9 +66,9 @@
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-010000      |
   +----------------------------------------------------------------------------------------+---------------------+
-  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_   | V-248713            |
+  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_   | V-230379            |
   |                                                                                        |                     |
-  |                                                                                        | OL08-00-020320      |
+  |                                                                                        | RHEL-08-020320      |
   +----------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -262,8 +262,8 @@ If using a vendor-supported Linux and this scan finding occurs, it's likely that
 
 **Expected Finding:**
 
-Finding is specific to Oracle Linux 8 STIG profile. Per the STIG notes:
+Per the STIG notes:
 
 > Automatic remediation of this control is not available due to the unique requirements of each system.
 
-While automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such and with or without user-controlling automation-content, STIG scanners would still flag systems that are technically compliant.
+While-automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such &ndash; and with or without user-controlling automation-content &ndash; STIG scanners would still flag systems that are technically compliant.
