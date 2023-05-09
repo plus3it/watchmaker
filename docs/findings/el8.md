@@ -20,6 +20,7 @@
   .. _User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime: #user-account-passwords-must-be-restricted-to-a-60-day-maximum-lifetime
   .. _OS Must Be Configured In The Password-Auth File To Prohibit Password Reuse For A Minimum Of Five Generations: #os-must-prohibit-password-reuse-for-a-minimum-of-five-generations
   .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
+  .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
 
 
   +----------------------------------------------------------------------------------------+---------------------+
@@ -64,6 +65,10 @@
   | `The Installed Operating System Is Not Vendor Supported`_                              | V-230221            |
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-010000      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_      | V-244532            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-010741      |
   +----------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -252,3 +257,20 @@ This rule effects primarily "free" versions of the Red Hat Enterprise Linux oper
 And an `/etc/redhat-release` file with contents that aligns to one that's delivered with any of the preceding RPM. The various "free" versions of the Red Hat Enterprise Linux operating system will not have any of the above RPMs present.
 
 If using a vendor-supported Linux and this scan finding occurs, it's likely that either the `release-` RPM is missing or damaged, something has unexpectedly altered the target's `/etc/redhat-release` file or the scanner is looking for a wildcarded `release` file under the `/etc`  directory and there's an unexpected filename found.
+
+# All Content In A User's Home Directory Must Be Group-Owned By The Primary User
+
+**Expected Finding:**
+
+At initial scan, this finding is typically triggered by the installation of some standard "enterprise" services. Some of these services, due to how they execute, will create _some_ of their files with `root` as the user- and/or (more importantly for this finding) group-owner. 
+
+The `oscap` content for this finding includes the caveat:
+
+> Due to OVAL limitation, this rule can report a false negative in a specific situation where two interactive users swap the group-ownership of folders or files in their respective home directories.
+
+While not a 100% overlap to the reason offered here, the caveat covers a common scenario. Other common scenarios can include:
+
+* User-initiated unpacking of archive files authored on a different system
+* Restoration of a user's `${HOME}` from another system to the current (scanned) system
+
+In either of these cases, such will most typically only show up on lifecycle scans and not provisioning-time scans
