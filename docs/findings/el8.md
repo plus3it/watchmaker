@@ -20,6 +20,7 @@
   .. _User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime: #user-account-passwords-must-be-restricted-to-a-60-day-maximum-lifetime
   .. _OS Must Be Configured In The Password-Auth File To Prohibit Password Reuse For A Minimum Of Five Generations: #os-must-prohibit-password-reuse-for-a-minimum-of-five-generations
   .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
+  .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
 
 
   +----------------------------------------------------------------------------------------+---------------------+
@@ -64,6 +65,10 @@
   | `The Installed Operating System Is Not Vendor Supported`_                              | V-230221            |
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-010000      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_   | V-248713            |
+  |                                                                                        |                     |
+  |                                                                                        | OL08-00-020320      |
   +----------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -252,3 +257,13 @@ This rule effects primarily "free" versions of the Red Hat Enterprise Linux oper
 And an `/etc/redhat-release` file with contents that aligns to one that's delivered with any of the preceding RPM. The various "free" versions of the Red Hat Enterprise Linux operating system will not have any of the above RPMs present.
 
 If using a vendor-supported Linux and this scan finding occurs, it's likely that either the `release-` RPM is missing or damaged, something has unexpectedly altered the target's `/etc/redhat-release` file or the scanner is looking for a wildcarded `release` file under the `/etc`  directory and there's an unexpected filename found.
+
+# "Only Authorized Local User Accounts Exist on Operating System" is always flagged
+
+**Expected Finding:**
+
+Finding is specific to Oracle Linux 8 STIG profile. Per the STIG notes:
+
+> Automatic remediation of this control is not available due to the unique requirements of each system.
+
+While automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such and with or without user-controlling automation-content, STIG scanners would still flag systems that are technically compliant.
