@@ -77,7 +77,7 @@
 
 **Condtionally-valid Finding:**
 
-If an EL8 system is bound to Active Directory &ndash; or other Kerberos-enabled centralized authentication-source &ndash; or is _acting as_ a Kerberos domain controller (KDC), the presence of an `/etc/krb5.keytab` file is mandatory. 
+If an EL8 system is bound to Active Directory &ndash; or other Kerberos-enabled centralized authentication-source &ndash; or is _acting as_ a Kerberos domain controller (KDC), the presence of an `/etc/krb5.keytab` file is mandatory.
 
 If the scanned system does not have the `krb5-workstation` or `krb5-server` packages installed and _any_ `.keytab` files are found in the `/etc` directory, this is a valid finding.
 
@@ -201,7 +201,7 @@ Or, expressed more compactly:
 awk -F: '$5 > 60 || $5 <= 0 { print $0 }' /etc/shadow
 ~~~
 
-If so, such scanners will assert a finding that is not actually valid for locked-password accounts. 
+If so, such scanners will assert a finding that is not actually valid for locked-password accounts.
 
 **Proof of Correctness:**
 
@@ -262,7 +262,7 @@ If using a vendor-supported Linux and this scan finding occurs, it's likely that
 
 **Expected Finding:**
 
-At initial scan, this finding is typically triggered by the installation of some standard "enterprise" services. Some of these services, due to how they execute, will create _some_ of their files with `root` as the user- and/or (more importantly for this finding) group-owner. 
+At initial scan, this finding is typically triggered by the installation of some standard "enterprise" services. Some of these services, due to how they execute, will create _some_ of their files with `root` as the user- and/or (more importantly for this finding) group-owner.
 
 The `oscap` content for this finding includes the caveat:
 
