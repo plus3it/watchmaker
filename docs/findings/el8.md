@@ -301,5 +301,5 @@ While-automation _could_ be authored that would leverage a site- or host-specifi
 Some scanners will erroneously alert on this for either/both of two reasons:
 
 - The scanner is looking for files that have mode-zero for their "all" field regardless of owning-directory's mode-setting: in this case, the result is _technically_ a correct finding but, from an _effective_ security perspective is non-problematic
-- The scanner may be confused if the "failed" file's group-permission is zero: in shis case, the result is simply not valid
+- The scanner may be confused if the "failed" file's group-permission is zero: in this case, the result is simply not valid
 
