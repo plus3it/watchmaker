@@ -27,7 +27,10 @@
   .. _Operating system must display the date and time of the last successful account login upon logon: #operating-system-must-display-the-date-and-time-of-the-last-successful-account-logon-upon-logon
   .. _Operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full: #operating-system-must-be-configured-so-that-the-audit-system-takes-appropriate-action-when-the-audit-storage-volume-is-full
   .. _Operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited: #operating-system-must-be-configured-to-off-load-audit-logs-onto-a-different-system-or-storage-media-from-the-system-being-audited
-
+  .. _User Must Not Be Allowed To Change Password More-frequently than once per 24 hours: #user-must-not-be-allowed-to-change-password-more-frequently-than-once-per-24-hours
+  .. _User Must Change Password At Least Once Every Sixty Days: #user-must-change-password-at-least-once-every-sixty-days
+  .. _User Must Be Provided Adequate Warning Of Password-Expiration: #user-must-be-provided-adequate-warning-of-password-expiration
+  .. _User Account Must Be Expired N Days After Password Has Expired: #user-account-must-be-expired-n-days-after-password-has-expired
 
 
   +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
@@ -100,6 +103,22 @@
   | `Operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited`_ | SV-95729            |
   |                                                                                                                                      |                     |
   |                                                                                                                                      | RHEL-07-030201      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `User Must Not Be Allowed To Change Password More-frequently than once per 24 hours`_                                                | SV-86551            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010240      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `User Must Change Password At Least Once Every Sixty Days`_                                                                          | SV-86555            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010260      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `User Must Be Provided Adequate Warning Of Password-Expiration`_                                                                     |                     |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      |                     |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `User Account Must Be Expired N Days After Password Has Expired`_                                                                    | SV-86565            |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-010310      |
   +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 
 ```
@@ -240,3 +259,20 @@ Executing the above _should_ return something like:
 **Invalid Finding:**
 
 Configuration of the `audisp-remote` subsystem is inherently site-specific: quite frequently, the `audisp-remote` subsystem is wholly supplanted by other offload-methods (e.g., Splunk, FluentBit, CloudWatch Logs, etc.). Therefore, neither generic executions of watchmaker nor executions that include configuration of `audisp-remote` alternatives will attempt to configure it.
+
+# User Must Not Be Allowed To Change Password More-Frequently than once per 24 hours
+
+Typically caused when a user is created via a service/process like `cloud-init`: the resulting user may not have its password-aging `mindays` parameter (field #4 in `/etc/shadow`) set
+
+# User Must Change Password At Least Once Every Sixty Days
+
+Typically caused when a user is created via a service/process like `cloud-init`: the resulting user may not have its password-aging `maxdays` parameter (field #5 in `/etc/shadow`) set
+
+# User Must Be Provided Adequate Warning Of Password-Expiration
+
+Typically caused when a user is created via a service/process like `cloud-init`: the resulting user may not have its password-aging `warndays` parameter (field #6 in `/etc/shadow`) set
+
+# User Account Must Be Expired N Days After Password Has Expired
+
+Typically caused when a user is created via a service/process like `cloud-init`: the resulting user may not have its password-aging `inactivedays` parameter (field #7 in `/etc/shadow`) set
+
