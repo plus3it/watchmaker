@@ -22,59 +22,63 @@
   .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
   .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
   .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
+  .. _All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-be-mode-0750-or-less-permissive
 
-
-  +----------------------------------------------------------------------------------------+---------------------+
-  | Finding Summary                                                                        | Finding Identifiers |
-  +========================================================================================+=====================+
-  | `Prevent System Daemons From Using Kerberos For Authentication`_                       | V-230238            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-010161      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `Users Must Provide A Password For Privilege Escalation`_                              | V-230271            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-010380      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `A Separate Filesystem Must Be Used For the /tmp Directory`_                           | V-230295            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-010543      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the nodev option`_                                        | V-230511            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-040123      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the nosuid option`_                                       | V-230512            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-040124      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the noexec option`_                                       | V-230514            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-040125      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `The OS Must Ensure Session Control Is Automatically Started At Shell Initialization`_ | V-230349            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-020041      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime`_              | V-230367            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-020210      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `OS Must Prohibit Password Reuse For A Minimum Of Five Generations`_                   | V-230368            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-020220      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `The Installed Operating System Is Not Vendor Supported`_                              | V-230221            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-010000      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_      | V-244532            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-010741      |
-  +----------------------------------------------------------------------------------------+---------------------+
-  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_   | V-230379            |
-  |                                                                                        |                     |
-  |                                                                                        | RHEL-08-020320      |
-  +----------------------------------------------------------------------------------------+---------------------+
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | Finding Summary                                                                            | Finding Identifiers |
+  +============================================================================================+=====================+
+  | `Prevent System Daemons From Using Kerberos For Authentication`_                           | V-230238            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010161      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Users Must Provide A Password For Privilege Escalation`_                                  | V-230271            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010380      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `A Separate Filesystem Must Be Used For the /tmp Directory`_                               | V-230295            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010543      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the nodev option`_                                            | V-230511            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-040123      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the nosuid option`_                                           | V-230512            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-040124      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the noexec option`_                                           | V-230514            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-040125      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `The OS Must Ensure Session Control Is Automatically Started At Shell Initialization`_     | V-230349            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-020041      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime`_                  | V-230367            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-020210      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `OS Must Prohibit Password Reuse For A Minimum Of Five Generations`_                       | V-230368            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-020220      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `The Installed Operating System Is Not Vendor Supported`_                                  | V-230221            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010000      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_          | V-244532            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010741      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_       | V-230379            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-020320      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive`_          | V-244531            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010731      |
+  +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
 
@@ -289,3 +293,13 @@ Per the STIG notes:
 > Automatic remediation of this control is not available due to the unique requirements of each system.
 
 While-automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such &ndash; and with or without user-controlling automation-content &ndash; STIG scanners would still flag systems that are _technically_ compliant.
+
+# All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive
+
+**Expected Finding:**
+
+Some scanners will erroneously alert on this for either/both of two reasons:
+
+- The scanner is looking for files that have mode-zero for their "all" field regardless of owning-directory's mode-setting: in this case, the result is _technically_ a correct finding but, from an _effective_ security perspective is non-problematic
+- The scanner may be confused if the "failed" file's group-permission is zero: in this case, the result is simply not valid
+
