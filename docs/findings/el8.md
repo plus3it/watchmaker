@@ -21,6 +21,7 @@
   .. _OS Must Be Configured In The Password-Auth File To Prohibit Password Reuse For A Minimum Of Five Generations: #os-must-prohibit-password-reuse-for-a-minimum-of-five-generations
   .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
   .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
+  .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
 
 
   +----------------------------------------------------------------------------------------+---------------------+
@@ -69,6 +70,10 @@
   | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_      | V-244532            |
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-010741      |
+  +----------------------------------------------------------------------------------------+---------------------+
+  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_   | V-230379            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-020320      |
   +----------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -268,9 +273,19 @@ The `oscap` content for this finding includes the caveat:
 
 > Due to OVAL limitation, this rule can report a false negative in a specific situation where two interactive users swap the group-ownership of folders or files in their respective home directories.
 
-While not a 100% overlap to the reason offered here, the caveat covers a common scenario. Other common scenarios can include:
+While not a 100% overlap to the reason offered here, the caveat covers a common scenario. Other common scenarios may include:
 
-* User-initiated unpacking of archive files authored on a different system
+* Unpacking of archive files authored on a different system
 * Restoration of a user's `${HOME}` from another system to the current (scanned) system
 
-In either of these cases, such will most typically only show up on lifecycle scans and not provisioning-time scans
+In either of these further cases, such will most typically only show up on lifecycle scans and not provisioning-time scans
+
+# "Only Authorized Local User Accounts Exist on Operating System" is always flagged
+
+**Expected Finding:**
+
+Per the STIG notes:
+
+> Automatic remediation of this control is not available due to the unique requirements of each system.
+
+While-automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such &ndash; and with or without user-controlling automation-content &ndash; STIG scanners would still flag systems that are _technically_ compliant.
