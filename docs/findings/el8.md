@@ -20,6 +20,7 @@
   .. _User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime: #user-account-passwords-must-be-restricted-to-a-60-day-maximum-lifetime
   .. _OS Must Be Configured In The Password-Auth File To Prohibit Password Reuse For A Minimum Of Five Generations: #os-must-prohibit-password-reuse-for-a-minimum-of-five-generations
   .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
+  .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
   .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
 
 
@@ -66,6 +67,10 @@
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-010000      |
   +----------------------------------------------------------------------------------------+---------------------+
+  | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_      | V-244532            |
+  |                                                                                        |                     |
+  |                                                                                        | RHEL-08-010741      |
+  +----------------------------------------------------------------------------------------+---------------------+
   | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_   | V-230379            |
   |                                                                                        |                     |
   |                                                                                        | RHEL-08-020320      |
@@ -77,7 +82,7 @@
 
 **Condtionally-valid Finding:**
 
-If an EL8 system is bound to Active Directory &ndash; or other Kerberos-enabled centralized authentication-source &ndash; or is _acting as_ a Kerberos domain controller (KDC), the presence of an `/etc/krb5.keytab` file is mandatory. 
+If an EL8 system is bound to Active Directory &ndash; or other Kerberos-enabled centralized authentication-source &ndash; or is _acting as_ a Kerberos domain controller (KDC), the presence of an `/etc/krb5.keytab` file is mandatory.
 
 If the scanned system does not have the `krb5-workstation` or `krb5-server` packages installed and _any_ `.keytab` files are found in the `/etc` directory, this is a valid finding.
 
@@ -201,7 +206,7 @@ Or, expressed more compactly:
 awk -F: '$5 > 60 || $5 <= 0 { print $0 }' /etc/shadow
 ~~~
 
-If so, such scanners will assert a finding that is not actually valid for locked-password accounts. 
+If so, such scanners will assert a finding that is not actually valid for locked-password accounts.
 
 **Proof of Correctness:**
 
@@ -258,6 +263,23 @@ And an `/etc/redhat-release` file with contents that aligns to one that's delive
 
 If using a vendor-supported Linux and this scan finding occurs, it's likely that either the `release-` RPM is missing or damaged, something has unexpectedly altered the target's `/etc/redhat-release` file or the scanner is looking for a wildcarded `release` file under the `/etc`  directory and there's an unexpected filename found.
 
+# All Content In A User's Home Directory Must Be Group-Owned By The Primary User
+
+**Expected Finding:**
+
+At initial scan, this finding is typically triggered by the installation of some standard "enterprise" services. Some of these services, due to how they execute, will create _some_ of their files with `root` as the user- and/or (more importantly for this finding) group-owner.
+
+The `oscap` content for this finding includes the caveat:
+
+> Due to OVAL limitation, this rule can report a false negative in a specific situation where two interactive users swap the group-ownership of folders or files in their respective home directories.
+
+While not a 100% overlap to the reason offered here, the caveat covers a common scenario. Other common scenarios may include:
+
+* Unpacking of archive files authored on a different system
+* Restoration of a user's `${HOME}` from another system to the current (scanned) system
+
+In either of these further cases, such will most typically only show up on lifecycle scans and not provisioning-time scans
+
 # "Only Authorized Local User Accounts Exist on Operating System" is always flagged
 
 **Expected Finding:**
@@ -266,4 +288,4 @@ Per the STIG notes:
 
 > Automatic remediation of this control is not available due to the unique requirements of each system.
 
-While-automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such &ndash; and with or without user-controlling automation-content &ndash; STIG scanners would still flag systems that are technically compliant.
+While-automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such &ndash; and with or without user-controlling automation-content &ndash; STIG scanners would still flag systems that are _technically_ compliant.
