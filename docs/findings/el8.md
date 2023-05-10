@@ -22,7 +22,7 @@
   .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
   .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
   .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
-  .. _All Interactive User Home Directory Files Must Have Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-have-be-mode-0750-or-less-permissive
+  .. _All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-be-mode-0750-or-less-permissive
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -75,7 +75,7 @@
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-020320      |
   +--------------------------------------------------------------------------------------------+---------------------+
-  | `All Interactive User Home Directory Files Must Have Be Mode 0750 Or Less Permissive`_     | V-244531            |
+  | `All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive`_          | V-244531            |
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-010731      |
   +--------------------------------------------------------------------------------------------+---------------------+
@@ -294,7 +294,7 @@ Per the STIG notes:
 
 While-automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such &ndash; and with or without user-controlling automation-content &ndash; STIG scanners would still flag systems that are _technically_ compliant.
 
-# All Interactive User Home Directory Files Must Have Be Mode 0750 Or Less Permissive
+# All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive
 
 **Expected Finding:**
 
