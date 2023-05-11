@@ -481,7 +481,7 @@ def test_windows_salt_call_old():
 def test_windows_salt_call_new():
     """Ensure new path is tested."""
     salt_path = os.sep.join(("C:\\Program Files", 'Salt Project',
-                             'Salt', 'salt-call.bat'))
+                             'Salt', 'salt-call.exe'))
     assert SaltWindows._get_salt_call() == salt_path
 
 

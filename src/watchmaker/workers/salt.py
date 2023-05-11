@@ -935,12 +935,21 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         """Retrieve installation path for Salt if it exists."""
         system_drive = os.environ['systemdrive']
         program_files = os.environ['ProgramFiles']
-
-        new_salt_path = os.sep.join((program_files, 'Salt Project', 'Salt',
-                                     'salt-call.bat'))
         old_salt_path = os.sep.join((system_drive, 'Salt', 'salt-call.bat'))
-        if os.path.isfile(new_salt_path):
-            return new_salt_path
+
+        new_salt_paths = [
+            os.sep.join(
+                (program_files, 'Salt Project', 'Salt', 'salt-call.exe')
+            ),
+            os.sep.join(
+                (program_files, 'Salt Project', 'Salt', 'salt-call.bat')
+            ),
+        ]
+
+        for salt_path in new_salt_paths:
+            if os.path.isfile(salt_path):
+                return salt_path
+
         return old_salt_path
 
     def install(self):
