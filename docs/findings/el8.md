@@ -24,7 +24,7 @@
   .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
   .. _All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-be-mode-0750-or-less-permissive
   .. _Add nosuid Option to /boot: #add-nosuid-option-to-/boot
-
+  .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -84,6 +84,10 @@
   | `Add nosuid Option to /boot`_                                                              | V-230300            |
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-010571      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                      | V-230316            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010680      |
   +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -314,3 +318,9 @@ Some scanners will erroneously alert on this for either/both of two reasons:
 **Invalid Finding:**
 
 Some scanners will check to see what the mount-option is for the filesystem containing the `/boot` directory without first ensuring that `/boot` directory is actually a standalone filesystem. When `/boot` is not a standalone filesystem, it gets the same boot-options as the `/` filesystem and, therefore, cannot have the `nosuid` mount-option set.
+
+# Configure Multiple DNS Servers in `/etc/resolv.conf` 
+
+**Expected Finding:**
+
+When deploying EL8 systems into environments with highly-available DNS servers, the system will typically only have _one_ DNS server configured.
