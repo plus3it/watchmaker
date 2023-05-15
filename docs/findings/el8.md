@@ -26,6 +26,7 @@
   .. _Add nosuid Option to /boot: #add-nosuid-option-to-/boot
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
+  .. _Verify that Shared Library Directories Have Root Ownership: #verify-that-shared-library-directories-have-root-ownership
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -94,6 +95,11 @@
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-020090      |
   +--------------------------------------------------------------------------------------------+---------------------+
+  | `Verify that Shared Library Directories Have Root Ownership`_                              | V-251709            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010351      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+
 ```
 
 
@@ -339,3 +345,9 @@ This finding is intended to result in a manual configuration-validation of the t
 > _Automatic remediation of this control is not available since all of the settings in the certmap need to be customized_
 
 Further, configuration of the `sssd` certmap is typically required only for systems that are configured for _direct_ authentication via client-certificate. This configuration-method is typically done only for systems with locally-attached SmartCard/PIV readers. "Remote" systems (such as those hosted with a CSP like AWS or Azure) typically _indirectly_ authenticate with client-certificates (either through SSH key-forwarding or GSSAPI token-forwarding).
+
+# Verify that Shared Library Directories Have Root Ownership
+
+**Expected Finding:**
+
+Some applications and/or enterprise-integration tools may install private shared-libraries that are user- or group- owned by the installed-application. The scanner may identify these as insecure/improperly-owned, regardless of permission-setting on higherl-level directories.
