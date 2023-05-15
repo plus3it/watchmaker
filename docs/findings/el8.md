@@ -23,6 +23,7 @@
   .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
   .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
   .. _All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-be-mode-0750-or-less-permissive
+  .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -78,6 +79,10 @@
   | `All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive`_          | V-244531            |
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-010731      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                      | V-230316            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010680      |
   +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -303,3 +308,8 @@ Some scanners will erroneously alert on this for either/both of two reasons:
 - The scanner is looking for files that have mode-zero for their "all" field regardless of owning-directory's mode-setting: in this case, the result is _technically_ a correct finding but, from an _effective_ security perspective is non-problematic
 - The scanner may be confused if the "failed" file's group-permission is zero: in this case, the result is simply not valid
 
+# Configure Multiple DNS Servers in `/etc/resolv.conf` 
+
+**Expected Finding:**
+
+When deploying EL8 systems into environments with highly-available DNS servers, the system will typically only have _one_ DNS server configured.
