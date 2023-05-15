@@ -23,6 +23,8 @@
   .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
   .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
   .. _All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-be-mode-0750-or-less-permissive
+  .. _Add nosuid Option to /boot: #add-nosuid-option-to-/boot
+
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -78,6 +80,10 @@
   | `All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive`_          | V-244531            |
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-010731      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Add nosuid Option to /boot`_                                                              | V-230300            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-010571      |
   +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -303,3 +309,8 @@ Some scanners will erroneously alert on this for either/both of two reasons:
 - The scanner is looking for files that have mode-zero for their "all" field regardless of owning-directory's mode-setting: in this case, the result is _technically_ a correct finding but, from an _effective_ security perspective is non-problematic
 - The scanner may be confused if the "failed" file's group-permission is zero: in this case, the result is simply not valid
 
+# Add `nosuid` Option to `/boot`
+
+**Invalid Finding:**
+
+Some scanners will check to see what the mount-option is for the filesystem containing the `/boot` directory without first ensuring that `/boot` directory is actually a standalone filesystem. When `/boot` is not a standalone filesystem, it gets the same boot-options as the `/` filesystem and, therefore, cannot have the `nosuid` mount-option set.
