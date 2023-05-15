@@ -25,6 +25,7 @@
   .. _All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-be-mode-0750-or-less-permissive
   .. _Add nosuid Option to /boot: #add-nosuid-option-to-/boot
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
+  .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -88,6 +89,10 @@
   | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                      | V-230316            |
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-010680      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Enable Certmap in SSSD`_                                                                  | V-230355            |
+  |                                                                                            |                     |
+  |                                                                                            | RHEL-08-020090      |
   +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -285,7 +290,7 @@ At initial scan, this finding is typically triggered by the installation of some
 
 The `oscap` content for this finding includes the caveat:
 
-> Due to OVAL limitation, this rule can report a false negative in a specific situation where two interactive users swap the group-ownership of folders or files in their respective home directories.
+> _Due to OVAL limitation, this rule can report a false negative in a specific situation where two interactive users swap the group-ownership of folders or files in their respective home directories._
 
 While not a 100% overlap to the reason offered here, the caveat covers a common scenario. Other common scenarios may include:
 
@@ -300,7 +305,7 @@ In either of these further cases, such will most typically only show up on lifec
 
 Per the STIG notes:
 
-> Automatic remediation of this control is not available due to the unique requirements of each system.
+> _Automatic remediation of this control is not available due to the unique requirements of each system._
 
 While-automation _could_ be authored that would leverage a site- or host-specific allowed-users list to disable or delete forbidden accounts, there exists an extremely-high likelihood that scanners used against such configuration-controlled operating environments would not contain the scanning logic necessary to validate compliance. As such &ndash; and with or without user-controlling automation-content &ndash; STIG scanners would still flag systems that are _technically_ compliant.
 
@@ -324,3 +329,13 @@ Some scanners will check to see what the mount-option is for the filesystem cont
 **Expected Finding:**
 
 When deploying EL8 systems into environments with highly-available DNS servers, the system will typically only have _one_ DNS server configured.
+
+# Enable Certmap in SSSD
+
+**Invalid Finding:**
+
+This finding is intended to result in a manual configuration-validation of the target system. Scanners that flag this finding typically include a note like:
+
+> _Automatic remediation of this control is not available since all of the settings in the certmap need to be customized_
+
+Further, configuration of the `sssd` certmap is typically required only for systems that are configured for _direct_ authentication via client-certificate. This configuration-method is typically done only for systems with locally-attached SmartCard/PIV readers. "Remote" systems (such as those hosted with a CSP like AWS or Azure) typically _indirectly_ authenticate with client-certificates (either through SSH key-forwarding or GSSAPI token-forwarding).
