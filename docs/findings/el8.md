@@ -27,6 +27,8 @@
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
   .. _Verify that Shared Library Directories Have Root Ownership: #verify-that-shared-library-directories-have-root-ownership
+  .. _Oracle Linux 8 STIGs Specify Conflicting ClientAliveCountMax values: #oracle-linux-8-stigs-specify-conflicting-clientalivecountmax-values
+  .. _Record Events When Privileged Executables Are Run: #record-events-when-privileged-executables-are-run
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -99,7 +101,14 @@
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-010351      |
   +--------------------------------------------------------------------------------------------+---------------------+
-
+  | `Oracle Linux 8 STIGs Specify Conflicting ClientAliveCountMax values`_                     | V-248552            |
+  |                                                                                            |                     |
+  |                                                                                            | OL08-00-010200      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Record Events When Privileged Executables Are Run`_                                       | V-248722            |
+  |                                                                                            |                     |
+  |                                                                                            | OL08-00-030000      |
+  +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
 
@@ -351,3 +360,38 @@ Further, configuration of the `sssd` certmap is typically required only for syst
 **Expected Finding:**
 
 Some applications and/or enterprise-integration tools may install private shared-libraries that are user- or group- owned by the installed-application. The scanner may identify these as insecure/improperly-owned, regardless of permission-setting on higherl-level directories.
+
+# Oracle Linux 8 STIGs Specify Conflicting `ClientAliveCountMax` values
+
+**Conflicting Guidance:**
+
+As of the time of this section's writing, there is a disagreement between the DISA STIG's target-value for the SSH daemon's `ClientAliveCountMax` value and that specified via the STIG's upstream content-project, Compliance As Code. The former specifies that the parameter's value should be `1`; the latter specifies that it should be `0`. This project's hardening implements the former as that is also the value specified by both the DISA STIG's and Compliance As Code project's recommended setting for Red Hat Linux 8.
+
+# Record Events When Privileged Executables Are Run
+
+**Invalid Finding:**
+
+Some security-scanners misidentify the compliance-state of target-systems for vulnerability-ID, V-248722 (OL08-00-030000). The relevant STIG check-text should be either or both of:
+
+- `grep execve /etc/audit/audit.rules`
+- `grep -r execve /etc/audit/rules.d`
+
+After watchmaker is applied, the former returns:
+
+```
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F key=setgid
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F key=setgid
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F key=setuid
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F key=setuid
+```
+
+While the latter returns:
+
+```
+/etc/audit/rules.d/setuid.rules:-a always,exit -F arch=b32 -S execve -C uid!=euid -F key=setuid
+/etc/audit/rules.d/setuid.rules:-a always,exit -F arch=b64 -S execve -C uid!=euid -F key=setuid
+/etc/audit/rules.d/setgid.rules:-a always,exit -F arch=b32 -S execve -C gid!=egid -F key=setgid
+/etc/audit/rules.d/setgid.rules:-a always,exit -F arch=b64 -S execve -C gid!=egid -F key=setgid
+```
+
+It is the presence of the content in the file in the `/etc/audit/rules.d/` directory that results in &ndash; by way of the `augenrules` service &ndash; the presence of the correct content in the `/etc/audit/audit.rules` file.
