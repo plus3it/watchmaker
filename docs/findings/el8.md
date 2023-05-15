@@ -26,6 +26,7 @@
   .. _Add nosuid Option to /boot: #add-nosuid-option-to-/boot
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
+  .. _Oracle Linux 8 STIGs Specify Conflicting ClientAliveCountMax values: #oracle-linux-8-stigs-specify-conflicting-clientalivecountmax-values
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -93,6 +94,10 @@
   | `Enable Certmap in SSSD`_                                                                  | V-230355            |
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-020090      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Oracle Linux 8 STIGs Specify Conflicting ClientAliveCountMax values`_                     | V-248552            |
+  |                                                                                            |                     |
+  |                                                                                            | OL08-00-010200      |
   +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -339,3 +344,9 @@ This finding is intended to result in a manual configuration-validation of the t
 > _Automatic remediation of this control is not available since all of the settings in the certmap need to be customized_
 
 Further, configuration of the `sssd` certmap is typically required only for systems that are configured for _direct_ authentication via client-certificate. This configuration-method is typically done only for systems with locally-attached SmartCard/PIV readers. "Remote" systems (such as those hosted with a CSP like AWS or Azure) typically _indirectly_ authenticate with client-certificates (either through SSH key-forwarding or GSSAPI token-forwarding).
+
+# Oracle Linux 8 STIGs Specify Conflicting `ClientAliveCountMax` values
+
+**Conflicting Guidance:**
+
+As of the time of this section's writing, there is a disagreement between the DISA STIG's target-value for the SSH daemon's `ClientAliveCountMax` value and that specified via the STIG's upstream content-project, Compliance As Code. The former specifies that the parameter's value should be `1`; the latter specifies that it should be `0`. This project's hardening implements the former as that is also the value specified by both the DISA STIG's and Compliance As Code project's recommended setting for Red Hat Linux 8.
