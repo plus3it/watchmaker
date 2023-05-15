@@ -1,2 +1,2 @@
 boto3==1.26.133
-pyinstaller==5.10.1
+pyinstaller==5.11.0
