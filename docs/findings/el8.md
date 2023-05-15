@@ -26,6 +26,8 @@
   .. _Add nosuid Option to /boot: #add-nosuid-option-to-/boot
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
+  .. _Record Events When Privileged Executables Are Run: #record-events-when-privileged-executables-are-run
+
 
   +--------------------------------------------------------------------------------------------+---------------------+
   | Finding Summary                                                                            | Finding Identifiers |
@@ -93,6 +95,10 @@
   | `Enable Certmap in SSSD`_                                                                  | V-230355            |
   |                                                                                            |                     |
   |                                                                                            | RHEL-08-020090      |
+  +--------------------------------------------------------------------------------------------+---------------------+
+  | `Record Events When Privileged Executables Are Run`_                                       | V-248722            |
+  |                                                                                            |                     |
+  |                                                                                            | OL08-00-030000      |
   +--------------------------------------------------------------------------------------------+---------------------+
 ```
 
@@ -339,3 +345,32 @@ This finding is intended to result in a manual configuration-validation of the t
 > _Automatic remediation of this control is not available since all of the settings in the certmap need to be customized_
 
 Further, configuration of the `sssd` certmap is typically required only for systems that are configured for _direct_ authentication via client-certificate. This configuration-method is typically done only for systems with locally-attached SmartCard/PIV readers. "Remote" systems (such as those hosted with a CSP like AWS or Azure) typically _indirectly_ authenticate with client-certificates (either through SSH key-forwarding or GSSAPI token-forwarding).
+
+# Record Events When Privileged Executables Are Run
+
+**Invalid Finding:**
+
+Some security-scanners misidentify the compliance-state of target-systems for vulnerability-ID, V-248722 (OL08-00-030000). The relevant STIG check-text should be either or both of:
+
+- `grep execve /etc/audit/audit.rules`
+- `grep -r execve /etc/audit/rules.d`
+
+After watchmaker is applied, the former returns:
+
+```
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F key=setgid
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F key=setgid
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F key=setuid
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F key=setuid
+```
+
+While the latter returns:
+
+```
+/etc/audit/rules.d/setuid.rules:-a always,exit -F arch=b32 -S execve -C uid!=euid -F key=setuid
+/etc/audit/rules.d/setuid.rules:-a always,exit -F arch=b64 -S execve -C uid!=euid -F key=setuid
+/etc/audit/rules.d/setgid.rules:-a always,exit -F arch=b32 -S execve -C gid!=egid -F key=setgid
+/etc/audit/rules.d/setgid.rules:-a always,exit -F arch=b64 -S execve -C gid!=egid -F key=setgid
+```
+
+It is the presence of the content in the file in the `/etc/audit/rules.d/` directory that results in &ndash; by way of the `augenrules` service &ndash; the presence of the correct content in the `/etc/audit/audit.rules` file.
