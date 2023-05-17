@@ -86,7 +86,7 @@ function Install-Git {
   Download-File -Url ${GitUrl} -SavePath ${GitFile}
 
   $Arguments = @()
-  $Arguments += "/SILENT"
+  $Arguments += "/VERYSILENT"
   $Arguments += "/NOCANCEL"
   $Arguments += "/NORESTART"
   $Arguments += "/SAVEINF=${SaveDir}\git_params.txt"
