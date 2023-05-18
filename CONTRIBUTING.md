@@ -189,8 +189,8 @@ specify something like this for EC2 userdata:
     $GitBranch = "<your-branch>"
 
     $BootstrapUrl = "https://watchmaker.cloudarmor.io/releases/latest/watchmaker-bootstrap.ps1"
-    $PythonUrl = "https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe"
-    $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.37.1.windows.1/Git-2.37.1-64-bit.exe"
+    $PythonUrl = "https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe"
+    $GitUrl = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe"
     $PypiUrl = "https://pypi.org/simple"
 
     # Use TLS 1.2+
@@ -214,7 +214,7 @@ specify something like this for EC2 userdata:
 
     # Install watchmaker
     cd watchmaker
-    pip install --index-url "$PypiUrl" --editable .
+    python -m pip install --index-url "$PypiUrl" --editable .
 
     # Run watchmaker
     watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs
