@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.27.2](https://github.com/plus3it/watchmaker/releases/tag/0.27.2)
+
+**Released**: 2023.05.18
+
+**Summary**:
+
+*   Adds support for salt 3006
+*   Builds standalone executable using Python 3.10
+*   Documents additional expected findings for EL8 systems
+*   Uses Python 3.10 in all documentation references
+*   Updates default config to use salt 3006.1
+*   Uses SCC 5.7.1 in default salt content
+*   ash-linux-formula
+    -   Simplifies logic for managing faillock.conf
+*   ash-windows-formula
+    -   Updates custom modules for compatibility with Salt 3006 while remaining
+        backwards compatible with salt 3005 and earlier
+*   splunkforwarder-formula
+    -   Sets splunk user/group on files and directories, eliminating "Changes"
+        when re-executing the formula
+
 ## [0.27.1](https://github.com/plus3it/watchmaker/releases/tag/0.27.1)
 
 **Released**: 2023.05.08
@@ -23,7 +44,8 @@
 *   forescout-secure-connector-formula
     -   Establishes symlink so logs are written to `/var/log` partition
 *   scap-formula
-    - Updates openscap content to v0.1.67, using scap 1.3 datastreams
+    -   Updates openscap content to v0.1.67, using scap 1.3 datastreams. This also
+        addresses issues with expiry on passwordless local users
 
 ## [0.27.0](https://github.com/plus3it/watchmaker/releases/tag/0.27.0)
 
