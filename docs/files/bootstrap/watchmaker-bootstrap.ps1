@@ -1,6 +1,6 @@
 [CmdLetBinding()]
 Param(
-  [String]$PythonUrl = "https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe"
+  [String]$PythonUrl = "https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe"
   ,
   [String]$GitUrl
   ,

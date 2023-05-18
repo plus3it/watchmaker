@@ -176,7 +176,7 @@ simple bootstrap script to do that for you. After installing Python, install
 ```shell
 <powershell>
 $BootstrapUrl = "https://watchmaker.cloudarmor.io/releases/latest/watchmaker-bootstrap.ps1"
-$PythonUrl = "https://www.python.org/ftp/python/3.8.10/python-3.8.10-amd64.exe"
+$PythonUrl = "https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe"
 $PypiUrl = "https://pypi.org/simple"
 
 # Use TLS 1.2+
@@ -191,7 +191,7 @@ $BootstrapFile = "${Env:Temp}\$(${BootstrapUrl}.split('/')[-1])"
 
 # Install Watchmaker
 python -m pip install --index-url="$PypiUrl" --upgrade pip setuptools
-pip install --index-url="$PypiUrl" --upgrade watchmaker
+python -m pip install --index-url="$PypiUrl" --upgrade watchmaker
 
 # Run Watchmaker
 watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs

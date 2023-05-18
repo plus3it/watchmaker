@@ -55,7 +55,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   variables:
-    py: "3.8"
+    py: "3.10"
     architecture: "x64"
     venv: $(System.DefaultWorkingDirectory)\venv
     artifactDirFull: $(System.DefaultWorkingDirectory)\$(artifactDir)
