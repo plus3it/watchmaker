@@ -31,6 +31,8 @@
   .. _User Must Change Password At Least Once Every Sixty Days: #user-must-change-password-at-least-once-every-sixty-days
   .. _User Must Be Provided Adequate Warning Of Password-Expiration: #user-must-be-provided-adequate-warning-of-password-expiration
   .. _User Account Must Be Expired N Days After Password Has Expired: #user-account-must-be-expired-n-days-after-password-has-expired
+  .. _For Operating Systems Using DNS Resolution, At Least Two Name Servers Must Be Configured: #for-operating-systems-using-dns-resolution,-at-least-two-name-servers-must-be-configured
+
 
 
   +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
@@ -119,6 +121,10 @@
   | `User Account Must Be Expired N Days After Password Has Expired`_                                                                    | SV-86565            |
   |                                                                                                                                      |                     |
   |                                                                                                                                      | RHEL-07-010310      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `For Operating Systems Using DNS Resolution, At Least Two Name Servers Must Be Configured`_                                          | SV-204608           |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-040600      |
   +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 
 ```
@@ -276,3 +282,10 @@ Typically caused when a user is created via a service/process like `cloud-init`:
 
 Typically caused when a user is created via a service/process like `cloud-init`: the resulting user may not have its password-aging `inactivedays` parameter (field #7 in `/etc/shadow`) set
 
+# For Operating Systems Using DNS Resolution, At Least Two Name Servers Must Be Configured
+
+**Conditionally Valid:**
+
+Only valid in environments where individually-defined DNS servers are not highly-available.
+
+When deployed into environments where DNS is provided through a highly-available service with a highly-available service-name, only one DNS server will be configured into the host's `/etc/resolv.conf` &ndash; typically by way of a DHCP option-set.
