@@ -32,6 +32,8 @@
   .. _User Must Be Provided Adequate Warning Of Password-Expiration: #user-must-be-provided-adequate-warning-of-password-expiration
   .. _User Account Must Be Expired N Days After Password Has Expired: #user-account-must-be-expired-n-days-after-password-has-expired
   .. _For Operating Systems Using DNS Resolution, At Least Two Name Servers Must Be Configured: #for-operating-systems-using-dns-resolution,-at-least-two-name-servers-must-be-configured
+  .. _The OS Must Elevate The SELinux Context When An Administrator Calls The Sudo Command: #the-os-must-elevate-the-selinux-context-when-an-administrator-calls-the-sudo-command
+
 
 
 
@@ -125,6 +127,10 @@
   | `For Operating Systems Using DNS Resolution, At Least Two Name Servers Must Be Configured`_                                          | SV-204608           |
   |                                                                                                                                      |                     |
   |                                                                                                                                      | RHEL-07-040600      |
+  +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `The OS Must Elevate The SELinux Context When An Administrator Calls The Sudo Command`_                                              | SV-250314           |
+  |                                                                                                                                      |                     |
+  |                                                                                                                                      | RHEL-07-020023      |
   +--------------------------------------------------------------------------------------------------------------------------------------+---------------------+
 
 ```
@@ -289,3 +295,14 @@ Typically caused when a user is created via a service/process like `cloud-init`:
 Only valid in environments where individually-defined DNS servers are not highly-available.
 
 When deployed into environments where DNS is provided through a highly-available service with a highly-available service-name, only one DNS server will be configured into the host's `/etc/resolv.conf` &ndash; typically by way of a DHCP option-set.
+
+# The OS Must Elevate The SELinux Context When An Administrator Calls The Sudo Command
+
+**Conditionally Valid:**
+
+Implementation of this finding's technical controls changes how the `sudo` commands are executed. Some EL7 tooling (at least one third-party authentication subsystem is known to break under this new control) is incompatible with implementing this control. For systems where this control breaks functionality, and must be disabled, this will be a valid finding that should be included in any exception documentation and associated organizational-processes. Otherwise the system should be configured to meet this control.
+
+**Further Notes:**
+
+1. Implementing this control can have significant user-education requirements and can also adversely-impact legacy automation. While these _should_ be non-fatal problems &ndash; only requiring user-education or fine-tuning of legacy automation, the control still should be implemented.
+1. As implemented in this project, the modifications to the relevnt `/etc/sudoers.d` files may create sub-optimal SELinux transistions. If so, it will be up to the watchmaker-user to deactivate the `ash-linux.el7.STIGbyID.cat2.RHEL-07-020023` and then provide their own mapping-modifications as a substitute. Deactivation can be done via the `ash-linux:lookup:skip-stigs` list-variable in Pillar.
