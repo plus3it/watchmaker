@@ -21,11 +21,19 @@ datas = [
         "src/watchmaker/_vendor/pypa/get-pip/public/2.7",
         "watchmaker/_vendor/pypa/get-pip/public/2.7",
     ),
+    ('/usr/lib64/.libcrypto.so.*.hmac', '.'),
+    ('/usr/lib64/.libssl.so.*.hmac', '.'),
 ]
-binaries = []
+
+binaries = [
+    ('/usr/lib64/libcrypto.so.*', '.'),
+    ('/usr/lib64/libssl.so.*', '.'),
+]
+
 hiddenimports = [
     "boto3",
 ]
+
 datas += copy_metadata("watchmaker", recursive=True)
 datas += collect_data_files("watchmaker")
 binaries += collect_dynamic_libs("watchmaker")
