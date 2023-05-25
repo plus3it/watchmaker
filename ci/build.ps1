@@ -7,7 +7,7 @@ $PYI_DIST_LATEST = ".pyinstaller\dist\latest"
 $PYI_SPEC_DIR = ".pyinstaller\spec"
 $PYI_WORK_DIR = ".pyinstaller\build"
 
-$PYI_HOOK_DIR = ".\ci\pyinstaller"
+$PYI_HOOK_DIR = ".\ci\pyinstaller\win"
 $PYI_SCRIPT = "${PYI_SPEC_DIR}\watchmaker-standalone.py"
 $WAM_SCRIPT = ".\src\watchmaker\__main__.py"
 $WAM_FILENAME = "watchmaker-${VERSION}-standalone-windows-amd64"
