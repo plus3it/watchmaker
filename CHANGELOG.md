@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.27.3](https://github.com/plus3it/watchmaker/releases/tag/0.27.3)
+
+**Released**: 2023.05.25
+
+**Summary**:
+
+*   Fixes issue with standalone binary on FIPS-enabled EL8 systems, by packaging
+    libcrypto and libssl libraries in the binary
+
 ## [0.27.2](https://github.com/plus3it/watchmaker/releases/tag/0.27.2)
 
 **Released**: 2023.05.18
@@ -61,6 +70,8 @@
         Currently, the standalone method for EL8 **does not** work when the system
         is FIPS-enabled. The problem is not yet entirely understood. Further investigation
         is needed before this issue can be resolved
+    -   UPDATE: The issue with FIPS-enabled EL8 and the standalone binary is fixed
+        in Watchmaker 0.27.3
 *   Updates salt worker to avoid re-installing salt when `salt-call --version`
     matches the `salt_version` in the Watchmaker config
 *   Updates EL7 findings documentation to line up with latest stig version
