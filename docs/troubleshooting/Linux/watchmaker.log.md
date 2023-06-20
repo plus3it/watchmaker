@@ -23,3 +23,6 @@ This file tracks the top-level execution of the `watchmaker` configuration-utili
     botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
     ~~~
 * Attempt to use a protected configuration-file. This will typically come win an HTTP 403 error. Most typically, this happens when the requested configuration-file exists on a protected network share and the requesting-process doesn't have permission to access it.
+    ~~~
+    botocore.exceptions.ClientError: An error occurred (403) when calling the HeadObject operation: Forbidden
+    ~~~
