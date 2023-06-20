@@ -12,7 +12,7 @@
 The logfiles to most-frequently pay attention to when running Watchmaker on Enterprise Linux distros (Red Hat, CentOS, Oracle Enterprise, etc.) are as follows:
 
 ```{toctree}
-:maxdepth: 0
+:maxdepth: 1
 watchmaker.log.md
 salt_call.debug.log.md
 var-log-messages.md
@@ -23,7 +23,6 @@ cloud-init-output.log.md
 - `/var/log/cloud-init.log`
 - `/var/log/cloud-init-output.log`[^1]
 - `/var/log/watchmaker`[^2]
-  - `/var/log/watchmaker/watchmaker.log`
   - `/var/log/watchmaker/salt_call.debug.log`
 
 ## `/var/log/cloud-init.log`
@@ -33,10 +32,6 @@ Default location where the Red Hat packaged version of the `cloud-init`[^3] serv
 ## `/var/log/cloud-init-output.log`
 
 Default location where the Red Hat packaged version of the `cloud-init` service for Enterprise Linux 8 and higher writes its summary log-output to.
-
-## `/var/log/watchmaker/watchmaker.log`
-
-Where the watchmaker service writes its log-data to.
 
 ## `/var/log/watchmaker/salt_call.debug.log`
 
