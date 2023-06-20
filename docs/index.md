@@ -36,6 +36,7 @@ _workers_ to execute on each platform.
 installation.md
 configuration.md
 usage.md
+troubleshooting/index.md
 findings/index.md
 scap.md
 faq.md
