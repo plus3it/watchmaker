@@ -45,10 +45,6 @@ jobs:
         image: [win19]
         architecture: x64
         py: "3.6"
-      py27_64:
-        image: [win19]
-        architecture: x64
-        py: "2.7"
 
 - job: build
   displayName: build standalone
