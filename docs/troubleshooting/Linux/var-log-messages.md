@@ -9,13 +9,6 @@
 
 # The `/var/log/messages` Log-File
 
-```{toctree}
-:maxdepth: 1
-:hidden:
-journald.md
-```
-
-
 This is Red Hat Enterprise Linux's default/primary logging location for miscellaneous system activities. Any init- or systemd-launched service that emits output to STDERR or STDOUT will typically (also) log to this file.[^1]
 
 Typically, the provisioning-administrator will wish to review this file to trace where failures in the invocation of watchmaker have failed or where errors in an instance's/VM's userData payload has encountered errors.
@@ -26,4 +19,4 @@ Typically, the provisioning-administrator will wish to review this file to trace
 The use of the qualifier, "typically", in the prior bullet is required to account for different methods for invoking `watchmaker`. Some `watchmaker`-users leverage methods such as CloudFormation and other templating-engines, Ansible and other externalized provisioning-services, etc. to launch the `watchmaker` process. Those methods are outside the scope of this document. The relevant logging should be known to the user of these alternate execution-frameworks.
 
 
-[^1]: Some sites will explicitly disable local logging to this file. If this has been done, data that normally shows up in `/var/log/messages` _may_, instead, be found in the systemd output logs. See the [Using journald](journald.md) document for a fuller detailing of using `journald` logging.
+[^1]: Some sites will explicitly disable local logging to this file. If this has been done, data that normally shows up in `/var/log/messages` _may_, instead, be found in the systemd output logs. See the [Using journald](journald.rst) document for a fuller detailing of using `journald` logging.
