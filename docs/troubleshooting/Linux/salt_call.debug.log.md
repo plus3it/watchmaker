@@ -59,7 +59,7 @@ Directories will have execution attempted by `watchmaker` if the environment spe
 
 Similarly, the behavior of each of the above states' executions will be governed by content specified under the `/srv/watchmaker/salt/pillar` directory hierarchy. This content is used to feed values into the parameter-driven SaltStack states enumerated in the `.../formulas` directories.
 
-# Typical Error Causes
+## Typical Error Causes
 
 The most frequent causes of errors, once `watchmaker` has caused `Saltstack` states to begin their execution, are errors encountered while running the individual enterprise-integration states. Typically, these errors are around stale configuration data (expired domain-join credentials for directory-integration or stale host/IP/port information for other services) or communication-issues between the OS that `watchmaker` is configuring and the service `watchmaker` is attempting to configure the instance to integrate: DNS resolution, host or network-level firewall rules, other transit-issues.
 
