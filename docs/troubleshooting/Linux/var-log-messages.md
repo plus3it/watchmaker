@@ -9,6 +9,13 @@
 
 # The `/var/log/messages` Log-File
 
+```{toctree}
+:maxdepth: 1
+:hidden:
+journald.md
+```
+
+
 This is Red Hat Enterprise Linux's default/primary logging location for miscellaneous system activities. Any init- or systemd-launched service that emits output to STDERR or STDOUT will typically (also) log to this file.[^1]
 
 Typically, the provisioning-administrator will wish to review this file to trace where failures in the invocation of watchmaker have failed or where errors in an instance's/VM's userData payload has encountered errors.
