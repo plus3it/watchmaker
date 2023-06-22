@@ -9,7 +9,7 @@
 
 # Troubleshooting Guidance
 
-Troubleshooting Watchmaker activies can be done by checking various system logs. Logfile locations vary by OS and _may_ vary by OS-+version_ and cloud-provider. The linked-to, per-OS, logfile discussions assume that you have executed Watchmaker per the relevant OSes' direct-usage guidance:
+Troubleshooting Watchmaker activities can be done by checking various system logs. Logfile locations vary by OS and _may_ vary by OS-version_ and cloud-provider. The per-OS, logfile discussions assume that you have executed Watchmaker per the relevant OSes' direct-usage guidance:
 
 ```{toctree}
 :maxdepth: 1
