@@ -41,19 +41,17 @@ base:
     [...elided...]
 ~~~
 
-In the above, the contents of the:
+In the above, these salt formulas will be executed unconditionally on RedHat-derivative systems:
 
 - `/srv/watchmaker/salt/formulas/name-computer-formula`
 - `/srv/watchmaker/salt/formulas/ash-linux-formula`[^1]
 
-Directories will always have execution attempted by `watchmaker`. Similarly, the contents of the:
+Similarly, the contents of the following directories will be executed by `watchmaker` only if the environment specified in the `watchmaker`-invocation (the string-value after the `-e` flag) matches one of the elements in the `environments` list.
 
 - `/srv/watchmaker/salt/formulas/join-domain-formula`
 - `/srv/watchmaker/salt/formulas/mcafee-agent-formula`
 - `/srv/watchmaker/salt/formulas/nessus-agent-formula`
 - `/srv/watchmaker/salt/formulas/splunkforwarder-formula`
-
-Directories will have execution attempted by `watchmaker` if the environment specified in the `watchmaker`-invocation (the string-value after the `-e` flag) matches one of the elements in the `environments` list.
 
 Similarly, the behavior of each of the above states' executions will be governed by content specified under the `/srv/watchmaker/salt/pillar` directory hierarchy. This content is used to feed values into the parameter-driven SaltStack states enumerated in the `.../formulas` directories.
 
