@@ -13,8 +13,8 @@ The logfiles to pay most attention to when running Watchmaker on Enterprise Linu
 
 ```{toctree}
 :maxdepth: 1
-salt_call.debug.log.md
 watchmaker.log.md
+salt_call.debug.log.md
 var-log-messages.md
 cloud-init.log.md
 cloud-init-output.log.md
