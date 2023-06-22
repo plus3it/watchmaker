@@ -9,13 +9,11 @@
 
 # The `/var/log/watchmaker/salt_call.debug.log` Log-File
 
-This is the log-file that captures the bulk of the SaltStack-related state-output. This file gets created when `watchmaker` has been able to successfully download all of its execution information. This file gets created shortly after the line:
+This is the log-file that captures the bulk of the SaltStack-related state-output. This file gets created when `watchmaker` has been able to successfully download all of its execution information. This file gets created shortly after this line appears in the `/var/log/watchmaker/watchmaker.log` file:
 
 ~~~
 2023-06-15 11:13:27,378 [watchmaker.workers.base.SaltLinux][DEBUG][6407]: Command: /usr/bin/salt-call --local --retcode-passthrough --no-color --config-dir /opt/watchmaker/salt --log-file /var/log/watchmaker/salt_call.debug.log --log-file-level debug --log-level error --out quiet --return local state.highstate
 ~~~
-
-Appears in the `/var/log/watchmaker/watchmaker.log` file.
 
 Typically, the only errors that will appear here are the results of errors in the SaltStack formulae for the standard integrations. To see which modules _may_ get logged into this file, look at the contents of the `/srv/watchmaker/salt/formulas/` directory and then cross-reference those directories against the contents of the `/srv/watchmaker/salt/states/top.sls` file. To help interpret, a typical `top.sls` file's contents is offered:
 
