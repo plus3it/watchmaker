@@ -18,11 +18,23 @@ This file tracks the top-level execution of the `watchmaker` configuration-utili
 
 ## Typical Errors
 
-* Bad specification of configuration file. This will typically come with an HTTP 404 error similar to:
+* Bad specification of remotely-hosted configuration file. This will typically come with an HTTP 404 error similar to:
     ~~~
     botocore.exceptions.ClientError: An error occurred (404) when calling the HeadObject operation: Not Found
     ~~~
-* Attempt to use a protected configuration-file. This will typically come win an HTTP 403 error. Most typically, this happens when the requested configuration-file exists on a protected network share and the requesting-process doesn't have permission to access it.
+
+    Ensure that the requested URI for the remotely-hosted configuration file is valid.
+* Attempt to use a protected, remotely-hosted configuration-file. This will typically come win an HTTP 403 error. Most typically, this happens when the requested configuration-file exists on a protected network share and the requesting-process doesn't have permission to access it.
     ~~~
     botocore.exceptions.ClientError: An error occurred (403) when calling the HeadObject operation: Forbidden
     ~~~
+
+    Ensure that `watchmaker` has adequate permissions to access the requested, remotely-hosted configuration file.
+* Remotely-hosted configuration file is specified as an `s3://` URI without installation of `boto3` Python module. This will typically come with an error similar to:
+    ```{eval-rst}
+    .. literalinclude:: ../NoBoto3-LogSnippet.txt
+       :language: text
+       :emphasize-lines: 1-2
+    ```
+
+    Ensure that the `boto3` Python module has been installed _prior to_ attempting to execute `watchmaker`
