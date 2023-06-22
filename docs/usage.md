@@ -70,7 +70,13 @@ Options:
   --help                          Show this message and exit.
 ```
 
-Note: The `-c`/`--config` switch supports the use of `s3://` URLs. However, in order for such URLs to be treated as valid, it will be necessary to include the `boto3` Python module: if leveraging userData for either Windows or Linux (as below), include it on the same `pip install` line used to install watchmaker; if executing interactively (or by other non userData means), ensure that the relevant system-preparation processes performed to install `watchmaker` also include installation of the `boto3` module prior to invoking the `watchmaker` utility.
+Note: The `-c`/`--config` switch supports the use of `s3://` URLs. However, in order for such URLs to be treated as valid, it will be necessary to include the `boto3` Python module: if leveraging userData for either Windows or Linux (as below), include it on the same `pip install` line used to install watchmaker; if executing interactively (or by other non userData means), ensure that the relevant system-preparation processes performed to install `watchmaker` also include installation of the `boto3` module prior to invoking the `watchmaker` utility. Failure to ensure presence of the `boto3` Python module when referencing `s3://` URIs will result in logged-failures similar to:
+
+```{eval-rst}
+.. literalinclude:: troubleshooting/NoBoto3-LogSnippet.txt
+   :language: text
+   :emphasize-lines: 1-2
+```
 
 
 ## `watchmaker` as a standalone package (Beta feature)
