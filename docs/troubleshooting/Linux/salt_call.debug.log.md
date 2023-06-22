@@ -72,5 +72,5 @@ The least frequent cause of errors is related to the SaltStack code itself. Usua
 
 For errors in enterprise-integration content, efforts have been undertaken to try to ensure those errors are adequately represented in this log-file. However, the application-specific logs (the ones _for_ the integrated-application) will still remain the authoritative source for troubleshooting exercises.
 
-[^1]: Due to the `ash-linux.vendor`, `ash-linux.stig` and `ash-linux.iavm` specification, only the `ash-linux-formla`'s `vendor`, `stig` and `iavm` states' executions will be attempted.
+[^1]: Due to the `ash-linux.vendor`, `ash-linux.stig` and `ash-linux.iavm` specification, only the `ash-linux-formula`'s `vendor`, `stig` and `iavm` states' executions will be attempted.
 
