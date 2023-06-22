@@ -66,7 +66,7 @@ The most frequent causes of errors, once `watchmaker` has caused `Saltstack` sta
 The next most frequent errors are already-existing configuration problems in the OS that `watchmaker` is configuring. These include things like:
 - Failures accessing RPM repositories (especially problematic with repositories that require client-cert authentication where there are certificate-expiration problems between the RPM client and repository server)
 - Too little storage in critical partitions
-- The `watchmaker` activities running after something else has changed a resource-configuration that `watchmaker` expects to managed but finds the resource in an unanticipated state
+- The `watchmaker` activities running after something else has changed a resource-configuration that `watchmaker` expects to manage but finds the resource in an unanticipated state
 
 The least frequent cause of errors is related to the SaltStack code itself. Usually, this is caught in pre-release testing, but "bugs happen". While states are typically coded to try to gracefully handle errors encountered &ndash; they'll typically still fail, but at least try to provide meaningful error-output. Usually, the "bugs happen" errors are resultant of environment-to-environment deltas that were not adequately specified to the code-maintainers or the requisite logic-branching was not able to be adequately exercised across the various environments.
 
