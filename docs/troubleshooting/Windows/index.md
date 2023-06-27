@@ -9,4 +9,26 @@
 
 # Windows Log-Files
 
-CONTENT IN PROGRESS
+When using `watchmaker` on Windows servers, the primary log-file of interest will be the:
+
+- [`c:\watchmaker\logs\watchmaker.log`](c_watchmaker_logs_watchmaker.log.md)
+- [`c:\watchmaker\logs\salt_call.debug`](c_watchmaker_logs_salt_call.debug.md)
+
+Files. There can be other files in the `c:\watchmaker\logs\` directory, but the ones present will depend on what enterprise-integration features have been selected for `watchmaker` to attempt to execute and whether those integrations are configured to log independently.
+
+There may be further log-files of interest, depending on how much execution-progress `watchmaker` has made and how `watchmaker` has been invoked.
+
+## AWS:
+
+- [`C:\ProgramData\Amazon\EC2-Windows\Launch\Log\UserdataExecution.log`](c_amazon_EC2-Windows_Launch_Log_UserdataExecution.log.md)
+- [`C:\ProgramData\Amazon\EC2Launch\log\agent.log`](c_amazon_EC2Launch_Log_UserdataExecution.log.md)
+
+
+```{toctree}
+:maxdepth: 1
+:hidden:
+c_watchmaker_logs_watchmaker.log.md
+c_watchmaker_logs_salt_call.debug.md
+c_amazon_EC2Launch_Log_UserdataExecution.log.md
+c_amazon_EC2-Windows_Launch_Log_UserdataExecution.log.md
+```
