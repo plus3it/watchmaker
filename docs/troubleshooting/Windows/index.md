@@ -20,8 +20,8 @@ There may be further log-files of interest, depending on how much execution-prog
 
 ## AWS:
 
-- [`C:\ProgramData\Amazon\EC2-Windows\Launch\Log\UserdataExecution.log`](c_amazon_EC2-Windows_Launch_Log_UserdataExecution.log.md)
 - [`C:\ProgramData\Amazon\EC2Launch\log\agent.log`](c_amazon_EC2Launch_Log_UserdataExecution.log.md)
+- [`C:\ProgramData\Amazon\EC2-Windows\Launch\Log\UserdataExecution.log`](c_amazon_EC2Launch_v2_Log_UserdataExecution.log.md)
 
 
 ```{toctree}
@@ -30,5 +30,5 @@ There may be further log-files of interest, depending on how much execution-prog
 c_watchmaker_logs_watchmaker.log.md
 c_watchmaker_logs_salt_call.debug.md
 c_amazon_EC2Launch_Log_UserdataExecution.log.md
-c_amazon_EC2-Windows_Launch_Log_UserdataExecution.log.md
+c_amazon_EC2Launch_v2_Log_UserdataExecution.log.md
 ```
