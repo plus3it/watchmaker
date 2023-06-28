@@ -1,0 +1,63 @@
+watchmaker_version: ">= 0.27.2.dev"
+
+all:
+  - salt:
+      admin_groups: null
+      admin_users: null
+      computer_name: null
+      environment: null
+      ou_path: null
+      salt_content: null
+      salt_states: Highstate
+      salt_version: '3006.1'
+      user_formulas:
+        # To add extra formulas, specify them as a map of
+        #    <formula_name>: <archive_url>
+        # The <formula_name> is the name of the directory in the salt file_root
+        # where the formula will be placed. The <archive_url> must be a zip
+        # file, and the zip must contain a top-level directory that, itself,
+        # contains the actual salt formula. To "overwrite" submodule formulas,
+        # make sure <formula_name> matches submodule names. E.g.:
+        #ash-linux-formula: https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+        #scap-formula: https://s3.amazonaws.com/salt-formulas/scap-formula-master.zip
+
+linux:
+  - yum:
+      repo_map:
+        #SaltEL7:
+        - dist:
+            - redhat
+            - centos
+          el_version: 7
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3006.1/salt-reposync-el7-onedir.repo
+        #SaltEL8:
+        - dist:
+            - almalinux
+            - centos
+            - oracle
+            - redhat
+            - rocky
+          el_version: 8
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3006.1/salt-reposync-el8-onedir.repo
+  - salt:
+      pip_install:
+        - dnspython
+      salt_debug_log: null
+      install_method: yum
+      bootstrap_source: null
+      git_repo: null
+      salt_version: null
+
+windows:
+  - salt:
+      salt_debug_log: null
+      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3006.1-Py3-AMD64-Setup.exe
+
+status:
+  providers:
+    - key: "WatchmakerStatus"
+      required: False
+      provider_type: "aws"
+    - key: "WatchmakerStatus"
+      required: False
+      provider_type: "azure"
