@@ -41,6 +41,7 @@ scap.md
 faq.md
 api.md
 contributing.md
+customization/index.md
 changelog.md
 ```
 
