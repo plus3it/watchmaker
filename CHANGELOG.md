@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.27.4](https://github.com/plus3it/watchmaker/releases/tag/0.27.4)
+
+**Released**: 2023.06.28
+
+**Summary**:
+
+*   Updates guidance on Linux STIG findings relating to SELinux context and sudo
+    privilege escalation
+*   ash-linux-formula
+    -   Adds additional guidance on pillar content usage
+    -   Adds additional EL7 STIG handlers
+    -   Removes duplicate EL7 STIG handlers for audit rules
+*   forescout-secure-connector-formula
+    -   Adds state to ensure correct directory ownership
+*   join-domain-formula
+    -   Updates sssd to support a variety of conf parameters
+*   scap-formula
+    -   Updates DISA SCAP content
+
 ## [0.27.3](https://github.com/plus3it/watchmaker/releases/tag/0.27.3)
 
 **Released**: 2023.05.25
