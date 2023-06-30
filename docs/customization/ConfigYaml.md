@@ -9,7 +9,7 @@
 
 # Dissecting The `config.yaml` File
 
-The stock config.yaml file has five top-level directives or directive-dictionaries:
+The stock config.yaml file has five top-level directives or directive-maps:
 
 - `watchmaker_version`
 - `all`
@@ -23,9 +23,9 @@ These directive or directive-dictionairs are used to govern the overall behavior
 
 This directive applies a compatibility-filter to the watchmaker execution. If the installed version of watchmaker doesn't meet the version-critera set by this line, watchmaker won't work with this file's content. It's assumed that any watchmaker version that does not match the version-criteria will not (properly) support the configuration directives. Normally, the version is set as "greater than or equal to" string.
 
-## The `all` Dictionary
+## The `all` Map
 
-This dictionary is used to supply default values to both saltstack and to specific SaltStack formulae. The dictionary-keys most likely to be of interest will be:
+This map is used to supply default values to both saltstack and to specific SaltStack formulae. The map-keys most likely to be of interest will be:
 
 - `valid_environments`
 - `salt_content`
@@ -92,15 +92,22 @@ Similarly, if one is working on a _new_ formula, specifying:
 
 Will cause the content-archive hosted at the specified URL to be unarcheved at `.../formulas/<NEW_FORMULA_NAME>` 
 
-## The `linux` Dictionary
+## The `linux` Map
 
-To Be Written
+This map instructs watchmaker about where to fetch `yum`/`dnf` repository-definition files from. Using the `yum:repo_map`, watchmaker will perform a lookup using the `dist:<distribution>` value and `el_version` value to identify the download `url` from which to pull the appropriate  `yum`/`dnf` repository-definition files from
 
-## The `windows` Dictionary
+Currently, mappings for `Red Hat 7`, `CentOS 7`, `Alma Linux 8`, `CentOS 8 Stream`, `Oracle Linux 8`, `Red Hat 8` and `Rocky Linux 8`. Further Enterprise Linux distributions may be supported by appropriate extension of this map, along with further modifcations to a few Saltstack formulae.
 
-To Be Written
+The `salt` dictionary is generally not modified for customization or other activities.
 
-## The `status` Dictionary
+
+## The `windows` Map
+
+Similar to the `linux` map, the `windows` map instructs watchmaker about where to fetch where to fetch the Salt-minion setup-executable for Windows from.
+
+As with the `linux` map, the `salt` dictionary is generally not modified for customization or other activities.
+
+## The `status` Map
 
 To Be Written
 
