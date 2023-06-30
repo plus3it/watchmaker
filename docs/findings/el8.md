@@ -9,6 +9,8 @@
 
 # Findings Summary-Table
 
+A few scans performed against EL8 systems are version-dependent. Watchmaker is designed to ensure that a given EL8 host is running at the latest-available EL8 minor-release version. Some of the version-dependent scans are for versions (well) prior "the latest-available EL8 minor-release version". The person responding to scan-findings should make sure to notice if the findings-text includes mention of specific EL8 minor-release version or version-ranges and compare that to the EL8 minor-release of the scanned system. If the version/version-range is less than that of the scanned version, the scan result may be immediately flagged as "**INVALID FINDING**". Anything that cannot be immediate flagged in this way should be checked against the following table of known findings[^1].
+
 ```{eval-rst}
   .. _Prevent System Daemons From Using Kerberos For Authentication: #prevent-system-daemons-from-using-kerberos-for-authentication
   .. _Users Must Provide A Password For Privilege Escalation: #users-must-provide-a-password-for-privilege-escalation
@@ -121,7 +123,6 @@
   |                                                                                                                             | RHEL-08-010471      |
   +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
 ```
-
 
 # Prevent System Daemons From Using Kerberos For Authentication
 
@@ -430,3 +431,6 @@ Condition: start condition failed at Tue 2023-06-27 15:21:32 UTC; 42s ago
 ~~~
 
 The above-captured output's `ConditionKernelCommandLine`'s indication that the codition of `!fips=1` "was not met" means that this capability is not (currently) compatible with a system running with FIPS mode enabled. Enablement of FIPS mode is specified in another, earlier, higher-priority STIG-finding. As such, this setting will not be enableable while the higher-priority configuration-state is in place.
+
+
+[^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
