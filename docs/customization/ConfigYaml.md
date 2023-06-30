@@ -103,7 +103,7 @@ The `salt` dictionary is generally not modified for customization or other activ
 
 ## The `windows` Map
 
-Similar to the `linux` map, the `windows` map instructs watchmaker about where to fetch where to fetch the Salt-minion setup-executable for Windows from.
+Similar to the `linux` map, the `windows` map instructs watchmaker about where to fetch the Salt-minion setup-executable for Windows from.
 
 As with the `linux` map, the `salt` dictionary is generally not modified for customization or other activities.
 
