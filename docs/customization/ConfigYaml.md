@@ -91,3 +91,16 @@ Similarly, if one is working on a _new_ formula, specifying:
 ```
 
 Will cause the content-archive hosted at the specified URL to be unarcheved at `.../formulas/<NEW_FORMULA_NAME>` 
+
+## The `linux` Dictionary
+
+To Be Written
+
+## The `windows` Dictionary
+
+To Be Written
+
+## The `status` Dictionary
+
+To Be Written
+
