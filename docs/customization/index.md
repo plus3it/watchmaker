@@ -41,6 +41,7 @@ SiteParameters.md
 SiteFormulae.md
 FormulaUpdates.md
 NewFormulas.md
+ConfigYaml.md
 SaltContent.md
 ```
 
