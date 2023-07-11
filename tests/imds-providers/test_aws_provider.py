@@ -128,4 +128,5 @@ def test_aws_metadata_headers(mock_urlopen):
 def test_aws_metadata_headers_none(mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
+    AWSProvider.imds_token = None
     assert provider._AWSProvider__get_metadata_request_headers() is None
