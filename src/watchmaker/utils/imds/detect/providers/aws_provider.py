@@ -48,7 +48,6 @@ class AWSProvider(AbstractProvider):
 
     def __is_valid_server(self):
         """Determine if valid metadata server."""
-        """Retrieve AWS metadata."""
         data = self.__call_urlopen_retry(
             self.metadata_url,
             self.DEFAULT_TIMEOUT,
