@@ -78,26 +78,17 @@ class AWSProvider(AbstractProvider):
 
     def __get_server_metadata(self):
         """Retrieve AWS metadata."""
-        metadata_response = None
         try:
-            metadata_response = utils.urlopen_retry(
-                self.metadata_url,
-                self.DEFAULT_TIMEOUT,
-                optional_headers=self.__get_metadata_request_headers(),
-            )
+            self.__request_token()
         except utils.urllib.error.URLError as error:
-            self.logger.debug("URLError is %s", error)
-            if (
-                "HTTP Error 401: Unauthorized" in str(error)
-                and self.__get_and_set_token()
-            ):
-                metadata_response = utils.urlopen_retry(
-                    self.metadata_url,
-                    self.DEFAULT_TIMEOUT,
-                    optional_headers=self.__get_metadata_request_headers(),
-                )
-            else:
-                raise error
+            self.logger.debug("Token URLError is %s", error)
+
+        metadata_response = utils.urlopen_retry(
+            self.metadata_url,
+            self.DEFAULT_TIMEOUT,
+            optional_headers=self.__get_metadata_request_headers(),
+        )
+
         self.logger.debug("Check metadata response is 200")
         if metadata_response.status == 200:
             return metadata_response.read()
@@ -111,7 +102,7 @@ class AWSProvider(AbstractProvider):
             self.logger.debug("Making IMDSv1 Call")
             return {}
 
-    def __get_and_set_token(self):
+    def __request_token(self):
         self.logger.debug("Create request for token")
         token_result = utils.urlopen_retry(
             self.metadata_imds_v2_token_url,
@@ -122,9 +113,6 @@ class AWSProvider(AbstractProvider):
         if token_result.status == 200:
             self.logger.debug("Get token result is 200")
             AWSProvider.imds_token = token_result.read().decode("utf-8")
-            return AWSProvider.imds_token
-        self.logger.debug("Token result was not a status 200")
-        return None
 
     def __get_file_contents(self, file):
         """Get file contents if exists."""
