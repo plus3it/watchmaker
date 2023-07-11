@@ -46,6 +46,7 @@ class AWSProvider(AbstractProvider):
         """Identify AWS via metadata server."""
         self.logger.debug("Checking AWS metadata")
         try:
+            self.__request_token()
             return self.__is_valid_server()
         except BaseException as ex:
             self.logger.error(ex)
@@ -59,15 +60,21 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS vendor file")
         for vendor_file in self.vendor_files:
             data = self.__get_file_contents(vendor_file)
-            if bool(data and b"amazon" in data.lower()):
+            if bool(data and "amazon" in data.lower()):
                 return True
         return False
 
     def __is_valid_server(self):
         """Determine if valid metadata server."""
-        data = self.__get_server_metadata()
+        """Retrieve AWS metadata."""
+        data = self.__call_urlopen_retry(
+            self.metadata_url,
+            self.DEFAULT_TIMEOUT,
+            optional_headers=self.__get_metadata_request_headers(),
+        )
+
         if data:
-            response = json.loads(data.decode("utf-8"))
+            response = json.loads(data)
             if response["imageId"].startswith(
                 "ami-",
             ) and response[
@@ -75,24 +82,6 @@ class AWSProvider(AbstractProvider):
             ].startswith("i-"):
                 return True
         return False
-
-    def __get_server_metadata(self):
-        """Retrieve AWS metadata."""
-        try:
-            self.__request_token()
-        except BaseException as error:
-            self.logger.debug("Error is %s", error)
-
-        metadata_response = utils.urlopen_retry(
-            self.metadata_url,
-            self.DEFAULT_TIMEOUT,
-            optional_headers=self.__get_metadata_request_headers(),
-        )
-
-        self.logger.debug("Check metadata response is 200")
-        if metadata_response.status == 200:
-            return metadata_response.read()
-        return None
 
     def __get_metadata_request_headers(self):
         if AWSProvider.imds_token:
@@ -103,16 +92,18 @@ class AWSProvider(AbstractProvider):
         return None
 
     def __request_token(self):
-        self.logger.debug("Create request for token")
-        token_result = utils.urlopen_retry(
-            self.metadata_imds_v2_token_url,
-            self.DEFAULT_TIMEOUT,
-            optional_headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
-            method="PUT",
-        )
-        if token_result.status == 200:
-            self.logger.debug("Get token result is 200")
-            AWSProvider.imds_token = token_result.read().decode("utf-8")
+        try:
+            self.logger.debug("Create request for token")
+            AWSProvider.imds_token = self.__call_urlopen_retry(
+                self.metadata_imds_v2_token_url,
+                self.DEFAULT_TIMEOUT,
+                optional_headers={
+                    "X-aws-ec2-metadata-token-ttl-seconds": "21600"
+                },
+                method="PUT",
+            )
+        except BaseException as error:
+            self.logger.debug("Error is %s", error)
 
     def __get_file_contents(self, file):
         """Get file contents if exists."""
@@ -121,9 +112,14 @@ class AWSProvider(AbstractProvider):
         # Convert a local vendor file to a URI
         file_path = utils.uri_from_filepath(file)
         try:
-            check_vendor_file = utils.urlopen_retry(
-                file_path, self.DEFAULT_TIMEOUT
-            )
-            return check_vendor_file.read()
+            return self.__call_urlopen_retry(file_path, self.DEFAULT_TIMEOUT)
         except (ValueError, utils.urllib.error.URLError):
             return None
+
+    def __call_urlopen_retry(self, uri, timeout, headers=None, method=None):
+        result = utils.urlopen_retry(
+            uri, timeout, optional_headers=headers, method=method
+        )
+        if result.status == 200:
+            return result.read().decode("utf-8")
+        return None
