@@ -70,7 +70,7 @@ class AWSProvider(AbstractProvider):
         data = self.__call_urlopen_retry(
             self.metadata_url,
             self.DEFAULT_TIMEOUT,
-            optional_headers=self.__get_metadata_request_headers(),
+            headers=self.__get_metadata_request_headers(),
         )
 
         if data:
@@ -97,9 +97,7 @@ class AWSProvider(AbstractProvider):
             AWSProvider.imds_token = self.__call_urlopen_retry(
                 self.metadata_imds_v2_token_url,
                 self.DEFAULT_TIMEOUT,
-                optional_headers={
-                    "X-aws-ec2-metadata-token-ttl-seconds": "21600"
-                },
+                headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
                 method="PUT",
             )
         except BaseException as error:
