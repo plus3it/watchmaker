@@ -118,3 +118,14 @@ def test_aws_metadata_headers(mock_urlopen):
     assert provider._AWSProvider__get_metadata_request_headers() == {
         "X-aws-ec2-metadata-token": AWSProvider.imds_token
     }
+
+
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__call_urlopen_retry",
+    return_value=(None),
+)
+def test_aws_metadata_headers_none(mock_urlopen):
+    """Test token is not saved to imds_token."""
+    provider = AWSProvider()
+    assert provider._AWSProvider__get_metadata_request_headers() is None
