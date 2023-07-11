@@ -95,34 +95,3 @@ def test_aws_check_request_token_none(mock_urlopen):
     provider = AWSProvider()
     assert provider._AWSProvider__request_token() is None
     assert AWSProvider.imds_token == None
-
-
-@patch.object(
-    AWSProvider,
-    "_AWSProvider__get_file_contents",
-    return_value="provider is amazon aws",
-)
-def test_aws_valid_vendor_file(provider_mock):
-    """Tests valid vendor file."""
-    provider = AWSProvider()
-    assert provider.check_vendor_file() is True
-
-
-@patch.object(
-    AWSProvider,
-    "_AWSProvider__get_file_contents",
-    return_value="provider unknown",
-)
-def test_aws_invalid_vendor_file(provider_mock):
-    """Tests invalid vendor file."""
-    provider = AWSProvider()
-    assert provider.check_vendor_file() is False
-
-
-@patch.object(
-    AWSProvider, "_AWSProvider__get_file_contents", return_value=None
-)
-def test_aws_no_response_vendor_file(provider_mock):
-    """Tests no response while reading vendor file."""
-    provider = AWSProvider()
-    assert provider.check_vendor_file() is False

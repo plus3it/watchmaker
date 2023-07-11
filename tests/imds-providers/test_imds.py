@@ -30,10 +30,7 @@ def test_provider_aws(aws_provider_mock, azure_provider_mock):
 
 @patch.object(AWSProvider, "identify", return_value=False)
 @patch.object(AzureProvider, "identify", return_value=True)
-@patch.object(AzureProvider, "check_vendor_file", return_value=False)
-def test_provider_azure(
-    aws_provider_mock, azure_provider_mock, azure_check_vendor_file_mock
-):
+def test_provider_azure(aws_provider_mock, azure_provider_mock):
     """Test provider is Azure."""
     assert provider(["aws", "azure"]) == "azure"
 
