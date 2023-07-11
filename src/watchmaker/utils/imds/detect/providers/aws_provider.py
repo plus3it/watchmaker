@@ -80,8 +80,8 @@ class AWSProvider(AbstractProvider):
         """Retrieve AWS metadata."""
         try:
             self.__request_token()
-        except utils.urllib.error.URLError as error:
-            self.logger.debug("Token URLError is %s", error)
+        except BaseException as error:
+            self.logger.debug("Error is %s", error)
 
         metadata_response = utils.urlopen_retry(
             self.metadata_url,
