@@ -28,8 +28,9 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
-        self.metadata_id_url = "http://169.254.169.254/latest/meta-data/instance-id"
-
+        self.metadata_id_url = (
+            "http://169.254.169.254/latest/meta-data/instance-id"
+        )
         self.metadata_region_url = (
             "http://169.254.169.254/latest/meta-data/placement/region"
         )
@@ -45,7 +46,9 @@ class AWSStatusProvider(AbstractStatusProvider):
         try:
             self.__set_details_from_server()
         except BaseException as ex:
-            self.logger.error("Error retrieving id/region from metadata service %s", ex)
+            self.logger.error(
+                "Error retrieving id/region from metadata service %s", ex
+            )
 
     def update_status(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
@@ -66,7 +69,9 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __tag_aws_instance(self, key, status):
         """Create or update instance tag with provided status."""
-        self.logger.debug("Tag Instance %s with  %s:%s", self.instance_id, key, status)
+        self.logger.debug(
+            "Tag Instance %s with  %s:%s", self.instance_id, key, status
+        )
 
         try:
             client = boto3.client("ec2", self.region)

@@ -28,7 +28,9 @@ class AWSProvider(AbstractProvider):
             "http://169.254.169.254/latest/dynamic/instance-identity/document"
         )
 
-        self.metadata_imds_v2_token_url = "http://169.254.169.254/latest/api/token"
+        self.metadata_imds_v2_token_url = (
+            "http://169.254.169.254/latest/api/token"
+        )
 
         self.vendor_files = (
             "/sys/class/dmi/id/product_version",
@@ -131,7 +133,9 @@ class AWSProvider(AbstractProvider):
         # Convert a local vendor file to a URI
         file_path = utils.uri_from_filepath(file)
         try:
-            check_vendor_file = utils.urlopen_retry(file_path, self.DEFAULT_TIMEOUT)
+            check_vendor_file = utils.urlopen_retry(
+                file_path, self.DEFAULT_TIMEOUT
+            )
             return check_vendor_file.read()
         except (ValueError, utils.urllib.error.URLError):
             return None
