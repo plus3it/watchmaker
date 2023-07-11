@@ -16,7 +16,7 @@ except ImportError:
 
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 
-# @patch.object(AWSProvider, '_AWSProvider__get_data_from_server')
+# @patch.object(AWSProvider, '_AWSProvider__get_server_metadata')
 #     provider_mock.return_value = (
 #         '{"imageId": "ami-12312412", "instanceId": "i-ec12as"}' \
 #          .encode("utf8")
@@ -31,7 +31,7 @@ from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 
 @patch.object(
     AWSProvider,
-    "_AWSProvider__get_data_from_server",
+    "_AWSProvider__get_server_metadata",
     return_value=(
         '{"imageId": "ami-12312412", \
                             "instanceId": "i-ec12as"}'.encode(
@@ -47,7 +47,7 @@ def test_aws_valid_metadata_data_from_server(provider_mock):
 
 @patch.object(
     AWSProvider,
-    "_AWSProvider__get_data_from_server",
+    "_AWSProvider__get_server_metadata",
     return_value=(
         '{"imageId": "some_ID", \
                               "instanceId": "some_Instance"}'.encode(
@@ -61,9 +61,7 @@ def test_aws_invalid_metadata_data_from_server(provider_mock):
     assert provider.check_metadata_server() is False
 
 
-@patch.object(
-    AWSProvider, "_AWSProvider__get_data_from_server", return_value=(None)
-)
+@patch.object(AWSProvider, "_AWSProvider__get_server_metadata", return_value=(None))
 def test_aws_no_metadata_data_from_server(provider_mock):
     """Test no server data response for aws provider identification."""
     provider = AWSProvider()
@@ -106,9 +104,7 @@ def test_aws_invalid_vendor_file(provider_mock):
     assert provider.check_vendor_file() is False
 
 
-@patch.object(
-    AWSProvider, "_AWSProvider__get_file_contents", return_value=None
-)
+@patch.object(AWSProvider, "_AWSProvider__get_file_contents", return_value=None)
 def test_aws_no_response_vendor_file(provider_mock):
     """Tests no response while reading vendor file."""
     provider = AWSProvider()
