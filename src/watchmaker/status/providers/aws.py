@@ -115,9 +115,8 @@ class AWSStatusProvider(AbstractStatusProvider):
         if AWSProvider.imds_token:
             self.logger.debug("Making IMDSv2 Call")
             return {"X-aws-ec2-metadata-token": AWSProvider.imds_token}
-        else:
-            self.logger.debug("Making IMDSv1 Call")
-            return {}
+        self.logger.debug("Making IMDSv1 Call")
+        return None
 
     def __error_on_required_status(self, required):
         """Error if tag is required."""
