@@ -94,12 +94,13 @@ class AWSProvider(AbstractProvider):
     def __request_token(self):
         try:
             self.logger.debug("Create request for token")
-            AWSProvider.imds_token = self.__call_urlopen_retry(
-                self.metadata_imds_v2_token_url,
-                self.DEFAULT_TIMEOUT,
-                headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
-                method="PUT",
-            )
+            raise BaseException("Just for a test")
+            # AWSProvider.imds_token = self.__call_urlopen_retry(
+            #     self.metadata_imds_v2_token_url,
+            #     self.DEFAULT_TIMEOUT,
+            #     headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
+            #     method="PUT",
+            # )
         except BaseException as error:
             self.logger.debug("Error is %s", error)
 
