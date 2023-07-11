@@ -94,4 +94,4 @@ def test_aws_check_request_token_none(mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
     assert provider._AWSProvider__request_token() is None
-    assert AWSProvider.imds_token == None
+    assert AWSProvider.imds_token is None

@@ -9,7 +9,6 @@ from __future__ import (
 )
 
 import logging
-from os.path import exists
 
 import watchmaker.utils as utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
