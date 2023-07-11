@@ -39,9 +39,7 @@ def uri_from_filepath(filepath):
     # Expand relative file paths and convert them to uri-style
     path = urllib.request.pathname2url(
         os.path.abspath(
-            os.path.expanduser(
-                "".join([x for x in [parts.netloc, parts.path] if x])
-            )
+            os.path.expanduser("".join([x for x in [parts.netloc, parts.path] if x]))
         )
     )
 
@@ -56,8 +54,9 @@ def basename_from_uri(uri):
 
 
 @backoff.on_exception(backoff.expo, urllib.error.URLError, max_tries=5)
-def urlopen_retry(uri, timeout=None):
+def urlopen_retry(uri, timeout=None, optional_headers={}, method=None):
     """Retry urlopen on exception."""
+    request_uri = uri
     kwargs = {}
     if timeout:
         kwargs["timeout"] = timeout
@@ -65,14 +64,18 @@ def urlopen_retry(uri, timeout=None):
         # trust the system's default CA certificates
         # proper way for 2.7.9+ on Linux
         if uri.startswith("https://"):
-            kwargs["context"] = ssl.create_default_context(
-                ssl.Purpose.SERVER_AUTH
-            )
+            kwargs["context"] = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     except AttributeError:
         pass
 
+    if optional_headers:
+        # need to use a request object instead of string.
+        request_uri = urllib.request.Request(
+            uri, data=None, headers=optional_headers, method=method
+        )
+
     # pylint: disable=consider-using-with
-    return urllib.request.urlopen(uri, **kwargs)
+    return urllib.request.urlopen(request_uri, **kwargs)
 
 
 def copytree(src, dst, force=False, **kwargs):
@@ -143,9 +146,7 @@ def copy_subdirectories(src_dir, dest_dir, log=None):
         if not subdir.startswith(".") and not os.path.exists(
             os.sep.join((dest_dir, subdir))
         ):
-            copytree(
-                os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir))
-            )
+            copytree(os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir)))
             if log:
                 log.info(
                     "Copied from %s to %s",

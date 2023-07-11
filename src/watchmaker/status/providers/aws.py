@@ -12,6 +12,7 @@ import logging
 
 import watchmaker.utils as utils
 from watchmaker.conditions import HAS_BOTO3
+from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 
 if HAS_BOTO3:
     import boto3  # type: ignore
@@ -27,9 +28,7 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
-        self.metadata_id_url = (
-            "http://169.254.169.254/latest/meta-data/instance-id"
-        )
+        self.metadata_id_url = "http://169.254.169.254/latest/meta-data/instance-id"
 
         self.metadata_region_url = (
             "http://169.254.169.254/latest/meta-data/placement/region"
@@ -46,9 +45,7 @@ class AWSStatusProvider(AbstractStatusProvider):
         try:
             self.__set_details_from_server()
         except BaseException as ex:
-            self.logger.error(
-                "Error retrieving id/region from metadata service %s", ex
-            )
+            self.logger.error("Error retrieving id/region from metadata service %s", ex)
 
     def update_status(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
@@ -69,9 +66,7 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __tag_aws_instance(self, key, status):
         """Create or update instance tag with provided status."""
-        self.logger.debug(
-            "Tag Instance %s with  %s:%s", self.instance_id, key, status
-        )
+        self.logger.debug("Tag Instance %s with  %s:%s", self.instance_id, key, status)
 
         try:
             client = boto3.client("ec2", self.region)
@@ -104,8 +99,20 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __get_response_from_server(self, metadata_url):
         """Get response for provided metadata_url."""
-        response = utils.urlopen_retry(metadata_url, self.DEFAULT_TIMEOUT)
+        response = utils.urlopen_retry(
+            metadata_url,
+            self.DEFAULT_TIMEOUT,
+            optional_headers=self.__get_metadata_request_headers(),
+        )
         return response.read().decode("utf-8")
+
+    def __get_metadata_request_headers(self):
+        if AWSProvider.imds_token:
+            self.logger.debug("Making IMDSv2 Call")
+            return {"X-aws-ec2-metadata-token": AWSProvider.imds_token}
+        else:
+            self.logger.debug("Making IMDSv1 Call")
+            return {}
 
     def __error_on_required_status(self, required):
         """Error if tag is required."""
