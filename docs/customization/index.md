@@ -30,6 +30,16 @@ These task-sets are delivered in the form of formulas. From the [vendor document
 
 The `watchmaker` project follows a similar convention. Formulae specifically authored to work under `watchmaker` can be found by visiting [Plus3 IT's GitHub](https://github.com/plus3it) and querying for the substring, "[-formula](https://github.com/plus3it/?q=-formula&type=all&language=&sort=)".
 
+## Critical Files
+
+Customization-activities will be governed by two, main files: the watchmaker configuration file (a.k.a.,`config.yaml`) and the Salt content archive (a.k.a., `salt-content.zip`). Discussion of the files' contents are as follows:
+
+```{toctree}
+:maxdepth: 1
+ConfigYaml.md
+SaltContent.md
+```
+
 ## Common Scenarios
 
 The behavior of watchmaker can be easily customized towards several ends. The most-commonly encountered are:
@@ -41,8 +51,6 @@ SiteParameters.md
 SiteFormulae.md
 FormulaUpdates.md
 NewFormulas.md
-ConfigYaml.md
-SaltContent.md
 ```
 
 If there are other customization-scenarios that should be included in this document-set, please see the [contribution guidance](../contributing.md). The contribution document covers how to submit requests for documentation-improvements as well as guidance on how to contribute changes (like further customization documentation).
