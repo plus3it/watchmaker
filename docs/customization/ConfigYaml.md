@@ -65,11 +65,15 @@ If using an S3 URI, a couple of further requirements apply:
 
 By default, `watchmaker` will extract this archive-file's contents at `/srv/watchmaker/salt` (Linux) or `C:\Watchmaker\Salt\srv` (Windows) the `./` referenced elsewhere in this document will be relative to that extraction-location.
 
-See the [Salt Contents Archive File](SaltContent.md) document for a discussion on the contents and layout of this file.
+```{eval-rst}
+.. note::
+    See the :doc:`Salt Contents Archive File <SaltContent>` document for a
+    discussion on the contents and layout of this file.
+```
 
 ### The `salt_states` String-Parameter
 
-The value for this parameter will almost always be `Highstate`. This value tells watchmaker to invoke SaltStack with the `Highstate` parameter. Invoking Saltstack with this value will cause all available and activated formulas to be selected for execution.
+This parameter is by Watchmaker to invoke SaltStack with the desired states selected for execution. The typical value for this parameter is `Highstate`. The `Highstate` value tells watchmaker to invoke SaltStack with the `Highstate` invoker rather than iterated-states invoker. Invoking Saltstack with the `Highstate` invoker  will cause all available and activated formulas to be selected for execution.
 
 ### The `salt_version` String-Parameter
 
@@ -79,8 +83,8 @@ The value for this parameter instructs watchmaker which version of the Saltstack
 
 This dictionary-parameter usually has no content. However, if one wishes to customize watchmaker's execution either by adding further formulae to install or to override installtion of default-formulae's contents with newer content (e.g., when testing updates to standard formulae), this dictionary should be populated. The expected value will take the form of:
 
-```
-<FORMULA_NAME>: <DOWNLOAD_URL>
+```yaml
+      <FORMULA_NAME>: <DOWNLOAD_URL>
 ```
 
 - `<FORMULA_NAME>` will be used as the installation-location for the formula-contents into the `/srv/watchmaker/salt/formulas` (Linux) or `C:\Watchmaker\Salt\srv\formulas` (Windows) directories.
@@ -88,27 +92,56 @@ This dictionary-parameter usually has no content. However, if one wishes to cust
 
 For example, if one is working on updates to the `ash-linux-formula` and has made those changes in a GitHub project, one would specify a value of:
 
-```
-ash-linux-formula: https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip
+```yaml
+ash-l      inux-formula: https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip
 ```
 
 The above will cause the content normally loaded at `.../formulas/ash-linux-formula` to be replaced with the content unarchved from the `https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip` archive-URI.
 
 Similarly, if one is working on a _new_ formula, specifying:
 
-```
-<NEW_FORMULA_NAME>: https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip
+```yaml
+      <NEW_FORMULA_NAME>: https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip
 ```
 
-Will cause the content-archive hosted at the specified URL to be unarcheved at `.../formulas/<NEW_FORMULA_NAME>`
+Will cause the content-archive hosted at the specified GitHub URL to be unarcheved at the platform-appropriate `.../formulas/<NEW_FORMULA_NAME>` directory-path. It _should_ also cause an appropriate update to the SaltStack minion-configuration[^1]. If this fails to happen, there is most likely a formatting issue with your `user_formulas` declaration. The following is (a snippet of) how the declaration _should_ look:
+
+```yaml
+all:
+  salt:
+    user_formulas:
+      <FORMULA_NAME>: <SOURCE_URL>
+```
+
+Note that the `<FORMULA_NAME>` line is indented two spaces from the `user_formulas` token. If improper indentation is used - for example:
+
+```yaml
+all:
+  salt:
+    user_formulas:
+    <FORMULA_NAME>: <SOURCE_URL>
+```
+
+Neither the `.../formulas/<NEW_FORMULA_NAME>` directory-path will be created nor the `minion` file updated.
+
 
 ## The `linux` Map
 
-This map instructs watchmaker about where to fetch `yum`/`dnf` repository-definition files from. Using the `yum:repo_map`, watchmaker will perform a lookup using the `dist:<distribution>` value and `el_version` value to identify the download `url` from which to pull the appropriate  `yum`/`dnf` repository-definition files from
+This map contains two top-level keys: `yum` and `salt`. Both are also maps.
 
-Currently, mappings for `Red Hat 7`, `CentOS 7`, `Alma Linux 8`, `CentOS 8 Stream`, `Oracle Linux 8`, `Red Hat 8` and `Rocky Linux 8`. Further Enterprise Linux distributions may be supported by appropriate extension of this map, along with further modifcations to a few Saltstack formulae.
+The `yum` map instructs watchmaker about where to fetch `yum`/`dnf` repository-definition files from. Using the `yum:repo_map`, watchmaker will perform a lookup using the `dist:<distribution>` value and `el_version` value to identify the download `url` from which to pull the appropriate  `yum`/`dnf` repository-definition files from
 
-The `salt` dictionary is generally not modified for customization or other activities.
+
+```{eval-rst}
+.. note::
+    Currently, mappings for ``Red Hat 7``, ``CentOS 7``, ``Alma Linux 8``,
+    ``CentOS 8 Stream``, ``Oracle Linux 8``, ``Red Hat 8`` and ``Rocky Linux 8``
+    are defined. Further Enterprise Linux distributions may be supported by
+    appropriate extension of this map, along with further modifcations to a few
+    Saltstack formulae.
+```
+
+The `salt` map is generally not modified for customization or other activities.
 
 
 ## The `windows` Map
@@ -119,5 +152,20 @@ As with the `linux` map, the `salt` dictionary is generally not modified for cus
 
 ## The `status` Map
 
-To Be Written
+This map defines the "status" content that watchmaker will attempt to write as a tag to the watchmaker-managed host. Currently, only Amazon EC2s and Azure VMs are supported. Currently, this map defaults to a value of:
 
+```yaml
+status:
+  providers:
+    - key: WatchmakerStatus
+      required: false
+      provider_type: aws
+    - key: WatchmakerStatus
+      required: false
+      provider_type: azure
+```
+
+The watchmaker finish/status routines interpret the above to mean, "apply the tag named `WatchmakerStatus` to the managed-host and set an appropriate completion-status value[^2], but do not exit with an error if the tagging-operation fails".
+
+[^1]: The minion-configuration file is found at `/opt/watchmaker/salt/minion` on Linux hosts and `C:\Watchmaker\Salt\conf\minion` on Windows hosts.
+[^2]: The completion-status tagger will set a value of either `Completed` or `Error`.
