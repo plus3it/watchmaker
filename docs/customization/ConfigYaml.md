@@ -88,12 +88,12 @@ This dictionary-parameter usually has no content. However, if one wishes to cust
 ```
 
 - `<FORMULA_NAME>` will be used as the installation-location for the formula-contents into the `/srv/watchmaker/salt/formulas` (Linux) or `C:\Watchmaker\Salt\srv\formulas` (Windows) directories.
-- `<DOWNLOAD_URL>` will be used as the location from which to download an archive of target formula's content. This content should be in the form of a ZIP archive.
+- `<DOWNLOAD_URL>` will be used as the location from which to download an archive of target formula's content. This content should be in the form of a ZIP archive. Most frequently, this will be the public download-URL of a GitHub branch's (or commit-ID's) ZIP-archived, but any archive-URL that watchmaker has permission to download _should_ work
 
 For example, if one is working on updates to the `ash-linux-formula` and has made those changes in a GitHub project, one would specify a value of:
 
 ```yaml
-ash-l      inux-formula: https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip
+      ash-linux-formula: https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip
 ```
 
 The above will cause the content normally loaded at `.../formulas/ash-linux-formula` to be replaced with the content unarchved from the `https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip` archive-URI.
@@ -109,6 +109,7 @@ Will cause the content-archive hosted at the specified GitHub URL to be unarchev
 ```yaml
 all:
   salt:
+    [...elided...]
     user_formulas:
       <FORMULA_NAME>: <SOURCE_URL>
 ```
@@ -118,6 +119,7 @@ Note that the `<FORMULA_NAME>` line is indented two spaces from the `user_formul
 ```yaml
 all:
   salt:
+    [...elided...]
     user_formulas:
     <FORMULA_NAME>: <SOURCE_URL>
 ```
