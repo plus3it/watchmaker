@@ -13,7 +13,7 @@ This document is intended to help both the `watchmaker` user-community and `watc
 
 ## Background
 
-By default, `watchmaker` executes a standard set of configuration-tasks. The `watchmaker` utility primarily leverages [SaltStack](https://docs.saltproject.io/en/latest/contents.html) for these configuration-tasks.
+By default, `watchmaker` executes a standard set of configuration-tasks. The `watchmaker` utility primarily leverages [SaltStack](https://docs.saltproject.io/en/latest/topics/about_salt_project.html#about-salt) for these configuration-tasks.
 
 The configuration-tasks, themselves, are grouped into sets of related tasks. Related tasks can be things like:
 
