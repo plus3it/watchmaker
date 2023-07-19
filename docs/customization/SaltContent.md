@@ -31,4 +31,4 @@ This directory-hierarchy governs _which_ Saltstack states will be executed from 
 
 ## The `winrepo` Directory-Tree
 
-&lt;TO_BE_WRITTEN&gt;
+This directory-hierarchy contains windows-specific automation-content. Unlike the `pillar`  and `states` directory-trees, content in this directory-tree is not expected to be multi-platform.
