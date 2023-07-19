@@ -39,10 +39,20 @@ This list provides a list of names of "environments" that saltstack's site-custo
 
 _Typical_ values will be `null`,`dev`, `test` and/or `prod`.
 
-- Usage of `null` indicates no differentiation between environments. This can mean that all the environments leverage the same service-integration information or that each deployment-environment will be governed by a different `config.yaml` file.
+- Usage of `null` indicates no differentiation between environments &ndash; that the generic configuration should be applied. This can mean that all the environments leverage the same service-integration information or that each deployment-environment will be governed by a different `config.yaml` file.
 - The others are shorthand for "development", "testing & integration" and "production", respectively.
 
 The word "typical" was previously emphasized because _any_ value (other than `null`) is supported so long as there is a correspondingingly-named content-hierarchy in the site's custom Salt-content archive file (see the `salt-content` dictionary-key in the next section). This content-hierarchy needs to exist within the Salt-content archive file at `./pillar/<ENVIRONMENT_NAME>` (e.g., a `dev` environment would have a corresponding `./pillar/dev` directory in the Salt-content archive file).
+
+```{eval-rst}
+.. note::
+    The default environment that watchmaker will apply is specified using the
+    ``environment`` parameter. In the example, this is set to ``null`` --
+    meaning that a generic configuration will be applied. This value is
+    overridden by requesting a specific environment-configuration by using
+    either ``-e <ENVIRONMENT>`` or ``--env <ENVIRONMENT>`` flag and argument
+    when invoking watchmaker (per the :doc:`Usage Guide </usage>`).
+```
 
 ### The `salt_content` String-Parameter
 
@@ -90,7 +100,7 @@ Similarly, if one is working on a _new_ formula, specifying:
 <NEW_FORMULA_NAME>: https://github.com/<USER_ID>/<PROJECT_NAME>/archive/refs/heads/<BRANCH_NAME>.zip
 ```
 
-Will cause the content-archive hosted at the specified URL to be unarcheved at `.../formulas/<NEW_FORMULA_NAME>` 
+Will cause the content-archive hosted at the specified URL to be unarcheved at `.../formulas/<NEW_FORMULA_NAME>`
 
 ## The `linux` Map
 
