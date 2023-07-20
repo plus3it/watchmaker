@@ -37,9 +37,9 @@ installation.md
 configuration.md
 usage.md
 customization/index.md
-findings/index.md
-scap.md
 faq.md
+scap.md
+findings/index.md
 api.md
 contributing.md
 changelog.md
