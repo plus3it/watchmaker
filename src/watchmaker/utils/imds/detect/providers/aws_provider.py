@@ -50,7 +50,17 @@ class AWSProvider(AbstractProvider):
             return False
 
     def get_imds_token(self):
+        """Return IMDS token."""
         return self.imds_token
+
+    def get_metadata_request_headers(self):
+        """Return metadata request header if imds token is set."""
+        if self.imds_token:
+            self.logger.debug("Returning AWS IMDSv2 Token Header")
+            return {"X-aws-ec2-metadata-token": self.imds_token}
+
+        self.logger.debug("AWS IMDSv2 Token not found")
+        return None
 
     def __is_valid_server(self):
         """Determine if valid metadata server."""
@@ -95,12 +105,4 @@ class AWSProvider(AbstractProvider):
         result = utils.urlopen_retry(request_uri, timeout)
         if result.status == 200:
             return result.read().decode("utf-8")
-        return None
-
-    def get_metadata_request_headers(self):
-        if self.imds_token:
-            self.logger.debug("Returning AWS IMDSv2 Token Header")
-            return {"X-aws-ec2-metadata-token": self.imds_token}
-
-        self.logger.debug("AWS IMDSv2 Token not found")
         return None
