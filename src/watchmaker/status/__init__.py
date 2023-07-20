@@ -66,13 +66,13 @@ class Status:
         """Get detected providers."""
         return list(self.status_providers)
 
-    def __get_status_providers(self, providers):
+    def __get_status_providers(self, detected_providers):
         """Get providers by identifiers."""
         status_providers = {}
-        for provider in providers:
+        for detected_provider in detected_providers:
             status_providers[provider] = Status._PROVIDERS.get(
-                provider.identifier
-            )(provider)
+                detected_provider.identifier
+            )(detected_provider)
 
         return status_providers
 

@@ -15,7 +15,6 @@ except ImportError:
     from mock import patch
 
 from watchmaker.config.status import (
-    get_cloud_providers_missing_prereqs,
     get_cloud_providers_with_prereqs,
     get_non_cloud_providers,
     get_req_cloud_providers_wo_prereqs,
