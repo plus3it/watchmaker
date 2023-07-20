@@ -9,6 +9,8 @@
 
 # Findings Summary-Table
 
+A few scans performed against EL8 systems are version-dependent. Watchmaker is designed to ensure that a given EL8 host is running at the latest-available EL8 minor-release version. Some of the version-dependent scans are for versions (well) prior "the latest-available EL8 minor-release version". The person responding to scan-findings should make sure to notice if the findings-text includes mention of specific EL8 minor-release version or version-ranges and compare that to the EL8 minor-release of the scanned system. If the version/version-range is less than that of the scanned version, the scan result may be immediately flagged as "**INVALID FINDING**". Anything that cannot be immediate flagged in this way should be checked against the following table of known findings[^1].
+
 ```{eval-rst}
   .. _Prevent System Daemons From Using Kerberos For Authentication: #prevent-system-daemons-from-using-kerberos-for-authentication
   .. _Users Must Provide A Password For Privilege Escalation: #users-must-provide-a-password-for-privilege-escalation
@@ -29,88 +31,98 @@
   .. _Verify that Shared Library Directories Have Root Ownership: #verify-that-shared-library-directories-have-root-ownership
   .. _Oracle Linux 8 STIGs Specify Conflicting ClientAliveCountMax values: #oracle-linux-8-stigs-specify-conflicting-clientalivecountmax-values
   .. _Record Events When Privileged Executables Are Run: #record-events-when-privileged-executables-are-run
+  .. _EL 8 systems less than v8.4 must configure the password complexity module in the system-auth allow three retries or less: #el-8-systems-less-than-v8.4-must-configure-the-password-complexity-module-in-the-system-auth-allow-three-retries-or-less
+  .. _ EL 8 must enable the hardware random number generator entropy gatherer service: #el-8-must-enable-the-hardware-random-number-generator-entropy-gatherer-service
 
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | Finding Summary                                                                            | Finding Identifiers |
-  +============================================================================================+=====================+
-  | `Prevent System Daemons From Using Kerberos For Authentication`_                           | V-230238            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010161      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `Users Must Provide A Password For Privilege Escalation`_                                  | V-230271            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010380      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `A Separate Filesystem Must Be Used For the /tmp Directory`_                               | V-230295            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010543      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the nodev option`_                                            | V-230511            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-040123      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the nosuid option`_                                           | V-230512            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-040124      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `The OS must mount /tmp with the noexec option`_                                           | V-230514            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-040125      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `The OS Must Ensure Session Control Is Automatically Started At Shell Initialization`_     | V-230349            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-020041      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime`_                  | V-230367            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-020210      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `OS Must Prohibit Password Reuse For A Minimum Of Five Generations`_                       | V-230368            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-020220      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `The Installed Operating System Is Not Vendor Supported`_                                  | V-230221            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010000      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_          | V-244532            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010741      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_       | V-230379            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-020320      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive`_          | V-244531            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010731      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `Add nosuid Option to /boot`_                                                              | V-230300            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010571      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                      | V-230316            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010680      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `Enable Certmap in SSSD`_                                                                  | V-230355            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-020090      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `Verify that Shared Library Directories Have Root Ownership`_                              | V-251709            |
-  |                                                                                            |                     |
-  |                                                                                            | RHEL-08-010351      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `Oracle Linux 8 STIGs Specify Conflicting ClientAliveCountMax values`_                     | V-248552            |
-  |                                                                                            |                     |
-  |                                                                                            | OL08-00-010200      |
-  +--------------------------------------------------------------------------------------------+---------------------+
-  | `Record Events When Privileged Executables Are Run`_                                       | V-248722            |
-  |                                                                                            |                     |
-  |                                                                                            | OL08-00-030000      |
-  +--------------------------------------------------------------------------------------------+---------------------+
+
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | Finding Summary                                                                                                             | Finding Identifiers |
+  +=============================================================================================================================+=====================+
+  | `Prevent System Daemons From Using Kerberos For Authentication`_                                                            | V-230238            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010161      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Users Must Provide A Password For Privilege Escalation`_                                                                   | V-230271            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010380      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `A Separate Filesystem Must Be Used For the /tmp Directory`_                                                                | V-230295            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010543      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the nodev option`_                                                                             | V-230511            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-040123      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the nosuid option`_                                                                            | V-230512            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-040124      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `The OS must mount /tmp with the noexec option`_                                                                            | V-230514            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-040125      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `The OS Must Ensure Session Control Is Automatically Started At Shell Initialization`_                                      | V-230349            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-020041      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime`_                                                   | V-230367            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-020210      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `OS Must Prohibit Password Reuse For A Minimum Of Five Generations`_                                                        | V-230368            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-020220      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `The Installed Operating System Is Not Vendor Supported`_                                                                   | V-230221            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010000      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_                                           | V-244532            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010741      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `"Only Authorized Local User Accounts Exist on Operating System" is always flagged`_                                        | V-230379            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-020320      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive`_                                           | V-244531            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010731      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Add nosuid Option to /boot`_                                                                                               | V-230300            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010571      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                                                       | V-230316            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010680      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Enable Certmap in SSSD`_                                                                                                   | V-230355            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-020090      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Verify that Shared Library Directories Have Root Ownership`_                                                               | V-251709            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010351      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Oracle Linux 8 STIGs Specify Conflicting ClientAliveCountMax values`_                                                      | V-248552            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | OL08-00-010200      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `Record Events When Privileged Executables Are Run`_                                                                        | V-248722            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | OL08-00-030000      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `EL 8 systems less than v8.4 must configure the password complexity module in the system-auth allow three retries or less`_ | V-251714            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-020102      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `EL 8 must enable the hardware random number generator entropy gatherer service`_                                           | V-230285            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010471      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
 ```
-
 
 # Prevent System Daemons From Using Kerberos For Authentication
 
@@ -395,3 +407,30 @@ While the latter returns:
 ```
 
 It is the presence of the content in the file in the `/etc/audit/rules.d/` directory that results in &ndash; by way of the `augenrules` service &ndash; the presence of the correct content in the `/etc/audit/audit.rules` file.
+
+# EL 8 systems less than v8.4 must configure the password complexity module in the system-auth allow three retries or less
+
+**Invalid Finding:**
+
+This finding applies _only_ to Enterprise Linux distros 8.0, 8.1, 8.2 and 8.3. As of the writing of this document all, properly-patched Enterprise Linux deployments are running 8.4 or higher. This finding does not apply to such systems
+
+# EL 8 must enable the hardware random number generator entropy gatherer service
+
+**Invalid Finding:**
+
+While this finding states that the `rngd` systemd unit must be enabled _and_ active. Per the output from the `rngd.service` systemd unit:
+
+~~~
+$ systemctl status rngd
+* rngd.service - Hardware RNG Entropy Gatherer Daemon
+   Loaded: loaded (/usr/lib/systemd/system/rngd.service; enabled; vendor preset: enabled)
+   Active: inactive (dead) since Tue 2023-06-27 15:21:25 UTC; 49s ago
+Condition: start condition failed at Tue 2023-06-27 15:21:32 UTC; 42s ago
+             ConditionKernelCommandLine=!fips=1 was not met
+ Main PID: 214 (code=exited, status=0/SUCCESS)
+~~~
+
+The above-captured output's `ConditionKernelCommandLine`'s indication that the condition of `!fips=1` "was not met" means that this capability is not (currently) compatible with a system running with FIPS mode enabled. Enablement of FIPS mode is specified in another, earlier, higher-priority STIG-finding. As such, this setting will not be enableable while the higher-priority configuration-state is in place.
+
+
+[^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.

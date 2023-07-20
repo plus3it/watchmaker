@@ -1,0 +1,295 @@
+[...elided...]
+2023-06-27 12:57:39,841 [salt.state       :325 ][ERROR   ][5656]
+{
+  'pid': 5420,
+  'retcode': 1,
+  'stdout': '
+    VERBOSE: Performing the operation "Join in domain \'plus3it.lab\\aws-c2c4418931.plus3it.lab\'" on target 
+    "ip-0A005598".\nWARNING: Command [xAdd-Computer] failed. Retrying in 10 second(s).\nVERBOSE: Performing the operation "Join in domain \'plus3it.lab\\aws-c2c4418931.plus3it.lab\'" on target 
+    "ip-0A005598".\nWARNING: Command [xAdd-Computer] failed. Retrying in 20 second(s).\nVERBOSE: Performing the operation "Join in domain \'plus3it.lab\\aws-c2c4418931.plus3it.lab\'" on target 
+    "ip-0A005598".\nWARNING: 
+    
+    PSMessageDetails      : 
+    Exception             : System.Management.Automation.RuntimeException: Command [xAdd-Computer] failed
+    TargetObject          : Command [xAdd-Computer] failed
+    CategoryInfo          : OperationStopped: (Command [xAdd-Computer] failed:String) [], RuntimeException
+    FullyQualifiedErrorId : Command [xAdd-Computer] failed
+    ErrorDetails          : 
+    InvocationInfo        : System.Management.Automation.InvocationInfo
+    ScriptStackTrace      : at Retry-TestCommand, C:\\ProgramData\\Salt 
+                            Project\\Salt\\var\\cache\\salt\\minion\\extfiles\\join-domain\\JoinDomain.ps1: line 519
+                            at <ScriptBlock>, C:\\ProgramData\\Salt 
+                            Project\\Salt\\var\\cache\\salt\\minion\\extfiles\\join-domain\\JoinDomain.ps1: line 678
+                            at <ScriptBlock>, <No file>: line 1
+    PipelineIterationInfo : {}
+    
+    
+    
+    WARNING: Command [xAdd-Computer] failed the maximum number of 3 time(s).\n11/14/2018 16:05:56:270 -----------------------------------------------------------------
+    11/14/2018 16:05:56:270 NetpDoDomainJoin
+    11/14/2018 16:05:56:270 NetpDoDomainJoin: using new computer names
+    11/14/2018 16:05:56:270 NetpDoDomainJoin: NetpGetNewMachineName returned 0x0
+    11/14/2018 16:05:56:270 NetpMachineValidToJoin: \'WIN-VDQFC8O4JEM\'
+    11/14/2018 16:05:56:270 NetpMachineValidToJoin: status: 0x0
+    11/14/2018 16:05:56:270 NetpJoinWorkgroup: joining computer \'WIN-VDQFC8O4JEM\' to workgroup \'WORKGROUP\'
+    11/14/2018 16:05:56:270 NetpValidateName: checking to see if \'WORKGROUP\' is valid as type 2 name
+    11/14/2018 16:05:56:286 NetpCheckNetBiosNameNotInUse for \'WORKGROUP\' [ Workgroup as MACHINE]  returned 0x0
+    11/14/2018 16:05:56:286 NetpValidateName: name \'WORKGROUP\' is valid for type 2
+    11/14/2018 16:05:56:614 NetpJoinWorkgroup: status:  0x0
+    11/14/2018 16:05:56:614 NetpDoDomainJoin: status: 0x0
+    06/23/2023 13:59:59:151 -----------------------------------------------------------------
+    06/23/2023 13:59:59:151 NetpDoDomainJoin
+    06/23/2023 13:59:59:151 NetpDoDomainJoin: using new computer names
+    06/23/2023 13:59:59:151 NetpDoDomainJoin: NetpGetNewMachineName returned 0x0
+    06/23/2023 13:59:59:151 NetpDoDomainJoin: NetpGetNewHostName returned 0x0
+    06/23/2023 13:59:59:151 NetpMachineValidToJoin: \'IP-0A005598\'
+    06/23/2023 13:59:59:151         OS Version: 10.0
+    06/23/2023 13:59:59:151         Build number: 17763 (17763.rs5_release.180914-1434)
+    06/23/2023 13:59:59:151         SKU: Windows Server 2019 Datacenter
+    06/23/2023 13:59:59:151         Architecture: 64-bit (AMD64)
+    06/23/2023 13:59:59:245 NetpMachineValidToJoin: status: 0x0
+    06/23/2023 13:59:59:245 NetpJoinDomain
+    06/23/2023 13:59:59:245         HostName: ip-0A005598
+    06/23/2023 13:59:59:245         NetbiosName: IP-0A005598
+    06/23/2023 13:59:59:245         Domain: plus3it.lab\\aws-101f37cc48.plus3it.lab
+    06/23/2023 13:59:59:245         MachineAccountOU: (NULL)
+    06/23/2023 13:59:59:245         Account: dom-joiner
+    06/23/2023 13:59:59:245         Options: 0x403
+    06/23/2023 13:59:59:245 NetpDisableIDNEncoding: no domain dns available - IDN encoding will NOT be disabled
+    06/23/2023 13:59:59:245 NetpJoinDomainOnDs: NetpDisableIDNEncoding returned: 0x0
+    06/23/2023 13:59:59:292 NetpJoinDomainOnDs: status of connecting to dc \'\\\\aws-101f37cc48.plus3it.lab\': 0x0
+    06/23/2023 13:59:59:307 NetpJoinDomainOnDs: Passed DC \'aws-101f37cc48.plus3it.lab\' verified as DNS name \'\\\\aws-101f37cc48.plus3it.lab\'
+    06/23/2023 13:59:59:307 NetpDsGetDcName: status of verifying DNS A record name resolution for \'aws-101f37cc48.plus3it.lab\': 0x0
+    06/23/2023 13:59:59:307 NetpGetDnsHostName: PrimaryDnsSuffix defaulted to DNS domain name: plus3it.lab
+    06/23/2023 13:59:59:323 NetpProvisionComputerAccount:
+    06/23/2023 13:59:59:323         lpDomain: plus3it.lab
+    06/23/2023 13:59:59:323         lpHostName: ip-0A005598
+    06/23/2023 13:59:59:323         lpMachineAccountOU: (NULL)
+    06/23/2023 13:59:59:323         lpDcName: aws-101f37cc48.plus3it.lab
+    06/23/2023 13:59:59:323         lpMachinePassword: (null)
+    06/23/2023 13:59:59:323         lpAccount: dom-joiner
+    06/23/2023 13:59:59:323         lpPassword: (non-null)
+    06/23/2023 13:59:59:323         dwJoinOptions: 0x403
+    06/23/2023 13:59:59:323         dwOptions: 0x40000003
+    06/23/2023 13:59:59:370 NetpLdapBind: Verified minimum encryption strength on aws-101f37cc48.plus3it.lab: 0x0
+    06/23/2023 13:59:59:370 NetpLdapGetLsaPrimaryDomain: reading domain data
+    06/23/2023 13:59:59:370 NetpGetNCData: Reading NC data
+    06/23/2023 13:59:59:370 NetpGetDomainData: Lookup domain data for: DC=plus3it,DC=lab
+    06/23/2023 13:59:59:370 NetpGetDomainData: Lookup crossref data for: CN=Partitions,CN=Configuration,DC=plus3it,DC=lab
+    06/23/2023 13:59:59:370 NetpLdapGetLsaPrimaryDomain: result of retrieving domain data: 0x0
+    06/23/2023 13:59:59:370 NetpGetLocalDACDisabled: returning 0x0, *pfDACDisabled=TRUE
+    06/23/2023 13:59:59:370 NetpCheckForDomainSIDCollision: returning 0x0(0).
+    06/23/2023 13:59:59:385 NetpGetComputerObjectDn: Cracking DNS domain name plus3it.lab/ into Netbios on \\\\aws-101f37cc48.plus3it.lab
+    06/23/2023 13:59:59:385 NetpGetComputerObjectDn: Crack results:         name = PLUS3IT\\
+    06/23/2023 13:59:59:385 NetpGetComputerObjectDn: Cracking account name PLUS3IT\\IP-0A005598$ on \\\\aws-101f37cc48.plus3it.lab
+    06/23/2023 13:59:59:385 NetpGetComputerObjectDn: Crack results:         Account does not exist
+    06/23/2023 13:59:59:385 NetpGetComputerObjectDn: Cracking Netbios domain name PLUS3IT\\ into root DN on \\\\aws-101f37cc48.plus3it.lab
+    06/23/2023 13:59:59:385 NetpGetComputerObjectDn: Crack results:         name = DC=plus3it,DC=lab
+    06/23/2023 13:59:59:385 NetpGetComputerObjectDn: Got DN CN=IP-0A005598,CN=Computers,DC=plus3it,DC=lab from the default computer container
+    06/23/2023 13:59:59:385 NetpGetADObjectOwnerAttributes: Looking up attributes for machine account: CN=IP-0A005598,CN=Computers,DC=plus3it,DC=lab
+    06/23/2023 13:59:59:385 NetpGetADObjectOwnerAttributes: Ldap Search failed: 8240
+    06/23/2023 13:59:59:385 NetpCheckIfAccountShouldBeReused: Computer Object does not exist in OU.
+    06/23/2023 13:59:59:385 NetpCheckIfAccountShouldBeReused:fReuseAllowed: TRUE, NetStatus:0x2030
+    06/23/2023 13:59:59:385 NetpModifyComputerObjectInDs: Initial attribute values:
+    06/23/2023 13:59:59:385                 objectClass  =  Computer
+    06/23/2023 13:59:59:385                 SamAccountName  =  IP-0A005598$
+    06/23/2023 13:59:59:385                 userAccountControl  =  0x1000
+    06/23/2023 13:59:59:385                 DnsHostName  =  ip-0A005598.plus3it.lab
+    06/23/2023 13:59:59:385                 ServicePrincipalName  =  HOST/ip-0A005598.plus3it.lab  RestrictedKrbHost/ip-0A005598.plus3it.lab  HOST/IP-0A005598  RestrictedKrbHost/IP-0A005598
+    06/23/2023 13:59:59:385                 unicodePwd  =  <SomePassword>
+    06/23/2023 13:59:59:385 NetpModifyComputerObjectInDs: Computer Object does not exist in OU
+    06/23/2023 13:59:59:385 NetpModifyComputerObjectInDs: Attribute values to set:
+    06/23/2023 13:59:59:385                 objectClass  =  Computer
+    06/23/2023 13:59:59:385                 SamAccountName  =  IP-0A005598$
+    06/23/2023 13:59:59:385                 userAccountControl  =  0x1000
+    06/23/2023 13:59:59:385                 DnsHostName  =  ip-0A005598.plus3it.lab
+    06/23/2023 13:59:59:385                 ServicePrincipalName  =  HOST/ip-0A005598.plus3it.lab  RestrictedKrbHost/ip-0A005598.plus3it.lab  HOST/IP-0A005598  RestrictedKrbHost/IP-0A005598
+    06/23/2023 13:59:59:385                 unicodePwd  =  <SomePassword>
+    06/23/2023 13:59:59:448 Querying "CN=IP-0A005598,CN=Computers,DC=plus3it,DC=lab" for objectSid attribute
+    06/23/2023 13:59:59:448 NetpQueryObjectSidAttribute succeeded: got RID=0x16c30 objectSid=S-1-5-21-3217479199-34324276-1494086650-93232
+    06/23/2023 13:59:59:448 NetpDeleteMachineAccountKey: called for computer \'IP-0A005598\'
+    06/23/2023 13:59:59:464 NetpGetComputerObjectDn: Cracking DNS domain name plus3it.lab/ into Netbios on \\\\aws-101f37cc48.plus3it.lab
+    06/23/2023 13:59:59:464 NetpGetComputerObjectDn: Crack results:         name = PLUS3IT\\
+    06/23/2023 13:59:59:464 NetpGetComputerObjectDn: Cracking account name PLUS3IT\\IP-0A005598$ on \\\\aws-101f37cc48.plus3it.lab
+    06/23/2023 13:59:59:464 NetpGetComputerObjectDn: Crack results:         (Account already exists) DN = CN=IP-0A005598,CN=Computers,DC=plus3it,DC=lab
+    06/23/2023 13:59:59:464 NetpDeleteMachineAccountKey: msDS-KeyCredentialLink attr was not found on computer \'IP-0A005598\' - no action required.
+    06/23/2023 13:59:59:464 NetpDeleteMachineAccountKey: returning Status: 0 
+    06/23/2023 13:59:59:464 ldap_unbind status: 0x0
+    06/23/2023 13:59:59:464 NetpJoinCreatePackagePart: status:0x0.
+    06/23/2023 13:59:59:495 NetpJoinDomainOnDs: Setting netlogon cache.
+    06/23/2023 13:59:59:495 NetpJoinDomainOnDs: status of setting netlogon cache: 0x0
+    06/23/2023 13:59:59:495 NetpJoinDomainOnDs: Function exits with status of: 0x0
+    06/23/2023 13:59:59:495 NetpJoinDomainOnDs: status of disconnecting from \'\\\\aws-101f37cc48.plus3it.lab\': 0x0
+    06/23/2023 13:59:59:495 NetpJoinDomain: DsrIsDeviceJoined returned false
+    06/23/2023 13:59:59:620 NetpJoinDomain: NetpCompleteOfflineDomainJoin SUCCESS: Requested a reboot :0x0
+    06/23/2023 13:59:59:620 NetpDoDomainJoin: status: 0x0
+     Setting backup/restore privileges.
+    06/23/2023 13:59:59:464 NetpProvGetWindowsImageState: IMAGE_STATE_COMPLETE.
+    06/23/2023 13:59:59:464 NetpAddPartCollectionToRegistry.
+    06/23/2023 13:59:59:464 NetpProvGetTargetProductVersion: Target product version: 10.0.17763.4252
+    06/23/2023 13:59:59:479 NetpAddPartCollectionToRegistry: delete OP state key status: 0x2.
+    06/23/2023 13:59:59:479 NetpConvertBlobToJoinState: Translating provisioning data to internal format
+    06/23/2023 13:59:59:479 NetpConvertBlobToJoinState: Selecting version 1
+    06/23/2023 13:59:59:479 NetpConvertBlobToJoinState: exiting: 0x0
+    06/23/2023 13:59:59:495 NetpJoin2RequestPackagePartInstall: Successfully persisted all fields
+    06/23/2023 13:59:59:495 NetpJoin3RequestPackagePartInstall: Successfully persisted all fields
+    06/23/2023 13:59:59:495 NetpAddPartCollectionToRegistry: Successfully initiated provisioning package installation: 3/3 part(s) installed.
+    06/23/2023 13:59:59:495 NetpAddPartCollectionToRegistry: status: 0x0.
+    06/23/2023 13:59:59:495 NetpOpenRegistry: status: 0x0.
+    06/23/2023 13:59:59:495 NetpSetPrivileges: status: 0x0.
+    06/23/2023 13:59:59:495 NetpRequestProvisioningPackageInstall: status: 0x0.
+    06/23/2023 13:59:59:495 -----------------------------------------------------------------
+    06/23/2023 13:59:59:495 NetpProvContinueProvisioningPackageInstall:
+    06/23/2023 13:59:59:495         Context: 0
+    06/23/2023 13:59:59:495 NetpProvGetWindowsImageState: IMAGE_STATE_COMPLETE.
+    06/23/2023 13:59:59:510 NetpCreatePartListFromRegistry: status: 0x0.
+    06/23/2023 13:59:59:510 NetpCompleteOfflineDomainJoin
+    06/23/2023 13:59:59:510         fBootTimeCaller: FALSE
+    06/23/2023 13:59:59:510         fSetLocalGroups: TRUE
+    06/23/2023 13:59:59:510 NetpJoinDomainLocal: NetpHandleJoinedStateInfo returned: 0x0
+    06/23/2023 13:59:59:588 NetpJoinDomainLocal: NetpManageMachineSecret returned: 0x0.
+    06/23/2023 13:59:59:588 Calling NetpQueryService to get Netlogon service state.
+    06/23/2023 13:59:59:588 NetpJoinDomainLocal: NetpQueryService returned: 0x0.
+    06/23/2023 13:59:59:588 NetpJoinDomainLocal: status of setting LSA pri. domain: 0x0
+    06/23/2023 13:59:59:588 NetpManageLocalGroupsForJoin: Adding groups for new domain, removing groups from old domain, if any.
+    06/23/2023 13:59:59:604 NetpManageLocalGroupsForJoin: status of modifying groups related to domain \'PLUS3IT\' to local groups: 0x0
+    06/23/2023 13:59:59:604 NetpManageLocalGroupsForJoin: INFO: No old domain groups to process.
+    06/23/2023 13:59:59:604 NetpJoinDomainLocal: Status of managing local groups: 0x0
+    06/23/2023 13:59:59:604 NetpJoinDomainLocal: status of setting ComputerNamePhysicalDnsDomain to \'plus3it.lab\': 0x0
+    06/23/2023 13:59:59:604 NetpJoinDomainLocal: Controlling services and setting service start type.
+    06/23/2023 13:59:59:604 NetpJoinDomainLocal: Updating W32TimeConfig
+    06/23/2023 13:59:59:620 NetpCompleteOfflineDomainJoin: status: 0x0
+    06/23/2023 13:59:59:620 NetpJoinProvider2OLContinuePackagePartInstall: ignoring Context=0 (work finished already).
+    06/23/2023 13:59:59:620 NetpJoinProvider3OLContinuePackagePartInstall: ignoring Context=0 (work finished already).
+    06/23/2023 13:59:59:620 NetpProvContinueProvisioningPackageInstall: Provisioning package installation completed successfully.
+    06/23/2023 13:59:59:620 NetpProvContinueProvisioningPackageInstall: delete OP state key status: 0x0.
+    06/23/2023 13:59:59:620 NetpProvContinueProvisioningPackageInstall: status: 0xa99.
+    06/27/2023 12:51:08:911 -----------------------------------------------------------------
+    06/27/2023 12:51:08:911 NetpUnJoinDomain: unjoin from \'PLUS3IT\' using \'plus3it.lab\\dom-joiner\' creds, options: 0x4
+    06/27/2023 12:51:08:911         OS Version: 10.0
+    06/27/2023 12:51:08:911         Build number: 17763 (17763.rs5_release.180914-1434)
+    06/27/2023 12:51:08:911         SKU: Windows Server 2019 Datacenter
+    06/27/2023 12:51:08:911         Architecture: 64-bit (AMD64)
+    06/27/2023 12:51:08:911 NetpUnJoinDomain: status of getting computer name: 0x0
+    06/27/2023 12:51:08:911 NetpUnJoinDomain: DsrIsDeviceJoined returned false
+    06/27/2023 12:51:08:911 NetpApplyJoinState: actions: 0x22b805a
+    06/27/2023 12:51:08:927 NetpDsGetDcName: trying to find DC in domain \'PLUS3IT\', flags: 0x1010
+    06/27/2023 12:51:08:927 NetpDsGetDcName: found DC \'\\\\AWS-C2C4418931\' in the specified domain
+    06/27/2023 12:51:09:123 NetpApplyJoinState: status of connecting to dc \'\\\\AWS-C2C4418931\': 0x0
+    06/27/2023 12:51:10:141 NetpApplyJoinState: status of stopping and setting start type of Netlogon to 16: 0x0
+    06/27/2023 12:51:10:141 NetpApplyJoinState: NON FATAL: status of removing DNS registrations: 0x0
+    06/27/2023 12:51:10:141 NetpGetLsaMachineAccountInfoOld: status: 0x0
+    06/27/2023 12:51:10:141 NetpApplyJoinState: status of getting LSA machine acct info (old) 0x0
+    06/27/2023 12:51:10:188 NetpManageMachineAccountWithSid: status of disabling account \'IP-0A005598$\' on \'\\\\AWS-C2C4418931\': 0x0
+    06/27/2023 12:51:10:188 NetpApplyJoinState: status of disabling account: 0x0
+    06/27/2023 12:51:10:188 NetpApplyJoinState: status of setting LSA pri. domain: 0x0
+    06/27/2023 12:51:10:188 NetpSetLsaMachineAccountInfoOld: status: 0x0
+    06/27/2023 12:51:10:188 NetpApplyJoinState: status of setting LSA machine acct info (old) 0x0
+    06/27/2023 12:51:10:188 NetpApplyJoinState: status of clearing ComputerNamePhysicalDnsDomain: 0x0
+    06/27/2023 12:51:10:221 NetpApplyJoinState: status of removing from local groups: 0x0
+    06/27/2023 12:51:10:259 NetpApplyJoinState: status of disconnecting from \'\\\\AWS-C2C4418931\': 0x0
+    06/27/2023 12:51:10:259 NetpUnJoinDomain: status: 0x0
+    06/27/2023 12:51:10:274 -----------------------------------------------------------------
+    06/27/2023 12:51:10:274 NetpDoDomainJoin
+    06/27/2023 12:51:10:274 NetpDoDomainJoin: using current computer names
+    06/27/2023 12:51:10:274 NetpDoDomainJoin: NetpGetComputerNameEx(NetBios) returned 0x0
+    06/27/2023 12:51:10:274 NetpMachineValidToJoin: \'IP-0A005598\'
+    06/27/2023 12:51:10:274         OS Version: 10.0
+    06/27/2023 12:51:10:274         Build number: 17763 (17763.rs5_release.180914-1434)
+    06/27/2023 12:51:10:274         SKU: Windows Server 2019 Datacenter
+    06/27/2023 12:51:10:274         Architecture: 64-bit (AMD64)
+    06/27/2023 12:51:10:274 NetpMachineValidToJoin: status: 0x0
+    06/27/2023 12:51:10:274 NetpJoinWorkgroup: joining computer \'IP-0A005598\' to workgroup \'WORKGROUP\'
+    06/27/2023 12:51:10:274 NetpValidateName: checking to see if \'WORKGROUP\' is valid as type 2 name
+    06/27/2023 12:51:16:366 NetpCheckNetBiosNameNotInUse for \'WORKGROUP\' [ Workgroup as MACHINE]  returned 0x0
+    06/27/2023 12:51:16:366 NetpValidateName: name \'WORKGROUP\' is valid for type 2
+    06/27/2023 12:51:16:366 NetpJoinWorkgroup: status:  0x0
+    06/27/2023 12:51:16:366 NetpDoDomainJoin: status: 0x0
+    06/27/2023 12:57:09:335 -----------------------------------------------------------------
+    06/27/2023 12:57:09:335 NetpDoDomainJoin
+    06/27/2023 12:57:09:335 NetpDoDomainJoin: using new computer names
+    06/27/2023 12:57:09:335 NetpDoDomainJoin: NetpGetNewMachineName returned 0x0
+    06/27/2023 12:57:09:335 NetpDoDomainJoin: NetpGetNewHostName returned 0x0
+    06/27/2023 12:57:09:335 NetpMachineValidToJoin: \'IP-0A005598\'
+    06/27/2023 12:57:09:335         OS Version: 10.0
+    06/27/2023 12:57:09:335         Build number: 17763 (17763.rs5_release.180914-1434)
+    06/27/2023 12:57:09:335         SKU: Windows Server 2019 Datacenter
+    06/27/2023 12:57:09:335         Architecture: 64-bit (AMD64)
+    06/27/2023 12:57:09:335 NetpMachineValidToJoin: status: 0x0
+    06/27/2023 12:57:09:335 NetpJoinDomain
+    06/27/2023 12:57:09:335         HostName: ip-0A005598
+    06/27/2023 12:57:09:335         NetbiosName: IP-0A005598
+    06/27/2023 12:57:09:335         Domain: plus3it.lab\\aws-c2c4418931.plus3it.lab
+    06/27/2023 12:57:09:335         MachineAccountOU: (NULL)
+    06/27/2023 12:57:09:335         Account: dom-joiner
+    06/27/2023 12:57:09:335         Options: 0x403
+    06/27/2023 12:57:09:335 NetpDisableIDNEncoding: no domain dns available - IDN encoding will NOT be disabled
+    06/27/2023 12:57:09:335 NetpJoinDomainOnDs: NetpDisableIDNEncoding returned: 0x0
+    06/27/2023 12:57:09:398 NetUseAdd to \\\\aws-c2c4418931.plus3it.lab\\IPC$ returned 1326
+    06/27/2023 12:57:09:398 NetpJoinDomainOnDs: status of connecting to dc \'\\\\aws-c2c4418931.plus3it.lab\': 0x52e
+    06/27/2023 12:57:09:398 NetpJoinDomainOnDs: Function exits with status of: 0x52e
+    06/27/2023 12:57:09:398 NetpJoinDomainOnDs: NetpResetIDNEncoding on \'(null)\': 0x0
+    06/27/2023 12:57:09:398 NetpDoDomainJoin: status: 0x52e
+    06/27/2023 12:57:19:429 -----------------------------------------------------------------
+    06/27/2023 12:57:19:429 NetpDoDomainJoin
+    06/27/2023 12:57:19:429 NetpDoDomainJoin: using new computer names
+    06/27/2023 12:57:19:429 NetpDoDomainJoin: NetpGetNewMachineName returned 0x0
+    06/27/2023 12:57:19:429 NetpDoDomainJoin: NetpGetNewHostName returned 0x0
+    06/27/2023 12:57:19:429 NetpMachineValidToJoin: \'IP-0A005598\'
+    06/27/2023 12:57:19:429         OS Version: 10.0
+    06/27/2023 12:57:19:429         Build number: 17763 (17763.rs5_release.180914-1434)
+    06/27/2023 12:57:19:429         SKU: Windows Server 2019 Datacenter
+    06/27/2023 12:57:19:429         Architecture: 64-bit (AMD64)
+    06/27/2023 12:57:19:429 NetpMachineValidToJoin: status: 0x0
+    06/27/2023 12:57:19:429 NetpJoinDomain
+    06/27/2023 12:57:19:429         HostName: ip-0A005598
+    06/27/2023 12:57:19:429         NetbiosName: IP-0A005598
+    06/27/2023 12:57:19:429         Domain: plus3it.lab\\aws-c2c4418931.plus3it.lab
+    06/27/2023 12:57:19:429         MachineAccountOU: (NULL)
+    06/27/2023 12:57:19:429         Account: dom-joiner
+    06/27/2023 12:57:19:429         Options: 0x403
+    06/27/2023 12:57:19:429 NetpDisableIDNEncoding: no domain dns available - IDN encoding will NOT be disabled
+    06/27/2023 12:57:19:429 NetpJoinDomainOnDs: NetpDisableIDNEncoding returned: 0x0
+    06/27/2023 12:57:19:476 NetUseAdd to \\\\aws-c2c4418931.plus3it.lab\\IPC$ returned 1326
+    06/27/2023 12:57:19:476 NetpJoinDomainOnDs: status of connecting to dc \'\\\\aws-c2c4418931.plus3it.lab\': 0x52e
+    06/27/2023 12:57:19:476 NetpJoinDomainOnDs: Function exits with status of: 0x52e
+    06/27/2023 12:57:19:476 NetpJoinDomainOnDs: NetpResetIDNEncoding on \'(null)\': 0x0
+    06/27/2023 12:57:19:476 NetpDoDomainJoin: status: 0x52e
+    06/27/2023 12:57:39:510 -----------------------------------------------------------------
+    06/27/2023 12:57:39:510 NetpDoDomainJoin
+    06/27/2023 12:57:39:510 NetpDoDomainJoin: using new computer names
+    06/27/2023 12:57:39:510 NetpDoDomainJoin: NetpGetNewMachineName returned 0x0
+    06/27/2023 12:57:39:510 NetpDoDomainJoin: NetpGetNewHostName returned 0x0
+    06/27/2023 12:57:39:510 NetpMachineValidToJoin: \'IP-0A005598\'
+    06/27/2023 12:57:39:510         OS Version: 10.0
+    06/27/2023 12:57:39:510         Build number: 17763 (17763.rs5_release.180914-1434)
+    06/27/2023 12:57:39:510         SKU: Windows Server 2019 Datacenter
+    06/27/2023 12:57:39:510         Architecture: 64-bit (AMD64)
+    06/27/2023 12:57:39:510 NetpMachineValidToJoin: status: 0x0
+    06/27/2023 12:57:39:510 NetpJoinDomain
+    06/27/2023 12:57:39:510         HostName: ip-0A005598
+    06/27/2023 12:57:39:510         NetbiosName: IP-0A005598
+    06/27/2023 12:57:39:510         Domain: plus3it.lab\\aws-c2c4418931.plus3it.lab
+    06/27/2023 12:57:39:510         MachineAccountOU: (NULL)
+    06/27/2023 12:57:39:510         Account: dom-joiner
+    06/27/2023 12:57:39:510         Options: 0x403
+    06/27/2023 12:57:39:510 NetpDisableIDNEncoding: no domain dns available - IDN encoding will NOT be disabled
+    06/27/2023 12:57:39:510 NetpJoinDomainOnDs: NetpDisableIDNEncoding returned: 0x0
+    06/27/2023 12:57:39:574 NetUseAdd to \\\\aws-c2c4418931.plus3it.lab\\IPC$ returned 1326
+    06/27/2023 12:57:39:574 NetpJoinDomainOnDs: status of connecting to dc \'\\\\aws-c2c4418931.plus3it.lab\': 0x52e
+    06/27/2023 12:57:39:574 NetpJoinDomainOnDs: Function exits with status of: 0x52e
+    06/27/2023 12:57:39:574 NetpJoinDomainOnDs: NetpResetIDNEncoding on \'(null)\': 0x0
+    06/27/2023 12:57:39:574 NetpDoDomainJoin: status: 0x52e
+  ',
+  'stderr': '
+    Retry-TestCommand : Command [xAdd-Computer] failed
+    At C:\\ProgramData\\Salt Project\\Salt\\var\\cache\\salt\\minion\\extfiles\\join-domain\\JoinDomain.ps1:678 char:7
+    +       Retry-TestCommand -Test xAdd-Computer -Args @{DomainName=$Domai ...
+    +       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        + CategoryInfo          : OperationStopped: (Command [xAdd-Computer] failed:String) [Retry-TestCommand], RuntimeEx 
+       ception
+        + FullyQualifiedErrorId : Command [xAdd-Computer] failed,Retry-TestCommand
+  '
+}
+2023-06-27 12:57:39,859 [salt.state       :2458][INFO    ][5656] Completed state [& "C:\ProgramData\Salt Project\Salt\var\cache\salt\minion\extfiles\join-domain\JoinDomain.ps1" -DomainName "plus3it.lab" -TargetOU "" -UserName "dom-joiner" -Tries 3 -ErrorAction Stop] at time 12:57:39.859161 (duration_in_ms=32050.5)
+[...elided...]
