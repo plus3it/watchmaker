@@ -1,0 +1,3 @@
+2023-06-22 14:26:59,192 [backoff][INFO ][4908]: Backing off urlopen_retry(...) for 0.6s (urllib.error.URLError: <urlopen error unknown url type: s3>)
+2023-06-22 14:26:59,803 [backoff][ERROR][4908]: Giving up urlopen_retry(...) after 5 tries (urllib.error.URLError: <urlopen error unknown url type: s3>)
+2023-06-22 14:26:59,803 [watchmaker.config][CRITICAL][4908]: Could not read config file from the provided value "s3://<BUKKIT>/<PREFIX>/config.yaml"! Check that the config is available.
