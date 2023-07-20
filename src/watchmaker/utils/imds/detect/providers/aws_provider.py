@@ -15,7 +15,7 @@ import os
 import watchmaker.utils as utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 
-IMDS_TOKEN_TIMEOUT = os.getenv("IMDS_TOKEN_TIMEOUT", 7200)
+IMDS_TOKEN_TIMEOUT = int(os.getenv("IMDS_TOKEN_TIMEOUT", "7200"))
 
 
 class AWSProvider(AbstractProvider):
@@ -93,6 +93,7 @@ class AWSProvider(AbstractProvider):
             )
         except BaseException as error:
             self.logger.debug("Failed to set IMDSv2 token: %s", error)
+        return None
 
     def __call_urlopen_retry(self, uri, timeout, headers=None, method=None):
         request_uri = utils.urllib.request.Request(

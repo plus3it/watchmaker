@@ -31,7 +31,7 @@ from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
     "_AWSProvider__request_token",
     return_value=(None),
 )
-def test_aws_identify_is_valid(mock_urlopen, mock_request_token):
+def test_identify_is_valid(mock_urlopen, mock_request_token):
     """Test valid server data response for aws provider identification."""
     provider = AWSProvider()
     assert provider.identify() is True
@@ -49,7 +49,7 @@ def test_aws_identify_is_valid(mock_urlopen, mock_request_token):
     "_AWSProvider__request_token",
     return_value=(None),
 )
-def test_aws_check_metadata_server_is_valid(mock_urlopen, mock_request_token):
+def test_metadata_server_is_valid(mock_urlopen, mock_request_token):
     """Test valid server data response for aws provider identification."""
     provider = AWSProvider()
     assert provider.check_metadata_server() is True
@@ -67,9 +67,7 @@ def test_aws_check_metadata_server_is_valid(mock_urlopen, mock_request_token):
     "_AWSProvider__request_token",
     return_value=(None),
 )
-def test_aws_check_metadata_server_is_invalid(
-    mock_urlopen, mock_request_token
-):
+def test_metadata_server_is_invalid(mock_urlopen, mock_request_token):
     """Test invalid server data response for aws provider identification."""
     provider = AWSProvider()
     assert provider.check_metadata_server() is False
@@ -80,7 +78,7 @@ def test_aws_check_metadata_server_is_invalid(
     "_AWSProvider__call_urlopen_retry",
     return_value=("abcdefgh1234546"),
 )
-def test_aws_check_request_token(mock_urlopen):
+def test_request_token(mock_urlopen):
     """Test token is saved to imds_token."""
     provider = AWSProvider()
     assert provider.get_imds_token() == "abcdefgh1234546"
@@ -91,7 +89,7 @@ def test_aws_check_request_token(mock_urlopen):
     "_AWSProvider__call_urlopen_retry",
     return_value=(None),
 )
-def test_aws_check_request_token_none(mock_urlopen):
+def test_token_none(mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
     assert provider.get_imds_token() is None

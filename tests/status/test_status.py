@@ -26,7 +26,7 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 @patch.object(AWSProvider, "identify", return_value=True)
 @patch.object(AzureProvider, "identify", return_value=False)
 @patch(
-    "watchmaker.config.status.get_cloud_providers_with_prereqs",
+    "watchmaker.config.status.get_cloud_with_prereqs",
     return_value=["aws", "azure"],
 )
 @patch.object(
@@ -62,11 +62,11 @@ def test_status(
 @patch.object(AWSProvider, "identify", return_value=False)
 @patch.object(AzureProvider, "identify", return_value=True)
 @patch(
-    "watchmaker.config.status.get_cloud_providers_with_prereqs",
+    "watchmaker.config.status.get_cloud_with_prereqs",
     return_value=[],
 )
 @patch(
-    "watchmaker.config.status.get_cloud_providers_missing_prereqs",
+    "watchmaker.config.status.get_cloud_missing_prereqs",
     return_value=["aws", "azure"],
 )
 @patch.object(
@@ -97,8 +97,8 @@ def test_req_status_provider(
 
     try:
         Status(config_status)
-    except StatusProviderError as e:
+    except StatusProviderError as spe:
         assert (
-            str(e)
+            str(spe)
             == "Required Provider detected that is missing prereqs: azure"
         )

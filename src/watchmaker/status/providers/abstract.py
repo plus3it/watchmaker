@@ -24,7 +24,7 @@ class AbstractStatusProvider:
     identifier = "unknown"
 
     @abc.abstractmethod
-    def initialize(self, provider):
+    def initialize(self):
         """Initialize provider."""
         pass  # pragma: no cover
 

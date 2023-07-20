@@ -83,9 +83,9 @@ def get_providers_by_provider_types(config_status, provider_type):
     ]
 
 
-def get_sup_cloud_providers_w_prereqs(config_status):
+def get_supported_cloud_w_prereqs(config_status):
     """Get supported cloud providers with prereqs and in config."""
-    supported = get_cloud_providers_with_prereqs()
+    supported = get_cloud_with_prereqs()
     return list(
         set(
             status.get("provider_type").lower()
@@ -95,9 +95,9 @@ def get_sup_cloud_providers_w_prereqs(config_status):
     )
 
 
-def get_req_cloud_providers_wo_prereqs(config_status):
+def get_required_cloud_wo_prereqs(config_status):
     """Get supported cloud providers without prereqs and in config."""
-    missing_prereqs = get_cloud_providers_missing_prereqs()
+    missing_prereqs = get_cloud_missing_prereqs()
     return list(
         set(
             status.get("provider_type").lower()
@@ -108,7 +108,7 @@ def get_req_cloud_providers_wo_prereqs(config_status):
     )
 
 
-def get_cloud_providers_with_prereqs():
+def get_cloud_with_prereqs():
     """Get supported cloud providers with prereqs."""
     providers = set()
 
@@ -128,7 +128,7 @@ def get_cloud_providers_with_prereqs():
     return list(providers)
 
 
-def get_cloud_providers_missing_prereqs():
+def get_cloud_missing_prereqs():
     """Get supported cloud providers without prereqs."""
     providers = set()
 
