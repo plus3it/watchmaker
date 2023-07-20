@@ -23,33 +23,57 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 
 @patch.object(AWSProvider, "identify", return_value=True)
 @patch.object(AzureProvider, "identify", return_value=False)
-def test_provider_aws(aws_provider_mock, azure_provider_mock):
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+def test_provider_aws(aws_provider_mock, azure_provider_mock, aws_token_mock):
     """Test provider is AWS."""
-    assert provider(["aws", "azure"]) == "aws"
+    assert provider(["aws", "azure"]).identifier == "aws"
 
 
 @patch.object(AWSProvider, "identify", return_value=False)
 @patch.object(AzureProvider, "identify", return_value=True)
-def test_provider_azure(aws_provider_mock, azure_provider_mock):
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+def test_provider_azure(
+    aws_provider_mock, azure_provider_mock, aws_token_mock
+):
     """Test provider is Azure."""
-    assert provider(["aws", "azure"]) == "azure"
+    assert provider(["aws", "azure"]).identifier == "azure"
 
 
 @patch.object(AWSProvider, "identify", return_value=False)
 @patch.object(AzureProvider, "identify", return_value=False)
-def test_provider_not_aws_or_azure(aws_provider_mock, azure_provider_mock):
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+def test_provider_not_aws_or_azure(
+    aws_provider_mock, azure_provider_mock, aws_token_mock
+):
     """Test provider is unknown."""
-    assert provider(["aws", "azure"]) == "unknown"
+    assert provider(["aws", "azure"]).identifier == "unknown"
 
 
 @patch.object(AWSProvider, "identify", return_value=False)
 @patch.object(AzureProvider, "identify", return_value=False)
-def test_none_provider(aws_provider_mock, azure_provider_mock):
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+def test_none_provider(aws_provider_mock, azure_provider_mock, aws_token_mock):
     """Test provider is unknown."""
-    assert provider(None) == "unknown"
+    assert provider(None).identifier == "unknown"
 
 
-@pytest.mark.skipif(True, reason="Test should be manually run.")
+@pytest.mark.skipif(False, reason="Test should be manually run.")
 def test_provider_detect():
     """Test provider is unknown."""
-    assert provider(["aws", "azure"]) == "unknown"
+    assert provider(["aws", "azure"]).identifier == "unknown"

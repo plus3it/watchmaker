@@ -26,7 +26,7 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 @patch.object(AWSProvider, "identify", return_value=True)
 @patch.object(AzureProvider, "identify", return_value=False)
 @patch(
-    "watchmaker.config.status.get_cloud_ids_with_prereqs",
+    "watchmaker.config.status.get_cloud_providers_with_prereqs",
     return_value=["aws", "azure"],
 )
 def test_status(
@@ -48,17 +48,17 @@ def test_status(
     status = Status(config_status)
     detected_providers = status.get_detected_providers()
     assert len(detected_providers) == 1
-    assert detected_providers[0] == AWSProvider.identifier
+    assert detected_providers[0].identifier == AWSProvider.identifier
 
 
 @patch.object(AWSProvider, "identify", return_value=False)
 @patch.object(AzureProvider, "identify", return_value=True)
 @patch(
-    "watchmaker.config.status.get_cloud_ids_with_prereqs",
+    "watchmaker.config.status.get_cloud_providers_with_prereqs",
     return_value=[],
 )
 @patch(
-    "watchmaker.config.status.get_cloud_ids_missing_prereqs",
+    "watchmaker.config.status.get_cloud_providers_missing_prereqs",
     return_value=["aws", "azure"],
 )
 def test_req_status_provider(

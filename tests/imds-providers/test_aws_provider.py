@@ -82,8 +82,7 @@ def test_aws_check_metadata_server_is_invalid(
 def test_aws_check_request_token(mock_urlopen):
     """Test token is saved to imds_token."""
     provider = AWSProvider()
-    assert provider._AWSProvider__request_token() is None
-    assert AWSProvider.imds_token == "abcdefgh1234546"
+    assert provider.get_imds_token() == "abcdefgh1234546"
 
 
 @patch.object(
@@ -94,31 +93,39 @@ def test_aws_check_request_token(mock_urlopen):
 def test_aws_check_request_token_none(mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
-    assert provider._AWSProvider__request_token() is None
-    assert AWSProvider.imds_token is None
+    assert provider.get_imds_token() is None
 
 
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=("abcdefgh1234546"),
+)
 @patch.object(
     AWSProvider,
     "_AWSProvider__call_urlopen_retry",
     return_value=(None),
 )
-def test_aws_metadata_headers(mock_urlopen):
+def test_aws_metadata_headers(mock_request_token, mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
-    AWSProvider.imds_token = "abcdefgh1234546"
-    assert provider._AWSProvider__get_metadata_request_headers() == {
-        "X-aws-ec2-metadata-token": AWSProvider.imds_token
+    assert provider.get_metadata_request_headers() == {
+        "X-aws-ec2-metadata-token": provider.get_imds_token()
     }
 
 
 @patch.object(
     AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+@patch.object(
+    AWSProvider,
     "_AWSProvider__call_urlopen_retry",
     return_value=(None),
 )
-def test_aws_metadata_headers_none(mock_urlopen):
+def test_aws_metadata_headers_none(mock_request_token, mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
-    AWSProvider.imds_token = None
-    assert provider._AWSProvider__get_metadata_request_headers() is None
+    provider.get_imds_token() is None
+    assert provider.get_metadata_request_headers() is None
