@@ -51,7 +51,7 @@ Traceback (most recent call last):
 RuntimeError: Runparts: 1 failures (00_script.sh) in 1 attempted commands
 ~~~
 
-In this case, the failure happend during the execution of the userdata-script, `/var/lib/cloud/instance/scripts/00_script.sh`. Even if the script hasn't logged anything directly useful in this log file or hasn't even been configured to log its own activities any where, knowing that it was during the execution of this file is useful.
+In this case, the failure happened during the execution of the userdata-script, `/var/lib/cloud/instance/scripts/00_script.sh`. Even if the script hasn't logged anything directly useful in this log file or hasn't even been configured to log its own activities any where, knowing that it was during the execution of this file is useful.
 
 1. The provisioning-administrator knows where in the `cloud-init` automation-sequence things failed
 2. One can look in other logs for actionable diagnostic-information
@@ -68,5 +68,5 @@ Similarly, if hand-execution of the script _succeeds_ it can point to the script
 
 Note that comparing execution via `cloud-init` versus execution from an interactive-shell works whether the script is written in BASH or some other interpreted language.
 
-[^1]: Event-sequencing issues most-frequently happen when a userData payload delivers two or more scripts. When multiple scripts are specified in a userData payload, they are not necessarily executed in the same order they're specified in the userData text-stream. Instead, `cloud-init` executes scripts placed into the `/var/lib/cloud/instance/scripts/` directory in alphabetical order. Thus, if one _needs_ the scripts to execute in a specific order, it is imporant to carefully name them such that that happens (e.g., `00_script` and `01_script` would result in the `00_`-prefixed script executing prior the `01_`-prefixed script)
+[^1]: Event-sequencing issues most-frequently happen when a userData payload delivers two or more scripts. When multiple scripts are specified in a userData payload, they are not necessarily executed in the same order they're specified in the userData text-stream. Instead, `cloud-init` executes scripts placed into the `/var/lib/cloud/instance/scripts/` directory in alphabetical order. Thus, if one _needs_ the scripts to execute in a specific order, it is important to carefully name them such that that happens (e.g., `00_script` and `01_script` would result in the `00_`-prefixed script executing prior the `01_`-prefixed script)
 [^2]: SELinux can be especially problematic for processes started by `cloud-init`. For example, the `firewall-cmd` utility is not directly usable. `cloud-init` scripts would need to either issue a `setenforce 0` before invoking the command or use the alternate `firewall-offline-command`

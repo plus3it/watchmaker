@@ -21,7 +21,7 @@ Any errors encountered by SaltStack will typically have a corresponding log-sect
 2023-06-27 12:57:39,841 [salt.state       :325 ][ERROR   ][5656] { ... }
 ```
 
-Errors from the failing SaltStack action will typically inclued an embedded JSON-stream. The above snippet's `{ ... }` stands in for an embedded JSON-stream (for brevity's sake). Depending how long the embedded JSON-stream is, it will probably make things easier for the provisionin-user to convert that stream to a more human-readable JSON document-block.
+Errors from the failing SaltStack action will typically include an embedded JSON-stream. The above snippet's `{ ... }` stands in for an embedded JSON-stream (for brevity's sake). Depending how long the embedded JSON-stream is, it will probably make things easier for the provisioning-user to convert that stream to a more human-readable JSON document-block.
 
 The most commonly-reported issues are around:
 
