@@ -36,12 +36,12 @@ _workers_ to execute on each platform.
 installation.md
 configuration.md
 usage.md
+customization/index.md
 findings/index.md
 scap.md
 faq.md
 api.md
 contributing.md
-customization/index.md
 changelog.md
 ```
 
