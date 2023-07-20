@@ -10,16 +10,18 @@ from __future__ import (
 
 import json
 import logging
+import os
 
 import watchmaker.utils as utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
+
+IMDS_TOKEN_TIMEOUT = os.getenv("IMDS_TOKEN_TIMEOUT", 7200)
 
 
 class AWSProvider(AbstractProvider):
     """Concrete implementation of the AWS cloud provider."""
 
     identifier = "aws"
-    imds_token = None
 
     def __init__(self, logger=None):
         self.logger = logger or logging.getLogger(__name__)
@@ -31,6 +33,8 @@ class AWSProvider(AbstractProvider):
             "http://169.254.169.254/latest/api/token"
         )
 
+        self.imds_token = self.__request_token()
+
     def identify(self):
         """Identify AWS using all the implemented options."""
         self.logger.info("Try to identify AWS")
@@ -40,18 +44,20 @@ class AWSProvider(AbstractProvider):
         """Identify AWS via metadata server."""
         self.logger.debug("Checking AWS metadata")
         try:
-            self.__request_token()
             return self.__is_valid_server()
         except BaseException as ex:
             self.logger.error(ex)
             return False
+
+    def get_imds_token(self):
+        return self.imds_token
 
     def __is_valid_server(self):
         """Determine if valid metadata server."""
         data = self.__call_urlopen_retry(
             self.metadata_url,
             self.DEFAULT_TIMEOUT,
-            headers=self.__get_metadata_request_headers(),
+            headers=self.get_metadata_request_headers(),
         )
 
         if data:
@@ -64,30 +70,37 @@ class AWSProvider(AbstractProvider):
                 return True
         return False
 
-    def __get_metadata_request_headers(self):
-        if AWSProvider.imds_token:
-            self.logger.debug("Making IMDSv2 Call")
-            return {"X-aws-ec2-metadata-token": AWSProvider.imds_token}
-
-        self.logger.debug("Making IMDSv1 Call")
-        return None
-
     def __request_token(self):
         try:
             self.logger.debug("Create request for token")
-            AWSProvider.imds_token = self.__call_urlopen_retry(
+            return self.__call_urlopen_retry(
                 self.metadata_imds_v2_token_url,
                 self.DEFAULT_TIMEOUT,
-                headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
+                headers={
+                    "X-aws-ec2-metadata-token-ttl-seconds": IMDS_TOKEN_TIMEOUT
+                },
                 method="PUT",
             )
         except BaseException as error:
             self.logger.debug("Failed to set IMDSv2 token: %s", error)
 
     def __call_urlopen_retry(self, uri, timeout, headers=None, method=None):
-        result = utils.urlopen_retry(
-            uri, timeout, optional_headers=headers, method=method
+        request_uri = utils.urllib.request.Request(
+            uri,
+            data=None,
+            headers=headers,
+            method=method,
         )
+
+        result = utils.urlopen_retry(request_uri, timeout)
         if result.status == 200:
             return result.read().decode("utf-8")
+        return None
+
+    def get_metadata_request_headers(self):
+        if self.imds_token:
+            self.logger.debug("Returning AWS IMDSv2 Token Header")
+            return {"X-aws-ec2-metadata-token": self.imds_token}
+
+        self.logger.debug("AWS IMDSv2 Token not found")
         return None
