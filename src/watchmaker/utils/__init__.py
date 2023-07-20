@@ -56,9 +56,8 @@ def basename_from_uri(uri):
 
 
 @backoff.on_exception(backoff.expo, urllib.error.URLError, max_tries=5)
-def urlopen_retry(uri, timeout=None, optional_headers=None, method=None):
+def urlopen_retry(uri, timeout=None, headers=None, method=None):
     """Retry urlopen on exception."""
-    request_uri = uri
     kwargs = {}
     if timeout:
         kwargs["timeout"] = timeout
@@ -72,11 +71,9 @@ def urlopen_retry(uri, timeout=None, optional_headers=None, method=None):
     except AttributeError:
         pass
 
-    if optional_headers:
-        # need to use a request object instead of string.
-        request_uri = urllib.request.Request(
-            uri, data=None, headers=optional_headers, method=method
-        )
+    request_uri = urllib.request.Request(
+        uri, data=None, headers=headers, method=method
+    )
 
     # pylint: disable=consider-using-with
     return urllib.request.urlopen(request_uri, **kwargs)
