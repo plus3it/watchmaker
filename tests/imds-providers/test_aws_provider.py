@@ -7,6 +7,7 @@ from __future__ import (
     unicode_literals,
     with_statement,
 )
+import json
 
 # Supports Python2 and Python3 test mocks
 try:
@@ -21,10 +22,7 @@ from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
     AWSProvider,
     "_AWSProvider__call_urlopen_retry",
     return_value=(
-        '{"imageId": "ami-12312412", \
-                            "instanceId": "i-ec12as"}'.encode(
-            "utf8"
-        )
+        json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})
     ),
 )
 @patch.object(
@@ -42,10 +40,7 @@ def test_aws_identify_is_valid(mock_urlopen, mock_request_token):
     AWSProvider,
     "_AWSProvider__call_urlopen_retry",
     return_value=(
-        '{"imageId": "ami-12312412", \
-                            "instanceId": "i-ec12as"}'.encode(
-            "utf8"
-        )
+        json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})
     ),
 )
 @patch.object(
@@ -63,10 +58,7 @@ def test_aws_check_metadata_server_is_valid(mock_urlopen, mock_request_token):
     AWSProvider,
     "_AWSProvider__call_urlopen_retry",
     return_value=(
-        '{"imageId": "not-valid", \
-                            "instanceId": "etc-ec12as"}'.encode(
-            "utf8"
-        )
+        json.dumps({"imageId": "not-valid", "instanceId": "etc-ec12as"})
     ),
 )
 @patch.object(
