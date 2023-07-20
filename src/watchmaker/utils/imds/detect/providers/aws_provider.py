@@ -82,7 +82,7 @@ class AWSProvider(AbstractProvider):
                 method="PUT",
             )
         except BaseException as error:
-            self.logger.debug("Error is %s", error)
+            self.logger.debug("Failed to set IMDSv2 token: %s", error)
 
     def __call_urlopen_retry(self, uri, timeout, headers=None, method=None):
         result = utils.urlopen_retry(
