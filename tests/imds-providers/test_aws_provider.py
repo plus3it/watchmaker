@@ -7,6 +7,7 @@ from __future__ import (
     unicode_literals,
     with_statement,
 )
+
 import json
 
 # Supports Python2 and Python3 test mocks
@@ -127,5 +128,5 @@ def test_aws_metadata_headers(mock_request_token, mock_urlopen):
 def test_aws_metadata_headers_none(mock_request_token, mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
-    provider.get_imds_token() is None
+    assert provider.get_imds_token() is None
     assert provider.get_metadata_request_headers() is None
