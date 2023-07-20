@@ -30,7 +30,7 @@ As with the configuration-file (passed via the `-c`/`--config` argument to the `
 
 To implement localized-behavior with watchmaker, it will be necessary to change the `salt_content` paramter's value from `null` to the location of a SaltStack content-bundle. As mentioned previously, the content-bundle should be delivered in the form of a ZIP-formatted content-archive.
 
-The the overall structure and format of the archive-bundle is discussed in the [_Salt Contents Archive File_](SaltContent.md) document. Site-specific _parameters_ &ndash; and associated values &ndash; would be handled within the archive-bundle's Pillar data contents.
+The the overall structure and format of the archive-bundle is discussed in the [_Salt Contents Archive File_](SaltContent.md) document. Site-specific _parameters_ &ndash; and associated values &ndash; would be handled within the archive-bundle's [Pillar](SaltContent.md#the-pillar-directory-tree) data contents.
 
 ## Bundle locations
 
