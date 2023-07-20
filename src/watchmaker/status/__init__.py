@@ -62,17 +62,19 @@ class Status:
                     status_config.is_provider_required(provider_type),
                 )
 
-    def get_detected_providers(self):
+    def get_detected_status_providers(self):
         """Get detected providers."""
-        return list(self.status_providers)
+        return self.status_providers
 
     def __get_status_providers(self, detected_providers):
         """Get providers by identifiers."""
         status_providers = {}
         for detected_provider in detected_providers:
-            status_providers[provider] = Status._PROVIDERS.get(
+            status_providers[
                 detected_provider.identifier
-            )(detected_provider)
+            ] = Status._PROVIDERS.get(detected_provider.identifier)(
+                detected_provider
+            )
 
         return status_providers
 

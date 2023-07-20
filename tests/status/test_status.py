@@ -54,9 +54,9 @@ def test_status(
     config = yaml.load(data, Loader=yaml.Loader)
     config_status = config.get("status", None)
     status = Status(config_status)
-    detected_providers = status.get_detected_providers()
+    detected_providers = status.get_detected_status_providers()
     assert len(detected_providers) == 1
-    assert detected_providers[0].identifier == AWSProvider.identifier
+    assert detected_providers.get("aws").identifier == AWSProvider.identifier
 
 
 @patch.object(AWSProvider, "identify", return_value=False)
