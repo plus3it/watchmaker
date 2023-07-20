@@ -56,7 +56,7 @@ def basename_from_uri(uri):
 
 
 @backoff.on_exception(backoff.expo, urllib.error.URLError, max_tries=5)
-def urlopen_retry(uri, timeout=None, headers=None, method=None):
+def urlopen_retry(uri, timeout=None):
     """Retry urlopen on exception."""
     kwargs = {}
     if timeout:
@@ -64,19 +64,17 @@ def urlopen_retry(uri, timeout=None, headers=None, method=None):
     try:
         # trust the system's default CA certificates
         # proper way for 2.7.9+ on Linux
-        if uri.startswith("https://"):
+        url = uri if isinstance(uri, str) else uri.full_url
+
+        if url.startswith("https://"):
             kwargs["context"] = ssl.create_default_context(
                 ssl.Purpose.SERVER_AUTH
             )
     except AttributeError:
         pass
 
-    request_uri = urllib.request.Request(
-        uri, data=None, headers=headers, method=method
-    )
-
     # pylint: disable=consider-using-with
-    return urllib.request.urlopen(request_uri, **kwargs)
+    return urllib.request.urlopen(uri, **kwargs)
 
 
 def copytree(src, dst, force=False, **kwargs):
