@@ -29,8 +29,16 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
     "watchmaker.config.status.get_cloud_providers_with_prereqs",
     return_value=["aws", "azure"],
 )
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
 def test_status(
-    aws_provider_mock, azure_provider_mock, supported_identifiers_mock
+    aws_provider_mock,
+    azure_provider_mock,
+    supported_identifiers_mock,
+    request_token_mock,
 ):
     """Test provider is AWS."""
     data = """
@@ -61,11 +69,17 @@ def test_status(
     "watchmaker.config.status.get_cloud_providers_missing_prereqs",
     return_value=["aws", "azure"],
 )
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
 def test_req_status_provider(
     aws_provider_mock,
     azure_provider_mock,
     supported_identifiers_mock,
     missing_prereqs_mock,
+    request_token_mock,
 ):
     """Test provider is AWS."""
     data = """
