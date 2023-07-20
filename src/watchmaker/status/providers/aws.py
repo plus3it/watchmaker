@@ -44,6 +44,7 @@ class AWSStatusProvider(AbstractStatusProvider):
         if self.instance_id and self.region:
             return
         try:
+            self.logger.debug("Initialize AWS instance_id and region")
             self.instance_id = self.__get_response_from_server(
                 self.metadata_id_url
             )
