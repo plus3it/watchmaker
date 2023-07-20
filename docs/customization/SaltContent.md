@@ -122,6 +122,99 @@ Similarly, if one wanted to change where relevant SCAP-content should be loaded 
 
 ### The `<environment>` Directory-Tree(s)
 
+The `<environment>` directory-trees work similarly to the `common` directory tree. The primary difference is focus. Where the `common` directory-tree sets broad-scope behaviors via pillar-variables' parameter/values, the `<environment>` directory-trees set more-limited behavior scopes' behaviors. These directory-trees are intended to align with an infrastructure-as-code environment where an organization has multiple, similar environments that each have specific needs (e.g., to point to per-environment CSP endpoints, security-services servers, etc., install different sets of software or apply different security-benchmarks).
+
+The structure for the `<environment>` directory-trees is much simpler than that for the  `common` directory tree. There are no subdirectories under each `<environment>` directory, just a single `init.sls` file. These typically take the form of:
+
+```
+{%- load_yaml as os_families %}
+RedHat:
+  <FORMULA_1_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+  ...
+  <FORMULA_N_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+Windows:
+  <FORMULA_1_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+  ...
+  <FORMULA_N_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+```
+
+Each of the `<VALUE>`s listed above may be string, list, dictionary or map data-types. The data-type will be dictated by the needs of the formula and illustrated in the relevant formulae's `pillar.example` or `pillar.example.yml` files. For example, to configure the [mcafee-agent-formula](https://github.com/plus3it/mcafee-agent-formula/) to properly configure Trellix to run on Windows and Linux hosts in the `prod` environment, one would have a `.../pillar/prod/init.sls` file that looked something like:
+
+```
+{%- load_yaml as os_families %}
+RedHat:
+  <FORMULA_1_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+  trellix-agent:
+    lookup:
+      source: s3://enterprise-software/mcafee/mcafee-agent/5.7.9/install.sh
+      source_hash: s3://enterprise-software/mcafee/mcafee-agent/5.7.9/install.sh.SHA512
+      client_in_ports:
+        - 5575
+      client_out_ports:
+        - 80
+        - 443
+  ...
+  <FORMULA_N_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+Windows:
+  <FORMULA_1_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+  trellix-agent:
+    lookup:
+      version: '5.7.9.139'
+    winrepo:
+      versions:
+        '5.7.9.139':
+          installer: s3://enterprise-software/mcafee/mcafee-agent/5.7.9/FramePkg.exe
+  ...
+  <FORMULA_N_NAME>:
+    lookup:
+      <var1>: <VALUE>
+      <var2>: <VALUE>
+      ...
+      <varN>: <VALUE>
+```
+
+The above would instruct the mcafee-agent-formula (see the automation's [pillar.example](https://raw.githubusercontent.com/plus3it/mcafee-agent-formula/master/pillar.example) file for insight) automation to:
+
+- Linux: Download and execute the the Trellix 5.7.9 installer from the `s3://enterprise-software/mcafee/mcafee-agent/5.7.9/` bucket-path &ndash; and validate the file's integrity using the checksum file `install.sh.SHA512` from the same S3 bucket-path &ndash; and set up firewalld inbound exceptions for port tcp/5575 and outbound exceptions for ports 80/tcp and 443/tcp.
+- Windows: Download and execute the Trellix "Frame" 5.7.9.139 package's executable-installer from the `s3://enterprise-software/mcafee/mcafee-agent/5.7.9/` bucket-path.
+
+Similar `init.sls` content would be needed for any other Watchmaker formula used to install, configure or manage the execution of software.
+
 ## The `states` Directory-Tree
 
 This directory-hierarchy governs _which_ Saltstack states will be executed from the available SaltStack formulae. Typically, only modification to this directory's `top.sls` is needed:
