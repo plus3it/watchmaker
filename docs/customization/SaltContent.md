@@ -20,12 +20,12 @@ The SallStack contents archive contains three main file-hierarchies
 
 This directry-hierarchy contains the pillar-data that is used to govern the behavior of executed SaltStack states. If modifying SaltStack states' behavior from their defaults (or supplying mandatory parameters), place the modifications under this directory-hierarchy.
 
-Any automation-formulae that make reference to Pillar data &ndash; typically such formulae will include a `pillar.example` or `pillar.example.yml` in their content-root directory &ndash; may have their behavior modified through content under this directory-tree. Typically, this directory-tree will contain a `common` directory-tree and a directory-tree for each supported deployment environment. Thus, if one is creating behavioral-controls for `dev`, `test` and `prod` environments, the `pillar` directory tree will contain:
+Any automation-formulae that make reference to Pillar data &ndash; typically such formulae will include a `pillar.example` or `pillar.example.yml` in their content-root directory &ndash; may have their behavior modified through content under this directory-tree. Typically, this directory-tree will contain a `common` directory-tree and a directory-tree for each supported deployment environment. Thus, if one is creating behavioral-controls for `dev`, `test` and `prod` [environments](#the-pillar-directory-tree), the `pillar` directory tree will contain:
 
-- `common`
-- `dev`
-- `prod`
-- `test`
+- [`common` directory](#the-common-directory-tree)
+- `dev` directory
+- `prod` directory
+- `test` directory
 
 Each formula that should be executed for a given site and environment should reference each formula's previously-mentioned `pillar.example` or `pillar.example.yml` files. Relevant content should be placed into either the `common` directory's `init.sls` files or in the environment-specific `init.sls` files. See below discussions for which directories should be used for a given method of setting parameter values.
 
@@ -122,7 +122,7 @@ Similarly, if one wanted to change where relevant SCAP-content should be loaded 
 
 ### The `<environment>` Directory-Tree(s)
 
-The `<environment>` directory-trees work similarly to the `common` directory tree. The primary difference is focus. Where the `common` directory-tree sets broad-scope behaviors via pillar-variables' parameter/values, the `<environment>` directory-trees set more-limited behavior scopes' behaviors. These directory-trees are intended to align with an infrastructure-as-code environment where an organization has multiple, similar environments that each have specific needs (e.g., to point to per-environment CSP endpoints, security-services servers, etc., install different sets of software or apply different security-benchmarks).
+The `<environment>` directory-trees work similarly to the `common` directory tree. The primary difference is focus. Where the `common` directory-tree sets broad-scope behaviors via pillar-variables' parameter/values, the `<environment>` directory-trees set more-limited scopes' behaviors. These directory-trees are intended to align with an infrastructure-as-code environment where an organization has multiple, similar environments that each have specific needs (e.g., to point to per-environment CSP endpoints, security-services servers, etc., install different sets of software or apply different security-benchmarks).
 
 The structure for the `<environment>` directory-trees is much simpler than that for the  `common` directory tree. There are no subdirectories under each `<environment>` directory, just a single `init.sls` file. These typically take the form of:
 
