@@ -3,5 +3,5 @@
     - scap.content
     - ash-linux.vendor
     - ash-linux.stig
-##    - ash-linux.iavm
-    - scap.scan
+    - ash-linux.iavm
+##    - scap.scan

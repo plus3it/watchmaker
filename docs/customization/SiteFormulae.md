@@ -61,7 +61,7 @@ If there are any futher conditionals that should be placed on the formula being 
 
 ## Removing Formulae the Execution-List
 
-In order to prevent a formula from being automatically run by Watchmaker, edit the `.../states/top.sls` file and either wholly remove the referenced-formula from the list or comment it out. To make the `ash-linux-formula`'s `iavm` state not run, modify the example `.../states/top.sls` file to look like:
+In order to prevent a formula from being automatically run by Watchmaker, edit the `.../states/top.sls` file and either wholly remove the referenced-formula from the list or comment it out. To make the `scap-formula`'s `scan` state not run[^1], modify the example `.../states/top.sls` file to look like:
 
 ```
 base:
@@ -70,13 +70,14 @@ base:
     - scap.content
     - ash-linux.vendor
     - ash-linux.stig
-    - scap.scan
+    - ash-linux.iavm
 ```
 
 or:
 
 ```{eval-rst}
 .. literalinclude:: RemoveFormulaFromTop-Simple-RedHat.txt
-   :emphasize-lines: 6
+   :emphasize-lines: 7
    :language: yaml
 ```
+[^1]: This is often done by system-owners that value launch-time provisioning-automation speed over the presence of an intial hardening-scan report on the launched-systems hard drive.
