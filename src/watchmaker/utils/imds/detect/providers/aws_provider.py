@@ -49,10 +49,6 @@ class AWSProvider(AbstractProvider):
             self.logger.error(ex)
             return False
 
-    def get_imds_token(self):
-        """Return IMDS token."""
-        return self.imds_token
-
     def get_metadata_request_headers(self):
         """Return metadata request header if imds token is set."""
         if self.imds_token:

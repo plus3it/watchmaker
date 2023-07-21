@@ -75,28 +75,6 @@ def test_metadata_server_is_invalid(mock_urlopen, mock_request_token):
 
 @patch.object(
     AWSProvider,
-    "_AWSProvider__call_urlopen_retry",
-    return_value=("abcdefgh1234546"),
-)
-def test_request_token(mock_urlopen):
-    """Test token is saved to imds_token."""
-    provider = AWSProvider()
-    assert provider.get_imds_token() == "abcdefgh1234546"
-
-
-@patch.object(
-    AWSProvider,
-    "_AWSProvider__call_urlopen_retry",
-    return_value=(None),
-)
-def test_token_none(mock_urlopen):
-    """Test token is not saved to imds_token."""
-    provider = AWSProvider()
-    assert provider.get_imds_token() is None
-
-
-@patch.object(
-    AWSProvider,
     "_AWSProvider__request_token",
     return_value=("abcdefgh1234546"),
 )
@@ -109,7 +87,7 @@ def test_aws_metadata_headers(mock_request_token, mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
     assert provider.get_metadata_request_headers() == {
-        "X-aws-ec2-metadata-token": provider.get_imds_token()
+        "X-aws-ec2-metadata-token": "abcdefgh1234546"
     }
 
 
@@ -126,5 +104,4 @@ def test_aws_metadata_headers(mock_request_token, mock_urlopen):
 def test_aws_metadata_headers_none(mock_request_token, mock_urlopen):
     """Test token is not saved to imds_token."""
     provider = AWSProvider()
-    assert provider.get_imds_token() is None
     assert provider.get_metadata_request_headers() is None
