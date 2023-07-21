@@ -14,7 +14,7 @@ The `watchmaker` utility bundles several SaltStack formulae. Which formulae are 
 - On Linux systems, the value of `.../` will be `/srv/watchmaker/salt`
 - On Windows systems, the value of `.../` will be `C:\Watchmaker\Salt\srv`
 
-A typical `.../states/top.sls` will look like:
+A typical `.../states/top.sls` will look something like:
 
 ```
 {%- set environments = ['dev', 'test', 'prod', 'dx'] %}
@@ -45,30 +45,18 @@ Adding, removing or re-ordering entries in this list modifies which formulae wat
 
 In order to add a new formula to Wachmaker's execution-list, edit the `.../states/top.sls` file. For cross-platform formulae, ensure appropriate entries exist under both the `base:G@os_family:RedHat` and `base:G@os_family:Winodws` lists. To add a formula to the execution list, insert the formula-name into the list just as the already-configured formulae are. For example, to add the [cribl-agent-formula] to the RedHat execution, modify the above RedHat stanza to look like:
 
-```
-  'G@os_family:RedHat':
-    - name-computer
-    - scap.content
-    - ash-linux.vendor
-    - ash-linux.stig
-    - ash-linux.iavm
-    - cribl-agent
-    - scap.scan
+```{eval-rst}
+.. literalinclude:: AddFormulaToTop-Simple-RedHat.txt
+   :emphasize-lines: 7
+   :language: yaml
 ```
 
 If there are any futher conditionals that should be placed on the formula being added, surround the target-formula's list entry with suitable, Jinja-based conditional-operators. For example, if you want to ensure that the `cribl-agent` is executed when a suitable environment-value is specified, update the preceeding example to look like:
 
-```
-  'G@os_family:RedHat':
-    - name-computer
-    - scap.content
-    - ash-linux.vendor
-    - ash-linux.stig
-    - ash-linux.iavm
-{%- if salt.grains.get('watchmaker:enterprise_environment') | lower in environments %}
-    - cribl-agent
-{%- endif %}
-    - scap.scan
+```{eval-rst}
+.. literalinclude:: AddFormulaToTop-Jinja-RedHat.txt
+   :emphasize-lines: 7-9
+   :language: shell
 ```
 
 ## Removing Formulae the Execution-List
@@ -87,13 +75,8 @@ base:
 
 or:
 
-```
-base:
-  'G@os_family:RedHat':
-    - name-computer
-    - scap.content
-    - ash-linux.vendor
-    - ash-linux.stig
-##    - ash-linux.iavm
-    - scap.scan
+```{eval-rst}
+.. literalinclude:: RemoveFormulaFromTop-Simple-RedHat.txt
+   :emphasize-lines: 6
+   :language: yaml
 ```
