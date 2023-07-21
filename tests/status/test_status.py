@@ -26,11 +26,19 @@ from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider
 @patch.object(AWSProvider, "identify", return_value=True)
 @patch.object(AzureProvider, "identify", return_value=False)
 @patch(
-    "watchmaker.config.status.get_cloud_ids_with_prereqs",
+    "watchmaker.config.status.get_cloud_with_prereqs",
     return_value=["aws", "azure"],
 )
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
 def test_status(
-    aws_provider_mock, azure_provider_mock, supported_identifiers_mock
+    aws_provider_mock,
+    azure_provider_mock,
+    supported_identifiers_mock,
+    request_token_mock,
 ):
     """Test provider is AWS."""
     data = """
@@ -46,26 +54,32 @@ def test_status(
     config = yaml.load(data, Loader=yaml.Loader)
     config_status = config.get("status", None)
     status = Status(config_status)
-    detected_providers = status.get_detected_providers()
+    detected_providers = status.get_detected_status_providers()
     assert len(detected_providers) == 1
-    assert detected_providers[0] == AWSProvider.identifier
+    assert detected_providers.get("aws").identifier == AWSProvider.identifier
 
 
 @patch.object(AWSProvider, "identify", return_value=False)
 @patch.object(AzureProvider, "identify", return_value=True)
 @patch(
-    "watchmaker.config.status.get_cloud_ids_with_prereqs",
+    "watchmaker.config.status.get_cloud_with_prereqs",
     return_value=[],
 )
 @patch(
-    "watchmaker.config.status.get_cloud_ids_missing_prereqs",
+    "watchmaker.config.status.get_cloud_missing_prereqs",
     return_value=["aws", "azure"],
+)
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
 )
 def test_req_status_provider(
     aws_provider_mock,
     azure_provider_mock,
     supported_identifiers_mock,
     missing_prereqs_mock,
+    request_token_mock,
 ):
     """Test provider is AWS."""
     data = """
@@ -83,8 +97,8 @@ def test_req_status_provider(
 
     try:
         Status(config_status)
-    except StatusProviderError as e:
+    except StatusProviderError as spe:
         assert (
-            str(e)
+            str(spe)
             == "Required Provider detected that is missing prereqs: azure"
         )

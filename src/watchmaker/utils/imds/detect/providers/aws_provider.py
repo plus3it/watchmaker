@@ -10,10 +10,12 @@ from __future__ import (
 
 import json
 import logging
-from os.path import exists
+import os
 
 import watchmaker.utils as utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
+
+IMDS_TOKEN_TIMEOUT = int(os.getenv("IMDS_TOKEN_TIMEOUT", "7200"))
 
 
 class AWSProvider(AbstractProvider):
@@ -27,15 +29,16 @@ class AWSProvider(AbstractProvider):
             "http://169.254.169.254/latest/dynamic/instance-identity/document"
         )
 
-        self.vendor_files = (
-            "/sys/class/dmi/id/product_version",
-            "/sys/class/dmi/id/bios_vendor",
+        self.metadata_imds_v2_token_url = (
+            "http://169.254.169.254/latest/api/token"
         )
+
+        self.imds_token = self.__request_token()
 
     def identify(self):
         """Identify AWS using all the implemented options."""
         self.logger.info("Try to identify AWS")
-        return self.check_metadata_server() or self.check_vendor_file()
+        return self.check_metadata_server()
 
     def check_metadata_server(self):
         """Identify AWS via metadata server."""
@@ -46,23 +49,25 @@ class AWSProvider(AbstractProvider):
             self.logger.error(ex)
             return False
 
-    def check_vendor_file(self):
-        """Identify whether this is an AWS provider.
+    def get_metadata_request_headers(self):
+        """Return metadata request header if imds token is set."""
+        if self.imds_token:
+            self.logger.debug("Returning AWS IMDSv2 Token Header")
+            return {"X-aws-ec2-metadata-token": self.imds_token}
 
-        Checks the vendor files to see if it contains amazon.
-        """
-        self.logger.debug("Checking AWS vendor file")
-        for vendor_file in self.vendor_files:
-            data = self.__get_file_contents(vendor_file)
-            if bool(data and b"amazon" in data.lower()):
-                return True
-        return False
+        self.logger.debug("AWS IMDSv2 Token not found")
+        return None
 
     def __is_valid_server(self):
         """Determine if valid metadata server."""
-        data = self.__get_data_from_server()
+        data = self.__call_urlopen_retry(
+            self.metadata_url,
+            self.DEFAULT_TIMEOUT,
+            headers=self.get_metadata_request_headers(),
+        )
+
         if data:
-            response = json.loads(data.decode("utf-8"))
+            response = json.loads(data)
             if response["imageId"].startswith(
                 "ami-",
             ) and response[
@@ -71,23 +76,30 @@ class AWSProvider(AbstractProvider):
                 return True
         return False
 
-    def __get_data_from_server(self):
-        """Retrieve AWS metadata."""
-        response = utils.urlopen_retry(self.metadata_url, self.DEFAULT_TIMEOUT)
-        if response.status == 200:
-            return response.read()
+    def __request_token(self):
+        try:
+            self.logger.debug("Create request for token")
+            return self.__call_urlopen_retry(
+                self.metadata_imds_v2_token_url,
+                self.DEFAULT_TIMEOUT,
+                headers={
+                    "X-aws-ec2-metadata-token-ttl-seconds": IMDS_TOKEN_TIMEOUT
+                },
+                method="PUT",
+            )
+        except BaseException as error:
+            self.logger.debug("Failed to set IMDSv2 token: %s", error)
         return None
 
-    def __get_file_contents(self, file):
-        """Get file contents if exists."""
-        if not exists(file):
-            return None
-        # Convert a local vendor file to a URI
-        file_path = utils.uri_from_filepath(file)
-        try:
-            check_vendor_file = utils.urlopen_retry(
-                file_path, self.DEFAULT_TIMEOUT
-            )
-            return check_vendor_file.read()
-        except (ValueError, utils.urllib.error.URLError):
-            return None
+    def __call_urlopen_retry(self, uri, timeout, headers=None, method=None):
+        request_uri = utils.urllib.request.Request(
+            uri,
+            data=None,
+            headers=headers,
+            method=method,
+        )
+
+        result = utils.urlopen_retry(request_uri, timeout)
+        if result.status == 200:
+            return result.read().decode("utf-8")
+        return None

@@ -25,18 +25,18 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     identifier = "aws"
 
-    def __init__(self, logger=None):
+    def __init__(self, provider, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.metadata_id_url = (
             "http://169.254.169.254/latest/meta-data/instance-id"
         )
-
         self.metadata_region_url = (
             "http://169.254.169.254/latest/meta-data/placement/region"
         )
 
         self.instance_id = None
         self.region = None
+        self.provider = provider
         self.initialize()
 
     def initialize(self):
@@ -44,7 +44,13 @@ class AWSStatusProvider(AbstractStatusProvider):
         if self.instance_id and self.region:
             return
         try:
-            self.__set_details_from_server()
+            self.logger.debug("Initialize AWS instance_id and region")
+            self.instance_id = self.__get_response_from_server(
+                self.metadata_id_url
+            )
+            self.region = self.__get_response_from_server(
+                self.metadata_region_url
+            )
         except BaseException as ex:
             self.logger.error(
                 "Error retrieving id/region from metadata service %s", ex
@@ -89,22 +95,16 @@ class AWSStatusProvider(AbstractStatusProvider):
 
         self.logger.debug("Create tag response %s", response)
 
-    def __set_details_from_server(self):
-        """Retrieve AWS instance id and region from metadata."""
-        self.instance_id = self.__get_id_from_server()
-        self.region = self.__get_region_from_server()
-
-    def __get_id_from_server(self):
-        """Get instance id from metadata id url."""
-        return self.__get_response_from_server(self.metadata_id_url)
-
-    def __get_region_from_server(self):
-        """Get region from metadata region url."""
-        return self.__get_response_from_server(self.metadata_region_url)
-
     def __get_response_from_server(self, metadata_url):
         """Get response for provided metadata_url."""
-        response = utils.urlopen_retry(metadata_url, self.DEFAULT_TIMEOUT)
+        headers = self.provider.get_metadata_request_headers()
+        request = utils.urllib.request.Request(
+            metadata_url, data=None, headers=headers
+        )
+        response = utils.urlopen_retry(
+            request,
+            self.DEFAULT_TIMEOUT,
+        )
         return response.read().decode("utf-8")
 
     def __error_on_required_status(self, required):

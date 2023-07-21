@@ -15,19 +15,18 @@ except ImportError:
     from mock import patch
 
 from watchmaker.config.status import (
-    get_cloud_ids_missing_prereqs,
-    get_cloud_ids_with_prereqs,
-    get_non_cloud_identifiers,
-    get_req_cloud_ids_wo_prereqs,
-    get_sup_cloud_ids_w_prereqs,
+    get_cloud_with_prereqs,
+    get_non_cloud_providers,
+    get_required_cloud_wo_prereqs,
+    get_supported_cloud_w_prereqs,
 )
 
 
 @patch(
-    "watchmaker.config.status.get_cloud_ids_with_prereqs",
+    "watchmaker.config.status.get_cloud_with_prereqs",
     return_value=["aws", "azure"],
 )
-def test_get_supported_cloud_identifiers_with_prereqs(prereqs):
+def test_supported_cloud_w_prereqs(prereqs):
     """Test get required ids that are have prereqs."""
     config_status = {
         "providers": [
@@ -49,7 +48,7 @@ def test_get_supported_cloud_identifiers_with_prereqs(prereqs):
         ]
     }
 
-    ids = get_sup_cloud_ids_w_prereqs(config_status)
+    ids = get_supported_cloud_w_prereqs(config_status)
 
     assert ids is not None
     assert "aws" in ids
@@ -59,10 +58,10 @@ def test_get_supported_cloud_identifiers_with_prereqs(prereqs):
 
 
 @patch(
-    "watchmaker.config.status.get_cloud_ids_missing_prereqs",
+    "watchmaker.config.status.get_cloud_missing_prereqs",
     return_value=["aws", "azure"],
 )
-def test_get_required_cloud_identifiers_missing_prereqs(prereqs):
+def test_req_cloud_wo_prereqs(prereqs):
     """Test get required ids that are missing prereqs."""
     config_status = {
         "providers": [
@@ -84,7 +83,7 @@ def test_get_required_cloud_identifiers_missing_prereqs(prereqs):
         ]
     }
 
-    ids = get_req_cloud_ids_wo_prereqs(config_status)
+    ids = get_required_cloud_wo_prereqs(config_status)
 
     assert ids is not None
     assert "aws" not in ids
@@ -94,10 +93,10 @@ def test_get_required_cloud_identifiers_missing_prereqs(prereqs):
 
 
 @patch(
-    "watchmaker.config.status.get_cloud_ids_missing_prereqs",
+    "watchmaker.config.status.get_cloud_missing_prereqs",
     return_value=[],
 )
-def test_no_required_cloud_identifiers_missing_prereqs(prereqs):
+def test_no_req_cloud_wo_prereqs(prereqs):
     """Test get required ids that are missing prereqs."""
     config_status = {
         "providers": [
@@ -119,9 +118,7 @@ def test_no_required_cloud_identifiers_missing_prereqs(prereqs):
         ]
     }
 
-    ids = get_req_cloud_ids_wo_prereqs(config_status)
-
-    assert ids == []
+    assert not get_required_cloud_wo_prereqs(config_status)
 
 
 @patch(
@@ -131,13 +128,12 @@ def test_no_required_cloud_identifiers_missing_prereqs(prereqs):
         {"provider": "azure", "has_prereq": False},
     ],
 )
-def test_get_cloud_ids_with_prereqs():
+def test_get_cloud_with_prereqs():
     """Test get ids with prereqs."""
-    ids = get_cloud_ids_with_prereqs()
+    providers = get_cloud_with_prereqs()
 
-    assert ids is not None
-    assert "aws" in ids
-    assert "azure" not in ids
+    assert len(providers) == 1
+    assert "aws" == providers[0]
 
 
 @patch(
@@ -147,13 +143,12 @@ def test_get_cloud_ids_with_prereqs():
         {"provider": "azure", "has_prereq": False},
     ],
 )
-def test_get_cloud_ids_missing_prereqs():
+def test_cloud_ids_missing_prereqs():
     """Test get ids missing prereqs."""
-    ids = get_cloud_ids_missing_prereqs()
+    providers = get_cloud_with_prereqs()
 
-    assert ids is not None
-    assert "aws" not in ids
-    assert "azure" in ids
+    assert len(providers) == 1
+    assert "azure" != providers[0]
 
 
 @patch(
@@ -163,7 +158,7 @@ def test_get_cloud_ids_missing_prereqs():
         {"provider": "db"},
     ],
 )
-def test_get_non_cloud_identifiers():
+def test_get_non_cloud_providers():
     """Test get non cloud identifiers matching config."""
     config_status = {
         "providers": [
@@ -180,18 +175,17 @@ def test_get_non_cloud_identifiers():
         ]
     }
 
-    ids = get_non_cloud_identifiers(config_status)
+    providers = get_non_cloud_providers(config_status)
 
-    assert ids is not None
-    assert "sqs" not in ids
-    assert "file" in ids
+    assert len(providers) == 1
+    assert "file" == providers[0]
 
 
 @patch(
     "watchmaker.config.status.SUPPORTED_NON_CLOUD_PROVIDERS",
     [],
 )
-def test_get_empty_non_cloud_identifiers():
+def test_no_non_cloud_providers():
     """Test empty SUPPORTED_NON_CLOUD_PROVIDERS."""
     config_status = {
         "providers": [
@@ -208,6 +202,4 @@ def test_get_empty_non_cloud_identifiers():
         ]
     }
 
-    ids = get_non_cloud_identifiers(config_status)
-
-    assert ids == []
+    assert not get_non_cloud_providers(config_status)

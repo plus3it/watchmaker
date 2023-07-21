@@ -8,6 +8,8 @@ from __future__ import (
     with_statement,
 )
 
+import json
+
 # Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
@@ -16,30 +18,38 @@ except ImportError:
 
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 
-# @patch.object(AWSProvider, '_AWSProvider__get_data_from_server')
-#     provider_mock.return_value = (
-#         '{"imageId": "ami-12312412", "instanceId": "i-ec12as"}' \
-#          .encode("utf8")
-#     )
 
-
-# def test_metadata_data_server_call_fail():
-#     """Test calling the real metadata server and failing."""
-#     provider = AWSProvider()
-#     assert provider.check_metadata_server() is False
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__call_urlopen_retry",
+    return_value=(
+        json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})
+    ),
+)
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+def test_identify_is_valid(mock_urlopen, mock_request_token):
+    """Test valid server data response for aws provider identification."""
+    provider = AWSProvider()
+    assert provider.identify() is True
 
 
 @patch.object(
     AWSProvider,
-    "_AWSProvider__get_data_from_server",
+    "_AWSProvider__call_urlopen_retry",
     return_value=(
-        '{"imageId": "ami-12312412", \
-                            "instanceId": "i-ec12as"}'.encode(
-            "utf8"
-        )
+        json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})
     ),
 )
-def test_aws_valid_metadata_data_from_server(provider_mock):
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+def test_metadata_server_is_valid(mock_urlopen, mock_request_token):
     """Test valid server data response for aws provider identification."""
     provider = AWSProvider()
     assert provider.check_metadata_server() is True
@@ -47,69 +57,51 @@ def test_aws_valid_metadata_data_from_server(provider_mock):
 
 @patch.object(
     AWSProvider,
-    "_AWSProvider__get_data_from_server",
+    "_AWSProvider__call_urlopen_retry",
     return_value=(
-        '{"imageId": "some_ID", \
-                              "instanceId": "some_Instance"}'.encode(
-            "utf8"
-        )
+        json.dumps({"imageId": "not-valid", "instanceId": "etc-ec12as"})
     ),
 )
-def test_aws_invalid_metadata_data_from_server(provider_mock):
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=(None),
+)
+def test_metadata_server_is_invalid(mock_urlopen, mock_request_token):
     """Test invalid server data response for aws provider identification."""
     provider = AWSProvider()
     assert provider.check_metadata_server() is False
 
 
 @patch.object(
-    AWSProvider, "_AWSProvider__get_data_from_server", return_value=(None)
+    AWSProvider,
+    "_AWSProvider__request_token",
+    return_value=("abcdefgh1234546"),
 )
-def test_aws_no_metadata_data_from_server(provider_mock):
-    """Test no server data response for aws provider identification."""
+@patch.object(
+    AWSProvider,
+    "_AWSProvider__call_urlopen_retry",
+    return_value=(None),
+)
+def test_aws_metadata_headers(mock_request_token, mock_urlopen):
+    """Test token is not saved to imds_token."""
     provider = AWSProvider()
-    assert provider.check_metadata_server() is False
-
-
-@patch.object(AWSProvider, "_AWSProvider__is_valid_server", return_value=True)
-def test_aws_metadata_valid_server(provider_mock):
-    """Test valid server for aws provider identification."""
-    provider = AWSProvider()
-    assert provider.check_metadata_server() is True
-
-
-@patch.object(AWSProvider, "_AWSProvider__is_valid_server", return_value=False)
-def test_aws_metadata_invalid_server(provider_mock):
-    """Test invalid server for aws provider identification."""
-    provider = AWSProvider()
-    assert provider.check_metadata_server() is False
+    assert provider.get_metadata_request_headers() == {
+        "X-aws-ec2-metadata-token": "abcdefgh1234546"
+    }
 
 
 @patch.object(
     AWSProvider,
-    "_AWSProvider__get_file_contents",
-    return_value=b"provider is amazon aws",
+    "_AWSProvider__request_token",
+    return_value=(None),
 )
-def test_aws_valid_vendor_file(provider_mock):
-    """Tests valid vendor file."""
-    provider = AWSProvider()
-    assert provider.check_vendor_file() is True
-
-
 @patch.object(
     AWSProvider,
-    "_AWSProvider__get_file_contents",
-    return_value=b"provider unknown",
+    "_AWSProvider__call_urlopen_retry",
+    return_value=(None),
 )
-def test_aws_invalid_vendor_file(provider_mock):
-    """Tests invalid vendor file."""
+def test_aws_metadata_headers_none(mock_request_token, mock_urlopen):
+    """Test token is not saved to imds_token."""
     provider = AWSProvider()
-    assert provider.check_vendor_file() is False
-
-
-@patch.object(
-    AWSProvider, "_AWSProvider__get_file_contents", return_value=None
-)
-def test_aws_no_response_vendor_file(provider_mock):
-    """Tests no response while reading vendor file."""
-    provider = AWSProvider()
-    assert provider.check_vendor_file() is False
+    assert provider.get_metadata_request_headers() is None
