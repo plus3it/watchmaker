@@ -1,0 +1,20 @@
+{%- set environments = ['dev', 'test', 'prod', 'dx'] %}
+
+base:
+  'G@os_family:RedHat':
+    - name-computer
+    - ash-linux.vendor
+    - ash-linux.stig
+    - ash-linux.iavm
+    - scap.content
+    - scap.scan
+
+  'G@os_family:Windows':
+    - name-computer
+    - pshelp
+    - netbanner.custom
+    - ash-windows.stig
+    - ash-windows.iavm
+    - ash-windows.delta
+    - ash-windows.custom
+    - scap.scan

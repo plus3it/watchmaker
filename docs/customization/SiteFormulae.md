@@ -16,27 +16,9 @@ The `watchmaker` utility bundles several SaltStack formulae. Which formulae are 
 
 A typical `.../states/top.sls` will look something like:
 
-```
-{%- set environments = ['dev', 'test', 'prod', 'dx'] %}
-
-base:
-  'G@os_family:RedHat':
-    - name-computer
-    - scap.content
-    - ash-linux.vendor
-    - ash-linux.stig
-    - ash-linux.iavm
-    - scap.scan
-
-  'G@os_family:Windows':
-    - name-computer
-    - pshelp
-    - netbanner.custom
-    - ash-windows.stig
-    - ash-windows.iavm
-    - ash-windows.delta
-    - scap.scan
-    - ash-windows.custom
+```{eval-rst}
+.. literalinclude:: FormulaTop-ALL.txt
+   :language: shell
 ```
 
 Adding, removing or re-ordering entries in this list modifies which formulae watchmaker executes and in what order it executes them
@@ -80,4 +62,29 @@ or:
    :emphasize-lines: 7
    :language: yaml
 ```
+
+## Changing Formulae the Execution-Order
+
+There may be times where the system-owner will want Watchmaker to run formulae in a different order than previously-configured. The `.../states/top.sls` specifies formulae and states' execution-order serially. The order is top-to-bottom (with items closer to the top of the list executed earlier and those closer to the bottom of the lis executed later). To change the order that formulae are executed, change the order of the execution-list.
+
+```{eval-rst}
+.. literalinclude:: FormulaTop-ALL_reordered.txt
+   :emphasize-lines: 9,20
+   :language: shell
+```
+
+In the above (when compared to the `.../states/top.sls` file near the top of this document), the Linux `scap.content` formula-state and the Windows `scap.scan` formula-state have been moved to a later executions. This is an atypical change, but is provided for completeness' sake.
+
+```{eval-rst}
+.. note::
+    Some times, particularly when creating new states, it is dicsovered that
+    some SaltStack formulae or states are not as idempotent as they were
+    intended to be. Re-ordering the executions may work around issues caused by
+    an insufficient degree of idempotency in one or more formulae.
+
+    It is generally recommended, if idempotency-issues require execution-orders
+    be modified, that the insufficiently-idempotent SaltStack formulae or states
+    be refactored to improve their idempotency.
+```
+
 [^1]: This is often done by system-owners that value launch-time provisioning-automation speed over the presence of an intial hardening-scan report on the launched-systems hard drive.
