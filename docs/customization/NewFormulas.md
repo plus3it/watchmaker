@@ -32,6 +32,15 @@ all:
 
 Once the custom `config.yaml` file is in the desired state, it can be uploaded to an S3-based testing-bucket, web server[^2] or even staged locally within the testing-system.
 
+## About Testing New Formulae
+
+To the greatest extent possible, formulae should be portable. It is recommended that when testing updates, the developer:
+
+* Tests without use of a custom `salt-content.zip`
+* Tests using custom Pillar-data &ndash; either by hand-modifying Pillar content or using a modified `salt-content.zip` cloned from the target deployment-environments' `salt-content.zip` &ndash; for one or more targeted deployment-environments
+
+Exercising across environments, in this way, will better assure that newly-created formulae operate as portably as expected prior to the newly-created formulae's integration into standard or site-specific Watchmaker executions.
+
 
 ## Execution - Generic/Defaults
 
@@ -60,6 +69,10 @@ The new formula's execution will be logged into the directory requested via the 
 ## Execution - Tailored
 
 If the new formula has variable configuration-data that needs to come from pillar, it will be necessary to either manually update the `.../pillar` directory's contents with the appropiate data (see: [_The `pillar` Directory-Tree_](SaltContent.md#the-pillar-directory-tree)) or create a custom `salt-config.zip` file and reference it from the custom `config.yaml` file.
+
+## Final Notes
+
+All formulae that have Pillar-settable or Pillar-overridable parameters should include a `pillar.example` or `pillar.example.yaml` file with the project's content. This file should be placed in the project's root-directory. The file should be valid YAML with explanatory comments for each configuration item. If a new formula's execution-customizability is more complex than is easily accommodated by comment-entries in the example Pillar YAML file, add a `README_PillarContents.md` file to the project. This file should contain sufficiently-expository content to allow new users of the formula to fully understand how to tailor the formulae's execution to their site's needs.
 
 [^1]: "Yet-to-be-integrated" formulae are any formulas that have not yet been set up for automated execution as part of a _full_ Watchmaker run. See the [_Modifying Formulae Execution-Parameters_](SiteParameters.md) document for tips.
 [^2]: If hosting on a web server and configuration content may be deemed sensitive, apply suitable access controls to the file and specify the fetch-URL with the appropriate authentication-elements.
