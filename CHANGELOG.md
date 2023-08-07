@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.27.5](https://github.com/plus3it/watchmaker/releases/tag/0.27.5)
+
+**Released**: 2023.08.07
+
+**Summary**:
+
+*   Adds doc section on troubleshooting Watchmaker, to include common errors, issues,
+    and relevant log files
+*   Updates AWS provider to support EC2 instances configured for only IMDSv2
+*   ash-linux-formula
+    -   Addresses additional STIG findings for EL7 and EL8
+*   join-domain-formula
+    -   Resolves issue with collision detection when deploying a new system
+        with a hostname that already exists in the domain
+    -   Corrects usage of StartTLS when searching for a computer object in the
+        domain
+    -   Provides several new options for controlling whether TLS is used when
+        searching for a computer object in the domain, and whether an error will
+        be treated as fatal or not
+
 ## [0.27.4](https://github.com/plus3it/watchmaker/releases/tag/0.27.4)
 
 **Released**: 2023.06.28
