@@ -14,7 +14,7 @@ import sys
 
 import pytest
 
-from watchmaker.exceptions import InvalidValue
+from watchmaker.exceptions import InvalidValue, OuPathRequired
 from watchmaker.workers.salt import SaltBase, SaltLinux, SaltWindows
 
 # Supports Python2 and Python3 test mocks
@@ -120,6 +120,21 @@ def test_bogus_environment(saltworker_client):
     with pytest.raises(InvalidValue):
         saltworker_client.ent_env = "bogus"
         saltworker_client.valid_envs = [None, "dev", "test", "prod"]
+        saltworker_client.before_install()
+
+
+def test_ou_path_required(saltworker_client):
+    """
+    Ensure that ou_path is required and raises OuPathRequiredError.
+
+    Args:
+        saltworker_client: (:obj:`src.workers.SaltBase`)
+
+    """
+    saltworker_client.ou_path_required = True  # Set ou_path_required to True
+    saltworker_client.ou_path = None  # Don't provide ou_path
+
+    with pytest.raises(OuPathRequired):
         saltworker_client.before_install()
 
 
