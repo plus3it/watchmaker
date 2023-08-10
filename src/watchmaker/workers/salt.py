@@ -21,7 +21,11 @@ import yaml
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import InvalidValueError, WatchmakerError
+from watchmaker.exceptions import (
+    InvalidValueError,
+    OuPathRequiredError,
+    WatchmakerError,
+)
 from watchmaker.managers.platform import (
     LinuxPlatformManager,
     PlatformManagerBase,
@@ -131,6 +135,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
         self.salt_content = kwargs.pop('salt_content', None) or ''
         self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
+        self.ou_path_required = kwargs.pop('ou_path_required', None) or False
         self.ou_path = kwargs.pop('ou_path', None) or ''
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
@@ -187,6 +192,11 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             )
             self.log.critical(msg)
             raise InvalidValueError(msg)
+
+        if self.ou_path_required and not self.ou_path:
+            raise OuPathRequiredError(
+                "The 'ou_path' option is required, but not provided."
+            )
 
     def install(self):
         """Install Salt."""

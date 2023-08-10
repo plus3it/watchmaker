@@ -29,6 +29,11 @@ class InvalidProviderError(WatchmakerError):
     """Invalid Provider Error."""
 
 
+class OuPathRequiredError(Exception):
+    """Exception raised when the OU path is required but not provided."""
+
+
 # Deprecated/renamed exceptions
 WatchmakerException = WatchmakerError
 InvalidValue = InvalidValueError
+OuPathRequired = OuPathRequiredError
