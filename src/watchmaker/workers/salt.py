@@ -21,13 +21,15 @@ import yaml
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import InvalidValueError, WatchmakerError, OuPathRequiredError
 from watchmaker.managers.platform import (
     LinuxPlatformManager,
     PlatformManagerBase,
     WindowsPlatformManager,
 )
 from watchmaker.workers.base import WorkerBase
+from watchmaker.exceptions import (
+    InvalidValueError, WatchmakerError, OuPathRequiredError
+)
 
 
 class SaltBase(WorkerBase, PlatformManagerBase):
@@ -190,7 +192,9 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             raise InvalidValueError(msg)
 
         if self.ou_path_required and not self.ou_path:
-            raise OuPathRequiredError("The 'ou_path' option is required, but not provided.")
+            raise OuPathRequiredError(
+                "The 'ou_path' option is required, but not provided."
+            )
 
     def install(self):
         """Install Salt."""
