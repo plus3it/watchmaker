@@ -21,15 +21,17 @@ import yaml
 
 import watchmaker.utils
 from watchmaker import static
+from watchmaker.exceptions import (
+    InvalidValueError,
+    OuPathRequiredError,
+    WatchmakerError,
+)
 from watchmaker.managers.platform import (
     LinuxPlatformManager,
     PlatformManagerBase,
     WindowsPlatformManager,
 )
 from watchmaker.workers.base import WorkerBase
-from watchmaker.exceptions import (
-    InvalidValueError, WatchmakerError, OuPathRequiredError
-)
 
 
 class SaltBase(WorkerBase, PlatformManagerBase):
