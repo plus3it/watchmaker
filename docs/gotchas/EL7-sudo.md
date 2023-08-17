@@ -7,54 +7,58 @@
 ```
 <br>
 
-# Hardening Gotchas
-
-Some STIG-specified hardenings will break systmes either partially (i.e., specific capabilities) or completely. In this document, we will try to document hardenings that are known to break things and provide tradeoffs and reversals of those breaking configuration-changes.
-
 # Use of `sudo` broken after application of "extra" hardenings
 
 The STIG-handlers for each of RHEL-07-020020 and RHEL-07-020023 can break ability to sudo if applied.
 
-## RHEL-07-020020
+* RHEL-07-020020
 
-This handler makes sure that every local user with a `uid` and/or `gid` respectively greater than the `SYS_UID_MAX` and `SYS_GID_MAX` settings in the `/etc/login.defs` file has an SELinux user-confinement defined. These confinements can be viewed by executing:
+    > **Rule Title:** _The Red Hat Enterprise Linux operating system must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures._
 
-~~~
-semanage login -l
-~~~
+    This handler for this STIG-ID makes sure that every local user with a `uid` and/or `gid` respectively greater than the `SYS_UID_MAX` and `SYS_GID_MAX` settings in the `/etc/login.defs` file has an SELinux user-confinement defined. These confinements can be viewed by executing:
 
-If a local user hasn't already had a user-confinement applied, this state will apply one. The ones that are applied based on the Pillar-data. The relevant Pillar data is defined in the `/srv/watchmaker/salt/pillar/<ENVIRONMENT>/init.sls` file under the `ash-linux:lookup:sel_confine` map-object.
+    ~~~
+    semanage login -l
+    ~~~
 
-One can check if watchmaker is aware of this map-object by typing:
+    If a local user hasn't already had a user-confinement applied, this state will apply one. The state will search relevant Pillar-data to look for confinement-mappings and apply any that are defined. The relevant Pillar data is defined in the `/srv/watchmaker/salt/pillar/<ENVIRONMENT>/init.sls` file under the `ash-linux:lookup:sel_confine` map-object.
 
-~~~
-salt-call -c /opt/watchmaker/salt pillar.get ash-linux:lookup:sel_confine
-~~~
+    One can check if watchmaker is aware of this map-object by typing:
 
-As the `root` user. If execution of this command returns only:
+    ~~~
+    salt-call -c /opt/watchmaker/salt pillar.get ash-linux:lookup:sel_confine
+    ~~~
 
-~~~
-local:
-~~~
+    As the `root` user. If execution of this command returns only:
 
-Then the pillar-data is not present. If pillar-data _is_ present, then it should return a list of SELinux user-confinements and each returned confinment will have a list of one or more usernames. For example:
+    ~~~
+    local:
+    ~~~
 
-~~~
-# salt-call -c /opt/watchmaker/salt pillar.get ash-linux:lookup:sel_confine
-local:
-    |_
-      ----------
-      staff_u:
-          - ec2-user
-    |_
-      ----------
-      unconfined_u:
-          - ssm-user
-~~~
+    Then the pillar-data is not present. If pillar-data _is_ present, then it should return a list of SELinux user-confinements and each returned confinment will have a list of one or more usernames. For example:
 
-Each username listed under a confinment will be given that confinment when RHEL-07-020020 is run.
+    ~~~
+    # salt-call -c /opt/watchmaker/salt pillar.get ash-linux:lookup:sel_confine
+    local:
+        |_
+          ----------
+          staff_u:
+              - ec2-user
+        |_
+          ----------
+          unconfined_u:
+              - ssm-user
+    ~~~
 
-### User Mapped As `user_u`
+    Each username listed under a confinment will be given that confinment when RHEL-07-020020 is run.
+
+* RHEL-07-020023
+
+    > **Rule Title:** _The Red Hat Enterprise Linux operating system must elevate the SELinux context when an administrator calls the sudo command._
+
+    This handler makes sure that every user of the `sudo` subsystem has an SELinux privilege-transition defined. These transitions aim to make it so that when users execute `sudo`, they don't have to pass any extra command-options to get the correct SELinux profile.
+
+## User Mapped As `user_u`
 
 If the `ash-linux:lookup:sel_confine` map-object does not exist in the Pillar-data, _every_ local user without an existing confinement will get mapped to the `user_u` confinement. This confinement-level will significantly restrict the things that the user-account can do, inclusive of using `sudo`. In the case of `sudo` these restrictions will manifest similarly to:
 
@@ -68,7 +72,7 @@ sudo: unable to initialize policy plugin
 $
 ~~~
 
-### User Mapped As `staff_u`
+## User Mapped As `staff_u`
 
 If the previously-discussed pillar-data declares that a give username should be mapped to the `staff_u` user-confinment, execution of `sudo` _may_ result in an errors. A quick `sudo -i` will show:
 
@@ -120,7 +124,8 @@ The user should receive no SELinux errors before the root prompt is displayed, n
 staff_u:sysadm_r:sysadm_t:s0-s0:c0.c1023
 ~~~
 
-### User Mapped As `unconfined_u`
+
+## User Mapped As `unconfined_u`
 
 There are a few ways that users get assigned this confinement: the user was explicitly created with that confinement assigned; they login using a third-party authentication-service like Adtive directory; or the previously-mentioned pillar-data was configured to map them to that confinement. Typically, so-mapped users will not experience any SELinux-related permissions problems. However, if an SELinux role-transition has been defined in the `sudoers` subsystem, the user may experience an error like:
 
@@ -136,5 +141,3 @@ To work around, invoke `sudo` as follows:
 ~~~
 $ sudo -i -r unconfined_r -t unconfined_t
 ~~~
-
-## RHEL-07-020023
