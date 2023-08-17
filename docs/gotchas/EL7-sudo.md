@@ -127,7 +127,7 @@ staff_u:sysadm_r:sysadm_t:s0-s0:c0.c1023
 
 ## User Mapped As `unconfined_u`
 
-There are a few ways that users get assigned this confinement: the user was explicitly created with that confinement assigned; they login using a third-party authentication-service like Adtive directory; or the previously-mentioned pillar-data was configured to map them to that confinement. Typically, so-mapped users will not experience any SELinux-related permissions problems. However, if an SELinux role-transition has been defined in the `sudoers` subsystem, the user may experience an error like:
+There are a few ways that users get assigned this confinement: the user was explicitly created with that confinement assigned; they login using a third-party authentication-service like Adtive directory; or the previously-mentioned pillar-data was configured to map them to that confinement. Typically, so-mapped users will not experience any SELinux-related permissions problems. However, if an SELinux role-transition has been defined in the `sudoers` subsystem (as is done when RHEL-07-020023 is run), the user may experience an error like:
 
 ~~~
 $ sudo -i
