@@ -58,8 +58,8 @@ def test_config_w_name_pattern(_mock_provider):
     )
     computer_name_pattern = config["salt"]["config"]["computer_name_pattern"]
     assert computer_name_pattern == r"(?i)xyz[\d]{3}[a-z]{8}[ex]"
-    assert re.fullmatch(computer_name_pattern, valid_computer_name) is not None
-    assert re.fullmatch(computer_name_pattern, invalid_computer_name) is None
+    assert re.match(f"{computer_name_pattern}\Z", valid_computer_name) is not None
+    assert re.match(f"{computer_name_pattern}\Z", invalid_computer_name) is None
 
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
@@ -76,4 +76,4 @@ def test_config_w_name_and_pattern(_mock_provider):
     computer_name_pattern = config["salt"]["config"]["computer_name_pattern"]
     assert computer_name_pattern == r"(?i)abc[\d]{3}[a-z]{8}[ex]"
     assert computer_name == "abc321abcdefghe"
-    assert re.fullmatch(computer_name_pattern, computer_name) is not None
+    assert re.match(f"{computer_name_pattern}\Z", computer_name) is not None
