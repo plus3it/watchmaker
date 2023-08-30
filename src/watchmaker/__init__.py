@@ -222,7 +222,11 @@ class Arguments(dict):
             else:
                 # item is the argument value
                 extra_arguments.extend(
-                    [watchmaker.utils.clean_none(item or Arguments.DEFAULT_VALUE)]
+                    [
+                        watchmaker.utils.clean_none(
+                            item or Arguments.DEFAULT_VALUE
+                        )
+                    ]
                 )
 
         self.extra_arguments = extra_arguments
@@ -287,7 +291,9 @@ class Client(object):
             .get("computer_name_pattern", None)
         )
 
-        computer_name = self.config["salt"]["config"].get("computer_name", None)
+        computer_name = self.config["salt"]["config"].get(
+            "computer_name", None
+        )
         if computer_name and computer_name_pattern:
             if not re.fullmatch(computer_name_pattern, computer_name):
                 raise WatchmakerError(
@@ -308,7 +314,9 @@ class Client(object):
         params["readyfile"] = os.path.join(
             "{0}".format(self.system_drive), "var", "run", "system-is-ready"
         )
-        params["logdir"] = os.path.join("{0}".format(self.system_drive), "var", "log")
+        params["logdir"] = os.path.join(
+            "{0}".format(self.system_drive), "var", "log"
+        )
         params["workingdir"] = os.path.join(
             "{0}".format(params["prepdir"]), "workingfiles"
         )
@@ -324,7 +332,9 @@ class Client(object):
         params["readyfile"] = os.path.join(
             "{0}".format(params["prepdir"]), "system-is-ready"
         )
-        params["logdir"] = os.path.join("{0}".format(params["prepdir"]), "Logs")
+        params["logdir"] = os.path.join(
+            "{0}".format(params["prepdir"]), "Logs"
+        )
         params["workingdir"] = os.path.join(
             "{0}".format(params["prepdir"]), "WorkingFiles"
         )

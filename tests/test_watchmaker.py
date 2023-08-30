@@ -139,7 +139,10 @@ def test_extra_arguments_map(_provider_mock):
     """Test map in extra_arguments loads correctly."""
     # setup
     raw_arguments = {
-        "extra_arguments": ["--user-formulas", '{"foo-formula": "https://url"}']
+        "extra_arguments": [
+            "--user-formulas",
+            '{"foo-formula": "https://url"}',
+        ]
     }
     check_val = {"user_formulas": {"foo-formula": "https://url"}}
 
@@ -220,7 +223,9 @@ def test_valid_config_name_w_pattern(_provider_mock):
     watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     client = watchmaker.Client(watchmaker_arguments)
-    assert client.config["salt"]["config"]["computer_name"] == "abc321abcdefghe"
+    assert (
+        client.config["salt"]["config"]["computer_name"] == "abc321abcdefghe"
+    )
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)

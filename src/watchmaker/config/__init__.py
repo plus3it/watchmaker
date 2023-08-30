@@ -123,7 +123,9 @@ def get_configs(system, worker_args, config_path=None):
             log.critical(msg)
             raise
 
-    log.debug("Command-line arguments merged into worker configs: %s", worker_args)
+    log.debug(
+        "Command-line arguments merged into worker configs: %s", worker_args
+    )
 
     validate_computer_name_pattern(config)
 
@@ -137,11 +139,15 @@ def get_configs(system, worker_args, config_path=None):
 def validate_computer_name_pattern(config):
     """Ensure pattern is valid and will match entire computer name."""
     computer_name_pattern = (
-        config.get("salt", {}).get("config", {}).get("computer_name_pattern", {})
+        config.get("salt", {})
+        .get("config", {})
+        .get("computer_name_pattern", {})
     )
 
     if computer_name_pattern:
         try:
             re.compile(computer_name_pattern)
         except re.error:
-            raise WatchmakerError("Invalid regex pattern %s" % computer_name_pattern)
+            raise WatchmakerError(
+                "Invalid regex pattern %s" % computer_name_pattern
+            )

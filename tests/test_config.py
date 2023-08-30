@@ -52,7 +52,9 @@ def test_config_w_name_pattern(_mock_provider):
     config, _status_config = get_configs(  # pylint: disable=unused-variable
         "linux",
         {},
-        os.path.join("tests", "resources", "config_with_computer_name_pattern.yaml"),
+        os.path.join(
+            "tests", "resources", "config_with_computer_name_pattern.yaml"
+        ),
     )
     computer_name_pattern = config["salt"]["config"]["computer_name_pattern"]
     assert computer_name_pattern == r"(?i)xyz[\d]{3}[a-z]{8}[ex]"
