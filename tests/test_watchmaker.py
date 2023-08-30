@@ -8,9 +8,11 @@ from __future__ import (
     with_statement,
 )
 
-import importlib_resources as resources
+import os
+
 import pytest
-import yaml
+
+from watchmaker.exceptions import WatchmakerError
 
 # Supports Python2 and Python3 test mocks
 try:
@@ -19,43 +21,6 @@ except ImportError:
     from mock import patch
 
 import watchmaker
-from watchmaker import static
-
-
-@pytest.fixture
-def watchmaker_arguments():
-    """Return default watchmaker arguments."""
-    watchmaker_arguments = {
-        'salt_states': 'highstate',
-        'no_reboot': False,
-        'admin_groups': None,
-        'computer_name': None,
-        'admin_users': None,
-        'log_level':
-        'debug',
-        'ou_path': None,
-        'config_path': None,
-        'environment': None,
-        'extra_arguments': [],
-        'log_dir': u'/var/log/watchmaker'
-    }
-
-    return watchmaker_arguments
-
-
-@pytest.fixture
-def watchmaker_client(watchmaker_arguments):
-    """Return  watchmaker client with defaults."""
-    return watchmaker.Client(watchmaker_arguments)
-
-
-@pytest.fixture
-def default_config():
-    """Return default configuration for watchmaker."""
-    config_path = str(resources.files(static) / 'config.yaml')
-
-    with open(config_path, 'r') as stream:
-        return yaml.safe_load(stream)
 
 
 def test_main():
@@ -64,16 +29,16 @@ def test_main():
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_none_arguments(provider_mock):
+def test_none_arguments(_provider_mock):
     """Check string 'None' conversion to None."""
     raw_arguments = {
-        'admin_groups': 'None',
-        'admin_users': 'None',
-        'computer_name': 'None',
-        'salt_states': 'None',
-        'ou_path': 'None'
+        "admin_groups": "None",
+        "admin_users": "None",
+        "computer_name": "None",
+        "salt_states": "None",
+        "ou_path": "None",
     }
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     assert watchmaker_arguments.admin_groups is None
     assert watchmaker_arguments.admin_users is None
@@ -83,16 +48,16 @@ def test_none_arguments(provider_mock):
 
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
 
-    assert 'salt_states' in watchmaker_client.worker_args
-    assert watchmaker_client.worker_args['salt_states'] is None
+    assert "salt_states" in watchmaker_client.worker_args
+    assert watchmaker_client.worker_args["salt_states"] is None
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_argument_default_value(provider_mock):
+def test_argument_default_value(_provider_mock):
     """Ensure argument default value is `Arguments.DEFAULT_VALUE`."""
     raw_arguments = {}
     check_val = watchmaker.Arguments.DEFAULT_VALUE
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     assert watchmaker_arguments.admin_groups == check_val
     assert watchmaker_arguments.admin_users == check_val
@@ -102,18 +67,13 @@ def test_argument_default_value(provider_mock):
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_extra_arguments_string(provider_mock):
+def test_extra_arguments_string(_provider_mock):
     """Test string in extra_arguments loads correctly."""
     # setup
-    raw_arguments = {
-        "extra_arguments": [
-            '--foo',
-            'bar'
-        ]
-    }
+    raw_arguments = {"extra_arguments": ["--foo", "bar"]}
     check_val = {"foo": "bar"}
 
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     # test
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
@@ -123,17 +83,17 @@ def test_extra_arguments_string(provider_mock):
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_extra_arguments_equal_separator(provider_mock):
+def test_extra_arguments_equal_separator(_provider_mock):
     """Test equal separator in extra_arguments loads correctly."""
     # setup
     raw_arguments = {
         "extra_arguments": [
-            '--foo=bar',
+            "--foo=bar",
         ]
     }
     check_val = {"foo": "bar"}
 
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     # test
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
@@ -143,18 +103,13 @@ def test_extra_arguments_equal_separator(provider_mock):
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_extra_arguments_quoted_string(provider_mock):
+def test_extra_arguments_quoted_string(_provider_mock):
     """Test quoted string in extra_arguments loads correctly."""
     # setup
-    raw_arguments = {
-        "extra_arguments": [
-            '--foo',
-            '"bar"'
-        ]
-    }
+    raw_arguments = {"extra_arguments": ["--foo", '"bar"']}
     check_val = {"foo": "bar"}
 
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     # test
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
@@ -164,18 +119,13 @@ def test_extra_arguments_quoted_string(provider_mock):
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_extra_arguments_list(provider_mock):
+def test_extra_arguments_list(_provider_mock):
     """Test list in extra_arguments loads correctly."""
     # setup
-    raw_arguments = {
-        "extra_arguments": [
-            '--foo',
-            '["bar"]'
-        ]
-    }
+    raw_arguments = {"extra_arguments": ["--foo", '["bar"]']}
     check_val = {"foo": ["bar"]}
 
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     # test
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
@@ -185,18 +135,15 @@ def test_extra_arguments_list(provider_mock):
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_extra_arguments_map(provider_mock):
+def test_extra_arguments_map(_provider_mock):
     """Test map in extra_arguments loads correctly."""
     # setup
     raw_arguments = {
-        "extra_arguments": [
-            '--user-formulas',
-            '{"foo-formula": "https://url"}'
-        ]
+        "extra_arguments": ["--user-formulas", '{"foo-formula": "https://url"}']
     }
     check_val = {"user_formulas": {"foo-formula": "https://url"}}
 
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     # test
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
@@ -206,16 +153,16 @@ def test_extra_arguments_map(provider_mock):
 
 
 @patch("watchmaker.status.Status.initialize", return_value=None)
-def test_none_arguments_aws_provider(provider_mock):
+def test_none_arguments_aws_provider(_provider_mock):
     """Check string 'None' conversion to None."""
     raw_arguments = {
-        'admin_groups': 'None',
-        'admin_users': 'None',
-        'computer_name': 'None',
-        'salt_states': 'None',
-        'ou_path': 'None'
+        "admin_groups": "None",
+        "admin_users": "None",
+        "computer_name": "None",
+        "salt_states": "None",
+        "ou_path": "None",
     }
-    watchmaker_arguments = watchmaker.Arguments(**dict(**raw_arguments))
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
 
     assert watchmaker_arguments.admin_groups is None
     assert watchmaker_arguments.admin_users is None
@@ -225,5 +172,69 @@ def test_none_arguments_aws_provider(provider_mock):
 
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
 
-    assert 'salt_states' in watchmaker_client.worker_args
-    assert watchmaker_client.worker_args['salt_states'] is None
+    assert "salt_states" in watchmaker_client.worker_args
+    assert watchmaker_client.worker_args["salt_states"] is None
+
+
+@patch("watchmaker.status.Status.initialize", return_value=None)
+def test_valid_name_arg_w_pattern(_provider_mock):
+    """Check name matches the pattern."""
+    raw_arguments = {
+        "computer_name": "xyz654abcdefghe",
+        "config_path": os.path.join(
+            "tests", "resources", "config_with_computer_name_pattern.yaml"
+        ),
+    }
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
+
+    assert watchmaker_arguments.computer_name == "xyz654abcdefghe"
+
+    watchmaker.Client(watchmaker_arguments)
+
+
+@patch("watchmaker.status.Status.initialize", return_value=None)
+def test_invalid_name_arg_w_pattern(_provider_mock):
+    """Check name does not match pattern."""
+    raw_arguments = {
+        "computer_name": "123654abcdefghlmdone",
+        "config_path": os.path.join(
+            "tests", "resources", "config_with_computer_name_pattern.yaml"
+        ),
+    }
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
+
+    assert watchmaker_arguments.computer_name == "123654abcdefghlmdone"
+
+    with pytest.raises(WatchmakerError):
+        watchmaker.Client(watchmaker_arguments)
+
+
+@patch("watchmaker.status.Status.initialize", return_value=None)
+def test_valid_config_name_w_pattern(_provider_mock):
+    """Check name matches the pattern."""
+    raw_arguments = {
+        "config_path": os.path.join(
+            "tests", "resources", "config_with_computer_name_and_pattern.yaml"
+        ),
+    }
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
+
+    client = watchmaker.Client(watchmaker_arguments)
+    assert client.config["salt"]["config"]["computer_name"] == "abc321abcdefghe"
+
+
+@patch("watchmaker.status.Status.initialize", return_value=None)
+def test_name_arg_wo_pattern(_provider_mock):
+    """Check name allowed without pattern."""
+    raw_arguments = {
+        "admin_groups": "None",
+        "admin_users": "None",
+        "computer_name": "123654abcdefghlmdone",
+        "salt_states": "None",
+        "ou_path": "None",
+    }
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
+
+    assert watchmaker_arguments.computer_name == "123654abcdefghlmdone"
+
+    watchmaker.Client(watchmaker_arguments)
