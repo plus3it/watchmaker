@@ -8,12 +8,6 @@ from __future__ import (
     with_statement,
 )
 
-import os
-
-import pytest
-
-from watchmaker.exceptions import WatchmakerError
-
 # Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
