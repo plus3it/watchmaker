@@ -17,9 +17,8 @@ import pytest
 from watchmaker.exceptions import (
     InvalidComputerNameError,
     InvalidValue,
-    OuPathRequired
+    OuPathRequired,
 )
-
 from watchmaker.workers.salt import SaltBase, SaltLinux, SaltWindows
 
 # Supports Python2 and Python3 test mocks
