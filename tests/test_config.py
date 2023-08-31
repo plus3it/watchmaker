@@ -46,7 +46,7 @@ def test_config_wo_status_config(_mock_provider):
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_config_w_name_pattern(_mock_provider):
-    """Test config that has a name pattern and compare against valid and invalid computer names."""
+    """Test config with name pattern compare valid/invalid names."""
     valid_computer_name = "xyz654abcdefghe"
     invalid_computer_name = "123654abcdefghlmdone"
     config, _status_config = get_configs(  # pylint: disable=unused-variable
@@ -56,10 +56,10 @@ def test_config_w_name_pattern(_mock_provider):
             "tests", "resources", "config_with_computer_name_pattern.yaml"
         ),
     )
-    computer_name_pattern = config["salt"]["config"]["computer_name_pattern"]
-    assert computer_name_pattern == r"(?i)xyz[\d]{3}[a-z]{8}[ex]"
-    assert re.match(f"{computer_name_pattern}\Z", valid_computer_name) is not None
-    assert re.match(f"{computer_name_pattern}\Z", invalid_computer_name) is None
+    pattern = config["salt"]["config"]["computer_name_pattern"]
+    assert pattern == r"(?i)xyz[\d]{3}[a-z]{8}[ex]"
+    assert re.match(pattern + r"\Z", valid_computer_name) is not None
+    assert re.match(pattern + r"\Z", invalid_computer_name) is None
 
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
@@ -73,7 +73,7 @@ def test_config_w_name_and_pattern(_mock_provider):
         ),
     )
     computer_name = config["salt"]["config"]["computer_name"]
-    computer_name_pattern = config["salt"]["config"]["computer_name_pattern"]
-    assert computer_name_pattern == r"(?i)abc[\d]{3}[a-z]{8}[ex]"
+    pattern = config["salt"]["config"]["computer_name_pattern"]
+    assert pattern == r"(?i)abc[\d]{3}[a-z]{8}[ex]"
     assert computer_name == "abc321abcdefghe"
-    assert re.match(f"{computer_name_pattern}\Z", computer_name) is not None
+    assert re.match(pattern + r"\Z", computer_name) is not None

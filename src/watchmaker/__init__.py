@@ -295,7 +295,7 @@ class Client(object):
             "computer_name", None
         )
         if computer_name and computer_name_pattern:
-            if not re.match(f"{computer_name_pattern}\Z", computer_name):
+            if not re.match(computer_name_pattern + r"\Z", computer_name):
                 raise WatchmakerError(
                     "Computer name: %s does not match pattern %s"
                     % (computer_name, computer_name_pattern)
