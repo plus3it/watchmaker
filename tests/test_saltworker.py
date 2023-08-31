@@ -583,6 +583,50 @@ def test_linux_computer_name_none():
     assert saltworker_lx._set_grain.call_count == 2
 
 
+def test_linux_computer_name_patt_none():
+    """Test that Pythonic None can be used without error rather than 'None'."""
+    # setup ========================
+    system_params = {}
+    salt_config = {}
+    system_params["prepdir"] = "662f1bdb-5992-5f8f-87d6-15c4de958b7b"
+    system_params["logdir"] = "76b74ceb-e81d-5fac-b293-0d7d45901ef7"
+    system_params["workingdir"] = "4e6a1827-1d3b-5612-a7fd-f6fed00b5a2f"
+
+    # try "normal" first, with a value. try with none below.
+    salt_config["computer_name_pattern"] = r"(?i)xyz[\d]{3}[a-z]{8}[ex]"
+
+    # execution ====================
+    saltworker_lx = SaltLinux(system_params, **salt_config)
+
+    saltworker_lx._set_grain = MagicMock(return_value=None)
+    saltworker_lx.run_salt = MagicMock(
+        return_value={"retcode": 0, "stdout": b"", "stderr": b""}
+    )
+
+    saltworker_lx.process_grains()
+
+    # assertions ===================
+    assert saltworker_lx._set_grain.call_count == 3
+    saltworker_lx._set_grain.assert_called_with(
+        'name-computer', {'pattern': salt_config["computer_name_pattern"]})
+
+    # tried "normal" first, with a value, above. now, trying with none.
+    salt_config["computer_name_pattern"] = None
+
+    # execution ====================
+    saltworker_lx = SaltLinux(system_params, **salt_config)
+
+    saltworker_lx._set_grain = MagicMock(return_value=None)
+    saltworker_lx.run_salt = MagicMock(
+        return_value={"retcode": 0, "stdout": b"", "stderr": b""}
+    )
+
+    saltworker_lx.process_grains()
+
+    # assertions ===================
+    assert saltworker_lx._set_grain.call_count == 2
+
+
 @patch("codecs.open", autospec=True)
 @patch("os.makedirs", autospec=True)
 @patch("yaml.safe_dump", autospec=True)

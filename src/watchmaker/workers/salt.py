@@ -130,6 +130,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.computer_name = kwargs.pop('computer_name', None) or ''
+        self.computer_name_pattern = kwargs.pop('computer_name_pattern', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
         self.valid_envs = kwargs.pop('valid_environments', []) or []
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
@@ -149,6 +150,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         self.computer_name = watchmaker.utils.config_none_deprecate(
             self.computer_name, self.log)
+        self.computer_name_pattern = watchmaker.utils.config_none_deprecate(
+            self.computer_name_pattern, self.log)
         self.salt_debug_log = watchmaker.utils.config_none_deprecate(
             self.salt_debug_log, self.log)
         self.salt_content = watchmaker.utils.config_none_deprecate(
@@ -581,6 +584,10 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         if self.computer_name:
             name = {'computername': str(self.computer_name)}
             self._set_grain('name-computer', name)
+
+        if self.computer_name_pattern:
+            pattern = {'pattern': str(self.computer_name_pattern)}
+            self._set_grain('name-computer', pattern)
 
         self.log.info('Syncing custom salt modules...')
         self.run_salt('saltutil.sync_all')
