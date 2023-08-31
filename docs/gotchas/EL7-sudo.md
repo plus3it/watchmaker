@@ -35,7 +35,7 @@ The STIG-handlers for each of RHEL-07-020020 and RHEL-07-020023 can break abilit
     local:
     ~~~
 
-    Then the pillar-data is not present. If pillar-data _is_ present, then it should return a list of SELinux user-confinements and each returned confinment will have a list of one or more usernames. For example:
+    Then the pillar-data is not present. If pillar-data _is_ present, then it should return a list of SELinux user-confinements and each returned confinement will have a list of one or more usernames. For example:
 
     ~~~
     # salt-call -c /opt/watchmaker/salt pillar.get ash-linux:lookup:sel_confine
@@ -50,7 +50,7 @@ The STIG-handlers for each of RHEL-07-020020 and RHEL-07-020023 can break abilit
               - ssm-user
     ~~~
 
-    Each username listed under a confinment will be given that confinment when RHEL-07-020020 is run.
+    Each username listed under a confinement will be given that confinement when RHEL-07-020020 is run.
 
 * RHEL-07-020023
 
@@ -74,7 +74,7 @@ $
 
 ## User Mapped As `staff_u`
 
-If the previously-discussed pillar-data declares that a give username should be mapped to the `staff_u` user-confinment, execution of `sudo` _may_ result in an errors. A quick `sudo -i` will show:
+If the previously-discussed pillar-data declares that a given username should be mapped to the `staff_u` user-confinement, execution of `sudo` _may_ result in an error. A quick `sudo -i` will show:
 
 ~~~
 $ sudo -i
@@ -127,7 +127,7 @@ staff_u:sysadm_r:sysadm_t:s0-s0:c0.c1023
 
 ## User Mapped As `unconfined_u`
 
-There are a few ways that users get assigned this confinement: the user was explicitly created with that confinement assigned; they login using a third-party authentication-service like Adtive directory; or the previously-mentioned pillar-data was configured to map them to that confinement. Typically, so-mapped users will not experience any SELinux-related permissions problems. However, if an SELinux role-transition has been defined in the `sudoers` subsystem (as is done when RHEL-07-020023 is run), the user may experience an error like:
+There are a few ways that users get assigned this confinement: the user was explicitly created with that confinement assigned; they login using a third-party authentication-service like Active directory; or the previously-mentioned pillar-data was configured to map them to that confinement. Typically, so-mapped users will not experience any SELinux-related permissions problems. However, if an SELinux role-transition has been defined in the `sudoers` subsystem (as is done when RHEL-07-020023 is run), the user may experience an error like:
 
 ~~~
 $ sudo -i
