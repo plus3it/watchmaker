@@ -37,6 +37,7 @@ installation.md
 configuration.md
 usage.md
 troubleshooting/index.md
+gotchas/index.md
 findings/index.md
 scap.md
 faq.md
