@@ -93,6 +93,7 @@ def test_config_validate_pattern():
     )
 
     validate_computer_name_pattern(config)
-    config["salt"]["config"]["computer_name_pattern"] = "?i)abc[\d]{3}[a-z]{8}[ex]"
+    config["salt"]["config"]["computer_name_pattern"] = \
+        r"?i)abc[\d]{3}[a-z]{8}[ex]"
     with pytest.raises(WatchmakerError):
         validate_computer_name_pattern(config)

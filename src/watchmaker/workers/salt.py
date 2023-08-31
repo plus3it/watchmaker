@@ -130,7 +130,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.computer_name = kwargs.pop('computer_name', None) or ''
-        self.computer_name_pattern = kwargs.pop('computer_name_pattern', None) or ''
+        self.computer_name_pattern = \
+            kwargs.pop('computer_name_pattern', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
         self.valid_envs = kwargs.pop('valid_environments', []) or []
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
