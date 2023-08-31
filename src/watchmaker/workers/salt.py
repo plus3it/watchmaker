@@ -212,7 +212,6 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                     % (self.computer_name, self.computer_name_pattern)
                 )
 
-
     def install(self):
         """Install Salt."""
         pass
