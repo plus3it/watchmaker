@@ -11,7 +11,10 @@ from __future__ import (
 import os
 import re
 
-from watchmaker.config import get_configs
+import pytest
+
+from watchmaker.config import get_configs, validate_computer_name_pattern
+from watchmaker.exceptions import WatchmakerError
 
 # Supports Python2 and Python3 test mocks
 try:
@@ -77,3 +80,19 @@ def test_config_w_name_and_pattern(_mock_provider):
     assert pattern == r"(?i)abc[\d]{3}[a-z]{8}[ex]"
     assert computer_name == "abc321abcdefghe"
     assert re.match(pattern + r"\Z", computer_name) is not None
+
+
+def test_config_validate_pattern():
+    """Test config validate pattern method."""
+    config, _status_config = get_configs(  # pylint: disable=unused-variable
+        "linux",
+        {},
+        os.path.join(
+            "tests", "resources", "config_with_computer_name_and_pattern.yaml"
+        ),
+    )
+
+    validate_computer_name_pattern(config)
+    config["salt"]["config"]["computer_name_pattern"] = "?i)abc[\d]{3}[a-z]{8}[ex]"
+    with pytest.raises(WatchmakerError):
+        validate_computer_name_pattern(config)
