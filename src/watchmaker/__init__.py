@@ -434,8 +434,7 @@ class Client(object):
 
         if self.no_reboot:
             self.log.info(
-                "Detected `no-reboot` switch. \
-                           System will not be rebooted."
+                "Detected `no-reboot` switch. System will not be rebooted."
             )
         else:
             self.log.info(
