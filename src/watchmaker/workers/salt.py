@@ -13,6 +13,7 @@ import codecs
 import glob
 import json
 import os
+import re
 import shutil
 
 import distro
@@ -22,6 +23,7 @@ import yaml
 import watchmaker.utils
 from watchmaker import static
 from watchmaker.exceptions import (
+    InvalidComputerNameError,
     InvalidValueError,
     OuPathRequiredError,
     WatchmakerError,
@@ -201,6 +203,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             raise OuPathRequiredError(
                 "The 'ou_path' option is required, but not provided."
             )
+
+        if self.computer_name and self.computer_name_pattern:
+            if not re.match(self.computer_name_pattern + r"\Z",
+                            self.computer_name):
+                raise InvalidComputerNameError(
+                    "Computer name: %s does not match pattern %s"
+                    % (self.computer_name, self.computer_name_pattern)
+                )
+
 
     def install(self):
         """Install Salt."""

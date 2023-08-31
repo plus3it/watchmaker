@@ -285,22 +285,6 @@ class Client(object):
             self.system, self.worker_args, self.config_path
         )
 
-        computer_name_pattern = (
-            self.config.get("salt", {})
-            .get("config", {})
-            .get("computer_name_pattern", None)
-        )
-
-        computer_name = self.config["salt"]["config"].get(
-            "computer_name", None
-        )
-        if computer_name and computer_name_pattern:
-            if not re.match(computer_name_pattern + r"\Z", computer_name):
-                raise WatchmakerError(
-                    "Computer name: %s does not match pattern %s"
-                    % (computer_name, computer_name_pattern)
-                )
-
         self.status = Status(status_config)
 
         self.status.update_status("RUNNING")
