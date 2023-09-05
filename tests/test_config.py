@@ -51,7 +51,7 @@ def test_config_wo_status_config(_mock_provider):
 def test_config_w_name_pattern(_mock_provider):
     """Test config with name pattern compare valid/invalid names."""
     valid_computer_name = "xyz654abcdefghe"
-    invalid_computer_name = "123654abcdefghlmdone"
+    invalid_computer_name = "123xyz654abcdefgheone"
     config, _status_config = get_configs(  # pylint: disable=unused-variable
         "linux",
         {},
@@ -59,11 +59,24 @@ def test_config_w_name_pattern(_mock_provider):
             "tests", "resources", "config_with_computer_name_pattern.yaml"
         ),
     )
+
     pattern = config["salt"]["config"]["computer_name_pattern"]
+
     assert pattern == r"(?i)xyz[\d]{3}[a-z]{8}[ex]"
     assert re.match(pattern + r"\Z", valid_computer_name) is not None
     assert re.match(pattern + r"\Z", invalid_computer_name) is None
 
+    # Test with terminal patterns and supported \Z terminal pattern combined
+    dbl_terminal_pattern = "^" + pattern + r"$\Z"
+    assert re.match(dbl_terminal_pattern, valid_computer_name) is not None
+    assert re.match(dbl_terminal_pattern, invalid_computer_name) is None
+
+    # Test without terminal patterns showing need for \Z
+    assert re.match(pattern, valid_computer_name + "12345") is not None
+    assert re.match(
+        dbl_terminal_pattern,
+        valid_computer_name + "12345"
+    ) is None
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_config_w_name_and_pattern(_mock_provider):
