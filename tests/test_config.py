@@ -78,6 +78,7 @@ def test_config_w_name_pattern(_mock_provider):
         valid_computer_name + "12345"
     ) is None
 
+
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
 def test_config_w_name_and_pattern(_mock_provider):
     """Test config that has a pattern and computer name."""
