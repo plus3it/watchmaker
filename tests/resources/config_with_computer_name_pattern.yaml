@@ -1,0 +1,67 @@
+watchmaker_version: ">= 0.24.6.dev"
+
+all:
+  - salt:
+      admin_groups: null
+      admin_users: null
+      computer_name: null
+      computer_name_pattern: (?i)xyz[\d]{3}[a-z]{8}[ex]
+      environment: null
+      ou_path: null
+      salt_content: null
+      salt_states: Highstate
+      user_formulas:
+        # To add extra formulas, specify them as a map of
+        #    <formula_name>: <archive_url>
+        # The <formula_name> is the name of the directory in the salt file_root
+        # where the formula will be placed. The <archive_url> must be a zip
+        # file, and the zip must contain a top-level directory that, itself,
+        # contains the actual salt formula. To "overwrite" submodule formulas,
+        # make sure <formula_name> matches submodule names. E.g.:
+        #ash-linux-formula: https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+        #scap-formula: https://s3.amazonaws.com/salt-formulas/scap-formula-master.zip
+
+linux:
+  - yum:
+      repo_map:
+        #SaltEL6:
+        - dist:
+            - redhat
+            - centos
+          el_version: 6
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-el6.repo
+        - dist: amazon
+          el_version: 6
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-amzn.repo
+        #SaltEL7:
+        - dist:
+            - redhat
+            - centos
+          el_version: 7
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el7-python3.repo
+        #SaltEL8:
+        - dist:
+            - redhat
+            - centos
+          el_version: 8
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el8-python3.repo
+  - salt:
+      salt_debug_log: null
+      install_method: yum
+      bootstrap_source: null
+      git_repo: null
+      salt_version: null
+
+windows:
+  - salt:
+      salt_debug_log: null
+      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
+
+status:
+  providers:
+    - key: "WatchmakerStatus"
+      required: False
+      provider_type: "aws"
+    - key: "WatchmakerStatus"
+      required: False
+      provider_type: "azure"

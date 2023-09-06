@@ -13,6 +13,10 @@ class WatchmakerError(Exception):
     """An unknown error occurred."""
 
 
+class InvalidComputerNameError(WatchmakerError):
+    """Exception raised when computer_name does not match pattern provided."""
+
+
 class InvalidValueError(WatchmakerError):
     """Passed an invalid value."""
 
