@@ -22,7 +22,7 @@ class AzureStatusProvider(AbstractStatusProvider):
 
     identifier = "azure"
 
-    def __init__(self, logger=None):
+    def __init__(self, provider, logger=None):
         self.logger = logger or logging.getLogger(__name__)
         self.metadata_id_url = (
             "http://169.254.169.254/metadata/instance?api-version=2021-02-01"
@@ -30,6 +30,7 @@ class AzureStatusProvider(AbstractStatusProvider):
         self.initial_status = False
         self.subscription_id = None
         self.resource_id = None
+        self.provider = provider
         self.initialize()
 
     def initialize(self):

@@ -13,6 +13,7 @@ import codecs
 import glob
 import json
 import os
+import re
 import shutil
 
 import distro
@@ -21,7 +22,12 @@ import yaml
 
 import watchmaker.utils
 from watchmaker import static
-from watchmaker.exceptions import InvalidValueError, WatchmakerError
+from watchmaker.exceptions import (
+    InvalidComputerNameError,
+    InvalidValueError,
+    OuPathRequiredError,
+    WatchmakerError,
+)
 from watchmaker.managers.platform import (
     LinuxPlatformManager,
     PlatformManagerBase,
@@ -126,11 +132,14 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop('user_formulas', None) or {}
         self.computer_name = kwargs.pop('computer_name', None) or ''
+        self.computer_name_pattern = \
+            kwargs.pop('computer_name_pattern', None) or ''
         self.ent_env = kwargs.pop('environment', None) or ''
         self.valid_envs = kwargs.pop('valid_environments', []) or []
         self.salt_debug_log = kwargs.pop('salt_debug_log', None) or ''
         self.salt_content = kwargs.pop('salt_content', None) or ''
         self.salt_content_path = kwargs.pop('salt_content_path', None) or ''
+        self.ou_path_required = kwargs.pop('ou_path_required', None) or False
         self.ou_path = kwargs.pop('ou_path', None) or ''
         self.admin_groups = kwargs.pop('admin_groups', None) or ''
         self.admin_users = kwargs.pop('admin_users', None) or ''
@@ -144,6 +153,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         self.computer_name = watchmaker.utils.config_none_deprecate(
             self.computer_name, self.log)
+        self.computer_name_pattern = watchmaker.utils.config_none_deprecate(
+            self.computer_name_pattern, self.log)
         self.salt_debug_log = watchmaker.utils.config_none_deprecate(
             self.salt_debug_log, self.log)
         self.salt_content = watchmaker.utils.config_none_deprecate(
@@ -187,6 +198,19 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             )
             self.log.critical(msg)
             raise InvalidValueError(msg)
+
+        if self.ou_path_required and not self.ou_path:
+            raise OuPathRequiredError(
+                "The 'ou_path' option is required, but not provided."
+            )
+
+        if self.computer_name and self.computer_name_pattern:
+            if not re.match(self.computer_name_pattern + r"\Z",
+                            self.computer_name):
+                raise InvalidComputerNameError(
+                    "Computer name: %s does not match pattern %s"
+                    % (self.computer_name, self.computer_name_pattern)
+                )
 
     def install(self):
         """Install Salt."""
@@ -571,6 +595,10 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         if self.computer_name:
             name = {'computername': str(self.computer_name)}
             self._set_grain('name-computer', name)
+
+        if self.computer_name_pattern:
+            pattern = {'pattern': str(self.computer_name_pattern)}
+            self._set_grain('name-computer', pattern)
 
         self.log.info('Syncing custom salt modules...')
         self.run_salt('saltutil.sync_all')

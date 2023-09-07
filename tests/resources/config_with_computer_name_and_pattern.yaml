@@ -1,15 +1,15 @@
-watchmaker_version: ">= 0.27.2.dev"
+watchmaker_version: ">= 0.24.6.dev"
 
 all:
   - salt:
       admin_groups: null
       admin_users: null
-      computer_name: null
+      computer_name: abc321abcdefghe
+      computer_name_pattern: (?i)abc[\d]{3}[a-z]{8}[ex]
       environment: null
       ou_path: null
       salt_content: null
       salt_states: Highstate
-      salt_version: "3006.2"
       user_formulas:
         # To add extra formulas, specify them as a map of
         #    <formula_name>: <archive_url>
@@ -24,24 +24,28 @@ all:
 linux:
   - yum:
       repo_map:
+        #SaltEL6:
+        - dist:
+            - redhat
+            - centos
+          el_version: 6
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-el6.repo
+        - dist: amazon
+          el_version: 6
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-amzn.repo
         #SaltEL7:
         - dist:
             - redhat
             - centos
           el_version: 7
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3006.2/salt-reposync-el7-onedir.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el7-python3.repo
         #SaltEL8:
         - dist:
-            - almalinux
-            - centos
-            - oracle
             - redhat
-            - rocky
+            - centos
           el_version: 8
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3006.2/salt-reposync-el8-onedir.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el8-python3.repo
   - salt:
-      pip_install:
-        - dnspython
       salt_debug_log: null
       install_method: yum
       bootstrap_source: null
@@ -51,7 +55,7 @@ linux:
 windows:
   - salt:
       salt_debug_log: null
-      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3006.2-Py3-AMD64-Setup.exe
+      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
 
 status:
   providers:

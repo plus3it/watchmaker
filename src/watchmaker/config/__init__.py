@@ -10,6 +10,7 @@ from __future__ import (
 
 import collections
 import logging
+import re
 
 import yaml
 from compatibleversion import check_version
@@ -36,7 +37,7 @@ def get_configs(system, worker_args, config_path=None):
     data = ""
     if not config_path:
         log.warning("User did not supply a config. Using the default config.")
-        data = files('watchmaker.static').joinpath('config.yaml').read_text()
+        data = files("watchmaker.static").joinpath("config.yaml").read_text()
     else:
         log.info("User supplied config being used.")
 
@@ -126,8 +127,27 @@ def get_configs(system, worker_args, config_path=None):
         "Command-line arguments merged into worker configs: %s", worker_args
     )
 
+    validate_computer_name_pattern(config)
+
     if not is_valid(config_status):
         log.error("Status config is invalid %s", config_status)
         raise WatchmakerError("Status config is invalid %s" % config_status)
 
     return config, config_status
+
+
+def validate_computer_name_pattern(config):
+    """Ensure pattern is valid and will match entire computer name."""
+    computer_name_pattern = (
+        config.get("salt", {})
+        .get("config", {})
+        .get("computer_name_pattern", {})
+    )
+
+    if computer_name_pattern:
+        try:
+            re.compile(computer_name_pattern)
+        except re.error:
+            raise WatchmakerError(
+                "Invalid regex pattern %s" % computer_name_pattern
+            )

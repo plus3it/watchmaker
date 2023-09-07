@@ -156,6 +156,9 @@ Parameters supported by the Salt Worker:
 
 * `computer_name` (_string_): The computer or hostname that should be applied.
 
+* `computer_name_pattern` (_string_): The pattern the `computer_name` value must match to be considered a valid name.
+    Pattern is used to validate computer name and fail fast on invalid names. In addition, this value will be set as the salt grain `name-computer:pattern`, to be used by the name-computer formula.
+
 * `environment` (_string_): Set for the environment in which the system is
     being built.
 

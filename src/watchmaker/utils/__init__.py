@@ -64,7 +64,9 @@ def urlopen_retry(uri, timeout=None):
     try:
         # trust the system's default CA certificates
         # proper way for 2.7.9+ on Linux
-        if uri.startswith("https://"):
+        url = uri if isinstance(uri, str) else uri.full_url
+
+        if url.startswith("https://"):
             kwargs["context"] = ssl.create_default_context(
                 ssl.Purpose.SERVER_AUTH
             )

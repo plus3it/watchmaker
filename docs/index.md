@@ -38,6 +38,7 @@ configuration.md
 usage.md
 customization/index.md
 troubleshooting/index.md
+gotchas/index.md
 faq.md
 scap.md
 findings/index.md

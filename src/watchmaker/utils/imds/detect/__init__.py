@@ -53,16 +53,17 @@ def provider(supported_providers=None):
         raise CloudDetectError("Detected more than one cloud provider")
 
     if len(results) == 0:
-        return AbstractProvider.identifier
+        return AbstractProvider
 
     return results[0]
 
 
 def identify(cloud_provider):
     """Identify provider."""
-    if cloud_provider().identify():
-        return cloud_provider.identifier
+    cloud_provider_instance = cloud_provider()
+    if cloud_provider_instance.identify():
+        return cloud_provider_instance
 
     raise InvalidProviderError(
-        "Environment is not %s" % cloud_provider.identifier
+        "Environment is not %s" % cloud_provider_instance.identifier
     )

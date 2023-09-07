@@ -14,14 +14,14 @@ import six
 
 
 @six.add_metaclass(abc.ABCMeta)
-class AbstractProvider():
+class AbstractProvider:
     """Abstract class representing a cloud provider.
 
     All concrete cloud providers should implement this.
     """
 
     DEFAULT_TIMEOUT = 5
-    identifier = 'unknown'
+    identifier = "unknown"
 
     @abc.abstractmethod
     def identify(self):
@@ -31,9 +31,4 @@ class AbstractProvider():
     @abc.abstractmethod
     def check_metadata_server(self):
         """Identify via metadata server."""
-        pass  # pragma: no cover
-
-    @abc.abstractmethod
-    def check_vendor_file(self):
-        """Identify via vendor file."""
         pass  # pragma: no cover
