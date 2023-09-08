@@ -50,7 +50,7 @@ The modified formulae's contents _can_ be installed from any Watchmaker-supporte
 1. Visit the CMS (GitHub.Com when devloping for the main Watchmaker project)
 2. Navigate to the content-developer's source fork/branch
 3. Find the `https://` URL of fork/branch's ZIP-archive of the code to be tested.
-4. Use the value from the prior setp as the value for `<TEST_FORMULA_ARCHIVE_URI>`
+4. Use the value from the prior step as the value for `<TEST_FORMULA_ARCHIVE_URI>`
 
 Modification of existing/already-integrated formulae's content typically takes place on GitHub.Com. As of this document's authoring date, the above process looks like:
 
