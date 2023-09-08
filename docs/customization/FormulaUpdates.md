@@ -39,7 +39,7 @@ To the greatest extent possible, formulae should be _portable_. It is recommende
 - Tests with a bog-standard configuration (the custom `config.yaml` file's `salt_content` parameter's value is set to `null`)
 - Tests with the target-environment's or target-environments' custom `salt-content.zip` file(s)
 - Tests with a customized version of the bog-standard `salt-config.zip` file if to-be-tested formula's config-inputs have been changed
-- Tests with a `salt-config.zip` file cloned from the target-environment's or target-environments' custom `salt-config.zip` file if to-be-tested formula's config-inputs have been changes
+- Tests with a `salt-config.zip` file cloned from the target-environment's or target-environments' custom `salt-config.zip` file if to-be-tested formula's config-inputs have been changed
 
 Exercising across environments, in this way, will better assure that proposed updates do not break an existing formula's portability.
 
