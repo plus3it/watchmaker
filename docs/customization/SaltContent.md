@@ -116,7 +116,7 @@ ash-linux:
 
 Then compare it to the ash-linux project's [pillar.example](https://raw.githubusercontent.com/plus3it/ash-linux-formula/master/pillar.example) file. The project's example file attempts to show available parameters whose values can be set/overridden and how they fit into the parameter-map's structure. In the above, the `ash-linux:lookup:scap-profile` parameter's value is set to `stig`. However, if one consult's the formula-project's `pillar.example` file, it's found that any of the values `stig-rhel7-server-gui-upstream`, `standard`, `pci-dss`, `C2S` or `common` are valid[^3].
 
-As such, if one wanted to make the ash-linux-formula automation use a harening-profile other than `stig`, one could specify any of the values found in that `pillar.example` file (e.g., change `stig` to `pci-dss` to use the `pci-dss` hardening-profile, instead).
+As such, if one wanted to make the ash-linux-formula automation use a hardening-profile other than `stig`, one could specify any of the values found in that `pillar.example` file (e.g., change `stig` to `pci-dss` to use the `pci-dss` hardening-profile, instead).
 
 Similarly, if one wanted to change where relevant SCAP-content should be loaded from the `scap-cpe`, `scap-xccdf` and/or `scap-ds` values could all be modified.
 
