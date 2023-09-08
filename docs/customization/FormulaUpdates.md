@@ -98,7 +98,7 @@ The modified formula's execution will be logged into the directory requested via
 
 ## Execution With Modified/New Configuration-Options
 
-Because Watchmaker will overwrite existing formula-content with the referenced formula-content, it should only be necessary execute the updated formula with a custom  `salt-content.zip` if:
+Because Watchmaker will overwrite existing formula-content with the referenced formula-content, it should only be necessary to execute the updated formula with a custom  `salt-content.zip` if:
 
 - One wishes to test with specific testing-values for existing formula-parameters
 - The formula-updates add new parameters
