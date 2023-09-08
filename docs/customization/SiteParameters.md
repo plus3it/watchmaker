@@ -34,7 +34,7 @@ The the overall structure and format of the archive-bundle is discussed in the [
 
 ## Bundle locations
 
-Watchmaker currently supports pulling the Saltstack content-bundles from three types of locations: HTTP(S) server, S3 bucket or filesystem-path.  The `salt_content` paramter's value is stated as a URI-notation. See the following subsections for guidance on location-specification
+Watchmaker currently supports pulling the Saltstack content-bundles from three types of locations: HTTP(S) server, S3 bucket or filesystem-path.  The `salt_content` paramter's value is stated as a URI-notation. See the following subsections for guidance on location-specification.
 
 It's worth noting that Watchmaker has not been tested to (directly) support accessing CIFS- or NFS-based network-shares. If it is desired to access a content-bundle from such a hosting-location, it is recommended to include share-mounting steps in any pre-Watchmaker execution-steps. Once the network-share is mounted, then watchmaker can access the content-bundle as though it was a locally-staged bundle (see below).
 
