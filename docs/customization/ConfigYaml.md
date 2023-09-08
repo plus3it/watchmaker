@@ -17,7 +17,7 @@ The stock config.yaml file has five top-level directives or directive-maps:
 - `windows`
 - `status`
 
-These directive or directive-dictionairs are used to govern the overall behavior of watchmaker's execution. See the [example config.yaml](https://raw.githubusercontent.com/plus3it/watchmaker/main/src/watchmaker/static/config.yaml) file for generic layout and content.
+These directives or directive-dictionaries are used to govern the overall behavior of watchmaker's execution. See the [default config.yaml](https://raw.githubusercontent.com/plus3it/watchmaker/main/src/watchmaker/static/config.yaml) file for generic layout and exemplar-content.
 
 ## The `watchmaker_version` Directive
 
