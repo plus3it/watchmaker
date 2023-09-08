@@ -103,7 +103,7 @@ Because Watchmaker will overwrite existing formula-content with the referenced f
 - One wishes to test with specific testing-values for existing formula-parameters
 - The formula-updates add new parameters
 - The formula-updates rename existing parameters
-- The formula-updates existing parameters' data-types. 
+- The formula-updates change existing parameters' data-types. 
 
 If executing to cover one of the above scenarios, it will be necessary to either manually update the `.../pillar` directory's contents with the appropiate data (see: [_The `pillar` Directory-Tree_](SaltContent.md#the-pillar-directory-tree)) or create a custom `salt-config.zip` file and reference it from the custom `config.yaml` file.
 
