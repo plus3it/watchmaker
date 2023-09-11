@@ -79,6 +79,5 @@ Once the above has been done, attempts to launch X11 clients _should_ result in 
     If one takes advantage of `tmux`'s ability to multiplex terminal and one
     wishes to be able to launch X11 apps from any `tmux`-managed session-window,
     it will be necessary to export the `DISPLAY` variable in _each_ `tmux`
-    session-window.  with the hardening contents and some watchmaker-users do
-    choose to execute them.
+    session-window.
 ```
