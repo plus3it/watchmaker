@@ -9,7 +9,7 @@
 
 # Hardening "Gotchas"
 
-The hardening-content shipped with watchmaker includes some content that may result in degredation of the hardened-systems' user experienc. We will try to document, here, those gotchas that we discover or that we are able to verify from user-submitted issue-reports.
+The hardening-content shipped with watchmaker includes some content that may result in degredation of the hardened-systems' user experience. We will try to document, here, those gotchas that we discover or that we are able to verify from user-submitted issue-reports.
 
 ```{toctree}
 :maxdepth: 1
