@@ -77,7 +77,7 @@ This parameter is by Watchmaker to invoke SaltStack with the desired states sele
 
 ### The `salt_version` String-Parameter
 
-The value for this parameter instructs watchmaker which version of the Saltstack software it should download. This will correspond to the value returned when `salt-call --version` is executed (after the `watchmaker` utility has downloaded and installed SaltStack). See the watchmaker [changelog](https://watchmaker.readthedocs.io/en/stable/changelog.html) for guidance on latest supported version of Saltstack.
+The value for this parameter instructs watchmaker which version of the Saltstack software it should download &ndash; or, if the correct version is already installed, skip re-downloading or re-installing. This will correspond to the value returned when `salt-call --version` is executed (after the `watchmaker` utility has downloaded and installed SaltStack). See the watchmaker [changelog](https://watchmaker.readthedocs.io/en/stable/changelog.html) for guidance on latest supported version of Saltstack.
 
 ### The `user_formulas` Dictionary-Parameter
 
