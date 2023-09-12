@@ -124,7 +124,7 @@ Similarly, if one wanted to change where relevant SCAP-content should be loaded 
 
 The `<environment>` directory-trees work similarly to the `common` directory tree. The primary difference is focus. Where the `common` directory-tree sets broad-scope behaviors via pillar-variables' parameter/values, the `<environment>` directory-trees set more-limited scopes' behaviors. These directory-trees are intended to align with an infrastructure-as-code environment where an organization has multiple, similar environments that each have specific needs (e.g., to point to per-environment CSP endpoints, security-services servers, etc., install different sets of software or apply different security-benchmarks).
 
-The structure for the `<environment>` directory-trees is much simpler than that for the  `common` directory tree. There are no subdirectories under each `<environment>` directory, just a single `init.sls` file. These typically take the form of:
+The structure for the `<environment>` directory-trees is much simpler than that for the `common` directory tree. There are no subdirectories under each `<environment>` directory, just a single `init.sls` file. These typically take the form of:
 
 ```
 {%- load_yaml as os_families %}
