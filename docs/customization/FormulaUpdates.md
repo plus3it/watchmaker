@@ -26,7 +26,7 @@ all:
 .. note::
     While multiple formulae are shown in the above snippet, it's not generally
     recommended to use this method for more than one, formula at a time. The
-    above is primarily to illustrate that the `user_formulas` parameter is a
+    above is primarily to illustrate that the ``user_formulas`` parameter is a
     dictionary.
 ```
 
