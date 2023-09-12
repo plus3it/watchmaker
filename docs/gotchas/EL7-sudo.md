@@ -7,9 +7,18 @@
 ```
 <br>
 
-# Use of `sudo` broken after application of "extra" hardenings
+# Use of `sudo` broken after application of "extra" hardenings (EL7)
 
-The STIG-handlers for each of RHEL-07-020020 and RHEL-07-020023 can break ability to sudo if applied.
+The STIG-handlers for each of RHEL-07-020020 and RHEL-07-020023 can break ability to `sudo` if applied. 
+
+
+```{eval-rst}
+.. note::
+
+    1. These hardenings have, historically, not been universally applied to watchmaker-hardened systems. However, they are included with the hardening contents and some watchmaker-users do choose to execute them.
+    2. Use with more-recent spel AMIs may avoid the problems reported, as those AMIs already include updated SELinux-related sudoers configurations.
+```
+
 
 * RHEL-07-020020
 
