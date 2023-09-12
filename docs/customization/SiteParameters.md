@@ -21,7 +21,7 @@ The `watchmaker` pillar-data is delivered by way of a ZIP-formatted content-arch
 .. literalinclude:: Example-config.yaml
    :emphasize-lines: 10
    :language: yaml
-.. note:: If creating a new config-file for customizing your site's ``watchmaker``-execution, it's recommended that config-file content _not_ be copied from this document but from the ``watchmaker`` project, directly.
+.. note:: If creating a new config-file for customizing your site's ``watchmaker``-execution, it's recommended that config-file content *not* be copied from this document but from the ``watchmaker`` project, directly.
 ```
 
 As with the configuration-file (passed via the `-c`/`--config` argument to the `watchmaker` utility), this file may be  specified as hosted on the local filesystem, any HTTP/HTTPS URL or an S3-hosted URI.
