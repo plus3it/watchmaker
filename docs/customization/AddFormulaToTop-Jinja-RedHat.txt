@@ -1,0 +1,10 @@
+  'G@os_family:RedHat':
+    - name-computer
+    - scap.content
+    - ash-linux.vendor
+    - ash-linux.stig
+    - ash-linux.iavm
+{%- if salt.grains.get('watchmaker:enterprise_environment') | lower in environments %}
+    - cribl-agent
+{%- endif %}
+    - scap.scan

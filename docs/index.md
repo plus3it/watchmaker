@@ -36,11 +36,12 @@ _workers_ to execute on each platform.
 installation.md
 configuration.md
 usage.md
+customization/index.md
 troubleshooting/index.md
 gotchas/index.md
-findings/index.md
-scap.md
 faq.md
+scap.md
+findings/index.md
 api.md
 contributing.md
 changelog.md
