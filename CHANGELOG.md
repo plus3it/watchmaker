@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.28.0](https://github.com/plus3it/watchmaker/releases/tag/0.28.0)
+
+**Released**: 2023.09.14
+
+**Summary**:
+
+*   Add watchmaker config argument `computer_name_pattern`, and exit with error
+    if provided `computer_name` does not match. Also writes grain for use with
+    name-computer-formula
+*   Updates default watchmaker config to use salt 3006.2
+*   Documents customization options for the watchmaker salt content
+*   Documents workarounds for known "gotchas" when applying EL7 and EL8 STIG controls
+*   ash-linux-formula
+    -   Supports customization for mapping users to different SELinux contexts
+    -   Removes el7 and EL8 STIG handlers that are now provided by SCAP remediation
+        content
+    -   Consolidates all separate EL8 PAM handlers to states based on new authselect
+        capabilities
+*   join-domain-formula
+    -   Adds support for `tries` option that retries a failed join domain action
+    -   Integrates with ash-linux PAM handlers to apply STIG controls, if available
+*   trellix-agent-formula
+    -   Refactors firewalld states around newer salt functionality
+*   name-computer-formula
+    -   Supports reading pattern from salt grain
+
 ## [0.27.5](https://github.com/plus3it/watchmaker/releases/tag/0.27.5)
 
 **Released**: 2023.08.07
