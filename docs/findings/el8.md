@@ -268,27 +268,26 @@ The above adds the further check of each line of the `/etc/shadow` file's second
 
 **Invalid Finding:**
 
-This is a spurious finding. Per the STIG, `watchmaker` updates the `/etc/pam.d/password-auth` file to ensure the presence of a `remember=5` token on the file's `password required pam_pwhistory.so` line:
+Red Hat has [updated the method](https://access.redhat.com/solutions/6980935) for implementing this guidance. The `remember` token is now configured in the `/etc/security/pwhistory.conf` configuration file rather than the previously-used `/etc/pam.d/*` files.
 
-* If a line exists starting with `password required pam_pwhistory.so` but has a non-conformant value for the `remember=` token, the non-conformant value is replaced with `5`
-* If a line exists starting with `password required pam_pwhistory.so` but has no `remember=` token, one with a suitable value is appended
-* If a line starting with `password required pam_pwhistory.so` does not exist, one is created with _only_ the `remember=5` token present
+If the scanner is flagging the `/etc/pam.d/*` files for lacking a `remember` token, this is a sign that the scanner's profiles need to be updated.
 
-Some scanners _may_ be configured to look for a greater number of tokens set than _just_ the `remember=5` token. E.g., some may look for something more like:
-
-~~~
-password required pam_pwhistory.so use_authtok remember=5 retry=3
-~~~
 
 **Proof of Correctness:**
 
 To validate that the required `remember=5` is present, execute:
 
-~~~
-grep -l -n remember=5 $( readlink -f /etc/pam.d/password-auth )
-~~~
+```bash
+$ grep -P '^(#|)remember' /etc/security/pwhistory.conf
+```
 
-The above _should_ return either `/etc/authselect/password-auth` or `/etc/pam.d/password-auth`; if the above has a null return, re-execute the `ash-linux.el8.STIGbyID.cat2.RHEL-08-020221` Saltstack state and re-validate.
+The above _should_ return a value similar to:
+
+```bash
+remember = 5
+```
+
+If the above has a null return, re-execute the `ash-linux.el8.STIGbyID.cat2.RHEL-08-pam_pwhistory` Saltstack state and re-validate.
 
 # The Installed Operating System Is Not Vendor Supported
 
