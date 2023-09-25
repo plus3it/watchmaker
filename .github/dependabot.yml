@@ -12,7 +12,7 @@ updates:
       python:
         patterns:
           - "*"
-        exclude_patterns:
+        exclude-patterns:
           - "pyinstaller"
   - package-ecosystem: gitsubmodule
     directory: "/"
