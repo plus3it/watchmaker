@@ -12,6 +12,8 @@ updates:
       python:
         patterns:
           - "*"
+        exclude_patterns:
+          - "pyinstaller"
   - package-ecosystem: gitsubmodule
     directory: "/"
     schedule:
