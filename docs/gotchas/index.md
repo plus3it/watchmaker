@@ -15,5 +15,6 @@ The hardening-content shipped with watchmaker includes some content that may res
 :maxdepth: 1
 EL7-sudo.md
 EL8-X11tunneling.md
+EL8-OpenSSHkeyLogins.md
 ```
 
