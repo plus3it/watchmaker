@@ -592,13 +592,13 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         if grain:
             self._set_grain('join-domain', grain)
 
+        grain = {}
         if self.computer_name:
-            name = {'computername': str(self.computer_name)}
-            self._set_grain('name-computer', name)
-
+            grain['computername'] = self.computer_name
         if self.computer_name_pattern:
-            pattern = {'pattern': str(self.computer_name_pattern)}
-            self._set_grain('name-computer', pattern)
+            grain['pattern'] = self.computer_name_pattern
+        if grain:
+            self._set_grain('name-computer', grain)
 
         self.log.info('Syncing custom salt modules...')
         self.run_salt('saltutil.sync_all')
