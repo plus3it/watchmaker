@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.28.1](https://github.com/plus3it/watchmaker/releases/tag/0.28.1)
+
+**Released**: 2023.10.05
+
+**Summary**:
+
+*   Fixes clobbering of `computer-name` grain when `computer-name-pattern` is also
+    provided. This prevented the `name-computer-formula` from setting the name
+    specified by the user
+*   Updates FAQ to include vendor guidance for EL8.8+
+*   Adds guidance on OpenSSH key signing requirements for EL8
+*   ash-linux-formula
+    -   Adds handler to address pam faillock findings on EL8
+
+
 ## [0.28.0](https://github.com/plus3it/watchmaker/releases/tag/0.28.0)
 
 **Released**: 2023.09.14
