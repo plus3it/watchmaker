@@ -22,6 +22,7 @@ A few scans performed against EL8 systems are version-dependent. Watchmaker is d
   .. _User Account Passwords Must Be Restricted To A 60-Day Maximum Lifetime: #user-account-passwords-must-be-restricted-to-a-60-day-maximum-lifetime
   .. _OS Must Be Configured In The Password-Auth File To Prohibit Password Reuse For A Minimum Of Five Generations: #os-must-prohibit-password-reuse-for-a-minimum-of-five-generations
   .. _The Installed Operating System Is Not Vendor Supported: #the-installed-operating-system-is-not-vendor-supported
+  .. _All remote access methods must be monitored: #all-remote-access-methods-must-be-monitored
   .. _All Content In A User's Home Directory Must Be Group-Owned By The Primary User: #all-user-content-in-a-user's-home-directory-must-be-group-owned-by-the-primary-user
   .. _"Only Authorized Local User Accounts Exist on Operating System" is always flagged: #only-authorized-local-user-accounts-exist-on-operating-system"-is-always-flagged
   .. _All Interactive User Home Directory Files Must Be Mode 0750 Or Less Permissive: #all-interactive-user-home-directory-files-must-be-mode-0750-or-less-permissive
@@ -77,6 +78,10 @@ A few scans performed against EL8 systems are version-dependent. Watchmaker is d
   | `The Installed Operating System Is Not Vendor Supported`_                                                                   | V-230221            |
   |                                                                                                                             |                     |
   |                                                                                                                             | RHEL-08-010000      |
+  +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
+  | `All remote access methods must be monitored`_                                                                              | V-230228            |
+  |                                                                                                                             |                     |
+  |                                                                                                                             | RHEL-08-010070      |
   +-----------------------------------------------------------------------------------------------------------------------------+---------------------+
   | `All Content In A User's Home Directory Must Be Group-Owned By The Primary User`_                                           | V-244532            |
   |                                                                                                                             |                     |
@@ -307,6 +312,44 @@ This rule effects primarily "free" versions of the Red Hat Enterprise Linux oper
 And an `/etc/redhat-release` file with contents that aligns to one that's delivered with any of the preceding RPM. The various "free" versions of the Red Hat Enterprise Linux operating system will not have any of the above RPMs present.
 
 If using a vendor-supported Linux and this scan finding occurs, it's likely that either the `release-` RPM is missing or damaged, something has unexpectedly altered the target's `/etc/redhat-release` file or the scanner is looking for a wildcarded `release` file under the `/etc`  directory and there's an unexpected filename found.
+
+# All Remote Access Methods Must Be Monitored
+
+**Invalid Finding:**
+
+After execution of hardening-routines, the scanned-for `/etc/rsyslog.conf` entries _are_ present. Any indications to the contrary are in error.
+
+**Proof of Correctness:**
+
+To verify that the necessary entries are present, execute:
+
+~~~bash
+grep -P '^(?!#)\s*([^\s]+)\s+/var/log/secure' /etc/rsyslog.conf
+~~~
+
+This will return output similar to the following:
+
+~~~bash
+authpriv.*  /var/log/secure
+daemon.*    /var/log/secure
+auth.*      /var/log/secure
+~~~
+
+**Note:** The above modification is made through the watchmaker-bundled Compliance as Code content. If the above entries are missing, ensure that the installed version of watchmaker is up to date, then rerun the `el8.VendorSTIG.remediate` state.
+* The version of watchmaker may be checked by doing:
+    ~~~bash
+    /usr/local/bin/watchmaker --version
+    ~~~
+* The version of Compliance as Code installed may be checked by doing
+    ~~~bash
+    # find /srv/watchmaker/salt/formulas/scap-formula/scap/content/guides/openscap -type f | \
+    xargs grep '\s\s<xccdf.*version\supdate=' | \
+    sed
+      -e 's/^.*latest">//'
+      -e 's/<.*$//' | \
+    sort -u
+    ~~~
+
 
 # All Content In A User's Home Directory Must Be Group-Owned By The Primary User
 
