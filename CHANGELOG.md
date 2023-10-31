@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.28.2](https://github.com/plus3it/watchmaker/releases/tag/0.28.2)
+
+**Released**: 2023.10.31
+
+**Summary**:
+
+*   Updates Watchmaker default config to use Salt 3006.4
+*   Documents invalid finding in EL8 for remote access monitoring methods
+*   ash-linux-formula
+    -   Addresses several EL8 Cat2 findings from recent SCAP scans
+*   join-domain-formula
+    -   (Linux) Adds cron config that refreshes AD computer object attributes
+
 ## [0.28.1](https://github.com/plus3it/watchmaker/releases/tag/0.28.1)
 
 **Released**: 2023.10.05
