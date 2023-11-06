@@ -151,7 +151,7 @@ jobs:
       - provider: pypi
         server: https://test.pypi.org/legacy/
         distributions: sdist bdist_wheel
-        username: plus3it
+        username: __token__  # https://test.pypi.org/help/#apitoken
         password: $PYPI_TEST_PASSWORD
         skip_cleanup: true
         skip_upload_docs: true
