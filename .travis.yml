@@ -159,7 +159,7 @@ jobs:
           branch: main
       - provider: pypi
         distributions: sdist bdist_wheel
-        username: plus3it
+        username: __token__  # https://pypi.org/help/#apitoken
         password: $PYPI_PASSWORD
         skip_cleanup: true
         skip_upload_docs: true
