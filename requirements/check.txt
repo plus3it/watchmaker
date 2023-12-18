@@ -8,9 +8,9 @@ flake8-docstrings==1.7.0
 flake8-isort==6.1.1
 flake8-future-import==0.4.7
 flake8-print==5.0.0
-isort==5.13.0
+isort==5.13.2
 m2r==0.3.1
 pep8-naming==0.13.3
 pydocstyle==6.3.0
-pylint==3.0.2
+pylint==3.0.3
 readme-renderer==42.0
