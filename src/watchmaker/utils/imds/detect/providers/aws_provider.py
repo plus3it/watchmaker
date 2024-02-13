@@ -45,7 +45,7 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS metadata")
         try:
             return self.__is_valid_server()
-        except BaseException as ex:
+        except Exception as ex:
             self.logger.error(ex)
             return False
 
@@ -87,7 +87,7 @@ class AWSProvider(AbstractProvider):
                 },
                 method="PUT",
             )
-        except BaseException as error:
+        except Exception as error:
             self.logger.debug("Failed to set IMDSv2 token: %s", error)
         return None
 

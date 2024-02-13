@@ -40,7 +40,7 @@ class AzureStatusProvider(AbstractStatusProvider):
 
         try:
             self.__set_ids_from_server()
-        except BaseException as ex:
+        except Exception as ex:
             self.logger.error(
                 "Error retrieving ids from metadata service %s", ex
             )
@@ -52,7 +52,7 @@ class AzureStatusProvider(AbstractStatusProvider):
             try:
                 self.__tag_azure_resouce(key, status)
                 return
-            except BaseException as ex:
+            except Exception as ex:
                 logging.error("Exception while tagging azure resource %s", ex)
         self.__error_on_required_status(required)
 

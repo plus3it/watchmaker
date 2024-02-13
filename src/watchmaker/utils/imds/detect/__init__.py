@@ -25,7 +25,6 @@ CLOUD_PROVIDERS = {"aws": AWSProvider, "azure": AzureProvider}
 
 def provider(supported_providers=None):
     """Identify and return identifier."""
-    exception_list = []
     results = []
     futures = []
     supported_providers = supported_providers if supported_providers else []
@@ -44,10 +43,8 @@ def provider(supported_providers=None):
     for fut in futures:
         try:
             results.append(fut.result())
-        except InvalidProviderError:
+        except Exception:
             pass
-        except BaseException as ex:
-            exception_list.append(str(ex))
 
     if len(results) > 1:
         raise CloudDetectError("Detected more than one cloud provider")
@@ -64,6 +61,7 @@ def identify(cloud_provider):
     if cloud_provider_instance.identify():
         return cloud_provider_instance
 
+    log.debug("Environment is not %s", cloud_provider_instance.identifier)
     raise InvalidProviderError(
         "Environment is not %s" % cloud_provider_instance.identifier
     )
