@@ -366,5 +366,4 @@ max-bool-expr=5
 
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception"
-overgeneral-exceptions=builtins.BaseException,
-                       builtins.Exception
+overgeneral-exceptions=builtins.Exception
