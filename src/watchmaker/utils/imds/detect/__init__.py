@@ -43,8 +43,10 @@ def provider(supported_providers=None):
     for fut in futures:
         try:
             results.append(fut.result())
-        except Exception:  # pylint: disable=broad-exception-caught
+        except InvalidProviderError as ipe:
             pass
+        except Exception:  # pylint: disable=broad-exception-caught
+            log.error("Unexpected exception occurred", exc_info=True)
 
     if len(results) > 1:
         raise CloudDetectError("Detected more than one cloud provider")
