@@ -43,7 +43,7 @@ def provider(supported_providers=None):
     for fut in futures:
         try:
             results.append(fut.result())
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             pass
 
     if len(results) > 1:
