@@ -43,7 +43,7 @@ def provider(supported_providers=None):
     for fut in futures:
         try:
             results.append(fut.result())
-        except InvalidProviderError as ipe:
+        except InvalidProviderError:
             pass
         except Exception:  # pylint: disable=broad-exception-caught
             log.error("Unexpected exception occurred", exc_info=True)
