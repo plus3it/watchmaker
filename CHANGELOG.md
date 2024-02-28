@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.28.3](https://github.com/plus3it/watchmaker/releases/tag/0.28.3)
+
+**Released**: 2024.02.28
+
+**Summary**:
+
+*   join-domain-formula
+    -   (Linux) Adds a `clean` state to simplify removing a system from the domain
+*   name-computer-formula
+    -   (Linux) Creates DNS records using nsupdate when `nameserver` and `dns_domain`
+        are provided
+*   scap-formula
+    -   (Linux) Updates ComplianceAsCode scap content to v0.1.70
+
 ## [0.28.2](https://github.com/plus3it/watchmaker/releases/tag/0.28.2)
 
 **Released**: 2023.10.31
