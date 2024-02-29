@@ -149,6 +149,8 @@ jobs:
             targetFolder: $(keyPrefix)
             bucketName: $(releaseBucket)
             sourceFolder: $(artifactDirFull)\dist\
+        - script: $(buildPython.pythonLocation)\python -m pip install -r "$(artifactDirFull)\deploy.txt"
+          displayName: install python deploy requirements
         - pwsh: |
             $ErrorActionPreference = "Stop"
             $APP_VERSION = (Select-String -Path "$(artifactDirFull)\setup.cfg" -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
@@ -159,7 +161,6 @@ jobs:
             $env:SATS_BODY = "* [${APP_NAME} v${APP_VERSION} CHANGELOG](https://github.com/plus3it/${APP_NAME}/blob/${APP_VERSION}/CHANGELOG.md)\n* [${APP_NAME} v${APP_VERSION} SCAP REPORTS](https://watchmaker.cloudarmor.io/list.html#releases/${APP_VERSION}/scans/)"
             $env:SATS_REL_NAME = "Release v${APP_VERSION}"
             $env:SATS_FILES_FILE = "$(artifactDirFull)\satsuki-files.json"
-            python -m pip install -r "$(artifactDirFull)\deploy.txt"
             satsuki
           displayName: deploy to github with satsuki
           condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
