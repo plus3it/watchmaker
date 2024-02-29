@@ -108,6 +108,10 @@ jobs:
   - group: wam-windows-ci
   - name: artifactDirFull
     value: $(System.DefaultWorkingDirectory)\$(artifactDir)
+  - name: py
+    value: "3.10"
+  - name: architecture
+    value: "x64"
   strategy:
     runOnce:
       deploy:
@@ -119,6 +123,12 @@ jobs:
           inputs:
             artifactName: $(artifactDir)
             downloadPath: $(System.DefaultWorkingDirectory)
+        - task: UsePythonVersion@0
+          displayName: ${{ format('provision build python {0} ({1})', variables.py, variables.architecture) }}
+          inputs:
+            versionSpec: $(py)
+            architecture: $(architecture)
+          name: buildPython
         - script: |
             cd
             dir $(artifactDir)
@@ -139,6 +149,8 @@ jobs:
             targetFolder: $(keyPrefix)
             bucketName: $(releaseBucket)
             sourceFolder: $(artifactDirFull)\dist\
+        - script: $(buildPython.pythonLocation)\python -m pip install -r "$(artifactDirFull)\deploy.txt"
+          displayName: install python deploy requirements
         - pwsh: |
             $ErrorActionPreference = "Stop"
             $APP_VERSION = (Select-String -Path "$(artifactDirFull)\setup.cfg" -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
@@ -149,7 +161,6 @@ jobs:
             $env:SATS_BODY = "* [${APP_NAME} v${APP_VERSION} CHANGELOG](https://github.com/plus3it/${APP_NAME}/blob/${APP_VERSION}/CHANGELOG.md)\n* [${APP_NAME} v${APP_VERSION} SCAP REPORTS](https://watchmaker.cloudarmor.io/list.html#releases/${APP_VERSION}/scans/)"
             $env:SATS_REL_NAME = "Release v${APP_VERSION}"
             $env:SATS_FILES_FILE = "$(artifactDirFull)\satsuki-files.json"
-            python -m pip install -r "$(artifactDirFull)\deploy.txt"
             satsuki
           displayName: deploy to github with satsuki
           condition: startsWith(variables['build.sourceBranch'], 'refs/tags/')
