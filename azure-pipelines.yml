@@ -108,6 +108,10 @@ jobs:
   - group: wam-windows-ci
   - name: artifactDirFull
     value: $(System.DefaultWorkingDirectory)\$(artifactDir)
+  - name: py
+    value: "3.10"
+  - name: architecture
+    value: "x64"
   strategy:
     runOnce:
       deploy:
@@ -119,6 +123,12 @@ jobs:
           inputs:
             artifactName: $(artifactDir)
             downloadPath: $(System.DefaultWorkingDirectory)
+        - task: UsePythonVersion@0
+          displayName: ${{ format('provision build python {0} ({1})', variables.py, variables.architecture) }}
+          inputs:
+            versionSpec: $(py)
+            architecture: $(architecture)
+          name: buildPython
         - script: |
             cd
             dir $(artifactDir)
