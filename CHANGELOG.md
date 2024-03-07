@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.28.4](https://github.com/plus3it/watchmaker/releases/tag/0.28.4)
+
+**Released**: 2024.03.07
+
+**Summary**:
+
+*   ash-linux-formula
+    -   (EL8) Populates fapolicyd default rules so system remains functional after
+        applying new stig controls
+*   ash-linux-formula
+    -   (EL8) Updates systemd boot.mount options for compatibility with UEFI
+*   scap-formula
+    -   (Linux) Updates openscap content to v0.1.71
+    -   Updates DISA content to latest as of Jan 2024
+
 ## [0.28.3](https://github.com/plus3it/watchmaker/releases/tag/0.28.3)
 
 **Released**: 2024.02.28
