@@ -21,10 +21,10 @@
 .. automodule:: watchmaker.managers
 ```
 
-#### watchmaker.managers.platform
+#### watchmaker.managers.platform_manager
 
 ```{eval-rst}
-.. automodule:: watchmaker.managers.platform
+.. automodule:: watchmaker.managers.platform_manager
 ```
 
 #### watchmaker.managers.worker_manager
