@@ -19,7 +19,7 @@ from importlib_resources import files
 import watchmaker.utils.imds.detect
 from watchmaker.config.status import is_valid
 from watchmaker.exceptions import WatchmakerError
-from watchmaker.utils import urllib
+from watchmaker.utils import urllib_utils
 
 log = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ def get_configs(system, worker_args, config_path=None):
         # Get the raw config data
         try:
             data = watchmaker.utils.urlopen_retry(config_path).read()
-        except (ValueError, urllib.error.URLError):
+        except (ValueError, urllib_utils.error.URLError):
             msg = (
                 'Could not read config file from the provided value "{0}"! '
                 "Check that the config is available.".format(config_path)

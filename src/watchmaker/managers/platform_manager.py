@@ -19,7 +19,7 @@ import zipfile
 
 import watchmaker.utils
 from watchmaker.exceptions import WatchmakerError
-from watchmaker.utils import urllib
+from watchmaker.utils import urllib_utils
 
 
 class PlatformManagerBase(object):
@@ -90,7 +90,7 @@ class PlatformManagerBase(object):
             with open(filename, 'wb') as outfile:
                 self.log.debug('Saving file to local filesystem...')
                 shutil.copyfileobj(response, outfile)
-        except (ValueError, urllib.error.URLError):
+        except (ValueError, urllib_utils.error.URLError):
             self.log.critical(
                 'Failed to retrieve the file. url = %s. filename = %s',
                 url, filename
