@@ -13,7 +13,7 @@ import six
 
 import watchmaker.utils
 from watchmaker.exceptions import WatchmakerError
-from watchmaker.managers.platform import LinuxPlatformManager
+from watchmaker.managers.platform_manager import LinuxPlatformManager
 from watchmaker.workers.base import WorkerBase
 
 

@@ -28,7 +28,7 @@ from watchmaker.exceptions import (
     OuPathRequiredError,
     WatchmakerError,
 )
-from watchmaker.managers.platform import (
+from watchmaker.managers.platform_manager import (
     LinuxPlatformManager,
     PlatformManagerBase,
     WindowsPlatformManager,
