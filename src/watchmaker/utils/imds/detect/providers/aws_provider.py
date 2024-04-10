@@ -92,7 +92,7 @@ class AWSProvider(AbstractProvider):
         return None
 
     def __call_urlopen_retry(self, uri, timeout, headers=None, method=None):
-        request_uri = utils.urllib.request.Request(
+        request_uri = utils.urllib_utils.request.Request(
             uri,
             data=None,
             headers=headers,
