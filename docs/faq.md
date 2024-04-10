@@ -182,3 +182,36 @@ Watchmaker's `join-domain-formlul` (for `sssd`) _does_ allow overriding the
 attempt to negotiate updates with GSS and TSIG. This is done by appending
 `dyndns_auth: none` (and, optionally, adding `dyndns_auth_ptr: none`) to the
 Salt pillar's `sssd_conf_parameters` parameter-value.
+
+## Why are my security-scans failing due to lack of `nosuid`/`noguid` mount-options for `/boot`
+
+Depending on how your OS was provisioned, the `/boot` directory-tree may or may not be on its own partition. If it's not on its own partition, it will be part of the `/` partition. As a result, it will not be possible to set partition-specific mount-options.
+
+Note: it is known that spel AMIs created for EL8 prior to April of 2024 will
+typically _not_ have `/boot` on its own partition. Suport for EFI-boot was only
+added to the EL8 automation in February of 2024 and only implemented (in some
+regions) in April of 2024. spel AMIs not built to support EFI-boot typically
+will not have `/boot` on its own partition.
+
+## How can I see what hardening-actions are implemented through `oscap`
+
+Watchmaker's use of `oscap` (for Linux hosts) is not transparently-implemented.
+While the `oscap` activities _are_ logged to the `/var/log/oscap.log` file,
+that file's logged-activity is created at an informationl level rather than a
+detailed, "debug"-style level. In order to see _exactly_ what the `oscap`
+utility does, one can make `oscap` generate a script-file containing all of its
+hardening-actions. This can be done by doing (as the `root` user):
+
+~~~bash
+oscap xccdf generate fix \
+  --fix-type bash \
+  --output ~/fixes.sh \
+  --profile xccdf_org.ssgproject.content_profile_stig
+  /root/scap/content/openscap/ssg-<PLATFORM>-ds.xml
+~~~
+
+Where "PLATFORM" will be something like `rhel7` on a Red Hat l system or `ol8`
+on an Oracle Linux 8 system. Once the `~/fixes.sh` script is generated, one can
+`grep` it for specific actions or open it up for viewing and peruse it for
+(presumably problematic) hardening actions (such as the `logcollector` setting
+noted in a prior section of this FAQ).
