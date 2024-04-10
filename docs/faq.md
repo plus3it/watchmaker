@@ -22,6 +22,21 @@ the output of a failed installation. Usually, the output points pretty clearly
 at the source of the problem. Watchmaker can be re-installed over itself with
 no problem, so once the root cause is resolved, simply re-install watchmaker.
 
+## Why does watchmaker immediately fail to run on my spel-based system?
+
+System-images created using [spel](https://github.com/plus3it/spel/) enable
+SELinux role-transitions for all local/baked-in user accounts. This includes
+the provisioning-users created at launchtime by the `cloud-init` utility. These
+users are created with the default SELinux context of
+`staff_u:staff_r:staff_t:s0-s0:c0.c1023`. Their default role-transition can
+result in the user not having enough privileges to run watchmaker. To work
+around any watchmaker-killing "permission denied" errors this may cause,
+escalate privileges using `sudo -i -r unconfined_r -t unconfined_t`.
+
+Note: this should only impact processes that are not initiated via `systemd`
+(i.e., should not impact provisioning-processes kicked off via userData,
+CloudFormation or the like).
+
 ## Why does the watchmaker install fail if my system is FIPS enabled?
 
 This is primarily a question for Red Hat (and derived distributions). As of this
@@ -69,6 +84,13 @@ page for a list of all supported operating systems.
 Watchmaker is supported on RedHat 8, CentOS 8 Stream, and Oracle Linux 8. See the
 [index](index) page for a list of all supported operating systems.
 
+## Does watchmaker support Enterprise Linux 9?
+
+As of today's date (2024-04-10), watchmaker's hardening-modules do not yet
+support Enterprise Linux 9 or related distros. This is currently a
+to-be-started project-task. Action on support for Enterprise Linux 9-based
+distros can be tracked through [ash-linux-formula issue #496](https://github.com/plus3it/ash-linux-formula/issues/496).
+
 ## How can I exclude salt states when executing watchmaker?
 
 The Salt worker in Watchmaker supports an `exclude_states` argument. When
@@ -105,50 +127,15 @@ salt-call -c /opt/watchmaker/salt state.show_top
 
 ## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?
 
-Yes, indirectly. Because watchmaker implements most of its functionality via
-[SaltStack](https://saltproject.io/) modules, you can directly-use the underlying
-SaltStack functionality to effect the desired change. This is done from the
-commandline - as root - by executing:
+For Enterprise Linux, "yes, indirectly". Because watchmaker implements most of
+its functionality via [SaltStack](https://saltproject.io/) modules, you can
+directly-use the underlying SaltStack functionality to effect the desired
+change. This is done from the commandline - as root - by executing:
 
 *   Disable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_disable`
 *   Enable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_enable`
 
 And then rebooting the system.
-
-## How do I install watchmaker when I am using Python 2.6?
-
-While Watchmaker no longer offically supports Python 2.6, you may use the last
-version where it was tested, Watchmaker 0.21.7. That version includes pins on
-dependencies that will work for Python 2.6.
-
-However, there are three python "setup" packages needed just to install ``watchmaker``,
-and these packages cannot be platform-restricted within the ``watchmaker`` package
-specification.
-
-Below is the list of packages in question, and the versions that no longer
-support Python 2.6:
-
-*   ``pip>=10``
-*   ``wheel>=0.30.0``
-*   ``setuptools>=37``
-
-In order to install pip in Python 2.6, you can get it from:
-
-*   <https://bootstrap.pypa.io/pip/2.6/get-pip.py>
-
-Once a Python 2.6-compatible ``pip`` version is installed, you can install
-compatible versions of the other packages like this:
-
-```shell
-python -m pip install --upgrade "pip<10" "wheel<0.30.0" "setuptools<37"
-```
-
-You can then [install watchmaker](installation) by restricting the watchmaker
-version to the last version tested with Python 2.6:
-
-```shell
-python -m pip install "watchmaker==0.21.7"
-```
 
 ## How do I get Watchmaker release/project notifications?
 
