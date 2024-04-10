@@ -139,6 +139,29 @@ And then rebooting the system.
 
 ## How do I get Watchmaker release/project notifications?
 
-Users may use an RSS reader of their choice to subscribe to the Watchmaker Release feed to get notifications on Watchmaker releases. The Watchmaker RSS release feed is https://github.com/plus3it/watchmaker/releases.atom.
+Users may use an RSS reader of their choice to subscribe to the Watchmaker
+Release feed to get notifications on Watchmaker releases. The Watchmaker RSS
+release feed is https://github.com/plus3it/watchmaker/releases.atom.
 
-Users can also "watch" the GitHub project to receive notifications on all project activity, https://github.com/plus3it/watchmaker/subscription.
+Users can also "watch" the GitHub project to receive notifications on all
+project activity, https://github.com/plus3it/watchmaker/subscription.
+
+## Why do I get warnings in my system logs about the rsyslog service not being able to connect to the `logcollector` host
+
+Watchmaker leverages the `oscap` utility and associated OSCAP content for a
+significant percentage of its hardening-actions. Recent updates to this content
+have included (inappropriately) adding:
+
+~~~
+# Per CCE-80863-4: Set *.* @@logcollector in /etc/rsyslog.conf
+*.* @@logcollector
+~~~
+
+To the `/etc/rsyslog.conf` file. The `*.* @@logcollector` line results in the
+`rsyslog` service attempting to do remote-logging to the external host
+`logcollector`. If no such hostname exists in the hardened-system's DNS domain,
+"host not found" error-types will be logged. If using a log-offloader tool
+(such as the Splunk forwarder-agent), it is safe to either comment out the `*.*
+@@logcollector`. If data _should_ be sent directly from `rsyslog` to a remote
+syslog-host, change the string `logcollector` to the FQDN of your site's actual
+log-collector host.
