@@ -165,3 +165,20 @@ To the `/etc/rsyslog.conf` file. The `*.* @@logcollector` line results in the
 @@logcollector`. If data _should_ be sent directly from `rsyslog` to a remote
 syslog-host, change the string `logcollector` to the FQDN of your site's actual
 log-collector host.
+
+## Why isn't the domain-join functionality doing DDNS updates
+
+Starting in early 2023, the default method for joining Linux hosts to Active
+Directory domains was changed to leveraging the native, `sssd`-based
+integrations. While `sssd` has the capability of doing DDNS updates (and doing
+regular refreshes to prevent record-loss due to record-scavenging), it has a
+couple of requirements in order to be able to do so. First and foremost is that
+the hosts providing DNS service to the Linux system have DDNS enabled for the A
+and PTR zones the Linux system is a member of. Similarly, `sssd` defaults to
+attempting to use GSS with TSIG for its DDNS update-requests: even if the Linux
+system's A and PTR zones are DDNS-enabled, if those zones don't allow DDNS
+clients to negotiate updates with GSS and TSIG, the updates will fail.
+Watchmaker's `join-domain-formlul` (for `sssd`) _does_ allow overriding the
+attempt to negotiate updates with GSS and TSIG. This is done by appending
+`dyndns_auth: none` (and, optionally, adding `dyndns_auth_ptr: none`) to the
+Salt pillar's `sssd_conf_parameters` parameter-value.
