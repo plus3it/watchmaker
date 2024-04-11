@@ -178,7 +178,7 @@ and PTR zones the Linux system is a member of. Similarly, `sssd` defaults to
 attempting to use GSS with TSIG for its DDNS update-requests: even if the Linux
 system's A and PTR zones are DDNS-enabled, if those zones don't allow DDNS
 clients to negotiate updates with GSS and TSIG, the updates will fail.
-Watchmaker's `join-domain-formlul` (for `sssd`) _does_ allow overriding the
+Watchmaker's `join-domain-formula` (for `sssd`) _does_ allow overriding the
 attempt to negotiate updates with GSS and TSIG. This is done by appending
 `dyndns_auth: none` (and, optionally, adding `dyndns_auth_ptr: none`) to the
 Salt pillar's `sssd_conf_parameters` parameter-value.
