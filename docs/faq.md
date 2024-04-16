@@ -22,6 +22,21 @@ the output of a failed installation. Usually, the output points pretty clearly
 at the source of the problem. Watchmaker can be re-installed over itself with
 no problem, so once the root cause is resolved, simply re-install watchmaker.
 
+## Why does watchmaker immediately fail to run on my spel-based system?
+
+System-images created using [spel](https://github.com/plus3it/spel/) enable
+SELinux role-transitions for all local/baked-in user accounts. This includes
+the provisioning-users created at launchtime by the `cloud-init` utility. These
+users are created with the default SELinux context of
+`staff_u:staff_r:staff_t:s0-s0:c0.c1023`. Their default role-transition can
+result in the user not having enough privileges to run watchmaker. To work
+around any watchmaker-killing "permission denied" errors this may cause,
+escalate privileges using `sudo -i -r unconfined_r -t unconfined_t`.
+
+Note: this should only impact processes that are not initiated via `systemd`
+(i.e., should not impact provisioning-processes kicked off via userData,
+CloudFormation or the like).
+
 ## Why does the watchmaker install fail if my system is FIPS enabled?
 
 This is primarily a question for Red Hat (and derived distributions). As of this
@@ -69,6 +84,13 @@ page for a list of all supported operating systems.
 Watchmaker is supported on RedHat 8, CentOS 8 Stream, and Oracle Linux 8. See the
 [index](index) page for a list of all supported operating systems.
 
+## Does watchmaker support Enterprise Linux 9?
+
+As of today's date (2024-04-10), watchmaker's hardening-modules do not yet
+support Enterprise Linux 9 or related distros. This is currently a
+to-be-started project-task. Action on support for Enterprise Linux 9-based
+distros can be tracked through [ash-linux-formula issue #496](https://github.com/plus3it/ash-linux-formula/issues/496).
+
 ## How can I exclude salt states when executing watchmaker?
 
 The Salt worker in Watchmaker supports an `exclude_states` argument. When
@@ -105,53 +127,91 @@ salt-call -c /opt/watchmaker/salt state.show_top
 
 ## Can I use watchmaker to toggle my RedHat/Centos host's FIPS mode?
 
-Yes, indirectly. Because watchmaker implements most of its functionality via
-[SaltStack](https://saltproject.io/) modules, you can directly-use the underlying
-SaltStack functionality to effect the desired change. This is done from the
-commandline - as root - by executing:
+For Enterprise Linux, "yes, indirectly". Because watchmaker implements most of
+its functionality via [SaltStack](https://saltproject.io/) modules, you can
+directly-use the underlying SaltStack functionality to effect the desired
+change. This is done from the commandline - as root - by executing:
 
 *   Disable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_disable`
 *   Enable FIPS-mode: `salt-call -c /opt/watchmaker/salt ash.fips_enable`
 
 And then rebooting the system.
 
-## How do I install watchmaker when I am using Python 2.6?
-
-While Watchmaker no longer offically supports Python 2.6, you may use the last
-version where it was tested, Watchmaker 0.21.7. That version includes pins on
-dependencies that will work for Python 2.6.
-
-However, there are three python "setup" packages needed just to install ``watchmaker``,
-and these packages cannot be platform-restricted within the ``watchmaker`` package
-specification.
-
-Below is the list of packages in question, and the versions that no longer
-support Python 2.6:
-
-*   ``pip>=10``
-*   ``wheel>=0.30.0``
-*   ``setuptools>=37``
-
-In order to install pip in Python 2.6, you can get it from:
-
-*   <https://bootstrap.pypa.io/pip/2.6/get-pip.py>
-
-Once a Python 2.6-compatible ``pip`` version is installed, you can install
-compatible versions of the other packages like this:
-
-```shell
-python -m pip install --upgrade "pip<10" "wheel<0.30.0" "setuptools<37"
-```
-
-You can then [install watchmaker](installation) by restricting the watchmaker
-version to the last version tested with Python 2.6:
-
-```shell
-python -m pip install "watchmaker==0.21.7"
-```
-
 ## How do I get Watchmaker release/project notifications?
 
-Users may use an RSS reader of their choice to subscribe to the Watchmaker Release feed to get notifications on Watchmaker releases. The Watchmaker RSS release feed is https://github.com/plus3it/watchmaker/releases.atom.
+Users may use an RSS reader of their choice to subscribe to the Watchmaker
+Release feed to get notifications on Watchmaker releases. The Watchmaker RSS
+release feed is https://github.com/plus3it/watchmaker/releases.atom.
 
-Users can also "watch" the GitHub project to receive notifications on all project activity, https://github.com/plus3it/watchmaker/subscription.
+Users can also "watch" the GitHub project to receive notifications on all
+project activity, https://github.com/plus3it/watchmaker/subscription.
+
+## Why do I get warnings in my system logs about the rsyslog service not being able to connect to the `logcollector` host
+
+Watchmaker leverages the `oscap` utility and associated OSCAP content for a
+significant percentage of its hardening-actions. Recent updates to this content
+have included (inappropriately) adding:
+
+~~~
+# Per CCE-80863-4: Set *.* @@logcollector in /etc/rsyslog.conf
+*.* @@logcollector
+~~~
+
+To the `/etc/rsyslog.conf` file. The `*.* @@logcollector` line results in the
+`rsyslog` service attempting to do remote-logging to the external host
+`logcollector`. If no such hostname exists in the hardened-system's DNS domain,
+"host not found" error-types will be logged. If using a log-offloader tool
+(such as the Splunk forwarder-agent), it is safe to either comment out the `*.*
+@@logcollector`. If data _should_ be sent directly from `rsyslog` to a remote
+syslog-host, change the string `logcollector` to the FQDN of your site's actual
+log-collector host.
+
+## Why isn't the domain-join functionality doing DDNS updates
+
+Starting in early 2023, the default method for joining Linux hosts to Active
+Directory domains was changed to leveraging the native, `sssd`-based
+integrations. While `sssd` has the capability of doing DDNS updates (and doing
+regular refreshes to prevent record-loss due to record-scavenging), it has a
+couple of requirements in order to be able to do so. First and foremost is that
+the hosts providing DNS service to the Linux system have DDNS enabled for the A
+and PTR zones the Linux system is a member of. Similarly, `sssd` defaults to
+attempting to use GSS with TSIG for its DDNS update-requests: even if the Linux
+system's A and PTR zones are DDNS-enabled, if those zones don't allow DDNS
+clients to negotiate updates with GSS and TSIG, the updates will fail.
+Watchmaker's `join-domain-formula` (for `sssd`) _does_ allow overriding the
+attempt to negotiate updates with GSS and TSIG. This is done by appending
+`dyndns_auth: none` (and, optionally, adding `dyndns_auth_ptr: none`) to the
+Salt pillar's `sssd_conf_parameters` parameter-value.
+
+## Why are my security-scans failing due to lack of `nosuid`/`noguid` mount-options for `/boot`
+
+Depending on how your OS was provisioned, the `/boot` directory-tree may or may not be on its own partition. If it's not on its own partition, it will be part of the `/` partition. As a result, it will not be possible to set partition-specific mount-options.
+
+Note: it is known that spel AMIs created for EL8 prior to April of 2024 will
+typically _not_ have `/boot` on its own partition. Suport for EFI-boot was only
+added to the EL8 automation in February of 2024 and only implemented (in some
+regions) in April of 2024. spel AMIs not built to support EFI-boot typically
+will not have `/boot` on its own partition.
+
+## How can I see what hardening-actions are implemented through `oscap`
+
+Watchmaker's use of `oscap` (for Linux hosts) is not transparently-implemented.
+While the `oscap` activities _are_ logged to the `/var/log/oscap.log` file,
+that file's logged-activity is created at an informationl level rather than a
+detailed, "debug"-style level. In order to see _exactly_ what the `oscap`
+utility does, one can make `oscap` generate a script-file containing all of its
+hardening-actions. This can be done by doing (as the `root` user):
+
+~~~bash
+oscap xccdf generate fix \
+  --fix-type bash \
+  --output ~/fixes.sh \
+  --profile xccdf_org.ssgproject.content_profile_stig
+  /root/scap/content/openscap/ssg-<PLATFORM>-ds.xml
+~~~
+
+Where "PLATFORM" will be something like `rhel7` on a Red Hat l system or `ol8`
+on an Oracle Linux 8 system. Once the `~/fixes.sh` script is generated, one can
+`grep` it for specific actions or open it up for viewing and peruse it for
+(presumably problematic) hardening actions (such as the `logcollector` setting
+noted in a prior section of this FAQ).
