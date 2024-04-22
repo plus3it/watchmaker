@@ -2,5 +2,5 @@
 
 myst-parser==2.0.0
 setuptools==69.5.1
-sphinx==7.2.6
+sphinx==7.3.7
 sphinx-rtd-theme==2.0.0
