@@ -1,6 +1,6 @@
 -r docs-check.txt
 
-myst-parser==2.0.0
+myst-parser==3.0.1
 setuptools==69.5.1
 sphinx==7.3.7
 sphinx-rtd-theme==2.0.0
