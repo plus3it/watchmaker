@@ -80,6 +80,7 @@ class AWSStatusProvider(AbstractStatusProvider):
         )
 
         try:
+            # pylint: disable=possibly-used-before-assignment
             client = boto3.client("ec2", self.region)
             response = client.create_tags(
                 Resources=[
