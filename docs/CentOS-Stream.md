@@ -19,7 +19,7 @@ repositories and creating "vault" repositories from them. This may be done with
 a quick script like:
 
 ```
-(
+# (
   cd /etc/yum.repos.d &&
   for RepoFile in CentOS-Stream-{BaseOS,AppStream,Extras{,-common},HighAvailability,NFV,PowerTools,RealTime,ResilientStorage}.repo
   do
@@ -31,4 +31,6 @@ a quick script like:
       "${RepoFile}" > "${RepoFile//.repo/-Vault.repo}"
   done
 )
+# dnf config-manager --save --set-disabled appstream baseos extras
+# dnf config-manager --save --set-enabled vault-{appstream,baseos,extras}
 ```
