@@ -81,15 +81,11 @@ page for a list of all supported operating systems.
 
 ## Does watchmaker support Enterprise Linux 8?
 
-Watchmaker is supported on RedHat 8, CentOS 8 Stream, and Oracle Linux 8. See the
+Watchmaker is supported on RedHat 8, CentOS Stream 8, and Oracle Linux 8. See the
 [index](index) page for a list of all supported operating systems.
 
-## Does watchmaker support Enterprise Linux 9?
+Also: See CentOS Stream deprecation [notes](CentOS-Stream.md)
 
-As of today's date (2024-04-10), watchmaker's hardening-modules do not yet
-support Enterprise Linux 9 or related distros. This is currently a
-to-be-started project-task. Action on support for Enterprise Linux 9-based
-distros can be tracked through [ash-linux-formula issue #496](https://github.com/plus3it/ash-linux-formula/issues/496).
 
 ## How can I exclude salt states when executing watchmaker?
 
