@@ -11,32 +11,48 @@
 
 A few scans performed against EL9 systems are version-dependent. Watchmaker is designed to ensure that a given EL9 host is running at the latest-available EL9 minor-release version. Some of the version-dependent scans are for versions (well) prior "the latest-available EL9 minor-release version". The person responding to scan-findings should make sure to notice if the findings-text includes mention of specific EL9 minor-release version or version-ranges and compare that to the EL9 minor-release of the scanned system. If the version/version-range is less than that of the scanned version, the scan result may be immediately flagged as "**INVALID FINDING**". Anything that cannot be immediate flagged in this way should be checked against the following table of known findings[^1].
 
+
 ```{eval-rst}
   .. _Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD: #ensure-users-re-authenticate-for-privilege-escalation---sudo-nopasswd
   .. _Support session locking with tmux: #support-session-locking-with-tmux
   .. _Only Authorized Local User Accounts Exist on Operating System: #only-authorized-local-user-accounts-exist-on-operating-system
   .. _Ensure Logs Sent To Remote Host: #ensure-logs-sent-to-remote-host
+  .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
 
 
-  +-----------------------------------------------------------------------------------------------------------------------------+----------------------------------------------+
-  | Finding Summary                                                                                                             | Finding Identifiers                          |
-  +=============================================================================================================================+==============================================+
-  | `Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD`_                                                    | content_rule_sudo_remove_nopasswd            |
-  |                                                                                                                             |                                              |
-  |                                                                                                                             |                                              |
-  +-----------------------------------------------------------------------------------------------------------------------------+----------------------------------------------+
-  | `Support session locking with tmux`_                                                                                        | content_rule_configure_bashrc_exec_tmux      |
-  |                                                                                                                             |                                              |
-  |                                                                                                                             |                                              |
-  +-----------------------------------------------------------------------------------------------------------------------------+----------------------------------------------+
-  | `Only Authorized Local User Accounts Exist on Operating System`_                                                            | content_rule_accounts_authorized_local_users |
-  |                                                                                                                             |                                              |
-  |                                                                                                                             |                                              |
-  +-----------------------------------------------------------------------------------------------------------------------------+----------------------------------------------+
-  | `Ensure Logs Sent To Remote Host`_                                                                                          | content_rule_rsyslog_remote_loghost          |
-  |                                                                                                                             |                                              |
-  |                                                                                                                             |                                              |
-  +-----------------------------------------------------------------------------------------------------------------------------+----------------------------------------------+
+  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+  | Finding Summary                                                                                                             | Finding Identifiers                            |
+  +=============================================================================================================================+================================================+
+  | `Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD`_                                                    | content_rule_sudo_remove_nopasswd              |
+  |                                                                                                                             |                                                |
+  |                                                                                                                             |                                                |
+  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+  | `Support session locking with tmux`_                                                                                        | content_rule_configure_bashrc_exec_tmux        |
+  |                                                                                                                             |                                                |
+  |                                                                                                                             |                                                |
+  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+  | `Only Authorized Local User Accounts Exist on Operating System`_                                                            | content_rule_accounts_authorized_local_users   |
+  |                                                                                                                             |                                                |
+  |                                                                                                                             |                                                |
+  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+  | `Ensure Logs Sent To Remote Host`_                                                                                          | content_rule_rsyslog_remote_loghost            |
+  |                                                                                                                             |                                                |
+  |                                                                                                                             |                                                |
+  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                                                       | content_rule_network_configure_name_resolution |
+  |                                                                                                                             |                                                |
+  |                                                                                                                             |                                                |
+  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+```
+
+```{eval-rst}
+.. note::
+   Note: This document is being written early in the adoption-cycle for
+   DISA-mandated security-controls. As such, some of the automation and
+   associated scan-finding are for pre-release content. Such content will
+   typically lack the finding-identifiers within the DISA content (e.g., the
+   vulnerability IDs that take a format like ``V-<SIX_DIGIT_STRING>`` and vendor
+   IDs that take the format ``<OSID>-08-<FINDING_ID>``)
 ```
 
 # Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
@@ -75,6 +91,12 @@ As a result, most scanners will emit this in their findings-reports as an indica
 * Even sites that _do_ use `rsyslog` to handle log-offloading, the scanners frequently look only for the log-destination `logcollector` - or similarly-generic destination-name - rather than the hostname, FQDN or IP address of the log-collection server
 
 It will be up to the system accreditor to know the site-specific implementation-requirements and validate accordingly
+
+# Configure Multiple DNS Servers in /etc/resolv.conf
+
+**Expected Finding:**
+
+In many environments, particularly CSP hosting-environments, "individual" DNS servers are actually highly-available services that answer at a single, highly-available IP address. As such, configuaration of multiple DNS servers may not only not be possible but may actually cause functionality-breaking problems.
 
 
 
