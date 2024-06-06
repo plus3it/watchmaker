@@ -50,7 +50,8 @@ CentOS-Stream.md
 
 ## Supported Operating Systems
 
-*   Enterprise Linux 8 (RHEL/CentOS Stream/Oracle Linux)
+*   Enterprise Linux 9 (RHEL/Oracle Linux/CentOS Stream/Alma Linux/Rocky Linux)
+*   Enterprise Linux 8 (RHEL/Oracle Linux/[CentOS Stream](CentOS-Stream.md))
 *   Enterprise Linux 7 (RHEL/CentOS)
 *   Windows Server 2019
 *   Windows Server 2016
