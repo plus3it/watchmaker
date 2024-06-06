@@ -45,6 +45,7 @@ findings/index.md
 api.md
 contributing.md
 changelog.md
+CentOS-Stream.md
 ```
 
 ## Supported Operating Systems

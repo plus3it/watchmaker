@@ -81,10 +81,16 @@ page for a list of all supported operating systems.
 
 ## Does watchmaker support Enterprise Linux 8?
 
-Watchmaker is supported on RedHat 8, CentOS 8 Stream, and Oracle Linux 8. See the
+Watchmaker is supported on RedHat 8, CentOS Stream 8, and Oracle Linux 8. See the
 [index](index) page for a list of all supported operating systems.
 
+Also: See CentOS Stream deprecation [notes](CentOS-Stream.md)
+
+
 ## Does watchmaker support Enterprise Linux 9?
+
+Watchmaker is supported on RedHat 9, CentOS Stream 9, and Oracle Linux 9. See the
+[index](index) page for a list of all supported operating systems.
 
 As of today's date (2024-04-10), watchmaker's hardening-modules do not yet
 support Enterprise Linux 9 or related distros. This is currently a
