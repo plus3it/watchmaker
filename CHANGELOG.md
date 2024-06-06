@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.28.5](https://github.com/plus3it/watchmaker/releases/tag/0.28.5)
+
+**Released**: 2024.06.06
+
+**Summary**:
+
+*   Provides several new FAQs to address recent changes and SCAP findings
+*   Provides update on discontinuation of CentOS Stream 8 and possible work-around 
+*   ash-linux-formula
+    -  Addresses findings related to UEFI-enabled systems
+    -  Removes remote log entry injected by scap content
+*   name-computer-formula
+    -  Provides options to skip either the forward or reverse nsupdate
+*   scap-formula
+    -  Updates openscap content to 0.1.72
+
 ## [0.28.4](https://github.com/plus3it/watchmaker/releases/tag/0.28.4)
 
 **Released**: 2024.03.07
