@@ -20,6 +20,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
   .. _Configure System to Forward All Mail For The Root Account: #configure-system-to-forward-all-mail-for-the-root-account
   .. _Ensure Chrony is only configured with the server directive: #ensure-chrony-is-only-configured-with-the-server-directive
+  .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -49,6 +50,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Ensure Chrony is only configured with the server directive`_                                                               | content_rule_chronyd_server_directive            |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Enable Certmap in SSSD`_                                                                                                   | content_rule_sssd_enable_certmap                 |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
@@ -130,6 +135,12 @@ Setup of the `chrony` time-synchronization system can be very site-specific. In 
 
 * If one further defines the `ash-linux:lookup:ntp-servers` Pillar-parameter to a list of NTP servers, `watchmaker` will close the finding by configuring the `chrony` service to use that list of servers
 * If one fails to define the `ash-linux:lookup:ntp-servers` Pillar-parameter `watchmaker` will close the finding by configuring the `chrony` service to a default list of servers (the per-vendor "pool" NTP servers maintained by the [Network Time Protocol (NTP) Project](https://ntp.org))
+
+# Enable Certmap in SSSD
+
+**Expected Finding:**
+
+Because configuration of the `sssd` service to perform SmartCard-based authentication is an inherently-local configuration-task (and because no, suitable testing environment has been provided to this project-team to prototype against), `watchmaker` makes no attempt to configure `sssd` service to perform SmartCard-based authentication.
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
