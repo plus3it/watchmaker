@@ -19,7 +19,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Ensure Logs Sent To Remote Host: #ensure-logs-sent-to-remote-host
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
   .. _Configure System to Forward All Mail For The Root Account: #configure-system-to-forward-all-mail-for-the-root-account
-
+  .. _Ensure Chrony is only configured with the server directive: #ensure-chrony-is-only-configured-with-the-server-directive
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -45,6 +45,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Configure System to Forward All Mail For The Root Account`_                                                                | content_rule_postfix_client_configure_mail_alias |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Ensure Chrony is only configured with the server directive`_                                                               | content_rule_chronyd_server_directive            |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
@@ -118,6 +122,14 @@ Forwarding-rules for a system's `root` user account is a wholly enterprise-speci
 
 ```
 
+# Ensure Chrony is only configured with the server directive
+
+**Condtionally-valid Finding:**
+
+Setup of the `chrony` time-synchronization system can be very site-specific. In fact, some sites may choose not to set it up, at all, due to having other methods for ensuring that their hosts' time is kept properly-synchronized with an authoritative source. By default, `watchmaker` will make no changes to the configuration of the `chrony` time-synchronization service unless one sets the `ash-linux:lookup:use-ntp` Pillar parameter to `True`. If set to `True`, `watchmaker` will attempt to close this finding:
+
+* If one further defines the `ash-linux:lookup:ntp-servers` Pillar-parameter to a list of NTP servers, `watchmaker` will close the finding by configuring the `chrony` service to use that list of servers
+* If one fails to define the `ash-linux:lookup:ntp-servers` Pillar-parameter `watchmaker` will close the finding by configuring the `chrony` service to a default list of servers (the per-vendor "pool" NTP servers maintained by the [Network Time Protocol (NTP) Project](https://ntp.org))
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
