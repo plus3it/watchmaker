@@ -18,41 +18,46 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Only Authorized Local User Accounts Exist on Operating System: #only-authorized-local-user-accounts-exist-on-operating-system
   .. _Ensure Logs Sent To Remote Host: #ensure-logs-sent-to-remote-host
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
+  .. _Configure System to Forward All Mail For The Root Account: #configure-system-to-forward-all-mail-for-the-root-account
 
 
-  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
-  | Finding Summary                                                                                                             | Finding Identifiers                            |
-  +=============================================================================================================================+================================================+
-  | `Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD`_                                                    | content_rule_sudo_remove_nopasswd              |
-  |                                                                                                                             |                                                |
-  |                                                                                                                             |                                                |
-  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
-  | `Support session locking with tmux`_                                                                                        | content_rule_configure_bashrc_exec_tmux        |
-  |                                                                                                                             |                                                |
-  |                                                                                                                             |                                                |
-  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
-  | `Only Authorized Local User Accounts Exist on Operating System`_                                                            | content_rule_accounts_authorized_local_users   |
-  |                                                                                                                             |                                                |
-  |                                                                                                                             |                                                |
-  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
-  | `Ensure Logs Sent To Remote Host`_                                                                                          | content_rule_rsyslog_remote_loghost            |
-  |                                                                                                                             |                                                |
-  |                                                                                                                             |                                                |
-  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
-  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                                                       | content_rule_network_configure_name_resolution |
-  |                                                                                                                             |                                                |
-  |                                                                                                                             |                                                |
-  +-----------------------------------------------------------------------------------------------------------------------------+------------------------------------------------+
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | Finding Summary                                                                                                             | Finding Identifiers                              |
+  +=============================================================================================================================+==================================================+
+  | `Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD`_                                                    | content_rule_sudo_remove_nopasswd                |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Support session locking with tmux`_                                                                                        | content_rule_configure_bashrc_exec_tmux          |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Only Authorized Local User Accounts Exist on Operating System`_                                                            | content_rule_accounts_authorized_local_users     |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Ensure Logs Sent To Remote Host`_                                                                                          | content_rule_rsyslog_remote_loghost              |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                                                       | content_rule_network_configure_name_resolution   |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Configure System to Forward All Mail For The Root Account`_                                                                | content_rule_postfix_client_configure_mail_alias |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
 ```{eval-rst}
 .. note::
-   Note: This document is being written early in the adoption-cycle for
-   DISA-mandated security-controls. As such, some of the automation and
-   associated scan-finding are for pre-release content. Such content will
-   typically lack the finding-identifiers within the DISA content (e.g., the
-   vulnerability IDs that take a format like ``V-<SIX_DIGIT_STRING>`` and vendor
-   IDs that take the format ``<OSID>-08-<FINDING_ID>``)
+   This document is being written early in the adoption-cycle for DISA-mandated
+   security-controls. As such, some of the automation and associated scan-finding
+   are for pre-release content. Such content will typically lack the
+   finding-identifiers within the DISA content (e.g., the vulnerability IDs that
+   take a format like ``V-<SIX_DIGIT_STRING>`` and vendor IDs that take the
+   format ``<OSID>-08-<FINDING_ID>``)
 ```
 
 # Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
@@ -97,6 +102,21 @@ It will be up to the system accreditor to know the site-specific implementation-
 **Expected Finding:**
 
 In many environments, particularly CSP hosting-environments, "individual" DNS servers are actually highly-available services that answer at a single, highly-available IP address. As such, configuaration of multiple DNS servers may not only not be possible but may actually cause functionality-breaking problems.
+
+# Configure System to Forward All Mail For The Root Account
+
+**Condtionally-valid Finding:**
+
+Forwarding-rules for a system's `root` user account is a wholly enterprise-specific &ndash; or even specific to service-group or individual-system level &ndash; determination. While watchmaker _can_ be used to close this finding (via the `.../el9/RuleById/medium/content_rule_postfix_client_configure_mail_alias` control/handler), it relies on the `ash-linux:lookup:root-mail-dest` Pillar-parameter having a value set. If this value is _not_ set, then watchmaker will not close this finding.
+
+```{eval-rst}
+.. note::
+   ``watchmaker``'s automation-content does not have the capability of ensuring that:
+
+   * The Pillar-parameter's ``ash-linux:lookup:root-mail-dest`` value is set to a valid email destination
+   * Even if the ``ash-linux:lookup:root-mail-dest`` value `is` set to a valid email destination, forwarding to that destination will actually `function`
+
+```
 
 
 
