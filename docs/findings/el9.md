@@ -13,9 +13,13 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
 
 
 ```{eval-rst}
+  .. _Set the UEFI Boot Loader Password: #set-the-uefi-boot-loader-password
   .. _Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD: #ensure-users-re-authenticate-for-privilege-escalation---sudo-nopasswd
   .. _Support session locking with tmux: #support-session-locking-with-tmux
+  .. _Configure tmux to lock session after inactivity: #configure-tmux-to-lock-session-after-inactivity
+  .. _Configure the tmux Lock Command: #configure-the-tmux-lock-command
   .. _Only Authorized Local User Accounts Exist on Operating System: #only-authorized-local-user-accounts-exist-on-operating-system
+  .. _Set the UEFI Boot Loader Admin Username to a Non-Default Value: #set-the-uefi-boot-loader-admin-username-to-a-non-default-value
   .. _Ensure Logs Sent To Remote Host: #ensure-logs-sent-to-remote-host
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
   .. _Configure System to Forward All Mail For The Root Account: #configure-system-to-forward-all-mail-for-the-root-account
@@ -25,6 +29,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
   +=============================================================================================================================+==================================================+
+  | `Set the UEFI Boot Loader Password`_                                                                                        | content_rule_grub2_uefi_password                 |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD`_                                                    | content_rule_sudo_remove_nopasswd                |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
@@ -33,7 +41,19 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Configure tmux to lock session after inactivity`_                                                                          | content_rule_configure_tmux_lock_after_time      |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Configure the tmux Lock Command`_                                                                                          | content_rule_configure_tmux_lock_command         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Only Authorized Local User Accounts Exist on Operating System`_                                                            | content_rule_accounts_authorized_local_users     |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Set the UEFI Boot Loader Admin Username to a Non-Default Value`_                                                           | content_rule_grub2_uefi_admin_username           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
@@ -61,12 +81,28 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
 
 ```{eval-rst}
 .. note::
+
    This document is being written early in the adoption-cycle for DISA-mandated
    security-controls. As such, some of the automation and associated scan-finding
    are for pre-release content. Such content will typically lack the
    finding-identifiers within the DISA content (e.g., the vulnerability IDs that
    take a format like ``V-<SIX_DIGIT_STRING>`` and vendor IDs that take the
    format ``<OSID>-08-<FINDING_ID>``)
+
+```
+
+# Set the UEFI Boot Loader Password
+
+**Invalid Finding:**
+
+By default, `watchmaker` will attempt to set a UEFI bootloader password. If the `watchmaker` user does not set the `ash-linux:lookup:grub-passwd` Pillar parameter to a site-custom value, a default value will be used. Currently, this default value is `AR34llyB4dP4ssw*rd`.
+
+```{eval-rst}
+.. warning::
+   It is `highly` recommended that a site-specific value be set for the
+   ``ash-linux:lookup:grub-passwd`` Pillar parameter. While failing to do so will
+   not result in a scan-finding, it will mean that anyone that has read this
+   document will know your servers' bootloader password
 ```
 
 # Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
@@ -83,6 +119,24 @@ The watchmaker automation normally comments out any `sudoers` entries that may b
 
 Watchmaker addresses this security-control. However, many scanners' check-automation have inflexible pattern-matching which are unable to properly detect that the finding _has_ been addressed
 
+# Configure tmux to lock session after inactivity
+
+**Invalid Finding:**
+
+The configuration-automation within `watchmaker` will configure the `tmux` service per the STIGs. If this finding pops up, it will be necessary to ensure that:
+
+* The associated `watchmaker` state (`.../el9/RuleById/medium/content_rule_configure_tmux_lock_after_time`) actually ran _and_ ran to successful completion
+* The `watchmaker`-set value is the same as the site's prescribed-value
+
+# Configure the tmux Lock Command
+
+**Invalid Finding:**
+
+The configuration-automation within `watchmaker` will configure the `tmux` service per the STIGs. If this finding pops up, it will be necessary to ensure that:
+
+* The associated `watchmaker` state (`.../el9/RuleById/medium/content_rule_configure_tmux_lock_command`) actually ran _and_ ran to successful completion
+* The `watchmaker`-set value is the same as the site's prescribed-value
+
 # Only Authorized Local User Accounts Exist on Operating System
 
 **Expected Finding:**
@@ -94,6 +148,20 @@ Automatic remediation of this control is not available due to the unique require
 ```
 
 As a result, most scanners will emit this in their findings-reports as an indication to the accreditor that a manual check of the system's local users conform to site-local policies
+
+# Set the UEFI Boot Loader Admin Username to a Non-Default Value
+
+**Invalid Finding:**
+
+By default, `watchmaker` will attempt to set a custom superuser name for the UEFI bootloader. If the `watchmaker` user does not set the `ash-linux:lookup:grub-user` Pillar parameter to a site-custom value, a default value will be used. Currently, this default value is `grubuser`.
+
+```{eval-rst}
+.. warning::
+   It is `highly` recommended that a site-specific value be set for the
+   ``ash-linux:lookup:grub-user`` Pillar parameter. While failing to do so will
+   not result in a scan-finding, it will mean that anyone that has read this
+   document will know your servers' bootloader superuser name
+```
 
 # Ensure Logs Sent To Remote Host
 
