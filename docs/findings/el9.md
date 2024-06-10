@@ -22,6 +22,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Set the UEFI Boot Loader Admin Username to a Non-Default Value: #set-the-uefi-boot-loader-admin-username-to-a-non-default-value
   .. _Ensure Logs Sent To Remote Host: #ensure-logs-sent-to-remote-host
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
+  .. _Add noexec Option to /tmp: #add-noexec-option-to-/tmp
   .. _Configure System to Forward All Mail For The Root Account: #configure-system-to-forward-all-mail-for-the-root-account
   .. _Ensure Chrony is only configured with the server directive: #ensure-chrony-is-only-configured-with-the-server-directive
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
@@ -62,6 +63,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                                                       | content_rule_network_configure_name_resolution   |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Add noexec Option to /tmp`_                                                                                                | content_rule_mount_option_tmp_noexec             |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
@@ -173,6 +178,12 @@ By default, `watchmaker` will attempt to set a custom superuser name for the UEF
 * Even sites that _do_ use `rsyslog` to handle log-offloading, the scanners frequently look only for the log-destination `logcollector` - or similarly-generic destination-name - rather than the hostname, FQDN or IP address of the log-collection server
 
 It will be up to the system accreditor to know the site-specific implementation-requirements and validate accordingly
+
+# Add noexec Option to /tmp
+
+**Invalid Finding:**
+
+If the scan-target implements the `/tmp` filesystem as a (`tmpfs`) pseudofileystem &ndash; or otherwise implements the `/tmp` filesystem's mount-options by way of a systemd options file &ndash; some scanners will fail to properly detect that the STIG-specified mount-options have been configured.
 
 # Configure Multiple DNS Servers in /etc/resolv.conf
 
