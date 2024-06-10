@@ -12,5 +12,5 @@ isort==5.13.2
 m2r==0.3.1
 pep8-naming==0.14.1
 pydocstyle==6.3.0
-pylint==3.2.2
+pylint==3.2.3
 readme-renderer==43.0
