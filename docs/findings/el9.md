@@ -13,6 +13,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
 
 
 ```{eval-rst}
+  .. _The OS must be a vendor-supported release: #the-os-must-be-a-vendor-supported-release
   .. _Set the UEFI Boot Loader Password: #set-the-uefi-boot-loader-password
   .. _Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD: #ensure-users-re-authenticate-for-privilege-escalation---sudo-nopasswd
   .. _Support session locking with tmux: #support-session-locking-with-tmux
@@ -22,7 +23,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Set the UEFI Boot Loader Admin Username to a Non-Default Value: #set-the-uefi-boot-loader-admin-username-to-a-non-default-value
   .. _Ensure Logs Sent To Remote Host: #ensure-logs-sent-to-remote-host
   .. _Configure Multiple DNS Servers in /etc/resolv.conf: #configure-multiple-dns-servers-in-/etc/resolv.conf
+  .. _The operating system must use a separate file system for /tmp: #rhel-9-must-use-a-separate-file-system-for-/tmp
+  .. _Add nodev Option to /tmp: #add-nodev-option-to-/tmp
   .. _Add noexec Option to /tmp: #add-noexec-option-to-/tmp
+  .. _Add nosuid Option to /tmp: #add-nosuid-option-to-/tmp
   .. _Configure System to Forward All Mail For The Root Account: #configure-system-to-forward-all-mail-for-the-root-account
   .. _Ensure Chrony is only configured with the server directive: #ensure-chrony-is-only-configured-with-the-server-directive
   .. _Enable SSH Server firewalld Firewall Exception: #enable-ssh-server-firewalld-firewall-exception
@@ -31,6 +35,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
   +=============================================================================================================================+==================================================+
+  | `The OS must be a vendor-supported release`_                                                                                | V-257777                                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-211010                                   |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Set the UEFI Boot Loader Password`_                                                                                        | content_rule_grub2_uefi_password                 |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
@@ -63,13 +71,25 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
-  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                                                       | content_rule_network_configure_name_resolution   |
+  | `Configure Multiple DNS Servers in /etc/resolv.conf`_                                                                       | V-257948                                         |
   |                                                                                                                             |                                                  |
-  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-252035                                   |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
-  | `Add noexec Option to /tmp`_                                                                                                | content_rule_mount_option_tmp_noexec             |
+  | `The operating system must use a separate file system for /tmp`_                                                            | V-257844                                         |
   |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-231015                                   |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Add nodev Option to /tmp`_                                                                                                 | V-257866                                         |
   |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-231125                                   |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Add noexec Option to /tmp`_                                                                                                | V-257867                                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-231130                                   |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Add nosuid Option to /tmp`_                                                                                                | V-257868                                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-231135                                   |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Configure System to Forward All Mail For The Root Account`_                                                                | content_rule_postfix_client_configure_mail_alias |
   |                                                                                                                             |                                                  |
@@ -100,6 +120,19 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
    format ``<OSID>-08-<FINDING_ID>``)
 
 ```
+
+# The OS must be a vendor-supported release
+
+**Condtionally-valid Finding:**
+
+Not Valid Findings:
+
+* During testing (using the `scc` tool), this control was witnessed to misidentify RHEL 9.4 as not being a supported OS release. As of this document's date (2024-06-10), 9.4 is the latest-available release of Red Hat: 9.4 released on 2024-04-30 (see [Red Hat Article #3078](https://access.redhat.com/articles/3078#RHEL9)); 9.5 is due in early November of this year.
+
+Expected Findings:
+
+* CentOS releases never have "vendor support"
+* Oracle Linux 9, when used with scanners that implement same evaluation-criteria as the `scc` tool, expect the vendor-string to indicate Red Hat, but the tested file will (rightly) indicate Oracle as vendor
 
 # Set the UEFI Boot Loader Password
 
@@ -185,7 +218,25 @@ By default, `watchmaker` will attempt to set a custom superuser name for the UEF
 
 It will be up to the system accreditor to know the site-specific implementation-requirements and validate accordingly
 
+# The operating system must use a separate file system for /tmp
+
+**Invalid Finding:**
+
+If the scan-target implements the `/tmp` filesystem as a (`tmpfs`) pseudofileystem, some scanners will fail to properly detect that the STIG-specified standalone mount has been configured.
+
+# Add nodev Option to /tmp
+
+**Invalid Finding:**
+
+If the scan-target implements the `/tmp` filesystem as a (`tmpfs`) pseudofileystem &ndash; or otherwise implements the `/tmp` filesystem's mount-options by way of a systemd options file &ndash; some scanners will fail to properly detect that the STIG-specified mount-options have been configured.
+
 # Add noexec Option to /tmp
+
+**Invalid Finding:**
+
+If the scan-target implements the `/tmp` filesystem as a (`tmpfs`) pseudofileystem &ndash; or otherwise implements the `/tmp` filesystem's mount-options by way of a systemd options file &ndash; some scanners will fail to properly detect that the STIG-specified mount-options have been configured.
+
+# Add nosuid Option to /tmp
 
 **Invalid Finding:**
 
