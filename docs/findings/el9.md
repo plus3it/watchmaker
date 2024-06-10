@@ -25,6 +25,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Add noexec Option to /tmp: #add-noexec-option-to-/tmp
   .. _Configure System to Forward All Mail For The Root Account: #configure-system-to-forward-all-mail-for-the-root-account
   .. _Ensure Chrony is only configured with the server directive: #ensure-chrony-is-only-configured-with-the-server-directive
+  .. _Enable SSH Server firewalld Firewall Exception: #enable-ssh-server-firewalld-firewall-exception
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
@@ -78,6 +79,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Enable SSH Server firewalld Firewall Exception`_                                                                           | content_rule_firewalld_sshd_port_enabled         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `Enable Certmap in SSSD`_                                                                                                   | content_rule_sssd_enable_certmap                 |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
@@ -107,7 +112,8 @@ By default, `watchmaker` will attempt to set a UEFI bootloader password. If the 
    It is `highly` recommended that a site-specific value be set for the
    ``ash-linux:lookup:grub-passwd`` Pillar parameter. While failing to do so will
    not result in a scan-finding, it will mean that anyone that has read this
-   document will know your servers' bootloader password
+   document -- or who has reviewed the watchmaker source-code -- will know your
+   servers' bootloader password
 ```
 
 # Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
@@ -214,6 +220,26 @@ Setup of the `chrony` time-synchronization system can be very site-specific. In 
 
 * If one further defines the `ash-linux:lookup:ntp-servers` Pillar-parameter to a list of NTP servers, `watchmaker` will close the finding by configuring the `chrony` service to use that list of servers
 * If one fails to define the `ash-linux:lookup:ntp-servers` Pillar-parameter `watchmaker` will close the finding by configuring the `chrony` service to a default list of servers (the per-vendor "pool" NTP servers maintained by the [Network Time Protocol (NTP) Project](https://ntp.org))
+
+# Enable SSH Server firewalld Firewall Exception
+
+**Invalid Finding:**
+
+This finding may be triggered if only the `ssh` _ports_ are scanned for. The `watchmaker` hardening routines ensure that a broad-scoped (i.e., "allow from all") firewalld exception is made for the `ssh` _service_. The implementation-difference may be seen by comparing the outputs of `firewall-cmd --list-services`
+
+```
+# firewall-cmd --list-services | sed 's/\s\s*/\n/g' | grep ssh
+ssh
+```
+
+and `firewall-cmd --list-ports`:
+
+```
+# firewall-cmd --list-ports | grep ^22
+22/tcp
+```
+
+Watchmaker's implementation will show up only in the output of the former. Some scanners may only expect the execption to show up in the latter.
 
 # Enable Certmap in SSSD
 
