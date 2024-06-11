@@ -31,6 +31,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Ensure Chrony is only configured with the server directive: #ensure-chrony-is-only-configured-with-the-server-directive
   .. _Enable SSH Server firewalld Firewall Exception: #enable-ssh-server-firewalld-firewall-exception
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
+  .. _OS library files must have mode 755 or less permissive: #os-library-files-must-have-mode-755-or-less-permissive
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -106,6 +107,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `Enable Certmap in SSSD`_                                                                                                   | content_rule_sssd_enable_certmap                 |
   |                                                                                                                             |                                                  |
   |                                                                                                                             |                                                  |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `OS library files must have mode 755 or less permissive`_                                                                   | V-257884                                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-232020                                   |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -297,6 +302,31 @@ Watchmaker's implementation will show up only in the output of the former. Some 
 **Expected Finding:**
 
 Because configuration of the `sssd` service to perform SmartCard-based authentication is an inherently-local configuration-task (and because no, suitable testing environment has been provided to this project-team to prototype against), `watchmaker` makes no attempt to configure `sssd` service to perform SmartCard-based authentication.
+
+# OS library files must have mode 755 or less permissive
+
+**Condtionally-valid Finding:**
+
+Scanners should typically only search in the directories `/lib`, `/lib64`, `/usr/lib` and `/usr/lib64` for this finding. Overly-broad scans of those directories _may_ turn up the files:
+
+* `/lib/polkit-1/polkit-agent-helper-1`
+* `/usr/lib/polkit-1/polkit-agent-helper-1`
+
+```{eval-rst}
+.. note::
+   The ``/lib/polkit-1/polkit-agent-helper-1`` will be a symbolic-link pointing
+   to ``/usr/lib/polkit-1/polkit-agent-helper-1``
+```
+
+These are files that _need_ to set to mode `4755` &ndash; permissions that are broader than the mode `0755` permitted under this finding.
+
+```{eval-rst}
+.. warning::
+   Changing these files' permissions to make them no longer show up on scans
+   `will` break the hardened system.
+```
+
+Any files other than `/lib/polkit-1/polkit-agent-helper-1` and `/usr/lib/polkit-1/polkit-agent-helper-1` should be treated as valid findings and remediated.
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
