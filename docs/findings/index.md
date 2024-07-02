@@ -30,3 +30,11 @@ el7.md
 
 el8.md
 ```
+
+## Common Scan Findings for EL9
+
+```{toctree}
+:maxdepth: 1
+
+el9.md
+```

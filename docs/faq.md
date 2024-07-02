@@ -86,6 +86,14 @@ Watchmaker is supported on RedHat 8, CentOS Stream 8, and Oracle Linux 8. See th
 
 Also: See CentOS Stream deprecation [notes](CentOS-Stream.md)
 
+## Does watchmaker support Enterprise Linux 9?
+
+Watchmaker is supported on all distros derived from
+Red Hat 9. This includes RedHat 9, CentOS Stream 9, Oracle Linux 9, Rocky 9,
+and Alma Linux 9. Scan-comparisons are explicitly-performed on Red Hat and
+Oracle Linux 9 with content CI-checks performed using an Alma Linux 9
+container. See the [index](index) page for a list of all supported operating
+systems.
 
 ## How can I exclude salt states when executing watchmaker?
 
