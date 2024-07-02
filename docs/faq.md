@@ -88,7 +88,7 @@ Also: See CentOS Stream deprecation [notes](CentOS-Stream.md)
 
 ## Does watchmaker support Enterprise Linux 9?
 
-Watchmaker is supported, to one degree or another, on all distros derived from
+Watchmaker is supported on all distros derived from
 Red Hat 9. This includes RedHat 9, CentOS Stream 9, Oracle Linux 9, Rocky 9,
 and Alma Linux 9. Scan-comparisons are explicitly-performed on Red Hat and
 Oracle Linux 9 with content CI-checks performed using an Alma Linux 9
