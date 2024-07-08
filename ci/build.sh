@@ -3,6 +3,8 @@ set -eu -o pipefail
 
 export VIRTUAL_ENV_DIR=.pyinstaller/venv
 
+PYTHON=python3.11
+
 VERSION=$(grep "version =" setup.cfg | sed 's/^.*= //')
 
 PYI_DIST_DIR=".pyinstaller/dist/${VERSION}"
@@ -19,7 +21,7 @@ WAM_LATEST="watchmaker-latest-standalone-linux-x86_64"
 SATS_TEMPLATE="./ci/pyinstaller/sats-template.json.template"
 SATS_FILE=".pyinstaller/satsuki-files.json"
 
-virtualenv --python=python3 $VIRTUAL_ENV_DIR
+virtualenv --python=${PYTHON} $VIRTUAL_ENV_DIR
 source "${VIRTUAL_ENV_DIR}/bin/activate"
 
 python -m pip install -r requirements/pip.txt

@@ -1,8 +1,10 @@
-FROM quay.io/centos7/python-38-centos7:centos7@sha256:ba24cdd62d1c1bdf286a61b36f94d1c6f6294b1f06843af47ab32101e453dbb1
+FROM docker.io/almalinux:8@sha256:e87da8566de5f0a10e0e6acdb7ca43da4ef97a114130691d7dd737d6923c863d
 
 ARG USER=wam-builder
 ARG USER_UID
 ARG USER_GID
+
+ENV PYTHON=python3.11
 
 USER root
 
@@ -14,14 +16,16 @@ RUN if [[ ${USER_UID} -eq 0 ]] ; then adduser ${USER} ; \
 COPY --chown=${USER}:${USER} requirements/pip.txt /requirements/pip.txt
 COPY --chown=${USER}:${USER} requirements/basics.txt /requirements/basics.txt
 
-RUN python3 -m ensurepip --upgrade --default-pip \
-    && python3 -m pip install -r /requirements/pip.txt \
-    && python3 -m pip --version \
-    && python3 -m pip install -r /requirements/basics.txt \
-    && python3 -m pip list
+RUN dnf install -y ${PYTHON}
 
-RUN yum -y install epel-release \
-    && yum -y install jq
+RUN ${PYTHON} -m ensurepip --upgrade --default-pip \
+    && ${PYTHON} -m pip install -r /requirements/pip.txt \
+    && ${PYTHON} -m pip --version \
+    && ${PYTHON} -m pip install -r /requirements/basics.txt \
+    && ${PYTHON} -m pip list
+
+RUN dnf -y install epel-release \
+    && dnf -y install jq
 
 USER ${USER}
 

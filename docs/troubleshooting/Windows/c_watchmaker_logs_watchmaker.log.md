@@ -54,7 +54,7 @@ The value of the ``--log-dir`` parameter sets the directory-location where ``wat
 
 ## Alternate Logs
 
-As noted above, this logfile may not exist if execution of watchmaker has wholly failed. If the execution was attempted via automated-startup methods but there is no watchmaker logfile, it will be necessary to check the CSP provider-logs. On AWS, the logs to check (per the [vendor documentation](https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2-windows-user-data.html#user-data-execution)) will be:
+As noted above, this logfile may not exist if execution of watchmaker has wholly failed. If the execution was attempted via automated-startup methods but there is no watchmaker logfile, it will be necessary to check the CSP provider-logs. On AWS, the logs to check (per the [vendor documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#ec2-windows-user-data)) will be:
 
 * If using (legacy) EC2Launch, the log-file to search will be [``C:\ProgramData\Amazon\EC2-Windows\Launch\Log\UserdataExecution.log``](c_amazon_EC2Launch_Log_UserdataExecution.log.md)
 * If using EC2Launch v2, the log-file to search will be [``C:\ProgramData\Amazon\EC2Launch\log\agent.log``](c_amazon_EC2Launch_v2_Log_UserdataExecution.log.md)
