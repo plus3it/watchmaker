@@ -19,6 +19,7 @@ python:
   - 3.8
   - 3.9
   - 3.10
+  - 3.11
 if: branch = main OR type = pull_request OR tag is present
 before_install:
   # don't overwrite env if it's already set (otherwise check, docs won't work properly)
@@ -71,19 +72,19 @@ jobs:
   include:
     - stage: test
       name: lint
-      python: 3.10
+      python: 3.11
       env:
         - TOXENV=check
 
     - stage: test
       name: docs
-      python: 3.10
+      python: 3.11
       env:
         - TOXENV=docs
 
     - stage: test
       name: build standalone
-      python: 3.10
+      python: 3.11
       install:
         - docker --version
         - chmod +x ci/prep_docker.sh
@@ -141,7 +142,7 @@ jobs:
     - stage: deploy
       name: deploy to pypi
       if: type != pull_request AND (branch = main OR tag is present)
-      python: 3.10
+      python: 3.11
       install: skip
       script: skip
       before_deploy: echo Deploying "$(grep 'version = ' setup.cfg)"
