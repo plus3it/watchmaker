@@ -14,7 +14,6 @@ env:
     - RELEASE_VERSION=$(grep -E '^current_version' $TRAVIS_BUILD_DIR/.bumpversion.cfg | sed 's/^.*= //')
     - PRIOR_VERSION=$(git describe --abbrev=0 --tags)
 python:
-  - 2.7
   - 3.6
   - 3.7
   - 3.8
