@@ -128,7 +128,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
 
 # The OS must be a vendor-supported release
 
-**Condtionally-valid Finding:**
+**Conditionally-valid Finding:**
 
 Not Valid Findings:
 
@@ -156,7 +156,7 @@ By default, `watchmaker` will attempt to set a UEFI bootloader password. If the 
 
 # Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
 
-**Condtionally-valid Finding:**
+**Conditionally-valid Finding:**
 
 On systems that leverage the [`cloud-init` service](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/configuring_and_managing_cloud-init_for_rhel_9/index) to configure a default- or provisioning-user account. In turn, that account is typically configured to _only_ allow key-based logins to those accounts. As a result, those accounts do not have passwords set (their `/etc/shadow` file's password-hash field-entries are set to `!!`). The `cloud-init` service enables `sudoer` capabilities through entries it creates in the `/etc/sudoers.d/90-cloud-init-users` file.
 
@@ -196,7 +196,7 @@ The configuration-automation within `watchmaker` will configure the `tmux` servi
 Automatic remediation of this control is not available due to the unique requirements of each system
 ```
 
-As a result, most scanners will emit this in their findings-reports as an indication to the accreditor that a manual check of the system's local users conform to site-local policies
+As a result, most scanners will emit this in their findings-reports as an indication to the assessor that a manual check of the system's local users conform to site-local policies
 
 # Set the UEFI Boot Loader Admin Username to a Non-Default Value
 
@@ -221,7 +221,7 @@ By default, `watchmaker` will attempt to set a custom superuser name for the UEF
 * Many sites use tools _other than_ `rsyslog` to handle log-offloading (Splunk, FluentBit, CSP-specific log-agents have all been used by various organizations that use watchmaker to harden their systems
 * Even sites that _do_ use `rsyslog` to handle log-offloading, the scanners frequently look only for the log-destination `logcollector` - or similarly-generic destination-name - rather than the hostname, FQDN or IP address of the log-collection server
 
-It will be up to the system accreditor to know the site-specific implementation-requirements and validate accordingly
+It will be up to the system assessor to know the site-specific implementation-requirements and validate accordingly
 
 # The operating system must use a separate file system for /tmp
 
@@ -255,7 +255,7 @@ In many environments, particularly CSP hosting-environments, "individual" DNS se
 
 # Configure System to Forward All Mail For The Root Account
 
-**Condtionally-valid Finding:**
+**Conditionally-valid Finding:**
 
 Forwarding-rules for a system's `root` user account is a wholly enterprise-specific &ndash; or even specific to service-group or individual-system level &ndash; determination. While watchmaker _can_ be used to close this finding (via the `.../el9/RuleById/medium/content_rule_postfix_client_configure_mail_alias` control/handler), it relies on the `ash-linux:lookup:root-mail-dest` Pillar-parameter having a value set. If this value is _not_ set, then watchmaker will not close this finding.
 
@@ -270,7 +270,7 @@ Forwarding-rules for a system's `root` user account is a wholly enterprise-speci
 
 # Ensure Chrony is only configured with the server directive
 
-**Condtionally-valid Finding:**
+**Conditionally-valid Finding:**
 
 Setup of the `chrony` time-synchronization system can be very site-specific. In fact, some sites may choose not to set it up, at all, due to having other methods for ensuring that their hosts' time is kept properly-synchronized with an authoritative source. By default, `watchmaker` will make no changes to the configuration of the `chrony` time-synchronization service unless one sets the `ash-linux:lookup:use-ntp` Pillar parameter to `True`. If set to `True`, `watchmaker` will attempt to close this finding:
 
@@ -295,17 +295,17 @@ and `firewall-cmd --list-ports`:
 22/tcp
 ```
 
-Watchmaker's implementation will show up only in the output of the former. Some scanners may only expect the execption to show up in the latter.
+Watchmaker's implementation will show up only in the output of the former. Some scanners may only expect the exception to show up in the latter.
 
 # Enable Certmap in SSSD
 
 **Expected Finding:**
 
-Because configuration of the `sssd` service to perform SmartCard-based authentication is an inherently-local configuration-task (and because no, suitable testing environment has been provided to this project-team to prototype against), `watchmaker` makes no attempt to configure `sssd` service to perform SmartCard-based authentication.
+Because configuration of the `sssd` service to perform SmartCard-based authentication is an inherently-local configuration-task (and because no suitable testing environment has been provided to this project-team to prototype against), `watchmaker` makes no attempt to configure `sssd` service to perform SmartCard-based authentication.
 
 # OS library files must have mode 755 or less permissive
 
-**Condtionally-valid Finding:**
+**Conditionally-valid Finding:**
 
 Scanners should typically only search in the directories `/lib`, `/lib64`, `/usr/lib` and `/usr/lib64` for this finding. Overly-broad scans of those directories _may_ turn up the files:
 
