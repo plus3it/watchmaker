@@ -19,6 +19,10 @@ jobs:
   parameters:
     tox_version: ''
     jobs:
+      py311_64:
+        image: [win19]
+        architecture: x64
+        py: "3.11"
       py310_64:
         # keep an example of the syntax for building on multiple platforms
         # image: [win16, win19]
@@ -51,7 +55,7 @@ jobs:
   pool:
     vmImage: 'windows-2019'
   variables:
-    py: "3.10"
+    py: "3.11"
     architecture: "x64"
     venv: $(System.DefaultWorkingDirectory)\venv
     artifactDirFull: $(System.DefaultWorkingDirectory)\$(artifactDir)
@@ -109,7 +113,7 @@ jobs:
   - name: artifactDirFull
     value: $(System.DefaultWorkingDirectory)\$(artifactDir)
   - name: py
-    value: "3.10"
+    value: "3.11"
   - name: architecture
     value: "x64"
   strategy:
