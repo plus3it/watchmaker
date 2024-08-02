@@ -67,7 +67,7 @@ def test_config_w_name_pattern(_mock_provider):
     assert re.match(pattern + r"\Z", invalid_computer_name) is None
 
     # Test with terminal patterns and supported \Z terminal pattern combined
-    dbl_terminal_pattern = "^" + pattern + r"$\Z"
+    dbl_terminal_pattern = r"(?i)^xyz[\d]{3}[a-z]{8}[ex]" + r"$\Z"
     assert re.match(dbl_terminal_pattern, valid_computer_name) is not None
     assert re.match(dbl_terminal_pattern, invalid_computer_name) is None
 
