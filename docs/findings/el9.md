@@ -158,9 +158,11 @@ By default, `watchmaker` will attempt to set a UEFI bootloader password. If the 
 
 **Conditionally-valid Finding:**
 
-On systems that leverage the [`cloud-init` service](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/configuring_and_managing_cloud-init_for_rhel_9/index) to configure a default- or provisioning-user account. In turn, that account is typically configured to _only_ allow key-based logins to those accounts. As a result, those accounts do not have passwords set (their `/etc/shadow` file's password-hash field-entries are set to `!!`). The `cloud-init` service enables `sudoer` capabilities through entries it creates in the `/etc/sudoers.d/90-cloud-init-users` file.
+Accounts configured for token- or key-based logins typically do not have passwors set. This is common on systems that leverage the [`cloud-init` service](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/configuring_and_managing_cloud-init_for_rhel_9/index) to configure a default- or provisioning-user account. Similary, PIV-enabled accounts will typically not have passwords.
 
-The watchmaker automation normally comments out any `sudoers` entries that may be defined. However, to preserve expected functionality for the `cloud-init`-created default-/provisioning-user, removal of the `NOPASSWD` directive is _not_ performed against the `/etc/sudoers.d/90-cloud-init-users` file. Therefore, this finding is expected on systems that leverage the `cloud-init` service to configure a default- or provisioning-user account (primarily AWS-hosted EC2s). Systems that do not leverage the `cloud-init` service to configure a default- or provisioning-user account should have no findings of this type listed.
+On AWS-hosted systems, the default-/provisioning user is configured with no password set, instead relying on SSH key-based logins for authentication. For such user-accounts, in order to provide the ability to use `sudo`, the `NOPASSWD` option must be set.
+
+The watchmaker automation normally comments out any `sudoers` entries that may be defined. However, to preserve expected functionality for the `cloud-init`-created default-/provisioning-user, removal of the `NOPASSWD` directive is _not_ performed against the `/etc/sudoers.d/90-cloud-init-users` file. Therefore, this finding is expected on systems that leverage the `cloud-init` service to configure a default- or provisioning-user account. Systems that do not leverage the `cloud-init` service to configure a default- or provisioning-user account should have no findings of this type listed.
 
 # Support session locking with tmux
 
