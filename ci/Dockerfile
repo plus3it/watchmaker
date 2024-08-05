@@ -1,4 +1,4 @@
-FROM docker.io/almalinux:8@sha256:e87da8566de5f0a10e0e6acdb7ca43da4ef97a114130691d7dd737d6923c863d
+FROM docker.io/almalinux:8@sha256:2f6245ff2d8d8184d179d46f649149b9077fb02d2b338059251729df63109a1a
 
 ARG USER=wam-builder
 ARG USER_UID
