@@ -29,6 +29,4 @@ RUN dnf -y install epel-release \
 
 USER ${USER}
 
-ENV LC_ALL=en_US.UTF-8
-ENV LANG=en_US.UTF-8
 ENV HOME="/home/${USER}"
