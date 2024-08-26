@@ -33,5 +33,5 @@ updates:
         patterns:
           - "*"
     ignore:
-      - dependency-name: "almalinux"
+      - dependency-name: "docker/library/almalinux"
         update-types: ["version-update:semver-major"]
