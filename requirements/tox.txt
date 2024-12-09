@@ -2,4 +2,4 @@
 
 tox==3.28.0;python_version<="3.6"
 tox==4.8.0;python_version<="3.7" and python_version>"3.6"
-tox==4.16.0;python_version>="3.8"
+tox==4.23.2;python_version>="3.8"
