@@ -9,7 +9,7 @@
 
 # Modifying Formulae Execution-Parameters
 
-The `watchmaker` utility bundles several SaltStack formulae. These bundled-formulae's behaviors are, in turn, governed, by a set of [Pillar](https://docs.saltproject.io/en/getstarted/config/pillar.html)-data that are also bundled with the `watchmaker`utility: pillar-data is how SaltStack states' behaviors may be modified. Sites that wish to either override the bundled-formulae's default behaviors or wish to run additional SaltStack formulae that are _not_ in the default formula-bundle &ndash; and need to provide supporting behvior-tailoring &ndash; can do so by creating custom pillar-data.
+The `watchmaker` utility bundles several SaltStack formulae. These bundled-formulae's behaviors are, in turn, governed, by a set of [Pillar](https://docs.saltproject.io/salt/user-guide/en/latest/topics/pillar.html)-data that are also bundled with the `watchmaker`utility: pillar-data is how SaltStack states' behaviors may be modified. Sites that wish to either override the bundled-formulae's default behaviors or wish to run additional SaltStack formulae that are _not_ in the default formula-bundle &ndash; and need to provide supporting behvior-tailoring &ndash; can do so by creating custom pillar-data.
 
 ## Reference
 
