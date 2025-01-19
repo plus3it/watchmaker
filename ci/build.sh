@@ -3,7 +3,7 @@ set -eu -o pipefail
 
 export VIRTUAL_ENV_DIR=.pyinstaller/venv
 
-PYTHON=python3.11
+PYTHON=python3.12
 
 VERSION=$(grep "version =" setup.cfg | sed 's/^.*= //')
 
