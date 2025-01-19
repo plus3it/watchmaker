@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.29.0](https://github.com/plus3it/watchmaker/releases/tag/0.29.0)
+
+**Released**: 2025.01.21
+
+**Summary**:
+
+*   Adds support for Red Hat 9, CentOS Stream 9, Rocky Linux 9, Alma Linux 9, and
+    Oracle Linux 9
+*   Adds support for Windows Server 2022
+*   Removes support for Red Hat 7 and CentOS 7
+*   Removes suport for Windows Server 2016
+*   ash-linux-formula
+    -   Updated to support EL9 platforms
+*   ash-windows-formula
+    -   Updated to support Windows Server 2022 and Windows 11
+*   forescout-secure-connector-formula
+    -   Manages unit file for systemd service
+*   domain-join-formula
+    -   (Linux) Ensures FIPS crypto policies include AD suport on EL9
+*   scap-formula
+    -   Adds content for Windows 11 and Windows 2022
+    -   Adds mappings for EL9 platforms
+    -   Updates openscap content to 0.1.75
+
 ## [0.28.5](https://github.com/plus3it/watchmaker/releases/tag/0.28.5)
 
 **Released**: 2024.06.06
@@ -7,14 +31,14 @@
 **Summary**:
 
 *   Provides several new FAQs to address recent changes and SCAP findings
-*   Provides update on discontinuation of CentOS Stream 8 and possible work-around 
+*   Provides update on discontinuation of CentOS Stream 8 and possible work-around
 *   ash-linux-formula
-    -  Addresses findings related to UEFI-enabled systems
-    -  Removes remote log entry injected by scap content
+    -   Addresses findings related to UEFI-enabled systems
+    -   Removes remote log entry injected by scap content
 *   name-computer-formula
-    -  Provides options to skip either the forward or reverse nsupdate
+    -   Provides options to skip either the forward or reverse nsupdate
 *   scap-formula
-    -  Updates openscap content to 0.1.72
+    -   Updates openscap content to 0.1.72
 
 ## [0.28.4](https://github.com/plus3it/watchmaker/releases/tag/0.28.4)
 
