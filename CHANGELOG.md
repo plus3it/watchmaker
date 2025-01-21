@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.29.2](https://github.com/plus3it/watchmaker/releases/tag/0.29.2)
+
+**Released**: 2025.01.21
+
+**Summary**:
+
+*   Removes vendored get-pip submodule, which has not been used since the switch
+    to the salt pip.install module in https://github.com/plus3it/watchmaker/pull/2716.
+    This saves almost 60MB in package size.
+
 ## [0.29.1](https://github.com/plus3it/watchmaker/releases/tag/0.29.1)
 
 **Released**: 2025.01.21
