@@ -4,7 +4,7 @@ ARG USER=wam-builder
 ARG USER_UID
 ARG USER_GID
 
-ENV PYTHON=python3.11
+ENV PYTHON=python3.12
 
 USER root
 

@@ -52,12 +52,11 @@ CentOS-Stream.md
 
 *   Enterprise Linux 9 (RHEL/Oracle Linux/CentOS Stream/Alma Linux/Rocky Linux)
 *   Enterprise Linux 8 (RHEL/Oracle Linux/[CentOS Stream](CentOS-Stream.md))
-*   Enterprise Linux 7 (RHEL/CentOS)
+*   Windows Server 2022
 *   Windows Server 2019
 *   Windows Server 2016
-*   Windows Server 2012 R2
+*   Windows 11
 *   Windows 10
-*   Windows 8.1
 
 ## Supported Python Versions
 

@@ -22,6 +22,9 @@ jobs:
               ${{ if eq(image, 'win19') }}:
                 image: 'windows-2019'
                 image_name: 'win19'
+              ${{ if eq(image, 'win22') }}:
+                image: 'windows-2022'
+                image_name: 'win22'
 
     displayName: ${{ format('test python {0} ({1})', job.value.py, job.value.architecture) }}
 

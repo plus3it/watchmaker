@@ -19,43 +19,47 @@ jobs:
   parameters:
     tox_version: ''
     jobs:
+      py312_64:
+        image: [win19,win22]
+        architecture: x64
+        py: "3.12"
       py311_64:
-        image: [win19]
+        image: [win19,win22]
         architecture: x64
         py: "3.11"
       py310_64:
         # keep an example of the syntax for building on multiple platforms
         # image: [win16, win19]
-        image: [win19]
+        image: [win19,win22]
         architecture: x64
         py: "3.10"
       py39_64:
-        image: [win19]
+        image: [win19,win22]
         architecture: x64
         py: "3.9"
       py38_64:
-        image: [win19]
+        image: [win19,win22]
         architecture: x64
         py: "3.8"
       py37_64:
-        image: [win19]
+        image: [win19,win22]
         architecture: x64
         py: "3.7"
       py37_32:
-        image: [win19]
+        image: [win19,win22]
         architecture: x86
         py: "3.7"
       py36_64:
-        image: [win19]
+        image: [win19,win22]
         architecture: x64
         py: "3.6"
 
 - job: build
   displayName: build standalone
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   variables:
-    py: "3.11"
+    py: "3.12"
     architecture: "x64"
     venv: $(System.DefaultWorkingDirectory)\venv
     artifactDirFull: $(System.DefaultWorkingDirectory)\$(artifactDir)
@@ -106,14 +110,14 @@ jobs:
   dependsOn: build
   condition: succeeded()
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-2022'
   environment: 'standalone'
   variables: # alternate syntax needed when using a group
   - group: wam-windows-ci
   - name: artifactDirFull
     value: $(System.DefaultWorkingDirectory)\$(artifactDir)
   - name: py
-    value: "3.11"
+    value: "3.12"
   - name: architecture
     value: "x64"
   strategy:
