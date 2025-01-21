@@ -109,7 +109,7 @@ jobs:
         - provider: script
           # deploy to github releases
           script: satsuki
-          skip_cleanup: true
+          cleanup: false
           on:
             branch: main
             condition: '"$PRIOR_VERSION" != "$RELEASE_VERSION"'
@@ -117,26 +117,26 @@ jobs:
           bucket: $DEV_BUCKET
           upload_dir: $S3_KEYFIX
           local_dir: $STAGING_DIR
-          skip_cleanup: true
+          cleanup: false
           on:
             branch: main
         - provider: s3
           bucket: $RELEASE_BUCKET
           upload_dir: $S3_KEYFIX
           local_dir: $STAGING_DIR
-          skip_cleanup: true
+          cleanup: false
           on:
             tags: true
         - provider: script
           # publish dev scap reports
           script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$DEV_BUCKET/$S3_KEYFIX/$APP_VERSION/scans
-          skip_cleanup: true
+          cleanup: false
           on:
             branch: main
         - provider: script
           # publish release scap reports
           script: bash ci/codebuild_start_wait.sh $CODEBUILD_PROJECT s3://$RELEASE_BUCKET/$S3_KEYFIX/$APP_VERSION/scans
-          skip_cleanup: true
+          cleanup: false
           on:
             tags: true
 
@@ -154,15 +154,15 @@ jobs:
         distributions: sdist bdist_wheel
         username: __token__  # https://test.pypi.org/help/#apitoken
         password: $PYPI_TEST_PASSWORD
-        skip_cleanup: true
-        skip_upload_docs: true
+        cleanup: false
+        upload_docs: false
         on:
           branch: main
       - provider: pypi
         distributions: sdist bdist_wheel
         username: __token__  # https://pypi.org/help/#apitoken
         password: $PYPI_PASSWORD
-        skip_cleanup: true
-        skip_upload_docs: true
+        cleanup: false
+        upload_docs: false
         on:
           tags: true
