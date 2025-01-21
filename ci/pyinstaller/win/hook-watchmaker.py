@@ -17,10 +17,6 @@ from PyInstaller.utils.hooks import (
 
 datas = [
     ("src/watchmaker/static", "watchmaker/static"),
-    (
-        "src/watchmaker/_vendor/pypa/get-pip/public/2.7",
-        "watchmaker/_vendor/pypa/get-pip/public/2.7",
-    ),
 ]
 binaries = []
 hiddenimports = [

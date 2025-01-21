@@ -18,4 +18,4 @@ include README.md
 
 include tox.ini *.yml *.yaml
 
-global-exclude *.py[cod] __pycache__ *.so *.dylib .git
+global-exclude *.pyz *.py[cod] __pycache__ *.so *.dylib .git
