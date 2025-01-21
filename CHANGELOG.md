@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.29.1](https://github.com/plus3it/watchmaker/releases/tag/0.29.1)
+
+**Released**: 2025.01.21
+
+**Summary**:
+
+*   Fixes deployment tooling with travis-ci since argument inputs have changed
+*   No functional changes, just bumping the patch version to trigger a deployment
+
 ## [0.29.0](https://github.com/plus3it/watchmaker/releases/tag/0.29.0)
 
 **Released**: 2025.01.21
