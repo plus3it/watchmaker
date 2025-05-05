@@ -53,4 +53,4 @@ FormulaUpdates.md
 NewFormulas.md
 ```
 
-If there are other customization-scenarios that should be included in this document-set, please see the [contribution guidance](../contributing.md). The contribution document covers how to submit requests for documentation-improvements as well as guidance on how to contribute changes (like further customization documentation).
+If there are other customization-scenarios that should be included in this document-set, please see the [contribution guidance](../contributing). The contribution document covers how to submit requests for documentation-improvements as well as guidance on how to contribute changes (like further customization documentation).
