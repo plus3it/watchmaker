@@ -24,12 +24,6 @@ all:
 linux:
   - yum:
       repo_map:
-        #SaltEL7:
-        - dist:
-            - redhat
-            - centos
-          el_version: 7
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3006.4/salt-reposync-el7-onedir.repo
         #SaltEL8:
         - dist:
             - almalinux
@@ -38,7 +32,7 @@ linux:
             - redhat
             - rocky
           el_version: 8
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3006.4/salt-reposync-el8-onedir.repo
+          url: https://watchmaker.dev.cloudarmor.io/yum.defs/saltstack/salt/3006.4/salt-reposync-onedir.repo
         #SaltEL9:
         - dist:
             - almalinux
@@ -47,7 +41,7 @@ linux:
             - redhat
             - rocky
           el_version: 9
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3006.4/salt-reposync-el9-onedir.repo
+          url: https://watchmaker.dev.cloudarmor.io/yum.defs/saltstack/salt/3006.4/salt-reposync-onedir.repo
   - salt:
       pip_install:
         - dnspython
@@ -60,7 +54,7 @@ linux:
 windows:
   - salt:
       salt_debug_log: null
-      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3006.4-Py3-AMD64-Setup.exe
+      installer_url: https://watchmaker.dev.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3006.4-Py3-AMD64-Setup.exe
 
 status:
   providers:
