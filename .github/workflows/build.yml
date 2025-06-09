@@ -46,12 +46,11 @@ jobs:
           retention-days: 1
 
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     needs: checkout
     strategy:
       matrix:
         python-version: ["3.12"]
-        os: ["ubuntu-latest"]
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -82,11 +81,10 @@ jobs:
 
   standalone:
     runs-on: ${{ matrix.os }}
-    needs: checkout
     strategy:
       matrix:
-        python-version: ["3.12"]
-        os: ["ubuntu-latest"]
+        os: ["ubuntu-latest", "windows-2019"]
+    needs: checkout
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -95,13 +93,18 @@ jobs:
           path: .
 
       - run: chmod +x ci/prep_docker.sh
+        if: runner.os == 'Linux'
       - run: ci/prep_docker.sh
-      - run: ls -al .pyinstaller/dist
+        if: runner.os == 'Linux'
+
+      - run: ci/build.ps1
+        if: runner.os == 'Windows'
+        shell: pwsh
 
       - name: Upload standalone binary
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: standalone-dists
+          name: standalone-dists-${{ runner.os }}
           path: |
             .pyinstaller/dist/**/*
             !.pyinstaller/dist/latest
@@ -123,7 +126,7 @@ jobs:
           path: .
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -146,12 +149,11 @@ jobs:
         run: pytest -vv tests
 
   lint:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     needs: build
     strategy:
       matrix:
         python-version: ["3.12"]
-        os: ["ubuntu-latest"]
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -160,7 +162,7 @@ jobs:
           path: .
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -185,12 +187,11 @@ jobs:
       - run: pylint src/watchmaker
 
   docs:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     needs: build
     strategy:
       matrix:
         python-version: ["3.12"]
-        os: ["ubuntu-latest"]
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -199,7 +200,7 @@ jobs:
           path: .
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
