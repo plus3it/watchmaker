@@ -1,0 +1,97 @@
+name: Release version and publish package
+
+on:
+  workflow_run:
+    workflows: ["Build and test"]
+    types: [completed]
+
+concurrency:
+  group: release-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Retrieve artifacts after build and test run
+  check-artifacts:
+    name: Check artifacts from build run
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read  # Required to download artifacts from other workflow runs
+    steps:
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: dists
+          path: dist/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Retrieve standalone binaries
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: standalone-*
+          path: .pyinstaller/dist
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: dists
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Upload standalone binaries
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: standalone-binaries
+          path: .pyinstaller/dist
+          if-no-files-found: error
+          retention-days: 1
+
+  # Create release
+  release-publish:
+    if: |
+      github.event.workflow_run.event != 'pull_request' &&
+      github.event.workflow_run.head_branch == github.event.repository.default_branch
+    name: Create release and publish package
+    runs-on: ubuntu-latest
+    needs:
+      - check-artifacts
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+      # Without this step, the release job will not realize this is a git repo,
+      # and will not honor the `clean: false` option
+      - name: Clone this git repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: dists
+          path: dist/
+
+      - name: Retrieve standalone binaries
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: standalone-binaries
+          path: .pyinstaller/dist
+
+      - name: Create GitHub release
+        id: release
+        uses: plus3it/actions-workflows/.github/actions/release@1c7909107a55325d40d2f12f29029c73a38c45c3
+        with:
+          release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
+          release-files: |
+            dist/*
+            .pyinstaller/dist/**/*
+
+      - run: ls -al dist/
+      - run: ls -alR .pyinstaller/dist/
+
+      - name: Publish package distributions to PyPI
+        if: steps.release.outputs.release-condition == 'true'
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
