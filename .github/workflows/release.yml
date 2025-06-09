@@ -61,12 +61,18 @@ jobs:
     needs:
       - check-artifacts
     permissions:
+      actions: read  # Required to download artifacts from other workflow runs
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    env:
+      AWS_DEFAULT_REGION: us-east-1
     steps:
-      # Without this step, the release job will not realize this is a git repo,
-      # and will not honor the `clean: false` option
-      - name: Clone this git repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: source
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Retrieve release distributions
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -95,3 +101,25 @@ jobs:
       - name: Publish package distributions to PyPI
         if: steps.release.outputs.release-condition == 'true'
         uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+
+      - name: Install aws-cli
+        uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
+        with:
+          role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
+          aws-region: "${{ env.AWS_DEFAULT_REGION }}"
+
+      - name: Validate credential
+        run: aws sts get-caller-identity
+
+      - name: Publish standalone binaries to S3
+        env:
+          BUCKET: "${{ steps.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
+        run: aws s3 cp --recursive .pyinstaller/dist/ s3://${{ env.BUCKET }}/${{ vars.S3_PREFIX }}/
+
+      - name: Generate scan reports
+        env:
+          BUCKET: "${{ steps.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
+        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET }}/${{ vars.S3_PREFIX}}/$APP_VERSION/scans
