@@ -20,17 +20,44 @@ permissions:
   contents: read
 
 jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          submodules: recursive
+
+      - name: Set dev version
+        if: github.event_name == 'pull_request'
+        run: |
+          ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
+          sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
+          grep "version = " setup.cfg
+
+      - name: Upload source
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: source
+          path: ./**
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 1
+
   build:
     runs-on: ${{ matrix.os }}
+    needs: checkout
     strategy:
       matrix:
         python-version: ["3.12"]
         os: ["ubuntu-latest"]
     steps:
-      - name: Clone this git repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          submodules: recursive
+          name: source
+          path: .
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
@@ -41,13 +68,6 @@ jobs:
 
       - run: pip install -r requirements/pip.txt
       - run: pip install -r requirements/basics.txt
-
-      - name: Set dev version
-        if: github.event_name == 'pull_request'
-        run: |
-          ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
-          sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
-          grep "version = " setup.cfg
 
       - name: Build package
         run: python -m build
@@ -62,39 +82,28 @@ jobs:
 
   standalone:
     runs-on: ${{ matrix.os }}
+    needs: checkout
     strategy:
       matrix:
         python-version: ["3.12"]
         os: ["ubuntu-latest"]
     steps:
-      - name: Clone this git repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          submodules: recursive
+          name: source
+          path: .
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-          cache-dependency-path: requirements/*.txt
-
-      - name: Set dev version
-        if: github.event_name == 'pull_request'
-        run: |
-          ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
-          sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
-          grep "version = " setup.cfg
-
+      - run: chmod +x ci/prep_docker.sh
       - run: ci/prep_docker.sh
       - run: ls -al .pyinstaller/dist
 
-      - name: Upload distributions
+      - name: Upload standalone binary
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: standalone-dists
           path: |
-            .pyinstaller/dist/
+            .pyinstaller/dist/**/*
             !.pyinstaller/dist/latest
           if-no-files-found: error
           retention-days: 1
@@ -107,10 +116,11 @@ jobs:
         python-version: ["3.12"]
         os: ["ubuntu-latest"]
     steps:
-      - name: Clone this git repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          submodules: recursive
+          name: source
+          path: .
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -143,10 +153,11 @@ jobs:
         python-version: ["3.12"]
         os: ["ubuntu-latest"]
     steps:
-      - name: Clone this git repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          submodules: recursive
+          name: source
+          path: .
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
@@ -181,10 +192,11 @@ jobs:
         python-version: ["3.12"]
         os: ["ubuntu-latest"]
     steps:
-      - name: Clone this git repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          submodules: recursive
+          name: source
+          path: .
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
