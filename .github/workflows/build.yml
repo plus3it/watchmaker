@@ -116,8 +116,15 @@ jobs:
     needs: build
     strategy:
       matrix:
-        python-version: ["3.12"]
-        os: ["ubuntu-latest"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        os: ["ubuntu-latest", "windows-2019", "windows-2022"]
+        include:
+          - python-version: "3.6"
+            os: "windows-2019"
+          - python-version: "3.7"
+            os: "ubuntu-22.04"
+          - python-version: "3.7"
+            os: "windows-2019"
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
