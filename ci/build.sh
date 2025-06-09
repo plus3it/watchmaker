@@ -55,12 +55,13 @@ pyinstaller --noconfirm --clean --onefile \
 # echo "Listing files in standalone..."
 # pyi-archive_viewer --log --brief --recursive "${DIST_DIR}/${WAM_FILENAME}"
 
+echo "Creating sha256 hash of standalone binary..."
+(cd "$PYI_DIST_DIR"; sha256sum "$WAM_FILENAME" > "${WAM_FILENAME}.sha256")
+
 mkdir -p "$PYI_DIST_LATEST"
 cp "${PYI_DIST_DIR}/${WAM_FILENAME}" "${PYI_DIST_LATEST}/${WAM_LATEST}"
+cp "${PYI_DIST_DIR}/${WAM_FILENAME}.sha256" "${PYI_DIST_LATEST}/${WAM_LATEST}.sha256"
 
-echo "Creating sha256 hashes of standalone binary..."
-(cd "$PYI_DIST_DIR"; sha256sum "$WAM_FILENAME" > "${WAM_FILENAME}.sha256")
-(cd "$PYI_DIST_LATEST"; sha256sum "$WAM_LATEST" > "${WAM_LATEST}.sha256")
 cat "${PYI_DIST_DIR}/${WAM_FILENAME}.sha256"
 
 echo "Creating satsuki file..."
