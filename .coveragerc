@@ -1,7 +1,7 @@
 [paths]
 source =
-   src/watchmaker
-   */site-packages/watchmaker
+    src/watchmaker
+    */site-packages/watchmaker
 
 [run]
 branch = True

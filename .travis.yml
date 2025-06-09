@@ -33,7 +33,7 @@ install:
   - pip install -r requirements/pip.txt
   - pip install -r requirements/tox.txt
   # Install codecov uploader
-  - curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step
+  - curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import  # One-time step
   - curl -Os https://uploader.codecov.io/latest/linux/codecov
   - curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM
   - curl -Os https://uploader.codecov.io/latest/linux/codecov.SHA256SUM.sig
@@ -149,20 +149,20 @@ jobs:
       before_deploy: echo Deploying "$(grep 'version = ' setup.cfg)"
       after_deploy: echo Deployed "$(grep 'version = ' setup.cfg)"
       deploy:
-      - provider: pypi
-        server: https://test.pypi.org/legacy/
-        distributions: sdist bdist_wheel
-        username: __token__  # https://test.pypi.org/help/#apitoken
-        password: $PYPI_TEST_PASSWORD
-        cleanup: false
-        upload_docs: false
-        on:
-          branch: main
-      - provider: pypi
-        distributions: sdist bdist_wheel
-        username: __token__  # https://pypi.org/help/#apitoken
-        password: $PYPI_PASSWORD
-        cleanup: false
-        upload_docs: false
-        on:
-          tags: true
+        - provider: pypi
+          server: https://test.pypi.org/legacy/
+          distributions: sdist bdist_wheel
+          username: __token__  # https://test.pypi.org/help/#apitoken
+          password: $PYPI_TEST_PASSWORD
+          cleanup: false
+          upload_docs: false
+          on:
+            branch: main
+        - provider: pypi
+          distributions: sdist bdist_wheel
+          username: __token__  # https://pypi.org/help/#apitoken
+          password: $PYPI_PASSWORD
+          cleanup: false
+          upload_docs: false
+          on:
+            tags: true

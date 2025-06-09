@@ -28,8 +28,8 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
-sys.path.insert(0, os.path.abspath('../src/'))
-rtd = os.environ.get('READTHEDOCS', None) == 'True'
+sys.path.insert(0, os.path.abspath("../src/"))
+rtd = os.environ.get("READTHEDOCS", None) == "True"
 
 # -- General configuration ------------------------------------------------
 
@@ -42,30 +42,30 @@ rtd = os.environ.get('READTHEDOCS', None) == 'True'
 # ones.
 # extensions = []
 extensions = [
-    'myst_parser',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.autosectionlabel',
-    'sphinx.ext.coverage',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.viewcode',
+    "myst_parser",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosectionlabel",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
 ]
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
+    "python": ("https://docs.python.org/3", None),
 }
 
-autoclass_content = 'class'
-autodoc_member_order = 'bysource'
-autodoc_default_options = {'members': True, 'show-inheritance': True}
+autoclass_content = "class"
+autodoc_member_order = "bysource"
+autodoc_default_options = {"members": True, "show-inheritance": True}
 
 myst_heading_anchors = 4
 
 napoleon_use_param = False
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffixes as a map of suffix => parser:
@@ -80,19 +80,19 @@ templates_path = ['_templates']
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'Watchmaker'
-copyright = u'2016, Plus3 IT Systems'  # noqa: A001
-author = u'Plus3 IT Systems'
+project = "Watchmaker"
+copyright = "2016, Plus3 IT Systems"  # noqa: A001
+author = "Plus3 IT Systems"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 # The short X.Y version.
-version = '0.29.2'
+version = "0.29.2"
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -116,7 +116,7 @@ release = version
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -138,7 +138,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -162,7 +162,7 @@ todo_include_todos = False
 # html_them_path
 
 if not rtd:
-    html_theme = 'sphinx_rtd_theme'
+    html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -193,7 +193,7 @@ if not rtd:
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -273,7 +273,7 @@ html_static_path = ['_static']
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Watchmaker'
+htmlhelp_basename = "Watchmaker"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -281,15 +281,12 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     #
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     #
     # 'preamble': '',
-
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
@@ -299,8 +296,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Watchmaker.tex', u'Watchmaker Documentation',
-     u'Plus3 IT Systems', 'manual'),
+    (
+        master_doc,
+        "Watchmaker.tex",
+        "Watchmaker Documentation",
+        "Plus3 IT Systems",
+        "manual",
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -334,10 +336,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'watchmaker', u'Watchmaker Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "watchmaker", "Watchmaker Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 #
@@ -350,9 +349,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Watchmaker', u'Watchmaker Documentation',
-     author, 'Watchmaker', 'Applied Configuration Management.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "Watchmaker",
+        "Watchmaker Documentation",
+        author,
+        "Watchmaker",
+        "Applied Configuration Management.",
+        "Miscellaneous",
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
@@ -376,13 +381,13 @@ texinfo_documents = [
 autosectionlabel_prefix_document = True
 
 linkcheck_ignore = [
-    r'https://github\.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.\d+){3}',
-    r'https://github\.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.x){3}',
-    r'https://github\.com/plus3it/watchmaker/releases/tag/.*',
-    r'https://watchmaker\.cloudarmor\.io/releases/.*$',
-    r'https://watchmaker\.cloudarmor\.io/.*#.*',
-    r'https://github.com/.*\.md#.*',
-    r'https://docs\.saltstack\.com/en/latest/ref/modules/all/[a-z\.]*#[a-z\.]*',  # noqa: E501, pylint: disable=line-too-long
+    r"https://github\.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.\d+){3}",
+    r"https://github\.com/plus3it/watchmaker/compare/(\d+\.){3}\.(\.x){3}",
+    r"https://github\.com/plus3it/watchmaker/releases/tag/.*",
+    r"https://watchmaker\.cloudarmor\.io/releases/.*$",
+    r"https://watchmaker\.cloudarmor\.io/.*#.*",
+    r"https://github.com/.*\.md#.*",
+    r"https://docs\.saltstack\.com/en/latest/ref/modules/all/[a-z\.]*#[a-z\.]*",  # noqa: E501, pylint: disable=line-too-long
 ]
 
 

@@ -22,6 +22,7 @@ SATS_TEMPLATE="./ci/pyinstaller/sats-template.json.template"
 SATS_FILE=".pyinstaller/satsuki-files.json"
 
 virtualenv --python=${PYTHON} $VIRTUAL_ENV_DIR
+# shellcheck disable=SC1091
 source "${VIRTUAL_ENV_DIR}/bin/activate"
 
 python -m pip install -r requirements/pip.txt

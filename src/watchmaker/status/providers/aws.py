@@ -27,9 +27,7 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __init__(self, provider, logger=None):
         self.logger = logger or logging.getLogger(__name__)
-        self.metadata_id_url = (
-            "http://169.254.169.254/latest/meta-data/instance-id"
-        )
+        self.metadata_id_url = "http://169.254.169.254/latest/meta-data/instance-id"
         self.metadata_region_url = (
             "http://169.254.169.254/latest/meta-data/placement/region"
         )
@@ -45,16 +43,10 @@ class AWSStatusProvider(AbstractStatusProvider):
             return
         try:
             self.logger.debug("Initialize AWS instance_id and region")
-            self.instance_id = self.__get_response_from_server(
-                self.metadata_id_url
-            )
-            self.region = self.__get_response_from_server(
-                self.metadata_region_url
-            )
+            self.instance_id = self.__get_response_from_server(self.metadata_id_url)
+            self.region = self.__get_response_from_server(self.metadata_region_url)
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            self.logger.error(
-                "Error retrieving id/region from metadata service %s", ex
-            )
+            self.logger.error("Error retrieving id/region from metadata service %s", ex)
 
     def update_status(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
@@ -75,9 +67,7 @@ class AWSStatusProvider(AbstractStatusProvider):
 
     def __tag_aws_instance(self, key, status):
         """Create or update instance tag with provided status."""
-        self.logger.debug(
-            "Tag Instance %s with  %s:%s", self.instance_id, key, status
-        )
+        self.logger.debug("Tag Instance %s with  %s:%s", self.instance_id, key, status)
 
         try:
             # pylint: disable=possibly-used-before-assignment

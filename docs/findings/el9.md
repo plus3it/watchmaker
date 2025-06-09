@@ -1,9 +1,9 @@
 ```{eval-rst}
-.. image:: ../images/cropped-plus3it-logo-cmyk.png
-   :width: 140px
-   :alt: Powered by Plus3 IT Systems
-   :align: right
-   :target: https://www.plus3it.com
+.. image:: /images/cropped-plus3it-logo-cmyk.png
+    :width: 140px
+    :alt: Powered by Plus3 IT Systems
+    :align: right
+    :target: https://www.plus3it.com
 ```
 <br>
 
@@ -117,12 +117,12 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
 ```{eval-rst}
 .. note::
 
-   This document is being written early in the adoption-cycle for DISA-mandated
-   security-controls. As such, some of the automation and associated scan-finding
-   are for pre-release content. Such content will typically lack the
-   finding-identifiers within the DISA content (e.g., the vulnerability IDs that
-   take a format like ``V-<SIX_DIGIT_STRING>`` and vendor IDs that take the
-   format ``<OSID>-08-<FINDING_ID>``)
+    This document is being written early in the adoption-cycle for DISA-mandated
+    security-controls. As such, some of the automation and associated scan-finding
+    are for pre-release content. Such content will typically lack the
+    finding-identifiers within the DISA content (e.g., the vulnerability IDs that
+    take a format like ``V-<SIX_DIGIT_STRING>`` and vendor IDs that take the
+    format ``<OSID>-08-<FINDING_ID>``)
 
 ```
 
@@ -147,11 +147,11 @@ By default, `watchmaker` will attempt to set a UEFI bootloader password. If the 
 
 ```{eval-rst}
 .. warning::
-   It is `highly` recommended that a site-specific value be set for the
-   ``ash-linux:lookup:grub-passwd`` Pillar parameter. While failing to do so will
-   not result in a scan-finding, it will mean that anyone that has read this
-   document -- or who has reviewed the watchmaker source-code -- will know your
-   servers' bootloader password
+    It is `highly` recommended that a site-specific value be set for the
+    ``ash-linux:lookup:grub-passwd`` Pillar parameter. While failing to do so will
+    not result in a scan-finding, it will mean that anyone that has read this
+    document -- or who has reviewed the watchmaker source-code -- will know your
+    servers' bootloader password
 ```
 
 # Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD
@@ -208,10 +208,10 @@ By default, `watchmaker` will attempt to set a custom superuser name for the UEF
 
 ```{eval-rst}
 .. warning::
-   It is `highly` recommended that a site-specific value be set for the
-   ``ash-linux:lookup:grub-user`` Pillar parameter. While failing to do so will
-   not result in a scan-finding, it will mean that anyone that has read this
-   document will know your servers' bootloader superuser name
+    It is `highly` recommended that a site-specific value be set for the
+    ``ash-linux:lookup:grub-user`` Pillar parameter. While failing to do so will
+    not result in a scan-finding, it will mean that anyone that has read this
+    document will know your servers' bootloader superuser name
 ```
 
 # Ensure Logs Sent To Remote Host
@@ -263,10 +263,10 @@ Forwarding-rules for a system's `root` user account is a wholly enterprise-speci
 
 ```{eval-rst}
 .. note::
-   ``watchmaker``'s automation-content does not have the capability of ensuring that:
+    ``watchmaker``'s automation-content does not have the capability of ensuring that:
 
-   * The Pillar-parameter's ``ash-linux:lookup:root-mail-dest`` value is set to a valid email destination
-   * Even if the ``ash-linux:lookup:root-mail-dest`` value `is` set to a valid email destination, forwarding to that destination will actually `function`
+    * The Pillar-parameter's ``ash-linux:lookup:root-mail-dest`` value is set to a valid email destination
+    * Even if the ``ash-linux:lookup:root-mail-dest`` value `is` set to a valid email destination, forwarding to that destination will actually `function`
 
 ```
 
@@ -316,16 +316,16 @@ Scanners should typically only search in the directories `/lib`, `/lib64`, `/usr
 
 ```{eval-rst}
 .. note::
-   The ``/lib/polkit-1/polkit-agent-helper-1`` will be a symbolic-link pointing
-   to ``/usr/lib/polkit-1/polkit-agent-helper-1``
+    The ``/lib/polkit-1/polkit-agent-helper-1`` will be a symbolic-link pointing
+    to ``/usr/lib/polkit-1/polkit-agent-helper-1``
 ```
 
 These are files that _need_ to set to mode `4755` &ndash; permissions that are broader than the mode `0755` permitted under this finding.
 
 ```{eval-rst}
 .. warning::
-   Changing these files' permissions to make them no longer show up on scans
-   `will` break the hardened system.
+    Changing these files' permissions to make them no longer show up on scans
+    `will` break the hardened system.
 ```
 
 Any files other than `/lib/polkit-1/polkit-agent-helper-1` and `/usr/lib/polkit-1/polkit-agent-helper-1` should be treated as valid findings and remediated.

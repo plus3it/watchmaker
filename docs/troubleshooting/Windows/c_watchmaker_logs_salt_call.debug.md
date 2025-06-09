@@ -1,9 +1,9 @@
 ```{eval-rst}
-.. image:: ../../images/cropped-plus3it-logo-cmyk.png
-   :width: 140px
-   :alt: Powered by Plus3 IT Systems
-   :align: right
-   :target: https://www.plus3it.com
+.. image:: /images/cropped-plus3it-logo-cmyk.png
+    :width: 140px
+    :alt: Powered by Plus3 IT Systems
+    :align: right
+    :target: https://www.plus3it.com
 ```
 <br>
 
@@ -40,8 +40,8 @@ The following is version of the salt_call.debug log file with a join-domain fail
 
 ```{eval-rst}
 .. literalinclude:: salt.debug.join-fail-expanded.txt
-   :language: text
-   :emphasize-lines: 228-232,253-257,278-282
+    :language: text
+    :emphasize-lines: 228-232,253-257,278-282
 ```
 
 

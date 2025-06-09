@@ -17,7 +17,7 @@ class WorkerBase(object):
 
     def __init__(self, system_params, *args, **kwargs):
         self.log = logging.getLogger(
-            '{0}.{1}'.format(__name__, self.__class__.__name__)
+            "{0}.{1}".format(__name__, self.__class__.__name__)
         )
 
         self.system_params = system_params

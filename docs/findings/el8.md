@@ -1,9 +1,9 @@
 ```{eval-rst}
-.. image:: ../images/cropped-plus3it-logo-cmyk.png
-   :width: 140px
-   :alt: Powered by Plus3 IT Systems
-   :align: right
-   :target: https://www.plus3it.com
+.. image:: /images/cropped-plus3it-logo-cmyk.png
+    :width: 140px
+    :alt: Powered by Plus3 IT Systems
+    :align: right
+    :target: https://www.plus3it.com
 ```
 <br>
 
@@ -224,15 +224,15 @@ As implemented, watchmaker places an `/etc/profile.d/tmux.sh` file that looks li
 # Check if shell is interactive
 if [[ $- == *i* ]] && [[ $( rpm --quiet -q tmux )$? -eq 0 ]]
 then
-   parent=$( ps -o ppid= -p $$ )
-   name=$( ps -o comm= -p $parent )
+    parent=$( ps -o ppid= -p $$ )
+    name=$( ps -o comm= -p $parent )
 
-   # Check if controlling-process is target-value
-   case "$name" in
-      sshd|login)
-         exec tmux
-         ;;
-   esac
+    # Check if controlling-process is target-value
+    case "$name" in
+        sshd|login)
+            exec tmux
+            ;;
+    esac
 fi
 ~~~
 
@@ -465,11 +465,11 @@ While this finding states that the `rngd` systemd unit must be enabled _and_ act
 ~~~
 $ systemctl status rngd
 * rngd.service - Hardware RNG Entropy Gatherer Daemon
-   Loaded: loaded (/usr/lib/systemd/system/rngd.service; enabled; vendor preset: enabled)
-   Active: inactive (dead) since Tue 2023-06-27 15:21:25 UTC; 49s ago
+    Loaded: loaded (/usr/lib/systemd/system/rngd.service; enabled; vendor preset: enabled)
+    Active: inactive (dead) since Tue 2023-06-27 15:21:25 UTC; 49s ago
 Condition: start condition failed at Tue 2023-06-27 15:21:32 UTC; 42s ago
-             ConditionKernelCommandLine=!fips=1 was not met
- Main PID: 214 (code=exited, status=0/SUCCESS)
+              ConditionKernelCommandLine=!fips=1 was not met
+Main PID: 214 (code=exited, status=0/SUCCESS)
 ~~~
 
 The above-captured output's `ConditionKernelCommandLine`'s indication that the condition of `!fips=1` "was not met" means that this capability is not (currently) compatible with a system running with FIPS mode enabled. Enablement of FIPS mode is specified in another, earlier, higher-priority STIG-finding. As such, this setting will not be enableable while the higher-priority configuration-state is in place.

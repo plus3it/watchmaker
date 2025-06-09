@@ -12,20 +12,20 @@ PROJECT_NAME=$1
 S3_URL=$2
 GIT_REF="${TRAVIS_COMMIT:-main}"
 
-CB_ENV_OVERRIDE='[{"name":"TF_VAR_scan_s3_url","value":"'"$S3_URL"'","type":"PLAINTEXT"},{"name":"TF_VAR_git_ref","value":"'"$GIT_REF"'","type":"PLAINTEXT"}]'
+CB_ENV_OVERRIDE=('[{"name":"TF_VAR_scan_s3_url","value":"'"$S3_URL"'","type":"PLAINTEXT"},{"name":"TF_VAR_git_ref","value":"'"$GIT_REF"'","type":"PLAINTEXT"}]')
 
 WAIT_INTERVAL=30 #in seconds
 
-if [ -z $(aws codebuild list-projects  --output text --query "projects[? @ == '${PROJECT_NAME}']") ]; then
+if [ -z "$(aws codebuild list-projects --output text --query "projects[? @ == '${PROJECT_NAME}']")" ]; then
   echo "Codebuild command failed or project not found!"
   exit 1
 else
   echo "Codebuild project found!  Starting build job..."
-  BUILD_ID=$(aws codebuild start-build --project-name ${PROJECT_NAME} --environment-variables-override ${CB_ENV_OVERRIDE} --output text --query 'build.id')
+  BUILD_ID=$(aws codebuild start-build --project-name "${PROJECT_NAME}" --environment-variables-override "${CB_ENV_OVERRIDE[@]}" --output text --query 'build.id')
 fi
 
 build_status() {
-  aws codebuild batch-get-builds --ids ${BUILD_ID} --query 'builds[*].buildStatus' --output text
+  aws codebuild batch-get-builds --ids "${BUILD_ID}" --query 'builds[*].buildStatus' --output text
 }
 
 echo "Start checking status for build...(https://console.aws.amazon.com/codesuite/codebuild/$ACCOUNT_ID/projects/$PROJECT_NAME/build/$BUILD_ID/?region=$AWS_DEFAULT_REGION)"

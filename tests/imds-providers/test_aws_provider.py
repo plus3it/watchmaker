@@ -22,9 +22,7 @@ from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 @patch.object(
     AWSProvider,
     "_AWSProvider__call_urlopen_retry",
-    return_value=(
-        json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})
-    ),
+    return_value=(json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})),
 )
 @patch.object(
     AWSProvider,
@@ -40,9 +38,7 @@ def test_identify_is_valid(mock_urlopen, mock_request_token):
 @patch.object(
     AWSProvider,
     "_AWSProvider__call_urlopen_retry",
-    return_value=(
-        json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})
-    ),
+    return_value=(json.dumps({"imageId": "ami-12312412", "instanceId": "i-ec12as"})),
 )
 @patch.object(
     AWSProvider,
@@ -58,9 +54,7 @@ def test_metadata_server_is_valid(mock_urlopen, mock_request_token):
 @patch.object(
     AWSProvider,
     "_AWSProvider__call_urlopen_retry",
-    return_value=(
-        json.dumps({"imageId": "not-valid", "instanceId": "etc-ec12as"})
-    ),
+    return_value=(json.dumps({"imageId": "not-valid", "instanceId": "etc-ec12as"})),
 )
 @patch.object(
     AWSProvider,

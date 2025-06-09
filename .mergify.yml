@@ -15,13 +15,13 @@ pull_request_rules:
       - and:
           - "#approved-reviews-by>=1"
           - or:
-            - label=submodules
-            - title~=(?i).*pyinstaller.*
+              - label=submodules
+              - title~=(?i).*pyinstaller.*
     actions:
       comment:
         message: go codebuild go
 
-  - name: automatic merge for dependabot submodule or pyinstaller pull requests with approval and codebuild success 
+  - name: automatic merge for dependabot submodule or pyinstaller pull requests with approval and codebuild success
     conditions:
       - author~=dependabot\[bot\]|dependabot-preview\[bot\]
       - or:
