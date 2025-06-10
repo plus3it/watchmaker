@@ -65,7 +65,7 @@ jobs:
           retention-days: 1
 
   # Create release
-  release-publish:
+  release:
     if: |
       github.event.workflow_run.event != 'pull_request' &&
       github.event.workflow_run.head_branch == github.event.repository.default_branch
@@ -73,10 +73,10 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - check-artifacts
+    outputs:
+      release-condition: ${{ steps.release.outputs.release-condition }}
     permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
-    env:
-      AWS_DEFAULT_REGION: us-east-1
+      contents: read
     steps:
       - name: Retrieve repo
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -93,9 +93,42 @@ jobs:
             dist/*
             .pyinstaller/dist/**/*
 
+  # Publish package to PyPI
+  publish-pypi:
+    if: needs.release.outputs.release-condition == 'true'
+    name: Publish package to pypi
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+      - name: Retrieve repo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: repo
+          path: .
+
       - name: Publish package distributions to PyPI
-        if: steps.release.outputs.release-condition == 'true'
         uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+
+  # Publish package to S3
+  publish-s3:
+    name: Publish package to s3
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    permissions:
+      id-token: write  # IMPORTANT: needed for oidc assume-role
+    env:
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
+    steps:
+      - name: Retrieve repo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: repo
+          path: .
 
       - name: Install aws-cli
         uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
@@ -103,6 +136,7 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
         with:
+          role-session-name: "watchmaker-publish-s3-package"
           role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
           aws-region: "${{ env.AWS_DEFAULT_REGION }}"
 
@@ -110,11 +144,40 @@ jobs:
         run: aws sts get-caller-identity
 
       - name: Publish standalone binaries to S3
-        env:
-          BUCKET: "${{ steps.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
-        run: aws s3 cp --recursive .pyinstaller/dist/ s3://${{ env.BUCKET }}/${{ vars.S3_PREFIX }}/
+        run: aws s3 cp --recursive .pyinstaller/dist/ s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX }}/
+
+  # Publish scans to S3
+  publish-scans:
+    name: Publish scans to s3
+    runs-on: ubuntu-latest
+    needs:
+      - check-artifacts
+      - release
+    permissions:
+      id-token: write  # IMPORTANT: needed for oidc assume-role
+    env:
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
+    steps:
+      - name: Retrieve repo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: repo
+          path: .
+
+      - name: Install aws-cli
+        uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
+        with:
+          role-duration-seconds: 7200
+          role-session-name: "watchmaker-publish-s3-scans"
+          role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
+          aws-region: "${{ env.AWS_DEFAULT_REGION }}"
+
+      - name: Validate credential
+        run: aws sts get-caller-identity
 
       - name: Generate scan reports
-        env:
-          BUCKET: "${{ steps.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
-        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET }}/${{ vars.S3_PREFIX}}/${{ needs.check-artifacts.outputs.version }}/scans
+        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX}}/${{ needs.check-artifacts.outputs.version }}/scans
