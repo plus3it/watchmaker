@@ -22,19 +22,40 @@ permissions:
 jobs:
   checkout:
     runs-on: ubuntu-latest
+    outputs:
+      release-condition: ${{ steps.release.outputs.condition }}
+      release-version: ${{ steps.release.outputs.version }}
     steps:
       - name: Checkout code
         id: checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          fetch-depth: 0
+          fetch-tags: true
           submodules: recursive
 
-      - name: Set dev version
-        if: github.event_name == 'pull_request'
+      - name: Set version and check release condition
+        id: release
+        shell: bash
         run: |
-          ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
-          sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
-          grep "version = " setup.cfg
+          set -eu -o pipefail
+          RELEASE=false
+          PRIOR_VERSION=$(git describe --abbrev=0 --tags || true)
+          RELEASE_VERSION=$(grep -E "current_version\s*=" .bumpversion.cfg | sed 's/^.*= //' )
+          if [[ "$PRIOR_VERSION" = "$RELEASE_VERSION" ]]; then
+            # If the current version matches the last tag, we are in a dev build.
+            # Update the version in setup.cfg to include a timestamp.
+            ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
+            sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
+          else
+            # If the current version does not match the last tag, we are in a release build.
+            RELEASE=true
+          fi
+          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
+          echo "condition=${RELEASE}"
+          echo "version=${VERSION}"
+          echo "condition=${RELEASE}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Upload source
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
