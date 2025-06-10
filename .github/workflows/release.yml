@@ -15,9 +15,19 @@ jobs:
     name: Check artifacts from build run
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     permissions:
       actions: read  # Required to download artifacts from other workflow runs
     steps:
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: source
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
       - name: Retrieve release distributions
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
@@ -35,20 +45,23 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Upload release artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: dists
-          path: dist/
-          if-no-files-found: error
-          retention-days: 1
+      - run: ls -al dist/
+      - run: ls -alR .pyinstaller/dist/
 
-      - name: Upload standalone binaries
+      - name: Output version
+        id: version
+        run: |
+          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
+          echo "version=${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload repo
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: standalone-binaries
-          path: .pyinstaller/dist
+          name: repo
+          path: ./**
           if-no-files-found: error
+          include-hidden-files: true
           retention-days: 1
 
   # Create release
@@ -61,30 +74,15 @@ jobs:
     needs:
       - check-artifacts
     permissions:
-      actions: read  # Required to download artifacts from other workflow runs
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     env:
       AWS_DEFAULT_REGION: us-east-1
     steps:
-      - name: Retrieve source
+      - name: Retrieve repo
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: source
+          name: repo
           path: .
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-
-      - name: Retrieve release distributions
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          name: dists
-          path: dist/
-
-      - name: Retrieve standalone binaries
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          name: standalone-binaries
-          path: .pyinstaller/dist
 
       - name: Create GitHub release
         id: release
@@ -94,9 +92,6 @@ jobs:
           release-files: |
             dist/*
             .pyinstaller/dist/**/*
-
-      - run: ls -al dist/
-      - run: ls -alR .pyinstaller/dist/
 
       - name: Publish package distributions to PyPI
         if: steps.release.outputs.release-condition == 'true'
@@ -122,4 +117,4 @@ jobs:
       - name: Generate scan reports
         env:
           BUCKET: "${{ steps.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
-        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET }}/${{ vars.S3_PREFIX}}/$APP_VERSION/scans
+        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET }}/${{ vars.S3_PREFIX}}/${{ needs.check-artifacts.outputs.version }}/scans
