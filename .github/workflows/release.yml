@@ -91,7 +91,7 @@ jobs:
           release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
           release-files: |
             dist/*
-            .pyinstaller/dist/**/*
+            .pyinstaller/dist/*/*
 
   # Publish package to PyPI
   publish-pypi:

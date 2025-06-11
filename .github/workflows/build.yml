@@ -127,7 +127,7 @@ jobs:
         with:
           name: standalone-dists-${{ runner.os }}
           path: |
-            .pyinstaller/dist/**/*
+            .pyinstaller/dist/*/*
           if-no-files-found: error
           retention-days: 1
 
