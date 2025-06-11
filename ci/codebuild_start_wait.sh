@@ -10,7 +10,7 @@ set -eu -o pipefail
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 PROJECT_NAME=$1
 S3_URL=$2
-GIT_REF="${TRAVIS_COMMIT:-main}"
+GIT_REF="${COMMIT_SHA:-main}"
 
 CB_ENV_OVERRIDE=('[{"name":"TF_VAR_scan_s3_url","value":"'"$S3_URL"'","type":"PLAINTEXT"},{"name":"TF_VAR_git_ref","value":"'"$GIT_REF"'","type":"PLAINTEXT"}]')
 

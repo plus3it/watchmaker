@@ -189,4 +189,6 @@ jobs:
         run: aws sts get-caller-identity
 
       - name: Generate scan reports
+        env:
+          COMMIT_SHA: ${{ github.sha }}
         run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX}}/${{ needs.check-artifacts.outputs.version }}/scans
