@@ -143,6 +143,15 @@ jobs:
       - name: Validate credential
         run: aws sts get-caller-identity
 
+      - run: ls -alR .pyinstaller/dist/
+      - run: mkdir -p .pyinstaller/dist/latest
+      - run: cp .pyinstaller/dist/*/watchmaker-*-standalone-linux-x86_64 .pyinstaller/dist/latest/watchmaker-latest-standalone-linux-x86_64
+      - run: cp .pyinstaller/dist/*/watchmaker-*-standalone-windows-amd64.exe .pyinstaller/dist/latest/watchmaker-latest-standalone-windows-amd64.exe
+      - run: cp .pyinstaller/dist/*/watchmaker-bootstrap.ps1 .pyinstaller/dist/latest/watchmaker-bootstrap.ps1
+      - run: cd .pyinstaller/dist/latest && sha256sum watchmaker-latest-standalone-linux-x86_64 > watchmaker-latest-standalone-linux-x86_64.sha256
+      - run: cd .pyinstaller/dist/latest && sha256sum watchmaker-latest-standalone-windows-amd64.exe > watchmaker-latest-standalone-windows-amd64.exe.sha256
+      - run: ls -alR .pyinstaller/dist/latest
+
       - name: Publish standalone binaries to S3
         run: aws s3 cp --recursive .pyinstaller/dist/ s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX }}/
 
