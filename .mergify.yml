@@ -1,9 +1,7 @@
 pull_request_rules:
-  - name: automatic approve dependabot pull requests
+  - name: approve dependabot pull requests
     conditions:
-      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
-      - status-success=Travis CI - Pull Request
-      - status-success=continuous-integration.azure-devops
+      - author=dependabot[bot]
     actions:
       review:
         type: APPROVE
@@ -11,7 +9,7 @@ pull_request_rules:
   # For salt-formula or pyinstaller updates, trigger codebuild, merge on codebuild status
   - name: write issue comment to start codebuild job
     conditions:
-      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
+      - author=dependabot[bot]
       - and:
           - "#approved-reviews-by>=1"
           - or:
@@ -21,13 +19,12 @@ pull_request_rules:
       comment:
         message: go codebuild go
 
-  - name: automatic merge for dependabot submodule or pyinstaller pull requests with approval and codebuild success
+  - name: merge dependabot submodule or pyinstaller pull requests with approval and codebuild success
     conditions:
-      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
+      - author=dependabot[bot]
       - or:
           - label=submodules
           - title~=(?i).*pyinstaller.*
-      - status-success=codebuild/custom/pr
       - status-success=codebuild/default/pr
       - "#approved-reviews-by>=1"
     actions:
@@ -35,9 +32,9 @@ pull_request_rules:
         method: merge
 
   # For regular dependabot pr, automatically merge on approve
-  - name: automatic merge for dependabot pull requests that are not pyinstaller and not submodules
+  - name: merge dependabot pull requests that are not pyinstaller and not submodules
     conditions:
-      - author~=dependabot\[bot\]|dependabot-preview\[bot\]
+      - author=dependabot[bot]
       - "#approved-reviews-by>=1"
       - label!=submodules
       - -title~=(?i).*pyinstaller.*

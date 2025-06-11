@@ -14,6 +14,7 @@ updates:
           - "*"
         exclude-patterns:
           - "pyinstaller"
+
   - package-ecosystem: gitsubmodule
     directory: "/"
     schedule:
@@ -23,6 +24,7 @@ updates:
       gitsubmodule:
         patterns:
           - "*"
+
   - package-ecosystem: docker
     directory: "/ci"
     schedule:
@@ -35,11 +37,21 @@ updates:
     ignore:
       - dependency-name: "docker/library/almalinux"
         update-types: ["version-update:semver-major"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
     groups:
       github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      docker:
         patterns:
           - "*"
