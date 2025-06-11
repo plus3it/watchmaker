@@ -1,6 +1,0 @@
--r basics.txt
-
-tox==3.28.0;python_version<="3.6"
-tox==4.8.0;python_version<="3.7" and python_version>"3.6"
-tox==4.25.0;python_version<="3.8" and python_version>"3.7"
-tox==4.26.0;python_version>="3.9"
