@@ -57,7 +57,7 @@ class PlatformManagerBase(object):
 
     def __init__(self, system_params, *args, **kwargs):
         self.log = logging.getLogger(
-            '{0}.{1}'.format(__name__, self.__class__.__name__)
+            "{0}.{1}".format(__name__, self.__class__.__name__)
         )
         self.system_params = system_params
         self.working_dir = None
@@ -80,25 +80,23 @@ class PlatformManagerBase(object):
         """
         # Convert a local path to a URI
         url = watchmaker.utils.uri_from_filepath(url)
-        self.log.debug('Downloading: %s', url)
-        self.log.debug('Destination: %s', filename)
+        self.log.debug("Downloading: %s", url)
+        self.log.debug("Destination: %s", filename)
 
         try:
-            self.log.debug('Establishing connection to the host, %s', url)
+            self.log.debug("Establishing connection to the host, %s", url)
             response = watchmaker.utils.urlopen_retry(url)
-            self.log.debug('Opening the file handle, %s', filename)
-            with open(filename, 'wb') as outfile:
-                self.log.debug('Saving file to local filesystem...')
+            self.log.debug("Opening the file handle, %s", filename)
+            with open(filename, "wb") as outfile:
+                self.log.debug("Saving file to local filesystem...")
                 shutil.copyfileobj(response, outfile)
         except (ValueError, urllib_utils.error.URLError):
             self.log.critical(
-                'Failed to retrieve the file. url = %s. filename = %s',
-                url, filename
+                "Failed to retrieve the file. url = %s. filename = %s", url, filename
             )
             raise
         self.log.info(
-            'Retrieved the file successfully. url=%s. filename=%s',
-            url, filename
+            "Retrieved the file successfully. url=%s. filename=%s", url, filename
         )
 
     def create_working_dir(self, basedir, prefix):
@@ -116,32 +114,32 @@ class PlatformManagerBase(object):
             :obj:`str`: Path to the working directory.
 
         """
-        self.log.info('Creating a working directory.')
+        self.log.info("Creating a working directory.")
         original_umask = os.umask(0)
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception:
-            msg = 'Could not create a working dir in {0}'.format(basedir)
+            msg = "Could not create a working dir in {0}".format(basedir)
             self.log.critical(msg)
             raise
-        self.log.debug('Created working directory: %s', working_dir)
+        self.log.debug("Created working directory: %s", working_dir)
         os.umask(original_umask)
         return working_dir
 
     @staticmethod
-    def _pipe_handler(pipe, logger=None, prefix_msg=''):
-        ret = b''
+    def _pipe_handler(pipe, logger=None, prefix_msg=""):
+        ret = b""
         try:
-            for line in iter(pipe.readline, b''):
+            for line in iter(pipe.readline, b""):
                 if logger:
-                    logger('%s%s', prefix_msg, line.rstrip())
+                    logger("%s%s", prefix_msg, line.rstrip())
                 ret += line
         finally:
             pipe.close()
 
         return ret
 
-    def call_process(self, cmd, log_pipe='all', raise_error=True):
+    def call_process(self, cmd, log_pipe="all", raise_error=True):
         """
         Execute a shell command.
 
@@ -165,18 +163,14 @@ class PlatformManagerBase(object):
                 ``stdout`` (:obj:`bytes`), and ``stderr`` (:obj:`bytes`).
 
         """
-        ret = {
-            'retcode': 0,
-            'stdout': b'',
-            'stderr': b''
-        }
+        ret = {"retcode": 0, "stdout": b"", "stderr": b""}
 
         if not isinstance(cmd, list):
-            msg = 'Command is not a list: {0}'.format(cmd)
+            msg = "Command is not a list: {0}".format(cmd)
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
-        self.log.debug('Command: %s', ' '.join(cmd))
+        self.log.debug("Command: %s", " ".join(cmd))
 
         # If running as a standalone, PyInstaller will have modified the
         # LD_LIBRARY_PATH to point to standalone libraries. If there were a
@@ -184,11 +178,11 @@ class PlatformManagerBase(object):
         # order for salt to run correctly, LD_LIBRARY_PATH has to be fixed.
         kwargs = {}
         env = dict(os.environ)
-        lib_path_key = 'LD_LIBRARY_PATH'
+        lib_path_key = "LD_LIBRARY_PATH"
 
         if env.get(lib_path_key) is not None:
 
-            lib_path_orig_value = env.get(lib_path_key + '_ORIG')
+            lib_path_orig_value = env.get(lib_path_key + "_ORIG")
             if lib_path_orig_value is None:
 
                 # you can have lib_path and no orig, if:
@@ -201,36 +195,36 @@ class PlatformManagerBase(object):
                 # put original lib_path back
                 env[lib_path_key] = lib_path_orig_value
 
-            kwargs['env'] = env
+            kwargs["env"] = env
 
         with subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
-        ) as process, concurrent.futures.ThreadPoolExecutor(
-            max_workers=2
-        ) as executor:
+        ) as process, concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             stdout_future = executor.submit(
                 self._pipe_handler,
                 process.stdout,
-                self.log.debug if log_pipe in ['stdout', 'all'] else None,
-                'Command stdout: '
+                self.log.debug if log_pipe in ["stdout", "all"] else None,
+                "Command stdout: ",
             )
 
             stderr_future = executor.submit(
                 self._pipe_handler,
                 process.stderr,
-                self.log.error if log_pipe in ['stderr', 'all'] else None,
-                'Command stderr: ')
+                self.log.error if log_pipe in ["stderr", "all"] else None,
+                "Command stderr: ",
+            )
 
-            ret['stdout'] = stdout_future.result()
-            ret['stderr'] = stderr_future.result()
+            ret["stdout"] = stdout_future.result()
+            ret["stderr"] = stderr_future.result()
 
-            ret['retcode'] = process.wait()
+            ret["retcode"] = process.wait()
 
-        self.log.debug('Command retcode: %s', ret['retcode'])
+        self.log.debug("Command retcode: %s", ret["retcode"])
 
-        if raise_error and ret['retcode'] != 0:
-            msg = 'Command failed! Exit code={0}, cmd={1}'.format(
-                ret['retcode'], ' '.join(cmd))
+        if raise_error and ret["retcode"] != 0:
+            msg = "Command failed! Exit code={0}, cmd={1}".format(
+                ret["retcode"], " ".join(cmd)
+            )
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
@@ -238,17 +232,17 @@ class PlatformManagerBase(object):
 
     def cleanup(self):
         """Delete working directory."""
-        self.log.info('Cleanup Time...')
+        self.log.info("Cleanup Time...")
         try:
-            self.log.debug('working_dir=%s', self.working_dir)
+            self.log.debug("working_dir=%s", self.working_dir)
             shutil.rmtree(self.working_dir)
-            self.log.info('Deleted working directory...')
+            self.log.info("Deleted working directory...")
         except Exception:
-            msg = 'Cleanup Failed!'
+            msg = "Cleanup Failed!"
             self.log.critical(msg)
             raise
 
-        self.log.info('Exiting cleanup routine...')
+        self.log.info("Exiting cleanup routine...")
 
     def extract_contents(self, filepath, to_directory, create_dir=False):
         """
@@ -273,34 +267,34 @@ class PlatformManagerBase(object):
                 (*Default*: ``False``)
 
         """
-        if filepath.endswith('.zip'):
-            self.log.debug('File Type: zip')
-            opener, mode = zipfile.ZipFile, 'r'
-        elif filepath.endswith('.tar.gz') or filepath.endswith('.tgz'):
-            self.log.debug('File Type: GZip Tar')
-            opener, mode = tarfile.open, 'r:gz'
-        elif filepath.endswith('.tar.bz2') or filepath.endswith('.tbz'):
-            self.log.debug('File Type: Bzip Tar')
-            opener, mode = tarfile.open, 'r:bz2'
+        if filepath.endswith(".zip"):
+            self.log.debug("File Type: zip")
+            opener, mode = zipfile.ZipFile, "r"
+        elif filepath.endswith(".tar.gz") or filepath.endswith(".tgz"):
+            self.log.debug("File Type: GZip Tar")
+            opener, mode = tarfile.open, "r:gz"
+        elif filepath.endswith(".tar.bz2") or filepath.endswith(".tbz"):
+            self.log.debug("File Type: Bzip Tar")
+            opener, mode = tarfile.open, "r:bz2"
         else:
             msg = (
-                'Could not extract "{0}" as no appropriate extractor is found.'
-                .format(filepath)
+                'Could not extract "{0}" as no appropriate extractor is found.'.format(
+                    filepath
+                )
             )
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
         if create_dir:
-            to_directory = os.sep.join((
-                to_directory,
-                '.'.join(filepath.split(os.sep)[-1].split('.')[:-1])
-            ))
+            to_directory = os.sep.join(
+                (to_directory, ".".join(filepath.split(os.sep)[-1].split(".")[:-1]))
+            )
 
         try:
             os.makedirs(to_directory)
         except OSError:
             if not os.path.isdir(to_directory):
-                msg = 'Unable create directory - {0}'.format(to_directory)
+                msg = "Unable create directory - {0}".format(to_directory)
                 self.log.critical(msg)
                 raise
 
@@ -316,10 +310,7 @@ class PlatformManagerBase(object):
         finally:
             os.chdir(cwd)
 
-        self.log.info(
-            'Extracted file. source=%s, dest=%s',
-            filepath, to_directory
-        )
+        self.log.info("Extracted file. source=%s, dest=%s", filepath, to_directory)
 
 
 class LinuxPlatformManager(PlatformManagerBase):
@@ -330,7 +321,7 @@ class LinuxPlatformManager(PlatformManagerBase):
     """
 
     def _install_from_yum(self, packages):
-        yum_cmd = ['sudo', 'yum', '-y', 'install']
+        yum_cmd = ["sudo", "yum", "-y", "install"]
         if isinstance(packages, list):
             yum_cmd.extend(packages)
         else:

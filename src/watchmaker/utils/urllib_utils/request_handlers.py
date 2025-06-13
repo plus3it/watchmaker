@@ -28,7 +28,7 @@ class S3Handler(urllib.request.BaseHandler):
 
     def s3_open(self, req):
         """Open S3 objects."""
-        # Credit: <https://github.com/ActiveState/code/tree/master/recipes/Python/578957_Urllib_handler_AmazS3>  # noqa: E501, pylint: disable=line-too-long
+        # Credit: <https://github.com/ActiveState/code/tree/master/recipes/Python/578957_Urllib_handler_AmazS3>  # noqa: B950, pylint: disable=line-too-long
 
         # The implementation was inspired mainly by the code behind
         # urllib.request.FileHandler.file_open().
@@ -44,9 +44,7 @@ class S3Handler(urllib.request.BaseHandler):
         key_name = selector[1:]
 
         if not bucket_name or not key_name:
-            raise urllib.error.URLError(
-                "url must be in the format s3://<bucket>/<key>"
-            )
+            raise urllib.error.URLError("url must be in the format s3://<bucket>/<key>")
 
         try:
             s3_conn = self.s3_conn
@@ -60,9 +58,7 @@ class S3Handler(urllib.request.BaseHandler):
         origurl = "s3://{0}/{1}".format(bucket_name, key_name)
 
         if key is None:
-            raise urllib.error.URLError(
-                "no such resource: {0}".format(origurl)
-            )
+            raise urllib.error.URLError("no such resource: {0}".format(origurl))
 
         headers = [
             ("Content-type", key.content_type),
@@ -81,6 +77,4 @@ class S3Handler(urllib.request.BaseHandler):
             )
         )
 
-        return urllib.response.addinfourl(
-            BufferedIOS3Key(key), headers, origurl
-        )
+        return urllib.response.addinfourl(BufferedIOS3Key(key), headers, origurl)

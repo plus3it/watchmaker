@@ -8,8 +8,6 @@ from __future__ import (
     with_statement,
 )
 
-import yaml
-
 from watchmaker.exceptions import StatusProviderError
 
 # Supports Python2 and Python3 test mocks
@@ -41,17 +39,18 @@ def test_status(
     request_token_mock,
 ):
     """Test provider is AWS."""
-    data = """
-    status:
-      providers:
-        - key: "WatchmakerStatus"
-          required: False
-          provider_type: "aws"
-        - key: "WatchmakerStatus"
-          required: False
-          provider_type: "azure"
-    """
-    config = yaml.load(data, Loader=yaml.Loader)
+    config = {
+        "status": {
+            "providers": [
+                {"key": "WatchmakerStatus", "required": False, "provider_type": "aws"},
+                {
+                    "key": "WatchmakerStatus",
+                    "required": False,
+                    "provider_type": "azure",
+                },
+            ]
+        }
+    }
     config_status = config.get("status", None)
     status = Status(config_status)
     detected_providers = status.get_detected_status_providers()
@@ -82,23 +81,17 @@ def test_req_status_provider(
     request_token_mock,
 ):
     """Test provider is AWS."""
-    data = """
-    status:
-      providers:
-        - key: "WatchmakerStatus"
-          required: False
-          provider_type: "aws"
-        - key: "WatchmakerStatus"
-          required: True
-          provider_type: "azure"
-    """
-    config = yaml.load(data, Loader=yaml.Loader)
+    config = {
+        "status": {
+            "providers": [
+                {"key": "WatchmakerStatus", "required": False, "provider_type": "aws"},
+                {"key": "WatchmakerStatus", "required": True, "provider_type": "azure"},
+            ]
+        }
+    }
     config_status = config.get("status", None)
 
     try:
         Status(config_status)
     except StatusProviderError as spe:
-        assert (
-            str(spe)
-            == "Required Provider detected that is missing prereqs: azure"
-        )
+        assert str(spe) == "Required Provider detected that is missing prereqs: azure"

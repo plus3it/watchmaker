@@ -15,4 +15,5 @@ from watchmaker.conditions import HAS_BOTO3
 
 if HAS_BOTO3:
     from watchmaker.utils.urllib_utils.request_handlers import S3Handler
+
     request.install_opener(request.build_opener(S3Handler))

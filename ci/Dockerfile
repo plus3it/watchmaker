@@ -24,9 +24,6 @@ RUN ${PYTHON} -m ensurepip --upgrade --default-pip \
     && ${PYTHON} -m pip install -r /requirements/basics.txt \
     && ${PYTHON} -m pip list
 
-RUN dnf -y install epel-release \
-    && dnf -y install jq
-
 USER ${USER}
 
 ENV HOME="/home/${USER}"

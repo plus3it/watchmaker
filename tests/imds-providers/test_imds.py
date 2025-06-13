@@ -40,9 +40,7 @@ def test_provider_aws(aws_provider_mock, azure_provider_mock, aws_token_mock):
     "_AWSProvider__request_token",
     return_value=(None),
 )
-def test_provider_azure(
-    aws_provider_mock, azure_provider_mock, aws_token_mock
-):
+def test_provider_azure(aws_provider_mock, azure_provider_mock, aws_token_mock):
     """Test provider is Azure."""
     assert provider(["aws", "azure"]).identifier == "azure"
 

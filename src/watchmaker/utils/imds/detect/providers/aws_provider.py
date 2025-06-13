@@ -29,9 +29,7 @@ class AWSProvider(AbstractProvider):
             "http://169.254.169.254/latest/dynamic/instance-identity/document"
         )
 
-        self.metadata_imds_v2_token_url = (
-            "http://169.254.169.254/latest/api/token"
-        )
+        self.metadata_imds_v2_token_url = "http://169.254.169.254/latest/api/token"
 
         self.imds_token = self.__request_token()
 
@@ -82,9 +80,7 @@ class AWSProvider(AbstractProvider):
             return self.__call_urlopen_retry(
                 self.metadata_imds_v2_token_url,
                 self.DEFAULT_TIMEOUT,
-                headers={
-                    "X-aws-ec2-metadata-token-ttl-seconds": IMDS_TOKEN_TIMEOUT
-                },
+                headers={"X-aws-ec2-metadata-token-ttl-seconds": IMDS_TOKEN_TIMEOUT},
                 method="PUT",
             )
         except Exception as error:  # pylint: disable=broad-exception-caught

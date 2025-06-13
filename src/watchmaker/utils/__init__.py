@@ -24,12 +24,7 @@ def scheme_from_uri(uri):
     # i.e. '/abspath/foo' or 'relpath/foo'
     # Do not test `if parts.scheme` because of how urlparse handles Windows
     # file paths -- i.e. 'C:\\foo' => scheme = 'c' :(
-    return (
-        uri.scheme
-        if "://"
-        in urllib_utils.parse.urlunparse(uri)
-        else "file"
-    )
+    return uri.scheme if "://" in urllib_utils.parse.urlunparse(uri) else "file"
 
 
 def uri_from_filepath(filepath):
@@ -44,9 +39,7 @@ def uri_from_filepath(filepath):
     # Expand relative file paths and convert them to uri-style
     path = urllib_utils.request.pathname2url(
         os.path.abspath(
-            os.path.expanduser(
-                "".join([x for x in [parts.netloc, parts.path] if x])
-            )
+            os.path.expanduser("".join([x for x in [parts.netloc, parts.path] if x]))
         )
     )
 
@@ -72,9 +65,7 @@ def urlopen_retry(uri, timeout=None):
         url = uri if isinstance(uri, str) else uri.full_url
 
         if url.startswith("https://"):
-            kwargs["context"] = ssl.create_default_context(
-                ssl.Purpose.SERVER_AUTH
-            )
+            kwargs["context"] = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     except AttributeError:
         pass
 
@@ -150,9 +141,7 @@ def copy_subdirectories(src_dir, dest_dir, log=None):
         if not subdir.startswith(".") and not os.path.exists(
             os.sep.join((dest_dir, subdir))
         ):
-            copytree(
-                os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir))
-            )
+            copytree(os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir)))
             if log:
                 log.info(
                     "Copied from %s to %s",

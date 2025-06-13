@@ -1,9 +1,9 @@
 ```{eval-rst}
-.. image:: ../images/cropped-plus3it-logo-cmyk.png
-   :width: 140px
-   :alt: Powered by Plus3 IT Systems
-   :align: right
-   :target: https://www.plus3it.com
+.. image:: /images/cropped-plus3it-logo-cmyk.png
+    :width: 140px
+    :alt: Powered by Plus3 IT Systems
+    :align: right
+    :target: https://www.plus3it.com
 ```
 <br>
 
@@ -17,8 +17,8 @@ The `watchmaker` utility bundles several SaltStack formulae. Which formulae are 
 A typical `.../states/top.sls` will look something like:
 
 ```{eval-rst}
-.. literalinclude:: FormulaTop-ALL.txt
-   :language: shell
+..  literalinclude:: FormulaTop-ALL.txt
+    :language: shell
 ```
 
 Adding, removing or re-ordering entries in this list modifies which formulae watchmaker executes and in what order it executes them
@@ -28,17 +28,17 @@ Adding, removing or re-ordering entries in this list modifies which formulae wat
 In order to add a new formula to Wachmaker's execution-list, edit the `.../states/top.sls` file. For cross-platform formulae, ensure appropriate entries exist under both the `base:G@os_family:RedHat` and `base:G@os_family:Winodws` lists. To add a formula to the execution list, insert the formula-name into the list just as the already-configured formulae are. For example, to add the [cribl-agent-formula] to the RedHat execution, modify the above RedHat stanza to look like:
 
 ```{eval-rst}
-.. literalinclude:: AddFormulaToTop-Simple-RedHat.txt
-   :emphasize-lines: 7
-   :language: yaml
+..  literalinclude:: AddFormulaToTop-Simple-RedHat.txt
+    :emphasize-lines: 7
+    :language: yaml
 ```
 
 If there are any futher conditionals that should be placed on the formula being added, surround the target-formula's list entry with suitable, Jinja-based conditional-operators. For example, if you want to ensure that the `cribl-agent` is executed when a suitable environment-value is specified, update the preceeding example to look like:
 
 ```{eval-rst}
-.. literalinclude:: AddFormulaToTop-Jinja-RedHat.txt
-   :emphasize-lines: 7-9
-   :language: shell
+..  literalinclude:: AddFormulaToTop-Jinja-RedHat.txt
+    :emphasize-lines: 7-9
+    :language: shell
 ```
 
 ## Removing Formulae the Execution-List
@@ -58,9 +58,9 @@ base:
 or:
 
 ```{eval-rst}
-.. literalinclude:: RemoveFormulaFromTop-Simple-RedHat.txt
-   :emphasize-lines: 7
-   :language: yaml
+..  literalinclude:: RemoveFormulaFromTop-Simple-RedHat.txt
+    :emphasize-lines: 7
+    :language: yaml
 ```
 
 ## Changing Formulae the Execution-Order
@@ -68,9 +68,9 @@ or:
 There may be times where the system-owner will want Watchmaker to run formulae in a different order than previously-configured. The `.../states/top.sls` specifies formulae and states' execution-order serially. The order is top-to-bottom (with items closer to the top of the list executed earlier and those closer to the bottom of the lis executed later). To change the order that formulae are executed, change the order of the execution-list.
 
 ```{eval-rst}
-.. literalinclude:: FormulaTop-ALL_reordered.txt
-   :emphasize-lines: 9,20
-   :language: shell
+..  literalinclude:: FormulaTop-ALL_reordered.txt
+    :emphasize-lines: 9,20
+    :language: shell
 ```
 
 In the above (when compared to the `.../states/top.sls` file near the top of this document), the Linux `scap.content` formula-state and the Windows `scap.scan` formula-state have been moved to a later executions. This is an atypical change, but is provided for completeness' sake.

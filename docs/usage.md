@@ -1,9 +1,9 @@
 ```{eval-rst}
-.. image:: images/cropped-plus3it-logo-cmyk.png
-   :width: 140px
-   :alt: Powered by Plus3 IT Systems
-   :align: right
-   :target: https://www.plus3it.com
+.. image:: /images/cropped-plus3it-logo-cmyk.png
+    :width: 140px
+    :alt: Powered by Plus3 IT Systems
+    :align: right
+    :target: https://www.plus3it.com
 ```
 <br>
 
@@ -74,8 +74,8 @@ Note: The `-c`/`--config` switch supports the use of `s3://` URLs. However, in o
 
 ```{eval-rst}
 .. literalinclude:: troubleshooting/NoBoto3-LogSnippet.txt
-   :language: text
-   :emphasize-lines: 1-2
+    :language: text
+    :emphasize-lines: 1-2
 ```
 
 
@@ -130,14 +130,14 @@ on the [CLI](#watchmaker-from-the-cli). Here is an example:
 
 ```{eval-rst}
 .. literalinclude:: usage.d/userData-Linux-bash.sh
-   :language: shell
+    :language: shell
 ```
 
 Alternatively, cloud-config directives can also be used on **Linux**:
 
 ```{eval-rst}
 .. literalinclude:: usage.d/userData-Linux-cloud_config.yml
-   :language: yaml
+    :language: yaml
 ```
 
 #### Windows
@@ -148,7 +148,7 @@ simple bootstrap script to do that for you. After installing Python, install
 
 ```{eval-rst}
 .. literalinclude:: usage.d/userData-Windows.ps1
-   :language: shell
+    :language: shell
 ```
 
 ### `watchmaker` as a CloudFormation template
@@ -186,8 +186,8 @@ and passing the required parameters.
 ```{eval-rst}
 .. note::
 
-   Each corresponding Terraform module and CloudFormation template are
-   grouped together in the same directory.
+    Each corresponding Terraform module and CloudFormation template are
+    grouped together in the same directory.
 ```
 
 The CloudFormation templates are integrated within their respective Terraform
@@ -276,7 +276,7 @@ client.install()
 ```{eval-rst}
 .. note::
 
-   This demonstrates only a few of the arguments that are available for the
-   ``watchmaker.Arguments()`` object. For details on all arguments, see the
-   :any:`API Reference <api>`.
+    This demonstrates only a few of the arguments that are available for the
+    ``watchmaker.Arguments()`` object. For details on all arguments, see the
+    :any:`API Reference <api>`.
 ```

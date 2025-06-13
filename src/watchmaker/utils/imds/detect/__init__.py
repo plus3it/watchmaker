@@ -28,15 +28,11 @@ def provider(supported_providers=None):
     results = []
     futures = []
     supported_providers = supported_providers if supported_providers else []
-    with concurrent.futures.ThreadPoolExecutor(
-        max_workers=MAX_WORKERS
-    ) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         for cloud_identifier in supported_providers:
             if CLOUD_PROVIDERS.get(cloud_identifier, None):
                 futures.append(
-                    executor.submit(
-                        identify, CLOUD_PROVIDERS[cloud_identifier]
-                    )
+                    executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier])
                 )
 
     concurrent.futures.wait(futures)

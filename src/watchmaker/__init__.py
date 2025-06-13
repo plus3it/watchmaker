@@ -222,11 +222,7 @@ class Arguments(dict):
             else:
                 # item is the argument value
                 extra_arguments.extend(
-                    [
-                        watchmaker.utils.clean_none(
-                            item or Arguments.DEFAULT_VALUE
-                        )
-                    ]
+                    [watchmaker.utils.clean_none(item or Arguments.DEFAULT_VALUE)]
                 )
 
         self.extra_arguments = extra_arguments
@@ -298,9 +294,7 @@ class Client(object):
         params["readyfile"] = os.path.join(
             "{0}".format(self.system_drive), "var", "run", "system-is-ready"
         )
-        params["logdir"] = os.path.join(
-            "{0}".format(self.system_drive), "var", "log"
-        )
+        params["logdir"] = os.path.join("{0}".format(self.system_drive), "var", "log")
         params["workingdir"] = os.path.join(
             "{0}".format(params["prepdir"]), "workingfiles"
         )
@@ -316,9 +310,7 @@ class Client(object):
         params["readyfile"] = os.path.join(
             "{0}".format(params["prepdir"]), "system-is-ready"
         )
-        params["logdir"] = os.path.join(
-            "{0}".format(params["prepdir"]), "Logs"
-        )
+        params["logdir"] = os.path.join("{0}".format(params["prepdir"]), "Logs")
         params["workingdir"] = os.path.join(
             "{0}".format(params["prepdir"]), "WorkingFiles"
         )
@@ -417,9 +409,7 @@ class Client(object):
             raise
 
         if self.no_reboot:
-            self.log.info(
-                "Detected `no-reboot` switch. System will not be rebooted."
-            )
+            self.log.info("Detected `no-reboot` switch. System will not be rebooted.")
         else:
             self.log.info(
                 "Reboot scheduled. System will reboot after the script exits."

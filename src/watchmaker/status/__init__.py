@@ -42,9 +42,7 @@ class Status:
         self.status_providers = self.__get_status_providers(detected_providers)
 
         for identifier in self.status_providers:
-            self.providers[
-                identifier
-            ] = status_config.get_providers_by_provider_types(
+            self.providers[identifier] = status_config.get_providers_by_provider_types(
                 config, identifier
             )
 
@@ -70,11 +68,9 @@ class Status:
         """Get providers by identifiers."""
         status_providers = {}
         for detected_provider in detected_providers:
-            status_providers[
+            status_providers[detected_provider.identifier] = Status._PROVIDERS.get(
                 detected_provider.identifier
-            ] = Status._PROVIDERS.get(detected_provider.identifier)(
-                detected_provider
-            )
+            )(detected_provider)
 
         return status_providers
 
@@ -85,37 +81,30 @@ class Status:
         detected_provider = self.__detect_provider_with_prereqs(config)
 
         if detected_provider and detected_provider.identifier:
-            self.logger.debug(
-                "Detected provider %s", detected_provider.identifier
-            )
+            self.logger.debug("Detected provider %s", detected_provider.identifier)
             detected_providers.append(detected_provider)
         else:
             self.__error_on_required_provider(config)
 
-        detected_providers.extend(
-            status_config.get_non_cloud_providers(config)
-        )
+        detected_providers.extend(status_config.get_non_cloud_providers(config))
 
         return detected_providers
 
     def __detect_provider_with_prereqs(self, config):
         """Detect supported providers with prereqs."""
-        supported_providers = status_config.get_supported_cloud_w_prereqs(
-            config
-        )
+        supported_providers = status_config.get_supported_cloud_w_prereqs(config)
         # Detect providers in config that have prereqs
         detected_provider = provider(supported_providers)
         return (
             None
-            if detected_provider.identifier
-            == AbstractStatusProvider.identifier
+            if detected_provider.identifier == AbstractStatusProvider.identifier
             else detected_provider
         )
 
     def __error_on_required_provider(self, config):
         """Detect required providers in config that do no have prereqs."""
-        req_providers_missing_prereqs = (
-            status_config.get_required_cloud_wo_prereqs(config)
+        req_providers_missing_prereqs = status_config.get_required_cloud_wo_prereqs(
+            config
         )
         self.logger.debug(
             "For each required provider missing "

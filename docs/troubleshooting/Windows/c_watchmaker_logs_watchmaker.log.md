@@ -1,9 +1,9 @@
 ```{eval-rst}
-.. image:: ../../images/cropped-plus3it-logo-cmyk.png
-   :width: 140px
-   :alt: Powered by Plus3 IT Systems
-   :align: right
-   :target: https://www.plus3it.com
+.. image:: /images/cropped-plus3it-logo-cmyk.png
+    :width: 140px
+    :alt: Powered by Plus3 IT Systems
+    :align: right
+    :target: https://www.plus3it.com
 ```
 <br>
 
@@ -25,8 +25,8 @@ The cited-location of the main ``watchmaker``-execution's log-file is predicated
 
 ```{eval-rst}
 .. literalinclude:: ../../usage.d/userData-Windows.ps1
-   :language: shell
-   :emphasize-lines: 21
+    :language: shell
+    :emphasize-lines: 21
 ```
 
 The value of the ``--log-dir`` parameter sets the directory-location where ``watchmaker`` will create its log-files, including the ``watchmaker.log`` file. If a different value is set for the ``--log-dir`` parameter, the log-file will be created in _that_ directory-location, instead.
@@ -47,8 +47,8 @@ The value of the ``--log-dir`` parameter sets the directory-location where ``wat
 * Remotely-hosted configuration file is specified as an `s3://` URI without installation of `boto3` Python module. This will typically come with an error similar to:
     ```{eval-rst}
     .. literalinclude:: ../NoBoto3-LogSnippet.txt
-       :language: text
-       :emphasize-lines: 1-2
+        :language: text
+        :emphasize-lines: 1-2
     ```
     Ensure that the `boto3` Python module has been installed _prior to_ attempting to execute `watchmaker`
 
