@@ -164,6 +164,9 @@ jobs:
       - release
     permissions:
       id-token: write  # IMPORTANT: needed for oidc assume-role
+    strategy:
+      matrix:
+        build: ["rhel8", "rhel9", "win16", "win19", "win22"]
     env:
       AWS_DEFAULT_REGION: us-east-1
       BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
@@ -191,4 +194,5 @@ jobs:
       - name: Generate scan reports
         env:
           COMMIT_SHA: ${{ github.sha }}
+          SOURCE_BUILDS: "[\\\"${{ matrix.build }}\\\"]"
         run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX}}/${{ needs.check-artifacts.outputs.version }}/scans

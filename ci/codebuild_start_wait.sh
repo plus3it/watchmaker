@@ -11,8 +11,9 @@ ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 PROJECT_NAME=$1
 S3_URL=$2
 GIT_REF="${COMMIT_SHA:-main}"
+SOURCE_BUILDS="${SOURCE_BUILDS:-[\\\"rhel8\\\", \\\"rhel9\\\", \\\"win16\\\", \\\"win19\\\", \\\"win22\\\"]}"
 
-CB_ENV_OVERRIDE=('[{"name":"TF_VAR_scan_s3_url","value":"'"$S3_URL"'"},{"name":"TF_VAR_git_ref","value":"'"$GIT_REF"'"},{"name":"TF_VAR_standalone_builds","value":"[]"}]')
+CB_ENV_OVERRIDE=('[{"name":"TF_VAR_scan_s3_url","value":"'"$S3_URL"'"},{"name":"TF_VAR_git_ref","value":"'"$GIT_REF"'"},{"name":"TF_VAR_source_builds","value":"'"$SOURCE_BUILDS"'"},{"name":"TF_VAR_standalone_builds","value":"[]"}]')
 
 WAIT_INTERVAL=30 #in seconds
 
