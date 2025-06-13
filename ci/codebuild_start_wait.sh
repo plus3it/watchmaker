@@ -12,7 +12,7 @@ PROJECT_NAME=$1
 S3_URL=$2
 GIT_REF="${COMMIT_SHA:-main}"
 
-CB_ENV_OVERRIDE=('[{"name":"TF_VAR_scan_s3_url","value":"'"$S3_URL"'","type":"PLAINTEXT"},{"name":"TF_VAR_git_ref","value":"'"$GIT_REF"'","type":"PLAINTEXT"}]')
+CB_ENV_OVERRIDE=('[{"name":"TF_VAR_scan_s3_url","value":"'"$S3_URL"'"},{"name":"TF_VAR_git_ref","value":"'"$GIT_REF"'"},{"name":"TF_VAR_standalone_builds","value":"[]"}]')
 
 WAIT_INTERVAL=30 #in seconds
 
