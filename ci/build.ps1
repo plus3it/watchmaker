@@ -43,8 +43,8 @@ pyinstaller --noconfirm --clean --onefile `
 
 Write-Host "Creating sha256 hashes of standalone binary..."
 $WAM_HASH = Get-FileHash -Algorithm SHA256 "${PYI_DIST_DIR}\${WAM_FILENAME}.exe"
-Set-Content -Path "${PYI_DIST_DIR}\${WAM_FILENAME}.sha256" -Value "$($WAM_HASH.hash) ${WAM_FILENAME}.exe"
-Get-Content "${PYI_DIST_DIR}\${WAM_FILENAME}.sha256"
+Set-Content -Path "${PYI_DIST_DIR}\${WAM_FILENAME}.exe.sha256" -Value "$($WAM_HASH.hash) ${WAM_FILENAME}.exe"
+Get-Content "${PYI_DIST_DIR}\${WAM_FILENAME}.exe.sha256"
 
 Write-Host "Checking standalone binary version..."
 & "${PYI_DIST_DIR}/${WAM_FILENAME}.exe" --version
