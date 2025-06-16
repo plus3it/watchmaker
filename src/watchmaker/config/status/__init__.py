@@ -53,7 +53,7 @@ def get_status(status_key):
     """Get status message.
 
     returns string: formatted status message from key provided
-                   or status_key as status
+                    or status_key as status
     """
     status = STATUS.get(status_key, None)
     return status if status else status_key
@@ -151,7 +151,6 @@ def get_non_cloud_providers(config_status):
         set(
             status.get("provider_type").lower()
             for status in config_status.get("providers", [])
-            if status.get("provider_type", "").lower()
-            in non_cloud_provider_list
+            if status.get("provider_type", "").lower() in non_cloud_provider_list
         )
     )

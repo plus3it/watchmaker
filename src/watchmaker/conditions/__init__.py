@@ -27,6 +27,7 @@ try:
         ResourceManagementClient,
         resources,
     )
+
     HAS_AZURE = True
 except ImportError:
     pass

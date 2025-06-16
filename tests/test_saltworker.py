@@ -37,27 +37,28 @@ def saltworker_client():
 def saltworker_base_salt_args():
     """Return base arguments for salt-call."""
     return [
-        '--log-file', 'salt_call.debug.log',
-        '--log-file-level', 'debug',
-        '--log-level', 'error',
-        '--out', 'quiet',
-        '--return', 'local'
+        "--log-file",
+        "salt_call.debug.log",
+        "--log-file-level",
+        "debug",
+        "--log-level",
+        "error",
+        "--out",
+        "quiet",
+        "--return",
+        "local",
     ]
 
 
 @patch.object(
     SaltBase,
     "call_process",
-    return_value={
-        "retcode": 0, "stdout": b"salt-call 3005.1\r\n", "stderr": b""
-    },
+    return_value={"retcode": 0, "stdout": b"salt-call 3005.1\r\n", "stderr": b""},
 )
 def test_check_salt_version_matches(call_process_mock):
     """Check matching salt version."""
     system_params = {}
-    salt_config = {
-        "salt_version": "3005.1"
-    }
+    salt_config = {"salt_version": "3005.1"}
     saltworker_client = SaltBase(system_params, **salt_config)
     assert saltworker_client._check_salt_version() is True
 
@@ -65,16 +66,12 @@ def test_check_salt_version_matches(call_process_mock):
 @patch.object(
     SaltBase,
     "call_process",
-    return_value={
-        "retcode": 0, "stdout": b"salt-call 3004.1\r\n", "stderr": b""
-    },
+    return_value={"retcode": 0, "stdout": b"salt-call 3004.1\r\n", "stderr": b""},
 )
 def test_check_salt_version_does_not_matches(call_process_mock):
     """Check not matching salt version."""
     system_params = {}
-    salt_config = {
-        "salt_version": "3005.1"
-    }
+    salt_config = {"salt_version": "3005.1"}
     saltworker_client = SaltBase(system_params, **salt_config)
     assert saltworker_client._check_salt_version() is False
 
@@ -82,13 +79,9 @@ def test_check_salt_version_does_not_matches(call_process_mock):
 def test_pip_package_installed(saltworker_client):
     """Ensure pip package is installed with run_salt and correct arguments."""
     saltworker_client.pip_install = ["dnspython"]
-    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
 
-    expected = [
-        'pip.install',
-        'dnspython',
-        'index_url=https://pypi.org/simple'
-    ]
+    expected = ["pip.install", "dnspython", "index_url=https://pypi.org/simple"]
 
     saltworker_client._install_pip_packages()
 
@@ -163,7 +156,7 @@ def test_salt_client_defaults():
     salt_config = {}
 
     saltworker_client = SaltBase(system_params, **salt_config)
-    assert saltworker_client.salt_states == 'highstate'
+    assert saltworker_client.salt_states == "highstate"
 
 
 def test_salt_client_none():
@@ -175,12 +168,10 @@ def test_salt_client_none():
 
     """
     system_params = {}
-    salt_config = {
-        'salt_states': None
-    }
+    salt_config = {"salt_states": None}
 
     saltworker_client = SaltBase(system_params, **salt_config)
-    assert saltworker_client.salt_states == ''
+    assert saltworker_client.salt_states == ""
 
 
 def test_salt_client_explicit_value():
@@ -192,12 +183,10 @@ def test_salt_client_explicit_value():
 
     """
     system_params = {}
-    salt_config = {
-        'salt_states': 'foo'
-    }
+    salt_config = {"salt_states": "foo"}
 
     saltworker_client = SaltBase(system_params, **salt_config)
-    assert saltworker_client.salt_states == 'foo'
+    assert saltworker_client.salt_states == "foo"
 
 
 def test_process_states_highstate(
@@ -212,22 +201,20 @@ def test_process_states_highstate(
 
     """
     # setup
-    states = 'highstate'
+    states = "highstate"
     exclude = None
 
-    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    expected = saltworker_client.salt_state_args + ['state.highstate']
+    expected = saltworker_client.salt_state_args + ["state.highstate"]
 
     # test
     saltworker_client.process_states(states, exclude)
 
     # assertions
     saltworker_client.run_salt.assert_called_with(
-        expected,
-        log_pipe='stderr',
-        raise_error=False
+        expected, log_pipe="stderr", raise_error=False
     )
     assert saltworker_client.run_salt.call_count == 1
 
@@ -244,22 +231,20 @@ def test_process_states_multiple_states(
 
     """
     # setup
-    states = 'foo,bar'
+    states = "foo,bar"
     exclude = None
 
-    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    expected = saltworker_client.salt_state_args + ['state.sls', 'foo,bar']
+    expected = saltworker_client.salt_state_args + ["state.sls", "foo,bar"]
 
     # test
     saltworker_client.process_states(states, exclude)
 
     # assertions
     saltworker_client.run_salt.assert_called_with(
-        expected,
-        log_pipe='stderr',
-        raise_error=False
+        expected, log_pipe="stderr", raise_error=False
     )
     assert saltworker_client.run_salt.call_count == 1
 
@@ -276,22 +261,20 @@ def test_process_states_multiple_states_case_sensitive(
 
     """
     # setup
-    states = 'Foo,bAR'
+    states = "Foo,bAR"
     exclude = None
 
-    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    expected = saltworker_client.salt_state_args + ['state.sls', 'Foo,bAR']
+    expected = saltworker_client.salt_state_args + ["state.sls", "Foo,bAR"]
 
     # test
     saltworker_client.process_states(states, exclude)
 
     # assertions
     saltworker_client.run_salt.assert_called_with(
-        expected,
-        log_pipe='stderr',
-        raise_error=False
+        expected, log_pipe="stderr", raise_error=False
     )
     assert saltworker_client.run_salt.call_count == 1
 
@@ -308,18 +291,18 @@ def test_process_states_highstate_extra_states(
 
     """
     # setup
-    states = 'highstate,foo,bar'
+    states = "highstate,foo,bar"
     exclude = None
 
-    saltworker_client.run_salt = MagicMock(return_value={'retcode': 0})
+    saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    call_1 = saltworker_client.salt_state_args + ['state.highstate']
-    call_2 = saltworker_client.salt_state_args + ['state.sls', 'foo,bar']
+    call_1 = saltworker_client.salt_state_args + ["state.highstate"]
+    call_2 = saltworker_client.salt_state_args + ["state.sls", "foo,bar"]
 
     calls = [
-        call(call_1, log_pipe='stderr', raise_error=False),
-        call(call_2, log_pipe='stderr', raise_error=False),
+        call(call_1, log_pipe="stderr", raise_error=False),
+        call(call_2, log_pipe="stderr", raise_error=False),
     ]
 
     # test
@@ -330,8 +313,7 @@ def test_process_states_highstate_extra_states(
     assert saltworker_client.run_salt.call_count == len(calls)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 def test_windows_missing_prepdir():
     """Ensure that error raised when missing prep directory."""
     system_params = {}
@@ -344,8 +326,7 @@ def test_windows_missing_prepdir():
         SaltWindows(system_params, **salt_config)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 def test_windows_missing_logdir():
     """Ensure that error raised when missing log directory."""
     system_params = {}
@@ -358,8 +339,7 @@ def test_windows_missing_logdir():
         SaltWindows(system_params, **salt_config)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 def test_windows_missing_workingdir():
     """Ensure that error raised when missing working directory."""
     system_params = {}
@@ -372,8 +352,7 @@ def test_windows_missing_workingdir():
         SaltWindows(system_params, **salt_config)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 def test_windows_defaults():
     """Ensure that default values are populated as expected."""
     system_params = {}
@@ -392,13 +371,11 @@ def test_windows_defaults():
     assert win_salt.installer_url == salt_config["installer_url"]
     assert win_salt.ash_role == salt_config["ash_role"]
     assert win_salt.salt_call == os.sep.join(("C:", "Salt", "salt-call.bat"))
-    assert win_salt.salt_wam_root == os.sep.join(
-        (system_params["prepdir"], "Salt"))
+    assert win_salt.salt_wam_root == os.sep.join((system_params["prepdir"], "Salt"))
     assert win_salt.salt_conf_path == os.sep.join(
         (system_params["prepdir"], "Salt", "conf")
     )
-    assert win_salt.salt_srv == os.sep.join(
-        (system_params["prepdir"], "Salt", "srv"))
+    assert win_salt.salt_srv == os.sep.join((system_params["prepdir"], "Salt", "srv"))
     assert win_salt.salt_win_repo == os.sep.join(
         (system_params["prepdir"], "Salt", "srv", "winrepo")
     )
@@ -407,10 +384,8 @@ def test_windows_defaults():
     assert win_salt.salt_working_dir_prefix == "Salt-"
 
     assert win_salt.salt_base_env == os.sep.join((win_salt.salt_srv, "states"))
-    assert win_salt.salt_formula_root == os.sep.join(
-        (win_salt.salt_srv, "formulas"))
-    assert win_salt.salt_pillar_root == os.sep.join(
-        (win_salt.salt_srv, "pillar"))
+    assert win_salt.salt_formula_root == os.sep.join((win_salt.salt_srv, "formulas"))
+    assert win_salt.salt_pillar_root == os.sep.join((win_salt.salt_srv, "pillar"))
     assert win_salt.salt_conf["file_client"] == "local"
     assert win_salt.salt_conf["hash_type"] == "sha512"
     assert win_salt.salt_conf["pillar_roots"] == {
@@ -426,8 +401,7 @@ def test_windows_defaults():
     )
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 def test_windows_install(saltworker_base_salt_args):
     """Ensure that install runs as expected."""
     system_params = {}
@@ -456,9 +430,9 @@ def test_windows_install(saltworker_base_salt_args):
     run_salt_calls = [
         call("pkg.refresh_db"),
         call(
-            saltworker_win.salt_state_args + ['state.highstate'],
-            log_pipe='stderr',
-            raise_error=False
+            saltworker_win.salt_state_args + ["state.highstate"],
+            log_pipe="stderr",
+            raise_error=False,
         ),
     ]
 
@@ -469,8 +443,7 @@ def test_windows_install(saltworker_base_salt_args):
     assert saltworker_win._prepare_for_install.call_count == 1
     assert saltworker_win._install_package.call_count == 1
     saltworker_win.service_stop.assert_called_with("salt-minion")
-    saltworker_win._build_salt_formula.assert_called_with(
-        saltworker_win.salt_srv)
+    saltworker_win._build_salt_formula.assert_called_with(saltworker_win.salt_srv)
     saltworker_win.service_disable.assert_called_with("salt-minion")
     saltworker_win._set_grain.assert_called_with(
         "ash-windows", {"lookup": {"role": salt_config["ash_role"]}}
@@ -481,27 +454,25 @@ def test_windows_install(saltworker_base_salt_args):
     assert saltworker_win.cleanup.call_count == 1
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 @patch("os.path.isfile", MagicMock(return_value=False))
 def test_windows_salt_call_old():
     """Ensure old path is tested."""
-    salt_path = os.sep.join(("C:", 'Salt', 'salt-call.bat'))
+    salt_path = os.sep.join(("C:", "Salt", "salt-call.bat"))
     assert SaltWindows._get_salt_call() == salt_path
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 @patch("os.path.isfile", MagicMock(return_value=True))
 def test_windows_salt_call_new():
     """Ensure new path is tested."""
-    salt_path = os.sep.join(("C:\\Program Files", 'Salt Project',
-                             'Salt', 'salt-call.exe'))
+    salt_path = os.sep.join(
+        ("C:\\Program Files", "Salt Project", "Salt", "salt-call.exe")
+    )
     assert SaltWindows._get_salt_call() == salt_path
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 @patch("codecs.open", autospec=True)
 @patch("os.makedirs", autospec=True)
 @patch("yaml.safe_dump", autospec=True)
@@ -529,8 +500,7 @@ def test_windows_prep_install(mock_safe, mock_makedirs, mock_codec):
     )
     mock_makedirs.assert_called_with(saltworker_win.salt_conf_path)
     mock_codec.assert_called_with(
-        os.path.join(saltworker_win.salt_conf_path, "minion"),
-        "w", encoding="utf-8"
+        os.path.join(saltworker_win.salt_conf_path, "minion"), "w", encoding="utf-8"
     )
     mock_safe.assert_called_with(
         saltworker_win.salt_conf,
@@ -564,7 +534,8 @@ def test_linux_computer_name_none():
     # assertions ===================
     assert saltworker_lx._set_grain.call_count == 3
     saltworker_lx._set_grain.assert_called_with(
-        'name-computer', {'computername': salt_config["computer_name"]})
+        "name-computer", {"computername": salt_config["computer_name"]}
+    )
 
     # tried "normal" first, with a value, above. now, trying with none.
     salt_config["computer_name"] = None
@@ -616,18 +587,21 @@ def test_linux_salt_debug_log_none(mock_safe, mock_makedirs, mock_codec):
 
     # assertions ===================
     assert saltworker_lx.salt_debug_logfile == os.sep.join(
-        (system_params["logdir"], 'salt_call.debug.log'))
+        (system_params["logdir"], "salt_call.debug.log")
+    )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 4),
-                    reason="Not supported in this Python version.")
+@pytest.mark.skipif(
+    sys.version_info < (3, 4), reason="Not supported in this Python version."
+)
 @patch("codecs.open", autospec=True)
 @patch("os.walk", autospec=True)
 @patch("yaml.safe_dump", autospec=True)
 @patch("yaml.safe_load", autospec=True)
 @patch("watchmaker.utils.copytree", autospec=True)
 def test_linux_salt_content_none(
-        mock_copytree, mock_yload, mock_ydump, mock_os, mock_codec):
+    mock_copytree, mock_yload, mock_ydump, mock_os, mock_codec
+):
     """Test that Pythonic None can be used without error rather than 'None'."""
     # setup ========================
     system_params = {}
@@ -656,8 +630,9 @@ def test_linux_salt_content_none(
     assert mock_copytree.call_count > 1
 
 
-@pytest.mark.skipif(sys.version_info < (3, 4),
-                    reason="Not supported in this Python version.")
+@pytest.mark.skipif(
+    sys.version_info < (3, 4), reason="Not supported in this Python version."
+)
 @patch("codecs.open", autospec=True)
 @patch("os.walk", autospec=True)
 @patch("yaml.safe_dump", autospec=True)
@@ -666,8 +641,14 @@ def test_linux_salt_content_none(
 @patch("glob.glob", autospec=True)
 @patch("watchmaker.utils.copy_subdirectories", autospec=True)
 def test_linux_salt_content_path_none(
-        mock_copysubdirs, mock_glob, mock_copytree, mock_yload,
-        mock_ydump, mock_os, mock_codec):
+    mock_copysubdirs,
+    mock_glob,
+    mock_copytree,
+    mock_yload,
+    mock_ydump,
+    mock_os,
+    mock_codec,
+):
     """Test that Pythonic None can be used without error rather than 'None'."""
     # setup ========================
     system_params = {}
@@ -700,8 +681,9 @@ def test_linux_salt_content_path_none(
     assert mock_glob.call_count == 0
 
 
-@pytest.mark.skipif(sys.version_info < (3, 4),
-                    reason="Not supported in this Python version.")
+@pytest.mark.skipif(
+    sys.version_info < (3, 4), reason="Not supported in this Python version."
+)
 @patch("codecs.open", autospec=True)
 @patch("os.walk", autospec=True)
 @patch("yaml.safe_dump", autospec=True)
@@ -709,8 +691,8 @@ def test_linux_salt_content_path_none(
 @patch("watchmaker.utils.copytree", autospec=True)
 @patch("glob.glob", autospec=True)
 def test_linux_salt_content_path(
-        mock_glob, mock_copytree, mock_yload,
-        mock_ydump, mock_os, mock_codec):
+    mock_glob, mock_copytree, mock_yload, mock_ydump, mock_os, mock_codec
+):
     """Ensure that files from salt_content_path are retrieved correctly."""
     # setup ========================
     system_params = {}
@@ -728,7 +710,7 @@ def test_linux_salt_content_path(
     saltworker_lx.retrieve_file = MagicMock(return_value=None)
     saltworker_lx.extract_contents = MagicMock(return_value=None)
     saltworker_lx.working_dir = system_params["workingdir"]
-    mock_glob.return_value = ['05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d']
+    mock_glob.return_value = ["05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d"]
 
     saltworker_lx._build_salt_formula("8822e968-deea-410f-9b6e-d25a36c512d1")
 
@@ -768,7 +750,8 @@ def test_linux_ou_path_none():
     # assertions ===================
     assert saltworker_lx._set_grain.call_count == 3
     saltworker_lx._set_grain.assert_called_with(
-        'join-domain', {'oupath': salt_config["ou_path"]})
+        "join-domain", {"oupath": salt_config["ou_path"]}
+    )
 
     # tried "normal" first, with a value, above. now, trying with none.
     salt_config["ou_path"] = None
@@ -812,7 +795,8 @@ def test_linux_admin_groups_none():
     # assertions ===================
     assert saltworker_lx._set_grain.call_count == 3
     saltworker_lx._set_grain.assert_called_with(
-        'join-domain', {'admin_groups': [salt_config["admin_groups"]]})
+        "join-domain", {"admin_groups": [salt_config["admin_groups"]]}
+    )
 
     # tried "normal" first, with a value, above. now, trying with none.
     salt_config["admin_groups"] = None
@@ -856,7 +840,8 @@ def test_linux_admin_users_none():
     # assertions ===================
     assert saltworker_lx._set_grain.call_count == 3
     saltworker_lx._set_grain.assert_called_with(
-        'join-domain', {'admin_users': [salt_config["admin_users"]]})
+        "join-domain", {"admin_users": [salt_config["admin_users"]]}
+    )
 
     # tried "normal" first, with a value, above. now, trying with none.
     salt_config["admin_users"] = None
@@ -875,8 +860,7 @@ def test_linux_admin_users_none():
     assert saltworker_lx._set_grain.call_count == 2
 
 
-@patch.dict(os.environ, {"systemdrive": "C:",
-                         "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
 def test_win_ash_role_none():
     """Test that Pythonic None can be used without error rather than 'None'."""
     # setup ========================
@@ -914,7 +898,8 @@ def test_win_ash_role_none():
     # assertions ===================
     assert saltworker_win._set_grain.call_count == 1
     saltworker_win._set_grain.assert_called_with(
-        'ash-windows', {'lookup': {'role': salt_config["ash_role"]}})
+        "ash-windows", {"lookup": {"role": salt_config["ash_role"]}}
+    )
 
     # tried "normal" first, with a value, above. now, trying with none.
     salt_config["ash_role"] = None
@@ -970,7 +955,8 @@ def test_linux_computer_name_patt_none():
     # assertions ===================
     assert saltworker_lx._set_grain.call_count == 3
     saltworker_lx._set_grain.assert_called_with(
-        'name-computer', {'pattern': salt_config["computer_name_pattern"]})
+        "name-computer", {"pattern": salt_config["computer_name_pattern"]}
+    )
 
     # tried "normal" first, with a value, above. now, trying with none.
     salt_config["computer_name_pattern"] = None

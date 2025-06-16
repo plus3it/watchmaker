@@ -1,0 +1,198 @@
+name: Release version and publish package
+
+on:
+  workflow_run:
+    workflows: ["Build and test"]
+    types: [completed]
+
+concurrency:
+  group: release-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Retrieve artifacts after build and test run
+  check-artifacts:
+    name: Check artifacts from build run
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    permissions:
+      actions: read  # Required to download artifacts from other workflow runs
+    steps:
+      - name: Retrieve source
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: source
+          path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: dists
+          path: dist/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Retrieve standalone binaries
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: standalone-*
+          path: .pyinstaller/dist
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - run: ls -al dist/
+      - run: ls -alR .pyinstaller/dist/
+
+      - name: Output version
+        id: version
+        run: |
+          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
+          echo "version=${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload repo
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: repo
+          path: ./**
+          if-no-files-found: error
+          include-hidden-files: true
+          retention-days: 1
+
+  # Create release
+  release:
+    if: |
+      github.event.workflow_run.event != 'pull_request' &&
+      github.event.workflow_run.head_branch == github.event.repository.default_branch
+    name: Create release and publish package
+    runs-on: ubuntu-latest
+    needs:
+      - check-artifacts
+    outputs:
+      release-condition: ${{ steps.release.outputs.release-condition }}
+    permissions:
+      contents: read
+    steps:
+      - name: Retrieve repo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: repo
+          path: .
+
+      - name: Create GitHub release
+        id: release
+        uses: plus3it/actions-workflows/.github/actions/release@1c7909107a55325d40d2f12f29029c73a38c45c3
+        with:
+          release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
+          release-files: |
+            dist/*
+            .pyinstaller/dist/*/*
+
+  # Publish package to PyPI
+  publish-pypi:
+    if: needs.release.outputs.release-condition == 'true'
+    name: Publish package to pypi
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+      - name: Retrieve repo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: repo
+          path: .
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
+
+  # Publish package to S3
+  publish-s3:
+    name: Publish package to s3
+    runs-on: ubuntu-latest
+    needs:
+      - release
+    permissions:
+      id-token: write  # IMPORTANT: needed for oidc assume-role
+    env:
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
+    steps:
+      - name: Retrieve repo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: repo
+          path: .
+
+      - name: Install aws-cli
+        uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
+        with:
+          role-session-name: "watchmaker-publish-s3-package"
+          role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
+          aws-region: "${{ env.AWS_DEFAULT_REGION }}"
+
+      - name: Validate credential
+        run: aws sts get-caller-identity
+
+      - run: ls -alR .pyinstaller/dist/
+      - run: mkdir -p .pyinstaller/dist/latest
+      - run: cp .pyinstaller/dist/*/watchmaker-*-standalone-linux-x86_64 .pyinstaller/dist/latest/watchmaker-latest-standalone-linux-x86_64
+      - run: cp .pyinstaller/dist/*/watchmaker-*-standalone-windows-amd64.exe .pyinstaller/dist/latest/watchmaker-latest-standalone-windows-amd64.exe
+      - run: cp .pyinstaller/dist/*/watchmaker-bootstrap.ps1 .pyinstaller/dist/latest/watchmaker-bootstrap.ps1
+      - run: cd .pyinstaller/dist/latest && sha256sum watchmaker-latest-standalone-linux-x86_64 > watchmaker-latest-standalone-linux-x86_64.sha256
+      - run: cd .pyinstaller/dist/latest && sha256sum watchmaker-latest-standalone-windows-amd64.exe > watchmaker-latest-standalone-windows-amd64.exe.sha256
+      - run: ls -alR .pyinstaller/dist/latest
+
+      - name: Publish standalone binaries to S3
+        run: aws s3 cp --recursive .pyinstaller/dist/ s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX }}/
+
+  # Publish scans to S3
+  publish-scans:
+    name: Publish scans to s3
+    runs-on: ubuntu-latest
+    needs:
+      - check-artifacts
+      - release
+    permissions:
+      id-token: write  # IMPORTANT: needed for oidc assume-role
+    strategy:
+      matrix:
+        build: ["rhel8", "rhel9", "win16", "win19", "win22"]
+    env:
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
+    steps:
+      - name: Retrieve repo
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: repo
+          path: .
+
+      - name: Install aws-cli
+        uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
+        with:
+          role-duration-seconds: 7200
+          role-session-name: "watchmaker-publish-s3-scans"
+          role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
+          aws-region: "${{ env.AWS_DEFAULT_REGION }}"
+
+      - name: Validate credential
+        run: aws sts get-caller-identity
+
+      - name: Generate scan reports
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+          SOURCE_BUILDS: "[\\\"${{ matrix.build }}\\\"]"
+        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX}}/${{ needs.check-artifacts.outputs.version }}/scans

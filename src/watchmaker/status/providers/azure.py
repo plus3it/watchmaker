@@ -41,9 +41,7 @@ class AzureStatusProvider(AbstractStatusProvider):
         try:
             self.__set_ids_from_server()
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            self.logger.error(
-                "Error retrieving ids from metadata service %s", ex
-            )
+            self.logger.error("Error retrieving ids from metadata service %s", ex)
 
     def update_status(self, key, status, required):
         """Tag an Azure instance with the key and status provided."""
@@ -57,9 +55,7 @@ class AzureStatusProvider(AbstractStatusProvider):
         self.__error_on_required_status(required)
 
     def __tag_azure_resouce(self, key, status):
-        self.logger.debug(
-            "Tag Resource %s with  %s:%s", self.resource_id, key, status
-        )
+        self.logger.debug("Tag Resource %s with  %s:%s", self.resource_id, key, status)
         # pylint: disable=attribute-defined-outside-init
         # pylint: disable=undefined-variable
         credential = AzureCliCredential()  # type: ignore # noqa F821
@@ -79,9 +75,7 @@ class AzureStatusProvider(AbstractStatusProvider):
 
     def __set_ids_from_server(self):
         """Retrieve Azure instance id from metadata."""
-        response = utils.urlopen_retry(
-            self.metadata_id_url, self.DEFAULT_TIMEOUT
-        )
+        response = utils.urlopen_retry(self.metadata_id_url, self.DEFAULT_TIMEOUT)
         data = json.load(response)
         self.subscription_id = data["compute"]["subscriptionId"]
         self.resource_id = data["compute"]["resourceId"]

@@ -104,3 +104,7 @@ htmlcov
 
 # gravitybee build dir
 .gravitybee
+
+# tardigrade-ci
+.tardigrade-ci
+tardigrade-ci/

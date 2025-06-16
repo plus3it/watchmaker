@@ -1,14 +1,4 @@
-graft ci
-graft docs
-graft requirements
 graft src
-graft tests
-
-include .bumpversion.cfg
-include .coveragerc
-include .editorconfig
-include .gitmodules
-include .pylintrc
 
 include AUTHORS.md
 include CHANGELOG.md
@@ -16,6 +6,19 @@ include CONTRIBUTING.md
 include LICENSE
 include README.md
 
-include tox.ini *.yml *.yaml
+exclude ci/**
+exclude docs/**
+exclude requirements/**
+exclude tests/**
+exclude .bumpversion.cfg
+exclude .coveragerc
+exclude .editorconfig
+exclude .gitmodules
+exclude .pylintrc
+exclude tox.ini
+exclude Dockerfile
+exclude Makefile
+exclude *.yml
+exclude *.yaml
 
 global-exclude *.pyz *.py[cod] __pycache__ *.so *.dylib .git

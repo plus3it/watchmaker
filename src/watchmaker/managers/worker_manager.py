@@ -52,10 +52,12 @@ class WorkersManagerBase(object):
         workers = []
 
         for worker, items in self.workers.items():
-            configuration = items['config']
-            workers.append(self.WORKERS.get(worker)(
-                system_params=self.system_params,
-                **configuration))
+            configuration = items["config"]
+            workers.append(
+                self.WORKERS.get(worker)(
+                    system_params=self.system_params, **configuration
+                )
+            )
 
         for worker in workers:
             worker.before_install()
@@ -71,10 +73,7 @@ class WorkersManagerBase(object):
 class LinuxWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Linux systems."""
 
-    WORKERS = {
-        'yum': Yum,
-        'salt': SaltLinux
-    }
+    WORKERS = {"yum": Yum, "salt": SaltLinux}
 
     def _worker_execution(self):
         pass
@@ -90,9 +89,7 @@ class LinuxWorkersManager(WorkersManagerBase):
 class WindowsWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Windows systems."""
 
-    WORKERS = {
-        'salt': SaltWindows
-    }
+    WORKERS = {"salt": SaltWindows}
 
     def _worker_execution(self):
         pass

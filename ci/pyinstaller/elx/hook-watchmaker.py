@@ -17,13 +17,13 @@ from PyInstaller.utils.hooks import (
 
 datas = [
     ("src/watchmaker/static", "watchmaker/static"),
-    ('/usr/lib64/.libcrypto.so.*.hmac', '.'),
-    ('/usr/lib64/.libssl.so.*.hmac', '.'),
+    ("/usr/lib64/.libcrypto.so.*.hmac", "."),
+    ("/usr/lib64/.libssl.so.*.hmac", "."),
 ]
 
 binaries = [
-    ('/usr/lib64/libcrypto.so.*', '.'),
-    ('/usr/lib64/libssl.so.*', '.'),
+    ("/usr/lib64/libcrypto.so.*", "."),
+    ("/usr/lib64/libssl.so.*", "."),
 ]
 
 hiddenimports = [

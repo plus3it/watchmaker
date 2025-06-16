@@ -55,9 +55,7 @@ def test_config_w_name_pattern(_mock_provider):
     config, _status_config = get_configs(  # pylint: disable=unused-variable
         "linux",
         {},
-        os.path.join(
-            "tests", "resources", "config_with_computer_name_pattern.yaml"
-        ),
+        os.path.join("tests", "resources", "config_with_computer_name_pattern.yaml"),
     )
 
     pattern = config["salt"]["config"]["computer_name_pattern"]
@@ -73,10 +71,7 @@ def test_config_w_name_pattern(_mock_provider):
 
     # Test without terminal patterns showing need for \Z
     assert re.match(pattern, valid_computer_name + "12345") is not None
-    assert re.match(
-        dbl_terminal_pattern,
-        valid_computer_name + "12345"
-    ) is None
+    assert re.match(dbl_terminal_pattern, valid_computer_name + "12345") is None
 
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="unknown")
@@ -107,7 +102,6 @@ def test_config_validate_pattern():
     )
 
     validate_computer_name_pattern(config)
-    config["salt"]["config"]["computer_name_pattern"] = \
-        r"?i)abc[\d]{3}[a-z]{8}[ex]"
+    config["salt"]["config"]["computer_name_pattern"] = r"?i)abc[\d]{3}[a-z]{8}[ex]"
     with pytest.raises(WatchmakerError):
         validate_computer_name_pattern(config)
