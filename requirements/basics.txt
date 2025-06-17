@@ -1,4 +1,4 @@
-build==1.2.2
+build==1.2.2.post1
 
 setuptools==59.6.0;python_version<="3.6"
 setuptools==68.0.0;python_version<="3.7" and python_version>"3.6"
