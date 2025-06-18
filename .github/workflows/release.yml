@@ -10,15 +10,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Retrieve artifacts after build and test run
-  check-artifacts:
-    name: Check artifacts from build run
-    if: github.event.workflow_run.conclusion == 'success'
+  # Create release
+  release:
+    if: |
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event != 'pull_request' &&
+      github.event.workflow_run.head_branch == github.event.repository.default_branch
+    name: Create release and publish package
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.version.outputs.version }}
+      release-condition: ${{ steps.release.outputs.release-condition }}
     permissions:
       actions: read  # Required to download artifacts from other workflow runs
+      contents: read
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
@@ -45,45 +49,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
 
-      - run: ls -al dist/
-      - run: ls -alR .pyinstaller/dist/
-
-      - name: Output version
-        id: version
-        run: |
-          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
-          echo "version=${VERSION}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-
-      - name: Upload repo
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        with:
-          name: repo
-          path: ./**
-          if-no-files-found: error
-          include-hidden-files: true
-          retention-days: 1
-
-  # Create release
-  release:
-    if: |
-      github.event.workflow_run.event != 'pull_request' &&
-      github.event.workflow_run.head_branch == github.event.repository.default_branch
-    name: Create release and publish package
-    runs-on: ubuntu-latest
-    needs:
-      - check-artifacts
-    outputs:
-      release-condition: ${{ steps.release.outputs.release-condition }}
-    permissions:
-      contents: read
-    steps:
-      - name: Retrieve repo
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          name: repo
-          path: .
-
       - name: Create GitHub release
         id: release
         uses: plus3it/actions-workflows/.github/actions/release@8f8c209f4baa89f8b624937368ed36646313e987
@@ -101,13 +66,16 @@ jobs:
     needs:
       - release
     permissions:
+      actions: read  # Required to download artifacts from other workflow runs
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
-      - name: Retrieve repo
+      - name: Retrieve release distributions
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: repo
-          path: .
+          name: dists
+          path: dist/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc
@@ -119,16 +87,20 @@ jobs:
     needs:
       - release
     permissions:
+      actions: read  # Required to download artifacts from other workflow runs
       id-token: write  # IMPORTANT: needed for oidc assume-role
     env:
       AWS_DEFAULT_REGION: us-east-1
       BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
     steps:
-      - name: Retrieve repo
+      - name: Retrieve standalone binaries
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: repo
-          path: .
+          pattern: standalone-*
+          path: .pyinstaller/dist
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Install aws-cli
         uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
@@ -160,7 +132,6 @@ jobs:
     name: Publish scans to s3
     runs-on: ubuntu-latest
     needs:
-      - check-artifacts
       - release
     permissions:
       id-token: write  # IMPORTANT: needed for oidc assume-role
@@ -171,11 +142,20 @@ jobs:
       AWS_DEFAULT_REGION: us-east-1
       BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
     steps:
-      - name: Retrieve repo
+      - name: Retrieve source
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: repo
+          name: source
           path: .
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
+          echo "version=${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Install aws-cli
         uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
@@ -195,4 +175,4 @@ jobs:
         env:
           COMMIT_SHA: ${{ github.sha }}
           SOURCE_BUILDS: "[\\\"${{ matrix.build }}\\\"]"
-        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX}}/${{ needs.check-artifacts.outputs.version }}/scans
+        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX}}/${{ steps.version.outputs.version }}/scans
