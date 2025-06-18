@@ -1,6 +1,6 @@
 [![License](https://img.shields.io/github/license/plus3it/watchmaker.svg)](./LICENSE)
-[![Travis CI Build Status](https://travis-ci.org/plus3it/watchmaker.svg?branch=develop)](https://travis-ci.org/plus3it/watchmaker)
-[![Azure DevOps Build Status](https://dev.azure.com/plus3it/watchmaker/_apis/build/status%2Fcontinuous-integration.azure-devops?branchName=main)](https://dev.azure.com/plus3it/watchmaker/_build/latest?definitionId=1&branchName=main)
+[![Build and Test Status](https://github.com/plus3it/watchmaker/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/plus3it/watchmaker/actions/workflows/build.yml)
+[![Release and Publish Status](https://github.com/plus3it/watchmaker/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/plus3it/watchmaker/actions/workflows/release.yml)
 [![Latest Version](https://img.shields.io/pypi/v/watchmaker.svg?label=version)](https://pypi.python.org/pypi/watchmaker)
 
 # Watchmaker
