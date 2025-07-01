@@ -5,10 +5,6 @@ on:
     workflows: ["Build and test"]
     types: [completed]
 
-concurrency:
-  group: release-${{ github.head_ref || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   # Create release
   release:
@@ -20,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release-condition: ${{ steps.release.outputs.release-condition }}
+      release-version: ${{ steps.version.outputs.value }}
+      scan-build-run-id: ${{ steps.scan-build.outputs.run-id }}
     permissions:
       actions: read  # Required to download artifacts from other workflow runs
       contents: read
@@ -48,6 +46,20 @@ jobs:
           merge-multiple: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Get version
+        id: version
+        run: |
+          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
+          echo "version=${VERSION}"
+          echo "value=${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Set terrafirm run-id
+        id: scan-build
+        run: |
+          RUN_ID=$(uuidgen)
+          echo "run-id=${RUN_ID}" >> "$GITHUB_OUTPUT"
+          echo "RUN_ID=${RUN_ID}"
 
       - name: Create GitHub release
         id: release
@@ -130,49 +142,27 @@ jobs:
   # Publish scans to S3
   publish-scans:
     name: Publish scans to s3
-    runs-on: ubuntu-latest
+    runs-on:
+      - codebuild-p3-terrafirm-${{ github.run_id }}-${{ github.run_attempt }}
+        instance-size:small
     needs:
       - release
-    permissions:
-      id-token: write  # IMPORTANT: needed for oidc assume-role
     strategy:
+      fail-fast: false
       matrix:
-        build: ["rhel8", "rhel9", "win16", "win19", "win22"]
+        scan-build: ["rhel8", "rhel9", "win16", "win19", "win22"]
     env:
-      AWS_DEFAULT_REGION: us-east-1
-      BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
+      TF_VAR_aws_region: us-east-1
+      TF_VAR_codebuild_id: ${{ needs.release.outputs.scan-build-run-id }}
+      TF_VAR_common_args: "-n -e dev"
+      TF_VAR_git_ref: ${{ github.sha }}
+      TF_VAR_git_repo: "${{ github.server_url }}/${{ github.repository }}.git"
+      TF_VAR_scan_s3_url: "s3://${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}/${{ vars.S3_PREFIX}}/${{ needs.release.outputs.release-version }}/scans"
+      TF_VAR_source_builds: '["${{ matrix.scan-build }}"]'
+      TF_VAR_standalone_builds: '[]'
     steps:
-      - name: Retrieve source
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          name: source
-          path: .
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-
-      - name: Get version
-        id: version
-        run: |
-          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
-          echo "version=${VERSION}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-
-      - name: Install aws-cli
-        uses: unfor19/install-aws-cli-action@e8b481e524a99f37fbd39fdc1dcb3341ab091367
-
-      - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
-        with:
-          role-duration-seconds: 7200
-          role-session-name: "watchmaker-publish-s3-scans"
-          role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
-          aws-region: "${{ env.AWS_DEFAULT_REGION }}"
-
-      - name: Validate credential
-        run: aws sts get-caller-identity
-
       - name: Generate scan reports
-        env:
-          COMMIT_SHA: ${{ github.sha }}
-          SOURCE_BUILDS: "[\\\"${{ matrix.build }}\\\"]"
-        run: bash ci/codebuild_start_wait.sh ${{ vars.CODEBUILD_PROJECT }} s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX}}/${{ steps.version.outputs.version }}/scans
+        id: terrafirm
+        uses: plus3it/terrafirm/.github/actions/test@e542672b4d5d7103cc4490989691e9f703fbd20a
+        with:
+          destroy-after-test: true
