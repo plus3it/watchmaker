@@ -24,12 +24,6 @@ all:
 linux:
   - yum:
       repo_map:
-        # SaltEL7:
-        - dist:
-            - redhat
-            - centos
-          el_version: 7
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.2/salt-reposync-onedir.repo
         # SaltEL8:
         - dist:
             - almalinux
