@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.29.3](https://github.com/plus3it/watchmaker/releases/tag/0.29.3)
+
+**Released**: 2025.07.02
+
+**Summary**:
+
+*   Uses SaltStack 3007.2 in Watchmaker default config
+*   Updates default config to use Salt repos compatible with Broadcom hosting
+*   Switches to GitHub Actions for all test and release workflows, removing Travis-CI
+    and Azure DevOps Pipelines
+*   Lints all python code using black
+*   scap-formula
+    -   Updates openscap content to 0.1.76
+    -   Includes SCAP Content for Almalinux 9, including Red Hat "stig" profile
+
+
 ## [0.29.2](https://github.com/plus3it/watchmaker/releases/tag/0.29.2)
 
 **Released**: 2025.01.21
