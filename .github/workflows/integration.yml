@@ -1,0 +1,76 @@
+name: Run terrafirm integration tests
+
+on:
+  # Run on demand
+  workflow_dispatch:
+
+  # Run on pull request review with a specific command
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    if: contains(github.event.review.body, '/build') || github.event_name == 'workflow_dispatch'
+    outputs:
+      run-id: ${{ steps.trigger.outputs.run-id }}
+    steps:
+      - name: Set terrafirm run-id
+        id: trigger
+        run: |
+          RUN_ID=$(uuidgen)
+          echo "run-id=${RUN_ID}" >> "$GITHUB_OUTPUT"
+          echo "RUN_ID=${RUN_ID}"
+
+  test-source:
+    runs-on:
+      - codebuild-p3-terrafirm-${{ github.run_id }}-${{ github.run_attempt }}
+        instance-size:small
+    needs: trigger
+    strategy:
+      fail-fast: false
+      matrix:
+        source-build: [rhel8, rhel9, win16, win19, win22]
+    env:
+      AWS_DEFAULT_REGION: us-east-1
+      TF_VAR_aws_region: us-east-1
+      TF_VAR_codebuild_id: ${{ needs.trigger.outputs.run-id }}
+      TF_VAR_common_args: "-n -e dev"
+      TF_VAR_git_ref: ${{ github.ref || github.sha }}
+      TF_VAR_git_repo: "${{ github.server_url }}/${{ github.repository }}.git"
+      TF_VAR_source_builds: '["${{ matrix.source-build }}"]'
+      TF_VAR_standalone_builds: '[]'
+    steps:
+      - name: Terrafirm integration tests
+        id: terrafirm
+        uses: plus3it/terrafirm/.github/actions/test@e542672b4d5d7103cc4490989691e9f703fbd20a
+        with:
+          destroy-after-test: true
+
+  test-standalone:
+    runs-on:
+      - codebuild-p3-terrafirm-${{ github.run_id }}-${{ github.run_attempt }}
+        instance-size:small
+    needs: trigger
+    strategy:
+      fail-fast: false
+      matrix:
+        standalone-build: [rhel8, rhel9, win16, win19, win22]
+    env:
+      AWS_DEFAULT_REGION: us-east-1
+      TF_VAR_aws_region: us-east-1
+      TF_VAR_codebuild_id: ${{ needs.trigger.outputs.run-id }}
+      TF_VAR_common_args: "-n -e dev"
+      TF_VAR_git_ref: ${{ github.ref || github.sha }}
+      TF_VAR_git_repo: "${{ github.server_url }}/${{ github.repository }}.git"
+      TF_VAR_source_builds: '[]'
+      TF_VAR_standalone_builds: '["${{ matrix.standalone-build }}"]'
+    steps:
+      - name: Terrafirm integration tests
+        id: terrafirm
+        uses: plus3it/terrafirm/.github/actions/test@e542672b4d5d7103cc4490989691e9f703fbd20a
+        with:
+          destroy-after-test: true
