@@ -674,7 +674,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
         ]
 
         # Add distro-specific policycoreutils RPM to package-list
-        self.yum_pkgs.append(self._policy_rpm(distro.version()[0]))
+        self.yum_pkgs.append(self._policy_rpm(distro.version().split('.')[0]))
 
         # Set up variables for paths to Salt directories and applications.
         self.salt_call = "/usr/bin/salt-call"
@@ -804,7 +804,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
 
     def _policy_rpm(self, arg):
         """Return name of distro version-appropriate policycoreutils RPM."""
-        if arg < "8":
+        if int(arg) < 8:
             result = "policycoreutils-python"
         else:
             result = "policycoreutils-python-utils"
