@@ -55,14 +55,14 @@ class Yum(WorkerBase, LinuxPlatformManager):
     def get_dist_info(self):
         """Validate the Linux distro and return info about the distribution."""
         dist = self.get_mapped_dist_name()
-        version = distro.version().split('.')[0]
+        version = distro.version().split(".")[0]
         el_version = None
 
         # Determine el_version
         if dist == "amazon":
             el_version = self._get_amazon_el_version(version)
         else:
-            el_version = distro.version().split('.')[0]
+            el_version = distro.version().split(".")[0]
 
         if el_version is None:
             msg = "Unsupported OS version! dist = {0}, version = {1}.".format(
