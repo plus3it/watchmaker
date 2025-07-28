@@ -39,7 +39,6 @@ pull_request_rules:
   - name: Approve dependabot pull requests
     conditions:
       - author=dependabot[bot]
-      - "#approved-reviews-by>=1"
       - label!=submodules
       - -title~=(?i).*pyinstaller.*
     actions:
