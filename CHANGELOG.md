@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.29.4](https://github.com/plus3it/watchmaker/releases/tag/0.29.4)
+
+**Released**: 2025.08.01
+
+**Summary**:
+
+*   Updates dist constraints to allow watchmaker to execute on Amazon Linux 2023
+*   Adjusts default config to invoke correct scap profiles for Rocky Linux and Alma Linux
+*   Adds mappings for EL10 and AL2023 to default config (no support yet in ash-linux, however)
+*   ash-linux
+    -   Removes content related to EL7
+*   scap-formula
+    -   Updates openscap content to 0.1.77
+    -   Adds SCAP content and salt mappings for EL10, Rocky Linux, and Amazon Linux 2023
+
 ## [0.29.3](https://github.com/plus3it/watchmaker/releases/tag/0.29.3)
 
 **Released**: 2025.07.02
