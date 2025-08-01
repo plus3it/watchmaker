@@ -92,7 +92,7 @@ author = "Plus3 IT Systems"
 # built documents.
 #
 # The short X.Y version.
-version = "0.29.3"
+version = "0.29.4"
 # The full version, including alpha/beta/rc tags.
 release = version
 
