@@ -23,7 +23,7 @@ jobs:
       contents: read
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
           name: source
           path: .
@@ -31,7 +31,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Retrieve release distributions
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
           name: dists
           path: dist/
@@ -39,7 +39,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Retrieve standalone binaries
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
           pattern: standalone-*
           path: .pyinstaller/dist
@@ -63,7 +63,7 @@ jobs:
 
       - name: Create GitHub release
         id: release
-        uses: plus3it/actions-workflows/.github/actions/release@8dbdaec548e7ccadb978c6a2fbc05e5c64625935
+        uses: plus3it/actions-workflows/.github/actions/release@3b8e48de2da8233d170c1d094932a562d9a36990
         with:
           release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
           release-files: |
@@ -82,7 +82,7 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - name: Retrieve release distributions
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
           name: dists
           path: dist/
@@ -106,7 +106,7 @@ jobs:
       BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
     steps:
       - name: Retrieve standalone binaries
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
         with:
           pattern: standalone-*
           path: .pyinstaller/dist
@@ -118,7 +118,7 @@ jobs:
         uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c
 
       - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@b47578312673ae6fa5b5096b330d9fbac3d116df
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a
         with:
           role-session-name: "watchmaker-publish-s3-package"
           role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
@@ -163,6 +163,6 @@ jobs:
     steps:
       - name: Generate scan reports
         id: terrafirm
-        uses: plus3it/terrafirm/.github/actions/test@e542672b4d5d7103cc4490989691e9f703fbd20a
+        uses: plus3it/terrafirm/.github/actions/test@a395c6c7185dafed5883b2532274660c4c4e16c6
         with:
           destroy-after-test: true
