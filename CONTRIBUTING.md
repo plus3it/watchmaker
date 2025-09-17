@@ -80,13 +80,8 @@ For pull request acceptance, you should:
 
 ## Documentation Previewing
 
-In previous iterations of this guide, `tox` was used by the project's CI
-configuration to wrap the execution of things like converting Markdown documents
-into the HTML documents that ultimately make up Watchmaker's official
-[documentation](https://watchmaker.readthedocs.io). The `tox`-using CI methods
-have since been replaced by GitHub actions and `tox`-related content removed.
 For those who wish to have a local preview capability for the generated HTML
-content, the following can be done:
+content (before submitting a PR), the following can be done:
 
 1.  Build a Docker image using the `Dockerfile` found in the `ci/local`
     directory. If using Podman for local work with Docker containers, executing:
@@ -205,5 +200,4 @@ specify something like this for EC2 userdata:
 
 [0]: https://github.com/plus3it/watchmaker/issues
 [1]: https://travis-ci.org/plus3it/watchmaker/pull_requests
-[2]: https://tox.wiki/en/latest/installation.html
 [3]: https://github.com/plus3it/watchmaker/tree/main/docs
