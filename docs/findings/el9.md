@@ -32,6 +32,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Enable SSH Server firewalld Firewall Exception: #enable-ssh-server-firewalld-firewall-exception
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
   .. _OS library files must have mode 755 or less permissive: #os-library-files-must-have-mode-755-or-less-permissive
+  .. _The OS must require authentication to access single-user mode: #the-os-must-require-authentication-to-access-single-user-mode
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -111,6 +112,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `OS library files must have mode 755 or less permissive`_                                                                   | V-257884                                         |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-232020                                   |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `The OS must require authentication to access single-user mode`_                                                            | V-258129                                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-611200                                   |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -329,6 +334,32 @@ These are files that _need_ to set to mode `4755` &ndash; permissions that are b
 ```
 
 Any files other than `/lib/polkit-1/polkit-agent-helper-1` and `/usr/lib/polkit-1/polkit-agent-helper-1` should be treated as valid findings and remediated.
+
+# The OS must require authentication to access single-user mode
+
+**Invalid Finding:**
+
+Some scanners may call out this setting as incorrect, even if correctly-set.
+
+The value as described in STIG v2r4 includes guidance suggesting setting a value of:
+
+```bash
+/usr/lib/systemd/systemd-sulogin-shell rescue
+```
+
+However, the Ansible content that comes with the `oscap` content from the Compliance As Code project implements setting a value of:
+
+```bash
+/bin/sh -c "/sbin/sulogin ; /usr/bin/systemctl --fail --no-block default"
+```
+
+Regardless of method chosen, some scanners will still flag the service-configuration as non-compliant. STIG guidance indicate that so long as:
+
+```bash
+grep sulogin /usr/lib/systemd/system/rescue.service
+```
+
+Returns either of the above, two values that the scan-target is adequately configured for this finding.
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
