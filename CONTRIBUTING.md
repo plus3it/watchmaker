@@ -108,16 +108,16 @@ content (before submitting a PR), the following can be done:
     This will result in the "preview" versions of the HTML files being generated
     under the project's `dist/docs` directory.
 
-1. To view the documents, use a `file://` URI to reference the location of your
-   local git repository's `dist/docs` directory. This may be something like:
+1.  To view the documents, use a `file://` URI to reference the location of your
+    local git repository's `dist/docs` directory. This may be something like:
 
-   ```shell
-   file:///home/<USER>/watchmaker/dist/docs
-   ```
+    ```shell
+    file:///home/<USER>/watchmaker/dist/docs
+    ```
 
-1. Click on the `index.html` file. You will be presented with a navigable
-   document-hierarchy that mimics what will show up on Watchmaker's official
-   documentation-site after your pull request is merged.
+1.  Click on the `index.html` file. You will be presented with a navigable
+    document-hierarchy that mimics what will show up on Watchmaker's official
+    documentation-site after your pull request is merged.
 
 
 ## Build a Development Branch in EC2
