@@ -106,10 +106,8 @@ content, the following can be done:
     ```shell
     podman run \
       -v $( pwd ):/watchmaker \
-      -it \
-      --entrypoint=/bin/bash \
-      /watchmaker/ci/local/build_dox.sh \
-      localhost/doc-preview
+      localhost/doc-preview \
+      /watchmaker/ci/local/build_dox.sh
     ```
 
     This will result in the "preview" versions of the HTML files being generated
