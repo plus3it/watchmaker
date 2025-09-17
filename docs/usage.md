@@ -172,7 +172,7 @@ maps", and provide one for each of the CFN templates.
 
 ### `watchmaker` in a Terraform module
 
-Watchmaker can also be used with [Terraform](https://www.terraform.io/) by
+Watchmaker can also be used with [Terraform](https://developer.hashicorp.com/terraform) by
 utilizing the [Watchmaker AWS Terraform modules](https://github.com/plus3it/terraform-aws-watchmaker)
 and passing the required parameters.
 
