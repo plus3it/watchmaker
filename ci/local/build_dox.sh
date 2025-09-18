@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -euo pipefail
 #
 # A simple script to make executing HTML-generation easy
