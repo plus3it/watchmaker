@@ -393,3 +393,4 @@ linkcheck_ignore = [
 
 def setup(app):  # noqa: D103
     app.add_css_file("theme_overrides.css")
+    app.config.user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0"
