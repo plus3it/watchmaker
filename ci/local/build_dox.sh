@@ -1,5 +1,5 @@
 #!/bin/sh
-set -euo pipefail
+set -eu
 #
 # A simple script to make executing HTML-generation easy
 #
