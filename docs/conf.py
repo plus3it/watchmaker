@@ -387,6 +387,7 @@ linkcheck_ignore = [
     r"https://watchmaker\.cloudarmor\.io/releases/.*$",
     r"https://watchmaker\.cloudarmor\.io/.*#.*",
     r"https://github.com/.*\.md#.*",
+    r"https://developer.hashicorp.com/.*",
     r"https://docs\.saltstack\.com/en/latest/ref/modules/all/[a-z\.]*#[a-z\.]*",  # noqa: E501, pylint: disable=line-too-long
 ]
 
