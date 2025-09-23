@@ -39,55 +39,22 @@ To set up `watchmaker` for local development:
 1.  Fork [watchmaker](https://github.com/plus3it/watchmaker) (look for the
     "Fork" button).
 
-2.  Clone your fork locally and update the submodules:
+1.  Clone your fork locally and update the submodules:
 
     ```shell
     git clone https://github.com/your_name_here/watchmaker.git && cd watchmaker
     git submodule update --init --recursive
     ```
 
-3.  Create a branch for local development:
+1.  Create a branch for local development:
 
     ```shell
     git checkout -b name-of-your-bugfix-or-feature
     ```
 
-4.  Now you can make your changes locally.
+1.  Now you can make your changes locally.
 
-5.  When you're done making changes, use [tox][2] to run the linter, the tests,
-    and the doc builder:
-
-    ```shell
-    tox
-    ```
-
-    > **NOTE**: This will test the package in all versions of Python listed in
-    > `tox.ini`. If `tox` cannot find the interpreter for the version, the test
-    > will fail with an `InterpreterNotFound` error. This is ok, as long as at
-    > least one interpreter runs and the tests pass. You can also specify which
-    > [tox environments](#tox-tips) to execute, which can be used to restrict the
-    > Python version required.
-    >
-    > You can also rely on Travis and Appveyor to [run the tests][1] after
-    > opening the pull request. They will be slower though...
-
-6.  In addition to building the package and running the tests, `tox` will build
-    any docs associated with the change. They will be located in the
-    `dist/docs` directory. Navigate to the folder, open index.html in your
-    browser, and verify that the doc text and formatting are as you intended.
-
-    If you _only_ want to build the docs, run:
-
-    ```shell
-    tox -e docs
-    ```
-
-    Note: depending on your development environment, your browser may not be
-    able to locate to above-created, rendered content. If so, it will be
-    necessary to copy or relocate the documentation to location that your
-    preferred-browser *can* access them.
-
-7.  Commit your changes and push your branch to GitHub:
+1.  Commit your changes and push your branch to GitHub:
 
     ```shell
     git add .
@@ -95,7 +62,10 @@ To set up `watchmaker` for local development:
     git push origin name-of-your-bugfix-or-feature
     ```
 
-8.  Submit a pull request through the GitHub website.
+1.  Submit a pull request through the GitHub website.
+
+Note: If you want to preview documentation-changes before opening a pull request,
+see the guidance in the "Documentation Previewing" section.
 
 ## Pull Request Guidelines
 
@@ -104,40 +74,51 @@ open the pull request.
 
 For pull request acceptance, you should:
 
-1.  Include passing tests (Ensure `tox` is successful).
-2.  Update documentation whenever making changes to the API or functionality.
-3.  Add a note to `CHANGELOG.md` about the changes. Include a link to the
+1.  Update documentation whenever making changes to the API or functionality.
+1.  Add a note to `CHANGELOG.md` about the changes. Include a link to the
     pull request.
 
-## Tox Tips
+## Documentation Previewing
 
-1.  The _primary_ tox environments for `watchmaker` include:
+For those who wish to have a local preview capability for the generated HTML
+content (before submitting a PR), the following can be done:
 
-    *   `check`
-    *   `docs`
-    *   `py26`
-    *   `py27`
-    *   `py35`
-    *   `py36`
-
-2.  To run a subset of environments:
+1.  Build a Docker image using the `Dockerfile` found in the `ci/local`
+    directory. If using Podman for local work with Docker containers, executing:
 
     ```shell
-    tox -e <env1>,<env2>,<env3>,etc
+    podman build -f ci/local/Dockerfile . -t doc-preview
     ```
 
-3.  To run a subset of tests:
+    Will build a container with the instrumentation necessary to
+    locally-generate copies of the HTML files that are normally only generated
+    when the project's GitHub Actions are executed. These GitHub Actions only
+    execute as part of a pull request submission.
+
+1.  Once the build finishes, build the local copy of the documentation by
+    executing, from the project-root:
 
     ```shell
-    tox -e <environment> -- py.test -k <test_myfeature>
+    podman run \
+      -v $( pwd ):/watchmaker \
+      localhost/doc-preview \
+      /watchmaker/ci/local/build_dox.sh
     ```
 
-4.  To run all the test environments in _parallel_, use `detox`:
+    This will result in the "preview" versions of the HTML files being generated
+    under the project's `dist/docs` directory.
+
+1.  To view the documents, use a `file://` URI to reference the location of your
+    local git repository's `dist/docs` directory. This may be something like:
 
     ```shell
-    pip install detox
-    detox
+    file:///home/<USER>/watchmaker/dist/docs
     ```
+
+1.  Click on the `index.html` file. You will be presented with a navigable
+    document-hierarchy that mimics what will show up on Watchmaker's official
+    documentation-site after your pull request is merged.
+
 
 ## Build a Development Branch in EC2
 
@@ -219,5 +200,4 @@ specify something like this for EC2 userdata:
 
 [0]: https://github.com/plus3it/watchmaker/issues
 [1]: https://travis-ci.org/plus3it/watchmaker/pull_requests
-[2]: https://tox.wiki/en/latest/installation.html
 [3]: https://github.com/plus3it/watchmaker/tree/main/docs
