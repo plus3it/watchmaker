@@ -1,6 +1,6 @@
 -r docs-check.txt
 
-black==25.1.0
+black==25.9.0
 check-manifest==0.50
 flake8==7.3.0
 flake8-bugbear==24.12.12
@@ -9,9 +9,9 @@ flake8-docstrings==1.7.0
 flake8-isort==6.1.2
 flake8-future-import==0.4.7
 flake8-print==5.0.0
-isort==6.0.1
+isort==6.1.0
 m2r==0.3.1
 pep8-naming==0.15.1
 pydocstyle==6.3.0
-pylint==3.3.8
+pylint==3.3.9
 readme-renderer==44.0
