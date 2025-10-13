@@ -7,7 +7,7 @@ setuptools==80.9.0;python_version>="3.9"
 
 virtualenv==20.17.1;python_version<="3.6"
 virtualenv==20.26.6;python_version<="3.7" and python_version>"3.6"
-virtualenv==20.34.0;python_version>="3.8"
+virtualenv==20.35.3;python_version>="3.8"
 
 wheel==0.37.1;python_version<="3.6"
 wheel==0.42.0;python_version<="3.7" and python_version>"3.6"
