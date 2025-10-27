@@ -33,6 +33,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Enable Certmap in SSSD: #enable-certmap-in-sssd
   .. _OS library files must have mode 755 or less permissive: #os-library-files-must-have-mode-755-or-less-permissive
   .. _The OS must require authentication to access single-user mode: #the-os-must-require-authentication-to-access-single-user-mode
+  .. _The OS The OS must elevate the SELinux context when an administrator calls the sudo command: #the-os-the-os-must-elevate-the-selinux-context-when-an-administrator-calls-the-sudo-command
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -116,6 +117,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `The OS must require authentication to access single-user mode`_                                                            | V-258129                                         |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-611200                                   |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `The OS The OS must elevate the SELinux context when an administrator calls the sudo command`_                              | V-272496                                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-431016                                   |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -360,6 +365,28 @@ grep sulogin /usr/lib/systemd/system/rescue.service
 ```
 
 Returns either of the above, two values that the scan-target is adequately configured for this finding.
+
+# The OS The OS must elevate the SELinux context when an administrator calls the sudo command
+
+**Conditionally-valid Finding:**
+
+While watchmaker will set the STIG-mandated, SELinux privilege-elevation context-mappings, there can be `sudo` users who either require there be no mappings or require different mappings than what some scanners may check for:
+
+* It is known that the account used to support the AWS SSM service _requires_ that there be no SELinux privilege elevation context-mappings (or that such mappings be different from what some scanners may chack for).
+* Similarly, some sites may have _classes_ of administrators that are `sudo`-enabled. Typically, each class will have different SELinux privilege elevation context-mappings set for them. Some of these mappings may be different from what some scanners may chack for.
+
+In either case, the scanner will flag the mappings as being incorrect. However, in order for desired functionality to be in place, those findings will need to be excepted.
+
+
+
+```{eval-rst}
+.. note::
+    Watchmaker will apply the STIG-mandated SELinux privilege elevation context-mappings to the `/etc/sudoers` file and all files under `/etc/sudoers.d` with the exception of:
+
+    * The ``/etc/sudoers.d/90-cloud-init-users`` file (created by cloud-init)
+    * The ``/etc/sudoers.d/ssm-agent-users``  file (demand-created by the AWS SSM-Agent service)
+    * Any file listed in Pillar's ``ash-linux:lookup:protected-sudoer-files`` list
+```
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
