@@ -89,8 +89,8 @@ jobs:
           cache: pip
           cache-dependency-path: requirements/*.txt
 
-      - run: pip install -r requirements/pip.txt
-      - run: pip install -r requirements/basics.txt
+      - run: python -m pip install -r requirements/pip.txt
+      - run: python -m pip install -r requirements/basics.txt
 
       - name: Build package
         run: python -m build
@@ -170,8 +170,8 @@ jobs:
           cache: pip
           cache-dependency-path: requirements/*.txt
 
-      - run: pip install -r requirements/pip.txt
-      - run: pip install -r requirements/test.txt
+      - run: python -m pip install -r requirements/pip.txt
+      - run: python -m pip install -r requirements/test.txt
 
       - name: Retrieve release distributions
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
@@ -209,8 +209,8 @@ jobs:
           cache: pip
           cache-dependency-path: requirements/*.txt
 
-      - run: pip install -r requirements/pip.txt
-      - run: pip install -r requirements/check.txt
+      - run: python -m pip install -r requirements/pip.txt
+      - run: python -m pip install -r requirements/check.txt
 
       - name: Retrieve release distributions
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
@@ -250,8 +250,8 @@ jobs:
           cache: pip
           cache-dependency-path: requirements/*.txt
 
-      - run: pip install -r requirements/pip.txt
-      - run: pip install -r requirements/docs.txt
+      - run: python -m pip install -r requirements/pip.txt
+      - run: python -m pip install -r requirements/docs.txt
 
       - name: Retrieve release distributions
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
