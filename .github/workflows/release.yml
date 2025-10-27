@@ -23,7 +23,7 @@ jobs:
       contents: read
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
         with:
           name: source
           path: .
@@ -31,7 +31,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Retrieve release distributions
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
         with:
           name: dists
           path: dist/
@@ -39,7 +39,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Retrieve standalone binaries
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
         with:
           pattern: standalone-*
           path: .pyinstaller/dist
@@ -63,7 +63,7 @@ jobs:
 
       - name: Create GitHub release
         id: release
-        uses: plus3it/actions-workflows/.github/actions/release@3b8e48de2da8233d170c1d094932a562d9a36990
+        uses: plus3it/actions-workflows/.github/actions/release@269d875599c92395f7fa99cab43edc1820798e61
         with:
           release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
           release-files: |
@@ -82,7 +82,7 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - name: Retrieve release distributions
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
         with:
           name: dists
           path: dist/
@@ -106,7 +106,7 @@ jobs:
       BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
     steps:
       - name: Retrieve standalone binaries
-        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
         with:
           pattern: standalone-*
           path: .pyinstaller/dist
