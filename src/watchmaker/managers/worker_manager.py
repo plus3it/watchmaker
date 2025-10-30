@@ -76,7 +76,6 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     def cleanup(self):
         """Execute cleanup function."""
-        pass
 
 
 class WindowsWorkersManager(WorkersManagerBase):
@@ -92,4 +91,3 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     def cleanup(self):
         """Execute cleanup function."""
-        pass

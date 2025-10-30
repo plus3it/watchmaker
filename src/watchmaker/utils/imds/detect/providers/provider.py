@@ -20,9 +20,9 @@ class AbstractProvider:
     @abc.abstractmethod
     def identify(self):
         """Identify provider type."""
-        pass  # pragma: no cover
+        # pragma: no cover
 
     @abc.abstractmethod
     def check_metadata_server(self):
         """Identify via metadata server."""
-        pass  # pragma: no cover
+        # pragma: no cover

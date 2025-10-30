@@ -20,9 +20,7 @@ class WorkerBase:
     @abc.abstractmethod
     def before_install(self):
         """Add before_install method to all child classes."""
-        pass
 
     @abc.abstractmethod
     def install(self):
         """Add install method to all child classes."""
-        pass

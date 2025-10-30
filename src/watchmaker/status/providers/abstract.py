@@ -20,9 +20,9 @@ class AbstractStatusProvider:
     @abc.abstractmethod
     def initialize(self):
         """Initialize provider."""
-        pass  # pragma: no cover
+        # pragma: no cover
 
     @abc.abstractmethod
     def update_status(self, key, status, required):
         """Identify via metadata server."""
-        pass  # pragma: no cover
+        # pragma: no cover

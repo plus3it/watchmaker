@@ -214,7 +214,6 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
     def install(self):  # noqa: C901 - orchestrates install steps; refactor later
         """Install Salt."""
-        pass
 
     @staticmethod
     def _get_salt_dirs(srv):

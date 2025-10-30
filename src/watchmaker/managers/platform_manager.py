@@ -262,10 +262,10 @@ class PlatformManagerBase:
         if filepath.endswith(".zip"):
             self.log.debug("File Type: zip")
             opener, mode = zipfile.ZipFile, "r"
-        elif filepath.endswith(".tar.gz") or filepath.endswith(".tgz"):
+        elif filepath.endswith((".tar.gz", ".tgz")):
             self.log.debug("File Type: GZip Tar")
             opener, mode = tarfile.open, "r:gz"
-        elif filepath.endswith(".tar.bz2") or filepath.endswith(".tbz"):
+        elif filepath.endswith((".tar.bz2", ".tbz")):
             self.log.debug("File Type: Bzip Tar")
             opener, mode = tarfile.open, "r:bz2"
         else:

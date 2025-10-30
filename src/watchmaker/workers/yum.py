@@ -115,7 +115,6 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     def before_install(self):
         """Validate configuration before starting install."""
-        pass
 
     def install(self):
         """Install yum repos defined in config file."""
