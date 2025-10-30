@@ -57,7 +57,7 @@ def get_status(status_key):
     returns string: formatted status message from key provided
                     or status_key as status
     """
-    status = STATUS.get(status_key, None)
+    status = STATUS.get(status_key)
     return status if status else status_key
 
 

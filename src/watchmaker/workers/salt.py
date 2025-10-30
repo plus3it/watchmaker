@@ -210,12 +210,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 "The 'ou_path' option is required, but not provided."
             )
 
-        if self.computer_name and self.computer_name_pattern:
-            if not re.match(self.computer_name_pattern + r"\Z", self.computer_name):
-                raise InvalidComputerNameError(
-                    "Computer name: %s does not match pattern %s"
-                    % (self.computer_name, self.computer_name_pattern)
-                )
+        if (
+            self.computer_name
+            and self.computer_name_pattern
+            and not re.match(self.computer_name_pattern + r"\Z", self.computer_name)
+        ):
+            raise InvalidComputerNameError(
+                "Computer name: %s does not match pattern %s"
+                % (self.computer_name, self.computer_name_pattern)
+            )
 
     def install(self):  # noqa: C901 - orchestrates install steps; refactor later
         """Install Salt."""
@@ -777,15 +780,12 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
             self._install_pip_packages()
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
-        if salt_enabled:
-            if not self.service_enable(salt_svc):
-                self.log.error("Failed to enable %s service", salt_svc)
-        else:
-            if not self.service_disable(salt_svc):
-                self.log.error("Failed to disable %s service", salt_svc)
-        if salt_running and salt_stopped:
-            if not self.service_start(salt_svc):
-                self.log.error("Failed to restart %s service", salt_svc)
+        if salt_enabled and not self.service_enable(salt_svc):
+            self.log.error("Failed to enable %s service", salt_svc)
+        elif not salt_enabled and not self.service_disable(salt_svc):
+            self.log.error("Failed to disable %s service", salt_svc)
+        if salt_running and salt_stopped and not self.service_start(salt_svc):
+            self.log.error("Failed to restart %s service", salt_svc)
 
         self.process_grains()
 
@@ -907,8 +907,8 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
     @staticmethod
     def _get_salt_call():
         """Retrieve installation path for Salt if it exists."""
-        system_drive = os.environ["systemdrive"]
-        program_files = os.environ["ProgramFiles"]
+        system_drive = os.environ["SYSTEMDRIVE"]
+        program_files = os.environ["PROGRAMFILES"]
         old_salt_path = os.sep.join((system_drive, "Salt", "salt-call.bat"))
 
         new_salt_paths = [
@@ -937,15 +937,12 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         self.salt_call = SaltWindows._get_salt_call()
         salt_stopped = self.service_stop(salt_svc)
         self._build_salt_formula(self.salt_srv)
-        if salt_enabled:
-            if not self.service_enable(salt_svc):
-                self.log.error("Failed to enable %s service", salt_svc)
-        else:
-            if not self.service_disable(salt_svc):
-                self.log.error("Failed to disable %s service", salt_svc)
-        if salt_running and salt_stopped:
-            if not self.service_start(salt_svc):
-                self.log.error("Failed to restart %s service", salt_svc)
+        if salt_enabled and not self.service_enable(salt_svc):
+            self.log.error("Failed to enable %s service", salt_svc)
+        elif not salt_enabled and not self.service_disable(salt_svc):
+            self.log.error("Failed to disable %s service", salt_svc)
+        if salt_running and salt_stopped and not self.service_start(salt_svc):
+            self.log.error("Failed to restart %s service", salt_svc)
 
         if self.ash_role:
             role = {"lookup": {"role": str(self.ash_role)}}

@@ -318,7 +318,7 @@ def test_process_states_highstate_extra_states(
     assert saltworker_client.run_salt.call_count == len(calls)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 def test_windows_missing_prepdir():
     """Ensure that error raised when missing prep directory."""
     system_params = {}
@@ -331,7 +331,7 @@ def test_windows_missing_prepdir():
         SaltWindows(system_params, **salt_config)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 def test_windows_missing_logdir():
     """Ensure that error raised when missing log directory."""
     system_params = {}
@@ -344,7 +344,7 @@ def test_windows_missing_logdir():
         SaltWindows(system_params, **salt_config)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 def test_windows_missing_workingdir():
     """Ensure that error raised when missing working directory."""
     system_params = {}
@@ -357,7 +357,7 @@ def test_windows_missing_workingdir():
         SaltWindows(system_params, **salt_config)
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 def test_windows_defaults():
     """Ensure that default values are populated as expected."""
     system_params = {}
@@ -406,7 +406,7 @@ def test_windows_defaults():
     )
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 def test_windows_install(saltworker_base_salt_args):
     """Ensure that install runs as expected."""
     system_params = {}
@@ -459,7 +459,7 @@ def test_windows_install(saltworker_base_salt_args):
     assert saltworker_win.cleanup.call_count == 1
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 @patch("os.path.isfile", MagicMock(return_value=False))
 def test_windows_salt_call_old():
     """Ensure old path is tested."""
@@ -467,7 +467,7 @@ def test_windows_salt_call_old():
     assert SaltWindows._get_salt_call() == salt_path
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 @patch("os.path.isfile", MagicMock(return_value=True))
 def test_windows_salt_call_new():
     """Ensure new path is tested."""
@@ -477,7 +477,7 @@ def test_windows_salt_call_new():
     assert SaltWindows._get_salt_call() == salt_path
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 @patch("codecs.open", autospec=True)
 @patch("os.makedirs", autospec=True)
 @patch("yaml.safe_dump", autospec=True)
@@ -865,7 +865,7 @@ def test_linux_admin_users_none():
     assert saltworker_lx._set_grain.call_count == 2
 
 
-@patch.dict(os.environ, {"systemdrive": "C:", "ProgramFiles": "C:\\Program Files"})
+@patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 def test_win_ash_role_none():
     """Test that Pythonic None can be used without error rather than 'None'."""
     # setup ========================

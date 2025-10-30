@@ -134,7 +134,7 @@ def test_get_cloud_with_prereqs():
     providers = get_cloud_with_prereqs()
 
     assert len(providers) == 1
-    assert "aws" == providers[0]
+    assert providers[0] == "aws"
 
 
 @patch(
@@ -149,7 +149,7 @@ def test_cloud_ids_missing_prereqs():
     providers = get_cloud_with_prereqs()
 
     assert len(providers) == 1
-    assert "azure" != providers[0]
+    assert providers[0] != "azure"
 
 
 @patch(
@@ -179,7 +179,7 @@ def test_get_non_cloud_providers():
     providers = get_non_cloud_providers(config_status)
 
     assert len(providers) == 1
-    assert "file" == providers[0]
+    assert providers[0] == "file"
 
 
 @patch(

@@ -52,7 +52,7 @@ def test_status(
             ]
         }
     }
-    config_status = config.get("status", None)
+    config_status = config.get("status")
     status = Status(config_status)
     detected_providers = status.get_detected_status_providers()
     assert len(detected_providers) == 1
@@ -90,7 +90,7 @@ def test_req_status_provider(
             ]
         }
     }
-    config_status = config.get("status", None)
+    config_status = config.get("status")
 
     try:
         Status(config_status)
