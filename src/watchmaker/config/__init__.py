@@ -144,5 +144,7 @@ def validate_computer_name_pattern(config):
     if computer_name_pattern:
         try:
             re.compile(computer_name_pattern)
-        except re.error:
-            raise WatchmakerError("Invalid regex pattern %s" % computer_name_pattern)
+        except re.error as exc:
+            raise WatchmakerError(
+                "Invalid regex pattern %s" % computer_name_pattern
+            ) from exc
