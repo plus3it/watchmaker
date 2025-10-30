@@ -152,7 +152,7 @@ def test_enable_ec2_config_event_log(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._enable_ec2_config_event_log()
 
@@ -194,7 +194,7 @@ def test_configure_ec2config_write_all_events(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_config_event_log()
 
@@ -260,7 +260,7 @@ def test_configure_ec2config_skip_if_events_present(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_config_event_log()
 
@@ -308,7 +308,7 @@ def test_configure_ec2launch_write_all_events(mocker):
     data = "{}"
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_launch_event_log()
 
@@ -355,7 +355,7 @@ def test_configure_ec2launch_skip_if_events_present(mocker):
     data = json.dumps({"events": events})
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_launch_event_log()
 

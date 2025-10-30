@@ -357,7 +357,7 @@ class Client:
                 msg = (
                     "Failed to parse argument value as YAML. Check the format "
                     "and/or properly quote the value when using the CLI to "
-                    f"account for shell interpolation. YAML error: {str(exc)}"
+                    f"account for shell interpolation. YAML error: {exc!s}"
                 )
                 self.log.critical(msg)
                 raise InvalidValueError(msg) from exc

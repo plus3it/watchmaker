@@ -17,7 +17,7 @@ from watchmaker.utils import urllib_utils
 log = logging.getLogger(__name__)
 
 
-def get_configs(system, worker_args, config_path=None):  # noqa: C901 - orchestrates config loading/merge; refactor later
+def get_configs(system, worker_args, config_path=None):  # noqa: C901
     """
     Read and validate configuration data for installation.
 
@@ -93,7 +93,7 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901 - orchestr
             # is not hashable so cannot be tested directly with
             # `if worker not in config`. this bit of ugliness extracts the
             # key and its value so we can use them directly.
-            worker_name, worker_config = list(worker.items())[0]
+            worker_name, worker_config = next(iter(worker.items()))
             if worker_name not in config:
                 # Add worker to config
                 config[worker_name] = {"config": worker_config}

@@ -1,16 +1,13 @@
-"""Watchmaker workers manager."""
-
+"""Workers Manager module."""
 
 import abc
-
-from six import add_metaclass
+from typing import ClassVar
 
 from watchmaker.workers.salt import SaltLinux, SaltWindows
 from watchmaker.workers.yum import Yum
 
 
-@add_metaclass(abc.ABCMeta)
-class WorkersManagerBase:
+class WorkersManagerBase(metaclass=abc.ABCMeta):
     """
     Base class for worker managers.
 
@@ -24,7 +21,7 @@ class WorkersManagerBase:
 
     """
 
-    WORKERS = {}
+    WORKERS: ClassVar[dict] = {}
 
     def __init__(self, system_params, workers, *args, **kwargs):
         self.system_params = system_params
@@ -66,7 +63,7 @@ class WorkersManagerBase:
 class LinuxWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Linux systems."""
 
-    WORKERS = {"yum": Yum, "salt": SaltLinux}
+    WORKERS: ClassVar[dict] = {"yum": Yum, "salt": SaltLinux}
 
     def _worker_execution(self):
         pass
@@ -81,7 +78,7 @@ class LinuxWorkersManager(WorkersManagerBase):
 class WindowsWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Windows systems."""
 
-    WORKERS = {"salt": SaltWindows}
+    WORKERS: ClassVar[dict] = {"salt": SaltWindows}
 
     def _worker_execution(self):
         pass

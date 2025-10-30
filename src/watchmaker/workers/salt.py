@@ -212,7 +212,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 f"{self.computer_name_pattern}"
             )
 
-    def install(self):  # noqa: C901 - orchestrates install steps; refactor later
+    def install(self):
         """Install Salt."""
 
     @staticmethod
@@ -595,12 +595,12 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         if highstate:
             self.log.info('Applying the salt "highstate"')
-            cmds.append(salt_cmd + ["state.highstate"])
+            cmds.append([*salt_cmd, "state.highstate"])
 
         if states:
             self.log.info("Applying the user-defined list of states, states=%s", states)
             states = ",".join(states)
-            cmds.append(salt_cmd + ["state.sls", states])
+            cmds.append([*salt_cmd, "state.sls", states])
 
         for cmd in cmds:
             if exclude:
@@ -758,7 +758,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
     def _selinux_setenforce(self, state):
         return self.call_process(["setenforce", state])
 
-    def install(self):  # noqa: C901 - orchestrates install steps; refactor later
+    def install(self):
         """Install salt and execute salt states."""
         self._configuration_validation()
         self._prepare_for_install()
@@ -915,7 +915,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
 
         return old_salt_path
 
-    def install(self):  # noqa: C901 - orchestrates install steps; refactor later
+    def install(self):
         """Install salt and execute salt states."""
         self._prepare_for_install()
 

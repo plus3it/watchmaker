@@ -201,7 +201,7 @@ def test_process_states_highstate(
     saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    expected = saltworker_client.salt_state_args + ["state.highstate"]
+    expected = [*saltworker_client.salt_state_args, "state.highstate"]
 
     # test
     saltworker_client.process_states(states, exclude)
@@ -232,7 +232,7 @@ def test_process_states_multiple_states(
     saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    expected = saltworker_client.salt_state_args + ["state.sls", "foo,bar"]
+    expected = [*saltworker_client.salt_state_args, "state.sls", "foo,bar"]
 
     # test
     saltworker_client.process_states(states, exclude)
@@ -263,7 +263,7 @@ def test_process_states_multiple_states_case_sensitive(
     saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    expected = saltworker_client.salt_state_args + ["state.sls", "Foo,bAR"]
+    expected = [*saltworker_client.salt_state_args, "state.sls", "Foo,bAR"]
 
     # test
     saltworker_client.process_states(states, exclude)
@@ -294,8 +294,8 @@ def test_process_states_highstate_extra_states(
     saltworker_client.run_salt = MagicMock(return_value={"retcode": 0})
     saltworker_client.salt_state_args = saltworker_base_salt_args
 
-    call_1 = saltworker_client.salt_state_args + ["state.highstate"]
-    call_2 = saltworker_client.salt_state_args + ["state.sls", "foo,bar"]
+    call_1 = [*saltworker_client.salt_state_args, "state.highstate"]
+    call_2 = [*saltworker_client.salt_state_args, "state.sls", "foo,bar"]
 
     calls = [
         call(call_1, log_pipe="stderr", raise_error=False),
@@ -427,7 +427,7 @@ def test_windows_install(saltworker_base_salt_args):
     run_salt_calls = [
         call("pkg.refresh_db"),
         call(
-            saltworker_win.salt_state_args + ["state.highstate"],
+            [*saltworker_win.salt_state_args, "state.highstate"],
             log_pipe="stderr",
             raise_error=False,
         ),

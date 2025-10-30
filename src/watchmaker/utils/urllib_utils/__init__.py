@@ -1,7 +1,7 @@
 """Exposes urllib imports with additional request handlers."""
 
 
-from six.moves.urllib import error, parse, request  # type:ignore # noqa F401
+from six.moves.urllib import error, parse, request  # noqa: F401
 
 from watchmaker.conditions import HAS_BOTO3
 

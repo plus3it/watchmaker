@@ -1,6 +1,8 @@
 """Watchmaker yum worker."""
 
 
+from typing import ClassVar
+
 import distro
 import six
 
@@ -21,7 +23,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
     """
 
-    SUPPORTED_DISTS = {
+    SUPPORTED_DISTS: ClassVar[dict] = {
         "almalinux": "almalinux",
         "amazon": "amazon",
         "amzn": "al2023",

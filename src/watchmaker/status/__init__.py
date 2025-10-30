@@ -2,6 +2,7 @@
 
 
 import logging
+from typing import ClassVar
 
 import watchmaker.config.status as status_config
 from watchmaker.exceptions import StatusProviderError
@@ -14,7 +15,7 @@ from watchmaker.utils.imds.detect import provider
 class Status:
     """Status factory for providers."""
 
-    _PROVIDERS = {
+    _PROVIDERS: ClassVar[dict] = {
         AWSStatusProvider.identifier: AWSStatusProvider,
         AzureStatusProvider.identifier: AzureStatusProvider,
     }

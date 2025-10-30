@@ -49,9 +49,9 @@ class AzureStatusProvider(AbstractStatusProvider):
 
     def __tag_azure_resouce(self, key, status):
         self.logger.debug("Tag Resource %s with  %s:%s", self.resource_id, key, status)
-        credential = AzureCliCredential()  # type: ignore # noqa F821
+        credential = AzureCliCredential()  # noqa: F821
 
-        resource_client = ResourceManagementClient(  # type: ignore # noqa F821
+        resource_client = ResourceManagementClient(  # noqa: F821
             credential, self.subscription_id
         )
 
