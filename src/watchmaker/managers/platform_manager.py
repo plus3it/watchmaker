@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Watchmaker base manager."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -181,25 +182,24 @@ class PlatformManagerBase(object):
         lib_path_key = "LD_LIBRARY_PATH"
 
         if env.get(lib_path_key) is not None:
-
             lib_path_orig_value = env.get(lib_path_key + "_ORIG")
             if lib_path_orig_value is None:
-
                 # you can have lib_path and no orig, if:
                 # 1. none was set and pyinstaller set one, or
                 # 2. one was set and we're not in standalone package
                 env.pop(lib_path_key, None)
 
             else:
-
                 # put original lib_path back
                 env[lib_path_key] = lib_path_orig_value
 
             kwargs["env"] = env
 
+        # fmt: off
         with subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
         ) as process, concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+            # fmt: on
             stdout_future = executor.submit(
                 self._pipe_handler,
                 process.stdout,

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Detect  module."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -41,7 +42,7 @@ def provider(supported_providers=None):
             results.append(fut.result())
         except InvalidProviderError:
             pass
-        except Exception:  # pylint: disable=broad-exception-caught
+        except Exception:
             log.error("Unexpected exception occurred", exc_info=True)
 
     if len(results) > 1:

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Abstract Provider."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -15,7 +16,8 @@ import six
 
 @six.add_metaclass(abc.ABCMeta)
 class AbstractProvider:
-    """Abstract class representing a cloud provider.
+    """
+    Abstract class representing a cloud provider.
 
     All concrete cloud providers should implement this.
     """

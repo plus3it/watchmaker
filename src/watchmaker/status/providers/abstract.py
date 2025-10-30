@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Abstract Status Provider."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -15,7 +16,8 @@ import six
 
 @six.add_metaclass(abc.ABCMeta)
 class AbstractStatusProvider:
-    """Abstract class representing a watchmaker status cloud provider.
+    """
+    Abstract class representing a watchmaker status cloud provider.
 
     All concrete watchmaker status cloud providers should implement this.
     """

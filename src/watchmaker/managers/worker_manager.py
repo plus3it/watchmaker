@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Watchmaker workers manager."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -47,7 +48,7 @@ class WorkersManagerBase(object):
     def _worker_validation(self):
         pass
 
-    def worker_cadence(self):  # noqa: D102
+    def worker_cadence(self):
         """Manage worker cadence."""
         workers = []
 

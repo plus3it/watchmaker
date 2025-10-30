@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Extends urllib with additional handlers."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -28,7 +29,7 @@ class S3Handler(urllib.request.BaseHandler):
 
     def s3_open(self, req):
         """Open S3 objects."""
-        # Credit: <https://github.com/ActiveState/code/tree/master/recipes/Python/578957_Urllib_handler_AmazS3>  # noqa: B950, pylint: disable=line-too-long
+        # Credit: <https://github.com/ActiveState/code/tree/master/recipes/Python/578957_Urllib_handler_AmazS3>
 
         # The implementation was inspired mainly by the code behind
         # urllib.request.FileHandler.file_open().
@@ -49,8 +50,6 @@ class S3Handler(urllib.request.BaseHandler):
         try:
             s3_conn = self.s3_conn
         except AttributeError:
-            # pylint: disable=attribute-defined-outside-init
-            # pylint: disable=undefined-variable
             s3_conn = self.s3_conn = boto3.resource("s3")
 
         key = s3_conn.Object(bucket_name=bucket_name, key=key_name)

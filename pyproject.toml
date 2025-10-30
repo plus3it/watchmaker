@@ -1,3 +1,28 @@
 [build-system]
 build-backend = "setuptools.build_meta"
 requires = ["setuptools", "wheel"]
+
+[tool.ruff]
+# Line length and excludes chosen to match prior flake8 settings
+line-length = 88
+exclude = [
+    ".git",
+    "__pycache__",
+    ".eggs",
+    "*.egg",
+    "build",
+    "dist",
+    "htmlcov",
+    "*/static/salt/formulas/*",
+]
+
+[tool.ruff.lint]
+ignore = [
+    "B904", "B905", "D107", "D203", "D212", "G201", "G010", "S101", "S105", "S202",
+    "S314", "S602", "S603", "S607", "EXE001",
+    "ANN", "PTH", "SIM", "UP", "PIE", "COM", "RUF", "PLR", "ISC", "TRY", "PERF", "EM",
+    "C", "BLE", "LOG", "FBT", "FLY", "DTZ", "ICN", "PGH",
+    # From tests/ and docs/
+    "PT", "INP", "SLF", "ARG", "ERA", "PLC",
+]
+select = ["ALL"]

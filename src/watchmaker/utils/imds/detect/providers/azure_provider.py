@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Azure Provider."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -36,7 +37,7 @@ class AzureProvider(AbstractProvider):
         self.logger.debug("Checking Azure metadata")
         try:
             return self.__is_valid_server()
-        except Exception as ex:  # pylint: disable=broad-exception-caught
+        except Exception as ex:
             self.logger.warning("Error while checking server %s", str(ex))
             return False
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Status Config module."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -50,7 +51,8 @@ def is_valid(config):
 
 
 def get_status(status_key):
-    """Get status message.
+    """
+    Get status message.
 
     returns string: formatted status message from key provided
                     or status_key as status

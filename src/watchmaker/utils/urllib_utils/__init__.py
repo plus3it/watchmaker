@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Exposes urllib imports with additional request handlers."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -8,7 +9,6 @@ from __future__ import (
     with_statement,
 )
 
-# pylint: disable=import-error
 from six.moves.urllib import error, parse, request  # type:ignore # noqa F401
 
 from watchmaker.conditions import HAS_BOTO3

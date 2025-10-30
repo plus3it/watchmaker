@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """Watchmaker setup script."""
+
 from __future__ import (
     absolute_import,
     division,

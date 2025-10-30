@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Watchmaker logger module."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -155,7 +156,7 @@ def prepare_logging(log_dir, log_level):
         try:
             _enable_ec2_config_event_log()
             _configure_ec2_config_event_log()
-        except (IOError, OSError) as exc:  # noqa: B014
+        except (IOError, OSError) as exc:
             if exc.errno == errno.ENOENT:
                 # PY2/PY3-compatible check for FileNotFoundError
                 # EC2_CONFIG or EC2_LOG_CONFIG do not exist
@@ -167,7 +168,7 @@ def prepare_logging(log_dir, log_level):
         try:
             _configure_ec2_launch_event_log()
             _schedule_ec2_launch_event_log()
-        except (IOError, OSError) as exc:  # noqa: B014
+        except (IOError, OSError) as exc:
             if exc.errno == errno.ENOENT:
                 # PY2/PY3-compatible check for FileNotFoundError
                 # EC2_LAUNCH_LOG_CONFIG or 'powershell.exe' do not exist

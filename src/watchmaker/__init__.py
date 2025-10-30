@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Watchmaker module."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -174,7 +175,7 @@ class Arguments(dict):
         no_reboot=False,
         log_level=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         super(Arguments, self).__init__(*args, **kwargs)
         self.config_path = config_path
