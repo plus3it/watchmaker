@@ -17,7 +17,9 @@ from watchmaker import static
 from watchmaker.exceptions import (
     InvalidComputerNameError,
     InvalidValueError,
+    MultiplePathsMatchError,
     OuPathRequiredError,
+    PathNotFoundError,
     WatchmakerError,
 )
 from watchmaker.managers.platform_manager import (
@@ -197,17 +199,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         valid_envs = [str(x).lower() for x in self.valid_envs]
 
         if valid_envs and env not in valid_envs:
-            msg = (
-                f"Selected environment ({env}) is not one of the valid"
-                f" environment types: {valid_envs}"
+            self.log.critical(
+                "Invalid environment %s not in %s",
+                env,
+                valid_envs,
             )
-            self.log.critical(msg)
-            raise InvalidValueError(msg)
+            raise InvalidValueError(env)
 
         if self.ou_path_required and not self.ou_path:
-            raise OuPathRequiredError(
-                "The 'ou_path' option is required, but not provided.",
-            )
+            raise OuPathRequiredError
 
         if (
             self.computer_name
@@ -215,8 +215,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             and not re.match(self.computer_name_pattern + r"\Z", self.computer_name)
         ):
             raise InvalidComputerNameError(
-                f"Computer name: {self.computer_name} does not match pattern "
-                f"{self.computer_name_pattern}",
+                self.computer_name,
+                self.computer_name_pattern,
             )
 
     def install(self):
@@ -258,11 +258,10 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         for salt_dir in [self.salt_formula_root, self.salt_conf_path]:
             try:
                 os.makedirs(salt_dir)
-            except OSError as exc:
+            except OSError:
                 if not os.path.isdir(salt_dir):
-                    msg = f"Unable to create directory - {salt_dir}"
-                    self.log.error(msg)
-                    raise SystemError(msg) from exc
+                    self.log.exception("Unable to create directory %s", salt_dir)
+                    raise
 
         with codecs.open(
             os.path.join(self.salt_conf_path, "minion"),
@@ -359,21 +358,21 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 salt_content_glob = glob.glob(salt_content_src)
                 self.log.debug("salt_content_glob: %s", salt_content_glob)
                 if len(salt_content_glob) > 1:
-                    msg = (
-                        f"Found multiple paths matching '{self.salt_content_path}' "
-                        f"in {self.salt_content}"
+                    self.log.critical(
+                        "Multiple paths match '%s' in %s",
+                        self.salt_content_path,
+                        self.salt_content,
                     )
-                    self.log.critical(msg)
-                    raise WatchmakerError(msg)
+                    raise MultiplePathsMatchError(self.salt_content_path)
                 try:
                     salt_files_dir = salt_content_glob[0]
                 except IndexError as exc:
-                    msg = (
-                        f"Salt content glob path '{self.salt_content_path}' "
-                        f"not found in {self.salt_content}"
+                    self.log.critical(
+                        "Path '%s' not found in %s",
+                        self.salt_content_path,
+                        self.salt_content,
                     )
-                    self.log.critical(msg)
-                    raise WatchmakerError(msg) from exc
+                    raise PathNotFoundError(self.salt_content_path) from exc
 
                 watchmaker.utils.copy_subdirectories(
                     salt_files_dir,

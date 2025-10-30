@@ -4,7 +4,7 @@ import logging
 from typing import ClassVar
 
 import watchmaker.config.status as status_config
-from watchmaker.exceptions import StatusProviderError
+from watchmaker.exceptions import CloudProviderDetectionError
 from watchmaker.status.providers.abstract import AbstractStatusProvider
 from watchmaker.status.providers.aws import AWSStatusProvider
 from watchmaker.status.providers.azure import AzureStatusProvider
@@ -109,7 +109,4 @@ class Status:
 
         # If a req provider is found raise StatusProviderError
         if cloud_provider.identifier != AbstractStatusProvider.identifier:
-            raise StatusProviderError(
-                f"Required Provider detected that is missing prereqs: "
-                f"{cloud_provider.identifier}",
-            )
+            raise CloudProviderDetectionError(cloud_provider.identifier)

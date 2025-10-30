@@ -37,8 +37,8 @@ class AWSStatusProvider(AbstractStatusProvider):
             self.logger.debug("Initialize AWS instance_id and region")
             self.instance_id = self.__get_response_from_server(self.metadata_id_url)
             self.region = self.__get_response_from_server(self.metadata_region_url)
-        except Exception as ex:
-            self.logger.error("Error retrieving id/region from metadata service %s", ex)
+        except Exception:
+            self.logger.exception("Error retrieving id/region from metadata service")
 
     def update_status(self, key, status, required):
         """Tag an AWS EC2 instance with the key and status provided."""
@@ -52,9 +52,10 @@ class AWSStatusProvider(AbstractStatusProvider):
         if HAS_BOTO3 and self.instance_id and status:
             try:
                 self.__tag_aws_instance(key, status)
+            except Exception:
+                logging.exception("Exception while tagging aws instance")
+            else:
                 return
-            except Exception as ex:
-                logging.error("Exception while tagging aws instance %s", ex)
         self.__error_on_required_status(required)
 
     def __tag_aws_instance(self, key, status):
@@ -71,9 +72,9 @@ class AWSStatusProvider(AbstractStatusProvider):
                     {"Key": key, "Value": status},
                 ],
             )
-        except Exception as ex:
-            self.logger.exception(ex)
-            raise ex
+        except Exception:
+            self.logger.exception("Error tagging AWS instance")
+            raise
 
         self.logger.debug("Create tag response %s", response)
 

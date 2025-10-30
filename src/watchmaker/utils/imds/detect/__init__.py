@@ -37,7 +37,7 @@ def provider(supported_providers=None):
             log.exception("Unexpected exception occurred")
 
     if len(results) > 1:
-        raise CloudDetectError("Detected more than one cloud provider")
+        raise CloudDetectError
 
     if len(results) == 0:
         return AbstractProvider
@@ -52,6 +52,4 @@ def identify(cloud_provider):
         return cloud_provider_instance
 
     log.debug("Environment is not %s", cloud_provider_instance.identifier)
-    raise InvalidProviderError(
-        f"Environment is not {cloud_provider_instance.identifier}",
-    )
+    raise InvalidProviderError(cloud_provider_instance.identifier)

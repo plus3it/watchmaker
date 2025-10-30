@@ -32,8 +32,8 @@ class AzureStatusProvider(AbstractStatusProvider):
 
         try:
             self.__set_ids_from_server()
-        except Exception as ex:
-            self.logger.error("Error retrieving ids from metadata service %s", ex)
+        except Exception:
+            self.logger.exception("Error retrieving ids from metadata service")
 
     def update_status(self, key, status, required):
         """Tag an Azure instance with the key and status provided."""
@@ -41,9 +41,10 @@ class AzureStatusProvider(AbstractStatusProvider):
         if HAS_AZURE and self.subscription_id and self.resource_id and status:
             try:
                 self.__tag_azure_resouce(key, status)
+            except Exception:
+                logging.exception("Exception while tagging azure resource")
+            else:
                 return
-            except Exception as ex:
-                logging.error("Exception while tagging azure resource %s", ex)
         self.__error_on_required_status(required)
 
     def __tag_azure_resouce(self, key, status):

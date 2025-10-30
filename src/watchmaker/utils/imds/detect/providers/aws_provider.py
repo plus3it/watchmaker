@@ -35,8 +35,8 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS metadata")
         try:
             return self.__is_valid_server()
-        except Exception as ex:
-            self.logger.error(ex)
+        except Exception:
+            self.logger.exception("Unexpected error checking AWS metadata server")
             return False
 
     def get_metadata_request_headers(self):

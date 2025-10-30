@@ -1,6 +1,6 @@
 """Providers main test module."""
 
-from watchmaker.exceptions import StatusProviderError
+from watchmaker.exceptions import CloudProviderDetectionError
 
 # Supports Python2 and Python3 test mocks
 try:
@@ -85,5 +85,5 @@ def test_req_status_provider(
 
     try:
         Status(config_status)
-    except StatusProviderError as spe:
+    except CloudProviderDetectionError as spe:
         assert str(spe) == "Required Provider detected that is missing prereqs: azure"

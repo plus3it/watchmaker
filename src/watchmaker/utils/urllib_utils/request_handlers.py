@@ -6,6 +6,8 @@ from email import message_from_string
 import boto3  # type: ignore
 from six.moves import urllib  # type: ignore
 
+from watchmaker.exceptions import MissingURLParamError
+
 
 class BufferedIOS3Key(io.BufferedIOBase):
     """Add a read method to S3 key object."""
@@ -36,7 +38,7 @@ class S3Handler(urllib.request.BaseHandler):
         key_name = selector[1:]
 
         if not bucket_name or not key_name:
-            raise urllib.error.URLError("url must be in the format s3://<bucket>/<key>")
+            raise MissingURLParamError("s3://<bucket>/<key>")
 
         try:
             s3_conn = self.s3_conn
@@ -48,7 +50,7 @@ class S3Handler(urllib.request.BaseHandler):
         origurl = f"s3://{bucket_name}/{key_name}"
 
         if key is None:
-            raise urllib.error.URLError(f"no such resource: {origurl}")
+            raise MissingURLParamError(origurl)
 
         headers = [
             ("Content-type", key.content_type),

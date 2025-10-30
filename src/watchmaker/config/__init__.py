@@ -10,7 +10,11 @@ from importlib_resources import files
 
 import watchmaker.utils.imds.detect
 from watchmaker.config.status import is_valid
-from watchmaker.exceptions import WatchmakerError
+from watchmaker.exceptions import (
+    InvalidRegexPatternError,
+    StatusConfigError,
+    WatchmakerError,
+)
 from watchmaker.utils import urllib_utils
 
 log = logging.getLogger(__name__)
@@ -122,7 +126,7 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901
 
     if not is_valid(config_status):
         log.error("Status config is invalid %s", config_status)
-        raise WatchmakerError(f"Status config is invalid {config_status}")
+        raise StatusConfigError(config_status)
 
     return config, config_status
 
@@ -137,6 +141,4 @@ def validate_computer_name_pattern(config):
         try:
             re.compile(computer_name_pattern)
         except re.error as exc:
-            raise WatchmakerError(
-                f"Invalid regex pattern {computer_name_pattern}",
-            ) from exc
+            raise InvalidRegexPatternError(computer_name_pattern) from exc
