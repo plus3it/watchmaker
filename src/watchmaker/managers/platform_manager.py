@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Watchmaker base manager."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import concurrent.futures
 import logging
@@ -23,7 +15,7 @@ from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib_utils
 
 
-class PlatformManagerBase(object):
+class PlatformManagerBase:
     """
     Base class for operating system managers.
 
@@ -58,7 +50,7 @@ class PlatformManagerBase(object):
 
     def __init__(self, system_params, *args, **kwargs):
         self.log = logging.getLogger(
-            "{0}.{1}".format(__name__, self.__class__.__name__)
+            f"{__name__}.{self.__class__.__name__}"
         )
         self.system_params = system_params
         self.working_dir = None
@@ -120,7 +112,7 @@ class PlatformManagerBase(object):
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception:
-            msg = "Could not create a working dir in {0}".format(basedir)
+            msg = f"Could not create a working dir in {basedir}"
             self.log.critical(msg)
             raise
         self.log.debug("Created working directory: %s", working_dir)
@@ -167,7 +159,7 @@ class PlatformManagerBase(object):
         ret = {"retcode": 0, "stdout": b"", "stderr": b""}
 
         if not isinstance(cmd, list):
-            msg = "Command is not a list: {0}".format(cmd)
+            msg = f"Command is not a list: {cmd}"
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
@@ -222,7 +214,7 @@ class PlatformManagerBase(object):
         self.log.debug("Command retcode: %s", ret["retcode"])
 
         if raise_error and ret["retcode"] != 0:
-            msg = "Command failed! Exit code={0}, cmd={1}".format(
+            msg = "Command failed! Exit code={}, cmd={}".format(
                 ret["retcode"], " ".join(cmd)
             )
             self.log.critical(msg)
@@ -278,9 +270,7 @@ class PlatformManagerBase(object):
             opener, mode = tarfile.open, "r:bz2"
         else:
             msg = (
-                'Could not extract "{0}" as no appropriate extractor is found.'.format(
-                    filepath
-                )
+                f'Could not extract "{filepath}" as no appropriate extractor is found.'
             )
             self.log.critical(msg)
             raise WatchmakerError(msg)
@@ -294,7 +284,7 @@ class PlatformManagerBase(object):
             os.makedirs(to_directory)
         except OSError:
             if not os.path.isdir(to_directory):
-                msg = "Unable create directory - {0}".format(to_directory)
+                msg = f"Unable create directory - {to_directory}"
                 self.log.critical(msg)
                 raise
 

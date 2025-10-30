@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Providers main test module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 from watchmaker.exceptions import StatusProviderError
 
@@ -15,7 +7,7 @@ from watchmaker.exceptions import StatusProviderError
 try:
     from unittest.mock import patch
 except ImportError:
-    from mock import patch
+    from unittest.mock import patch
 
 from watchmaker.status import Status
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider

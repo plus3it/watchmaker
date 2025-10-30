@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Status Module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import logging
 
@@ -117,6 +109,6 @@ class Status:
         # If a req provider is found raise StatusProviderError
         if cloud_provider.identifier != AbstractStatusProvider.identifier:
             raise StatusProviderError(
-                "Required Provider detected that is missing prereqs: %s"
-                % cloud_provider.identifier
+                f"Required Provider detected that is missing prereqs: "
+                f"{cloud_provider.identifier}"
             )

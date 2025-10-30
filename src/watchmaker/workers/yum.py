@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Watchmaker yum worker."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import distro
 import six
@@ -44,7 +36,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
         self.yumrepomap = kwargs.pop("repo_map", None) or []
 
         # Init inherited classes
-        super(Yum, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.dist_info = self.get_dist_info()
 
     def _get_amazon_el_version(self, version):
@@ -66,9 +58,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
             el_version = distro.version().split(".")[0]
 
         if el_version is None:
-            msg = "Unsupported OS version! dist = {0}, version = {1}.".format(
-                dist, version
-            )
+            msg = f"Unsupported OS version! dist = {dist}, version = {version}."
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
@@ -83,7 +73,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
             return self.SUPPORTED_DISTS[distro.id()]
         except KeyError as exc:
             # Release not supported, exit with error
-            msg = "Unsupported OS distribution. OS must be one of: {0}".format(
+            msg = "Unsupported OS distribution. OS must be one of: {}".format(
                 ", ".join(self.SUPPORTED_DISTS.keys())
             )
             self.log.critical(msg)
@@ -136,9 +126,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
                 # Download the yum repo definition to /etc/yum.repos.d/
                 self.log.info("Installing repo: %s", repo["url"])
                 url = repo["url"]
-                repofile = "/etc/yum.repos.d/{0}".format(
-                    watchmaker.utils.basename_from_uri(url)
-                )
+                repofile = f"/etc/yum.repos.d/{watchmaker.utils.basename_from_uri(url)}"
                 self.retrieve_file(url, repofile)
             else:
                 self.log.debug(

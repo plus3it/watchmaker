@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Extends urllib with additional handlers."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import io
 from email import message_from_string
@@ -20,7 +12,7 @@ class BufferedIOS3Key(io.BufferedIOBase):
     """Add a read method to S3 key object."""
 
     def __init__(self, key, *args, **kwargs):
-        super(BufferedIOS3Key, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.read = key.get()["Body"].read
 
 
@@ -54,10 +46,10 @@ class S3Handler(urllib.request.BaseHandler):
 
         key = s3_conn.Object(bucket_name=bucket_name, key=key_name)
 
-        origurl = "s3://{0}/{1}".format(bucket_name, key_name)
+        origurl = f"s3://{bucket_name}/{key_name}"
 
         if key is None:
-            raise urllib.error.URLError("no such resource: {0}".format(origurl))
+            raise urllib.error.URLError(f"no such resource: {origurl}")
 
         headers = [
             ("Content-type", key.content_type),
@@ -70,7 +62,7 @@ class S3Handler(urllib.request.BaseHandler):
 
         headers = message_from_string(
             "\n".join(
-                "{0}: {1}".format(header, value)
+                f"{header}: {value}"
                 for header, value in headers
                 if value is not None
             )

@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Config module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import collections
 import logging
@@ -50,8 +42,8 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901 - orchestr
             data = watchmaker.utils.urlopen_retry(config_path).read()
         except (ValueError, urllib_utils.error.URLError):
             msg = (
-                'Could not read config file from the provided value "{0}"! '
-                "Check that the config is available.".format(config_path)
+                f'Could not read config file from the provided value "{config_path}"! '
+                "Check that the config is available."
             )
             log.critical(msg)
             raise
@@ -77,9 +69,9 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901 - orchestr
         watchmaker.__version__, config_version_specifier
     ):
         msg = (
-            "Watchmaker version {} is not compatible with the config "
-            "file (watchmaker_version = {})"
-        ).format(watchmaker.__version__, config_version_specifier)
+            f"Watchmaker version {watchmaker.__version__} is not compatible "
+            f"with the config file (watchmaker_version = {config_version_specifier})"
+        )
         log.critical(msg)
         raise WatchmakerError(msg)
 
@@ -120,7 +112,7 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901 - orchestr
                 config[worker_name]["config"].update(worker_args)
                 config[worker_name]["__merged"] = True
         except Exception:
-            msg = "Failed to merge worker config; worker={0}".format(worker)
+            msg = f"Failed to merge worker config; worker={worker}"
             log.critical(msg)
             raise
 
@@ -130,7 +122,7 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901 - orchestr
 
     if not is_valid(config_status):
         log.error("Status config is invalid %s", config_status)
-        raise WatchmakerError("Status config is invalid %s" % config_status)
+        raise WatchmakerError(f"Status config is invalid {config_status}")
 
     return config, config_status
 
@@ -146,5 +138,5 @@ def validate_computer_name_pattern(config):
             re.compile(computer_name_pattern)
         except re.error as exc:
             raise WatchmakerError(
-                "Invalid regex pattern %s" % computer_name_pattern
+                f"Invalid regex pattern {computer_name_pattern}"
             ) from exc

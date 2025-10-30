@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """AWS Status Provider."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import logging
 
@@ -109,6 +101,6 @@ class AWSStatusProvider(AbstractStatusProvider):
             else:
                 err_msg = "watchmaker was unable to update status"
 
-            err_msg = "{0} {1}".format(err_prefix, err_msg)
+            err_msg = f"{err_prefix} {err_msg}"
             logging.error(err_msg)
             raise StatusProviderError(err_msg)

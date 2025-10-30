@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Watchmaker module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import datetime
 import logging
@@ -36,12 +28,9 @@ def _extract_version(package_name):
 
 
 def _version_info(app_name, version):
-    return "{0}/{1} Python/{2} {3}/{4}".format(
-        app_name,
-        version,
-        platform.python_version(),
-        platform.system(),
-        platform.release(),
+    return (
+        f"{app_name}/{version} Python/{platform.python_version()} "
+        f"{platform.system()}/{platform.release()}"
     )
 
 
@@ -177,7 +166,7 @@ class Arguments(dict):
         *args,
         **kwargs,
     ):
-        super(Arguments, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.config_path = config_path
         self.log_dir = log_dir
         self.no_reboot = no_reboot
@@ -230,14 +219,14 @@ class Arguments(dict):
 
     def __getattr__(self, attr):
         """Support attr-notation for getting dict contents."""
-        return super(Arguments, self).__getitem__(attr)
+        return super().__getitem__(attr)
 
     def __setattr__(self, attr, value):
         """Support attr-notation for setting dict contents."""
-        super(Arguments, self).__setitem__(attr, value)
+        super().__setitem__(attr, value)
 
 
-class Client(object):
+class Client:
     """
     Prepare a system for setup and installation.
 
@@ -249,7 +238,7 @@ class Client(object):
 
     def __init__(self, arguments):
         self.log = logging.getLogger(
-            "{0}.{1}".format(__name__, self.__class__.__name__)
+            f"{__name__}.{self.__class__.__name__}"
         )
         # Pop extra_arguments now so we can log it separately
         extra_arguments = arguments.pop("extra_arguments", [])
@@ -290,14 +279,14 @@ class Client(object):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
         params["prepdir"] = os.path.join(
-            "{0}".format(self.system_drive), "usr", "tmp", "watchmaker"
+            f"{self.system_drive}", "usr", "tmp", "watchmaker"
         )
         params["readyfile"] = os.path.join(
-            "{0}".format(self.system_drive), "var", "run", "system-is-ready"
+            f"{self.system_drive}", "var", "run", "system-is-ready"
         )
-        params["logdir"] = os.path.join("{0}".format(self.system_drive), "var", "log")
+        params["logdir"] = os.path.join(f"{self.system_drive}", "var", "log")
         params["workingdir"] = os.path.join(
-            "{0}".format(params["prepdir"]), "workingfiles"
+            "{}".format(params["prepdir"]), "workingfiles"
         )
         params["restart"] = "shutdown -r +1 &"
         return params
@@ -309,14 +298,14 @@ class Client(object):
         # ends in colon; so using a join on the sep character.
         params["prepdir"] = os.path.sep.join([self.system_drive, "Watchmaker"])
         params["readyfile"] = os.path.join(
-            "{0}".format(params["prepdir"]), "system-is-ready"
+            "{}".format(params["prepdir"]), "system-is-ready"
         )
-        params["logdir"] = os.path.join("{0}".format(params["prepdir"]), "Logs")
+        params["logdir"] = os.path.join("{}".format(params["prepdir"]), "Logs")
         params["workingdir"] = os.path.join(
-            "{0}".format(params["prepdir"]), "WorkingFiles"
+            "{}".format(params["prepdir"]), "WorkingFiles"
         )
         params["shutdown_path"] = os.path.join(
-            "{0}".format(os.environ["SYSTEMROOT"]), "system32", "shutdown.exe"
+            "{}".format(os.environ["SYSTEMROOT"]), "system32", "shutdown.exe"
         )
         params["restart"] = (
             params["shutdown_path"]
@@ -337,7 +326,7 @@ class Client(object):
             self.workers_manager = WindowsWorkersManager
             self.system_params = self._get_windows_system_params()
         else:
-            msg = "System, {0}, is not recognized?".format(self.system)
+            msg = f"System, {self.system}, is not recognized?"
             self.log.critical(msg)
             raise WatchmakerError(msg)
         if self.log_dir:
@@ -368,8 +357,8 @@ class Client(object):
                 msg = (
                     "Failed to parse argument value as YAML. Check the format "
                     "and/or properly quote the value when using the CLI to "
-                    "account for shell interpolation. YAML error: {0}"
-                ).format(str(exc))
+                    f"account for shell interpolation. YAML error: {str(exc)}"
+                )
                 self.log.critical(msg)
                 raise InvalidValueError(msg) from exc
             raise
@@ -390,7 +379,7 @@ class Client(object):
             oschmod.set_mode(self.system_params["prepdir"], 0o700)
         except OSError:
             if not os.path.exists(self.system_params["workingdir"]):
-                msg = "Unable to create directory - {0}".format(
+                msg = "Unable to create directory - {}".format(
                     self.system_params["workingdir"]
                 )
                 self.log.critical(msg)

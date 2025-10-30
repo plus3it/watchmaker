@@ -1,14 +1,6 @@
-# -*- coding: utf-8 -*-
 # pylint: disable=redefined-outer-name,protected-access
 """Salt worker main test module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import watchmaker.utils
 
@@ -16,7 +8,7 @@ import watchmaker.utils
 try:
     from unittest.mock import patch
 except ImportError:
-    from mock import patch
+    from unittest.mock import patch
 
 
 @patch("os.path.exists", autospec=True)

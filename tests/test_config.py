@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Providers main test module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import os
 import re
@@ -21,7 +13,7 @@ from watchmaker.exceptions import WatchmakerError
 try:
     from unittest.mock import patch
 except ImportError:
-    from mock import patch
+    from unittest.mock import patch
 
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="aws")

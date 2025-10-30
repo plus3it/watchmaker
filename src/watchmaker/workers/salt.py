@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Watchmaker salt worker."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import ast
 import codecs
@@ -128,7 +120,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
     def __init__(self, *args, **kwargs):
         # Init inherited classes
-        super(SaltBase, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Pop arguments used by SaltBase
         self.user_formulas = kwargs.pop("user_formulas", None) or {}
@@ -199,8 +191,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         if valid_envs and env not in valid_envs:
             msg = (
-                "Selected environment ({0}) is not one of the valid"
-                " environment types: {1}".format(env, valid_envs)
+                f"Selected environment ({env}) is not one of the valid"
+                f" environment types: {valid_envs}"
             )
             self.log.critical(msg)
             raise InvalidValueError(msg)
@@ -216,8 +208,8 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             and not re.match(self.computer_name_pattern + r"\Z", self.computer_name)
         ):
             raise InvalidComputerNameError(
-                "Computer name: %s does not match pattern %s"
-                % (self.computer_name, self.computer_name_pattern)
+                f"Computer name: {self.computer_name} does not match pattern "
+                f"{self.computer_name_pattern}"
             )
 
     def install(self):  # noqa: C901 - orchestrates install steps; refactor later
@@ -261,7 +253,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 os.makedirs(salt_dir)
             except OSError as exc:
                 if not os.path.isdir(salt_dir):
-                    msg = "Unable to create directory - {0}".format(salt_dir)
+                    msg = f"Unable to create directory - {salt_dir}"
                     self.log.error(msg)
                     raise SystemError(msg) from exc
 
@@ -303,7 +295,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
             # Extract the formula
             formula_working_dir = self.create_working_dir(
-                self.working_dir, "{0}-".format(filename)
+                self.working_dir, f"{filename}-"
             )
             self.extract_contents(filepath=file_loc, to_directory=formula_working_dir)
 
@@ -352,16 +344,18 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 salt_content_glob = glob.glob(salt_content_src)
                 self.log.debug("salt_content_glob: %s", salt_content_glob)
                 if len(salt_content_glob) > 1:
-                    msg = "Found multiple paths matching '{0}' in {1}".format(
-                        self.salt_content_path, self.salt_content
+                    msg = (
+                        f"Found multiple paths matching '{self.salt_content_path}' "
+                        f"in {self.salt_content}"
                     )
                     self.log.critical(msg)
                     raise WatchmakerError(msg)
                 try:
                     salt_files_dir = salt_content_glob[0]
                 except IndexError as exc:
-                    msg = "Salt content glob path '{0}' not found in {1}".format(
-                        self.salt_content_path, self.salt_content
+                    msg = (
+                        f"Salt content glob path '{self.salt_content_path}' "
+                        f"not found in {self.salt_content}"
                     )
                     self.log.critical(msg)
                     raise WatchmakerError(msg) from exc
@@ -417,7 +411,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
             "pip.install",
         ]
         pip_cmd.extend([",".join(self.pip_install)])
-        pip_cmd.extend(["index_url={0}".format(self.pip_index)])
+        pip_cmd.extend([f"index_url={self.pip_index}"])
         pip_cmd.extend(self.pip_args)
         self.run_salt(pip_cmd)
 
@@ -611,7 +605,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         for cmd in cmds:
             if exclude:
-                cmd.extend(["exclude={0}".format(exclude)])
+                cmd.extend([f"exclude={exclude}"])
 
             ret = self.run_salt(cmd, log_pipe="stderr", raise_error=False)
 
@@ -662,7 +656,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
 
     def __init__(self, *args, **kwargs):
         # Init inherited classes
-        super(SaltLinux, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Pop arguments used by SaltLinux
         self.install_method = kwargs.pop("install_method", None) or "yum"
@@ -752,11 +746,11 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
 
         self.salt_file_roots = {"file_roots": {"base": file_roots}}
 
-        super(SaltLinux, self)._build_salt_formula(extract_dir)
+        super()._build_salt_formula(extract_dir)
 
     def _set_grain(self, grain, value):
         self.log.info("Setting grain `%s` ...", grain)
-        super(SaltLinux, self)._set_grain(grain, value)
+        super()._set_grain(grain, value)
 
     def _selinux_status(self):
         selinux_getenforce = self.call_process(["getenforce"])
@@ -836,7 +830,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         self.ash_role = kwargs.pop("ash_role", None) or ""
 
         # Init inherited classes
-        super(SaltWindows, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.ash_role = watchmaker.utils.config_none_deprecate(self.ash_role, self.log)
 
@@ -888,7 +882,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
                 " needed for installation of Salt in Windows."
             )
 
-        super(SaltWindows, self)._prepare_for_install()
+        super()._prepare_for_install()
 
     def _build_salt_formula(self, extract_dir):
         formulas_conf = self._get_formulas_conf()
@@ -898,11 +892,11 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
 
         self.salt_file_roots = {"file_roots": {"base": file_roots}}
 
-        super(SaltWindows, self)._build_salt_formula(extract_dir)
+        super()._build_salt_formula(extract_dir)
 
     def _set_grain(self, grain, value):
         self.log.info("Setting grain `%s` ...", grain)
-        super(SaltWindows, self)._set_grain(grain, value)
+        super()._set_grain(grain, value)
 
     @staticmethod
     def _get_salt_call():

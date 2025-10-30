@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
 """Watchmaker workers manager."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import abc
 
@@ -18,7 +10,7 @@ from watchmaker.workers.yum import Yum
 
 
 @add_metaclass(abc.ABCMeta)
-class WorkersManagerBase(object):
+class WorkersManagerBase:
     """
     Base class for worker managers.
 

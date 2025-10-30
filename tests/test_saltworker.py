@@ -1,14 +1,6 @@
-# -*- coding: utf-8 -*-
 # pylint: disable=redefined-outer-name,protected-access
 """Salt worker main test module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import os
 import sys
@@ -22,7 +14,7 @@ from watchmaker.workers.salt import SaltBase, SaltLinux, SaltWindows
 try:
     from unittest.mock import MagicMock, call, patch
 except ImportError:
-    from mock import MagicMock, call, patch
+    from unittest.mock import MagicMock, call, patch
 
 
 @pytest.fixture
