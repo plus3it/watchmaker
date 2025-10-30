@@ -43,7 +43,7 @@ def provider(supported_providers=None):
         except InvalidProviderError:
             pass
         except Exception:
-            log.error("Unexpected exception occurred", exc_info=True)
+            log.exception("Unexpected exception occurred")
 
     if len(results) > 1:
         raise CloudDetectError("Detected more than one cloud provider")

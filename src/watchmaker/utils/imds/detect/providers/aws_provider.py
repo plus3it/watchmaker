@@ -30,7 +30,7 @@ class AWSProvider(AbstractProvider):
             "http://169.254.169.254/latest/dynamic/instance-identity/document"
         )
 
-        self.metadata_imds_v2_token_url = "http://169.254.169.254/latest/api/token"
+        self.metadata_imds_v2_token_url = "http://169.254.169.254/latest/api/token"  # noqa: S105
 
         self.imds_token = self.__request_token()
 

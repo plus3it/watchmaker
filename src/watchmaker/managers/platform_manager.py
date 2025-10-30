@@ -196,7 +196,7 @@ class PlatformManagerBase(object):
             kwargs["env"] = env
 
         # fmt: off
-        with subprocess.Popen(
+        with subprocess.Popen(  # noqa: S603
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
         ) as process, concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             # fmt: on

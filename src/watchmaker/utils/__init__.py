@@ -122,7 +122,7 @@ def config_none_deprecate(check_value, log):
             'Use of "None" (string) as a config value is deprecated. Use '
             "`null` instead."
         )
-        log.warn(deprecate_msg)
+        log.warning(deprecate_msg)
         warnings.warn(deprecate_msg, DeprecationWarning, stacklevel=2)
 
     return value

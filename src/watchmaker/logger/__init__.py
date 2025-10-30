@@ -57,7 +57,7 @@ try:
     EC2_LAUNCH_SEND_EVENTS = "\\".join(
         [PROGRAM_DATA, "Amazon\\EC2-Windows\\Launch\\Scripts\\SendEventLogs.ps1"]
     )
-    assert IS_WINDOWS
+    assert IS_WINDOWS  # noqa: S101
     EC2_LAUNCH_DEPS = True
 except AssertionError:
     pass
@@ -277,8 +277,8 @@ def _configure_ec2_launch_event_log():
 
 def _schedule_ec2_launch_event_log():
     """Schedule EC2Launch to forward Event Logs to EC2 System Log."""
-    return subprocess.check_call(
-        [
+    return subprocess.check_call(  # noqa: S603
+        [  # noqa: S607
             "powershell.exe",
             "-NoLogo",
             "-NoProfile",

@@ -256,11 +256,11 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         for salt_dir in [self.salt_formula_root, self.salt_conf_path]:
             try:
                 os.makedirs(salt_dir)
-            except OSError:
+            except OSError as exc:
                 if not os.path.isdir(salt_dir):
                     msg = "Unable to create directory - {0}".format(salt_dir)
                     self.log.error(msg)
-                    raise SystemError(msg)
+                    raise SystemError(msg) from exc
 
         with codecs.open(
             os.path.join(self.salt_conf_path, "minion"), "w", encoding="utf-8"
@@ -356,12 +356,12 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                     raise WatchmakerError(msg)
                 try:
                     salt_files_dir = salt_content_glob[0]
-                except IndexError:
+                except IndexError as exc:
                     msg = "Salt content glob path '{0}' not found in {1}".format(
                         self.salt_content_path, self.salt_content
                     )
                     self.log.critical(msg)
-                    raise WatchmakerError(msg)
+                    raise WatchmakerError(msg) from exc
 
                 watchmaker.utils.copy_subdirectories(
                     salt_files_dir, extract_dir, self.log

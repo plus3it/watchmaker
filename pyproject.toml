@@ -18,11 +18,15 @@ exclude = [
 
 [tool.ruff.lint]
 ignore = [
-    "B904", "B905", "D107", "D203", "D212", "G201", "G010", "S101", "S105", "S202",
-    "S314", "S602", "S603", "S607", "EXE001",
+    "B905", "D107", "D203", "D212",
+    "S202",  # tarfile.extractall without filter - requires Python 3.12+ or custom validation
+    "EXE001",  # Only occurs in CI when source is restored as artifact (loses executable bit)
     "ANN", "PTH", "SIM", "UP", "PIE", "COM", "RUF", "PLR", "ISC", "TRY", "PERF", "EM",
     "C", "BLE", "LOG", "FBT", "FLY", "DTZ", "ICN", "PGH",
     # From tests/ and docs/
     "PT", "INP", "SLF", "ARG", "ERA", "PLC",
 ]
 select = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S314"]

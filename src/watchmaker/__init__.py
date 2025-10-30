@@ -371,7 +371,7 @@ class Client(object):
                     "account for shell interpolation. YAML error: {0}"
                 ).format(str(exc))
                 self.log.critical(msg)
-                raise InvalidValueError(msg)
+                raise InvalidValueError(msg) from exc
             raise
 
     def install(self):
@@ -415,6 +415,6 @@ class Client(object):
             self.log.info(
                 "Reboot scheduled. System will reboot after the script exits."
             )
-            subprocess.call(self.system_params["restart"], shell=True)
+            subprocess.call(self.system_params["restart"], shell=True)  # noqa: S602
         self.status.update_status("COMPLETE")
         self.log.info("Stop time: %s", datetime.datetime.now())
