@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """AWS Status Provider."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -45,7 +46,7 @@ class AWSStatusProvider(AbstractStatusProvider):
             self.logger.debug("Initialize AWS instance_id and region")
             self.instance_id = self.__get_response_from_server(self.metadata_id_url)
             self.region = self.__get_response_from_server(self.metadata_region_url)
-        except Exception as ex:  # pylint: disable=broad-exception-caught
+        except Exception as ex:
             self.logger.error("Error retrieving id/region from metadata service %s", ex)
 
     def update_status(self, key, status, required):
@@ -61,7 +62,7 @@ class AWSStatusProvider(AbstractStatusProvider):
             try:
                 self.__tag_aws_instance(key, status)
                 return
-            except Exception as ex:  # pylint: disable=broad-exception-caught
+            except Exception as ex:
                 logging.error("Exception while tagging aws instance %s", ex)
         self.__error_on_required_status(required)
 
@@ -70,7 +71,6 @@ class AWSStatusProvider(AbstractStatusProvider):
         self.logger.debug("Tag Instance %s with  %s:%s", self.instance_id, key, status)
 
         try:
-            # pylint: disable=possibly-used-before-assignment
             client = boto3.client("ec2", self.region)
             response = client.create_tags(
                 Resources=[

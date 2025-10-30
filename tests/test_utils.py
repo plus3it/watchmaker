@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=redefined-outer-name,protected-access
 """Salt worker main test module."""
+
 from __future__ import (
     absolute_import,
     division,

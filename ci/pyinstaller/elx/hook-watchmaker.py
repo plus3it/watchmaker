@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Pyinstaller hook for watchmaker standalone."""
+
 from __future__ import (
     absolute_import,
     division,

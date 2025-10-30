@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Watchmaker salt worker."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -348,7 +349,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 salt_content_glob = glob.glob(salt_content_src)
                 self.log.debug("salt_content_glob: %s", salt_content_glob)
                 if len(salt_content_glob) > 1:
-                    msg = "Found multiple paths matching" " '{0}' in {1}".format(
+                    msg = "Found multiple paths matching '{0}' in {1}".format(
                         self.salt_content_path, self.salt_content
                     )
                     self.log.critical(msg)
@@ -356,7 +357,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 try:
                     salt_files_dir = salt_content_glob[0]
                 except IndexError:
-                    msg = "Salt content glob path '{0}' not" " found in {1}".format(
+                    msg = "Salt content glob path '{0}' not found in {1}".format(
                         self.salt_content_path, self.salt_content
                     )
                     self.log.critical(msg)
@@ -427,6 +428,9 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                 Watchmaker will always begin the command with the options
                 ``--local``, ``--retcode-passthrough``, and ``--no-color``, so
                 do not specify those options in the command.
+
+            **kwargs:
+                Additional keyword arguments to pass to :meth:`call_process`.
 
         """
         cmd = [

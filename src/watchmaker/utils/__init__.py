@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Loads helper utility modules and functions."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -69,7 +70,6 @@ def urlopen_retry(uri, timeout=None):
     except AttributeError:
         pass
 
-    # pylint: disable=consider-using-with
     return urllib_utils.request.urlopen(uri, **kwargs)
 
 
@@ -89,6 +89,9 @@ def copytree(src, dst, force=False, **kwargs):
         force: (:obj:`bool`)
             Whether to delete destination prior to copy.
             (*Default*: ``False``)
+
+        **kwargs:
+            Additional keyword arguments to pass to :func:`shutil.copytree`.
 
     """
     if force and os.path.exists(dst):

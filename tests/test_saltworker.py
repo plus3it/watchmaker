@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=redefined-outer-name,protected-access
 """Salt worker main test module."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -198,6 +199,7 @@ def test_process_states_highstate(
 
     Args:
         saltworker_client: (:obj:`src.workers.SaltBase`)
+        saltworker_base_salt_args: (:obj:`list`)
 
     """
     # setup
@@ -228,6 +230,7 @@ def test_process_states_multiple_states(
 
     Args:
         saltworker_client: (:obj:`src.workers.SaltBase`)
+        saltworker_base_salt_args: (:obj:`list`)
 
     """
     # setup
@@ -258,6 +261,7 @@ def test_process_states_multiple_states_case_sensitive(
 
     Args:
         saltworker_client: (:obj:`src.workers.SaltBase`)
+        saltworker_base_salt_args: (:obj:`list`)
 
     """
     # setup
@@ -288,6 +292,7 @@ def test_process_states_highstate_extra_states(
 
     Args:
         saltworker_client: (:obj:`src.workers.SaltBase`)
+        saltworker_base_salt_args: (:obj:`list`)
 
     """
     # setup

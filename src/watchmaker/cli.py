@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Watchmaker cli."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -67,7 +68,7 @@ def _print_version(ctx, _param, value):
     show_default=True,
     type=click.Path(exists=False, file_okay=False),
     default=LOG_LOCATIONS.get(platform.system().lower(), None),
-    help=("Path to the directory where Watchmaker log files will be " "saved."),
+    help=("Path to the directory where Watchmaker log files will be saved."),
 )
 @click.option(
     "-n",
@@ -123,9 +124,7 @@ def _print_version(ctx, _param, value):
     "--computer-name",
     default=None,
     show_default=True,
-    help=(
-        "Set a salt grain that specifies the computername to apply " "to the system."
-    ),
+    help=("Set a salt grain that specifies the computername to apply to the system."),
 )
 @click.option(
     "-e",
@@ -159,9 +158,7 @@ def main(extra_arguments=None, **kwargs):
     # It is necessary to use `**dict()` with Python 2.7. Revisit when support
     # for Python 2 (EL7) is dropped.
     watchmaker_arguments = watchmaker.Arguments(
-        **dict(  # pylint: disable=use-dict-literal # noqa: E501
-            extra_arguments=extra_arguments, **kwargs
-        )
+        **dict(extra_arguments=extra_arguments, **kwargs)
     )
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
     sys.exit(watchmaker_client.install())

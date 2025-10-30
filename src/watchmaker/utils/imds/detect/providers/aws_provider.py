@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """AWS Provider."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -43,7 +44,7 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS metadata")
         try:
             return self.__is_valid_server()
-        except Exception as ex:  # pylint: disable=broad-exception-caught
+        except Exception as ex:
             self.logger.error(ex)
             return False
 
@@ -68,9 +69,7 @@ class AWSProvider(AbstractProvider):
             response = json.loads(data)
             if response["imageId"].startswith(
                 "ami-",
-            ) and response[
-                "instanceId"
-            ].startswith("i-"):
+            ) and response["instanceId"].startswith("i-"):
                 return True
         return False
 
@@ -83,7 +82,7 @@ class AWSProvider(AbstractProvider):
                 headers={"X-aws-ec2-metadata-token-ttl-seconds": IMDS_TOKEN_TIMEOUT},
                 method="PUT",
             )
-        except Exception as error:  # pylint: disable=broad-exception-caught
+        except Exception as error:
             self.logger.debug("Failed to set IMDSv2 token: %s", error)
         return None
 

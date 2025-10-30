@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Azure Status Provider."""
+
 from __future__ import (
     absolute_import,
     division,
@@ -40,7 +41,7 @@ class AzureStatusProvider(AbstractStatusProvider):
 
         try:
             self.__set_ids_from_server()
-        except Exception as ex:  # pylint: disable=broad-exception-caught
+        except Exception as ex:
             self.logger.error("Error retrieving ids from metadata service %s", ex)
 
     def update_status(self, key, status, required):
@@ -50,18 +51,14 @@ class AzureStatusProvider(AbstractStatusProvider):
             try:
                 self.__tag_azure_resouce(key, status)
                 return
-            except Exception as ex:  # pylint: disable=broad-exception-caught
+            except Exception as ex:
                 logging.error("Exception while tagging azure resource %s", ex)
         self.__error_on_required_status(required)
 
     def __tag_azure_resouce(self, key, status):
         self.logger.debug("Tag Resource %s with  %s:%s", self.resource_id, key, status)
-        # pylint: disable=attribute-defined-outside-init
-        # pylint: disable=undefined-variable
         credential = AzureCliCredential()  # type: ignore # noqa F821
 
-        # pylint: disable=attribute-defined-outside-init
-        # pylint: disable=undefined-variable
         resource_client = ResourceManagementClient(  # type: ignore # noqa F821
             credential, self.subscription_id
         )
@@ -81,7 +78,8 @@ class AzureStatusProvider(AbstractStatusProvider):
         self.resource_id = data["compute"]["resourceId"]
 
     def __get_operation(self):
-        """Get the tag operation.
+        """
+        Get the tag operation.
 
         Return "create" if initial status otherwise "udpate"
         """
