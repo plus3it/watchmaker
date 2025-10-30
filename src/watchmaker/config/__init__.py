@@ -25,7 +25,7 @@ from watchmaker.utils import urllib_utils
 log = logging.getLogger(__name__)
 
 
-def get_configs(system, worker_args, config_path=None):
+def get_configs(system, worker_args, config_path=None):  # noqa: C901 - orchestrates config loading/merge; refactor later
     """
     Read and validate configuration data for installation.
 

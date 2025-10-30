@@ -350,19 +350,19 @@ class Client(object):
         # Leading hypens are removed, and other hyphens are converted to
         # underscores
         worker_args.update(
-            dict(
-                (k.lstrip("-").replace("-", "_"), v)
+            {
+                k.lstrip("-").replace("-", "_"): v
                 for k, v in zip(*[iter(extra_arguments)] * 2)
-            )
+            }
         )
 
         try:
             # Set self.worker_args, removing `None` values from worker_args
-            return dict(
-                (k, yaml.safe_load("null" if v is None else v))
+            return {
+                k: yaml.safe_load("null" if v is None else v)
                 for k, v in worker_args.items()
                 if v != Arguments.DEFAULT_VALUE
-            )
+            }
         except yaml.YAMLError as exc:
             if hasattr(exc, "problem_mark"):
                 msg = (

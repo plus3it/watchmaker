@@ -217,7 +217,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                     % (self.computer_name, self.computer_name_pattern)
                 )
 
-    def install(self):
+    def install(self):  # noqa: C901 - orchestrates install steps; refactor later
         """Install Salt."""
         pass
 
@@ -762,7 +762,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
     def _selinux_setenforce(self, state):
         return self.call_process(["setenforce", state])
 
-    def install(self):
+    def install(self):  # noqa: C901 - orchestrates install steps; refactor later
         """Install salt and execute salt states."""
         self._configuration_validation()
         self._prepare_for_install()
@@ -922,7 +922,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
 
         return old_salt_path
 
-    def install(self):
+    def install(self):  # noqa: C901 - orchestrates install steps; refactor later
         """Install salt and execute salt states."""
         self._prepare_for_install()
 
