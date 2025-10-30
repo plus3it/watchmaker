@@ -1,7 +1,6 @@
 """Watchmaker exceptions module."""
 
 
-
 class WatchmakerError(Exception):
     """An unknown error occurred."""
 

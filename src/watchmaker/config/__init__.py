@@ -1,6 +1,5 @@
 """Config module."""
 
-
 import collections
 import logging
 import re

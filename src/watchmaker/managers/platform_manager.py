@@ -1,6 +1,5 @@
 """Watchmaker base manager."""
 
-
 import concurrent.futures
 import logging
 import os
@@ -49,9 +48,7 @@ class PlatformManagerBase:
     boto_client = None
 
     def __init__(self, system_params, *args, **kwargs):
-        self.log = logging.getLogger(
-            f"{__name__}.{self.__class__.__name__}"
-        )
+        self.log = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
         self.system_params = system_params
         self.working_dir = None
         PlatformManagerBase.args = args

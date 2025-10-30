@@ -1,6 +1,5 @@
 """Providers main test module."""
 
-
 import os
 import re
 

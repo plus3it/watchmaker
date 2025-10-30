@@ -1,6 +1,5 @@
 """Watchmaker module."""
 
-
 import datetime
 import logging
 import os
@@ -237,9 +236,7 @@ class Client:
     """
 
     def __init__(self, arguments):
-        self.log = logging.getLogger(
-            f"{__name__}.{self.__class__.__name__}"
-        )
+        self.log = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
         # Pop extra_arguments now so we can log it separately
         extra_arguments = arguments.pop("extra_arguments", [])
 

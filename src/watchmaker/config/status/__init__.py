@@ -1,6 +1,5 @@
 """Status Config module."""
 
-
 import logging
 
 from watchmaker.conditions import HAS_AZURE, HAS_BOTO3

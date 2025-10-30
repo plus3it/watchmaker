@@ -1,7 +1,6 @@
 """PyTest configuration."""
 
 
-
 def pytest_configure(config):
     """Set system to recognize that its in a test environment."""
     import sys

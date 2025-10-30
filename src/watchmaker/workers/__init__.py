@@ -1,2 +1,1 @@
 """Watchmaker workers module."""
-

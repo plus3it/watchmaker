@@ -1,6 +1,5 @@
 """Pyinstaller hook for watchmaker standalone."""
 
-
 from PyInstaller.utils.hooks import (
     collect_data_files,
     collect_dynamic_libs,

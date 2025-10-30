@@ -1,6 +1,5 @@
 """Watchmaker main test module."""
 
-
 import json
 import logging
 import logging.handlers

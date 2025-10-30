@@ -1,6 +1,5 @@
 """Watchmaker base worker."""
 
-
 import abc
 import logging
 
@@ -9,9 +8,7 @@ class WorkerBase:
     """Define the architecture of a Worker."""
 
     def __init__(self, system_params, *args, **kwargs):
-        self.log = logging.getLogger(
-            f"{__name__}.{self.__class__.__name__}"
-        )
+        self.log = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
 
         self.system_params = system_params
         WorkerBase.args = args

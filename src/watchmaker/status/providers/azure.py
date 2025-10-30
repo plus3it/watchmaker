@@ -1,6 +1,5 @@
 """Azure Status Provider."""
 
-
 import json
 import logging
 

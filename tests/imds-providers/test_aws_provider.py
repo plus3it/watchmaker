@@ -1,6 +1,5 @@
 """Providers main test module."""
 
-
 import json
 
 # Supports Python2 and Python3 test mocks

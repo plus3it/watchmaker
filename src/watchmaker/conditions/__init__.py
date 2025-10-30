@@ -1,6 +1,5 @@
 """Conditions module."""
 
-
 HAS_BOTO3 = False
 try:
     import boto3  # noqa: F401

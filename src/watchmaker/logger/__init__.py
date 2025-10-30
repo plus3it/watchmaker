@@ -1,6 +1,5 @@
 """Watchmaker logger module."""
 
-
 import collections
 import errno
 import json

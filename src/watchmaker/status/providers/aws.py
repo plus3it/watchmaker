@@ -1,6 +1,5 @@
 """AWS Status Provider."""
 
-
 import logging
 
 import watchmaker.utils as utils

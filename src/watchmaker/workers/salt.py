@@ -1,6 +1,5 @@
 """Watchmaker salt worker."""
 
-
 import ast
 import codecs
 import glob

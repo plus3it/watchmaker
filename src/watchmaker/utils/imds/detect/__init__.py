@@ -1,6 +1,5 @@
 """Detect  module."""
 
-
 import concurrent.futures
 import logging
 

@@ -1,2 +1,1 @@
 """Watchmaker managers module."""
-

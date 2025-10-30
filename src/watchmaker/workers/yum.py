@@ -1,6 +1,5 @@
 """Watchmaker yum worker."""
 
-
 from typing import ClassVar
 
 import distro

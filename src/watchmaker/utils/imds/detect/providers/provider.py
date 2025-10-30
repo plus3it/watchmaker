@@ -1,6 +1,5 @@
 """Abstract Provider."""
 
-
 import abc
 
 import six

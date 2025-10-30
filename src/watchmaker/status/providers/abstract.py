@@ -1,6 +1,5 @@
 """Abstract Status Provider."""
 
-
 import abc
 
 import six

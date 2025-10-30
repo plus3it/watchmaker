@@ -1,6 +1,5 @@
 """Configure Watchmaker documentation."""
 
-
 import os
 import sys
 
