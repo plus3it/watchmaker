@@ -31,8 +31,8 @@ def uri_from_filepath(filepath):
     # Expand relative file paths and convert them to uri-style
     path = urllib_utils.request.pathname2url(
         os.path.abspath(
-            os.path.expanduser("".join([x for x in [parts.netloc, parts.path] if x]))
-        )
+            os.path.expanduser("".join([x for x in [parts.netloc, parts.path] if x])),
+        ),
     )
 
     return urllib_utils.parse.urlunparse((scheme, "", path, "", "", ""))
@@ -133,7 +133,7 @@ def copy_subdirectories(src_dir, dest_dir, log=None):
     dest_dir = str(dest_dir)
     for subdir in next(os.walk(src_dir))[1]:
         if not subdir.startswith(".") and not os.path.exists(
-            os.sep.join((dest_dir, subdir))
+            os.sep.join((dest_dir, subdir)),
         ):
             copytree(os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir)))
             if log:

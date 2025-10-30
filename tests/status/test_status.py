@@ -40,8 +40,8 @@ def test_status(
                     "required": False,
                     "provider_type": "azure",
                 },
-            ]
-        }
+            ],
+        },
     }
     config_status = config.get("status")
     status = Status(config_status)
@@ -78,8 +78,8 @@ def test_req_status_provider(
             "providers": [
                 {"key": "WatchmakerStatus", "required": False, "provider_type": "aws"},
                 {"key": "WatchmakerStatus", "required": True, "provider_type": "azure"},
-            ]
-        }
+            ],
+        },
     }
     config_status = config.get("status")
 

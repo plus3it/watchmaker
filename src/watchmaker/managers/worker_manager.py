@@ -45,8 +45,9 @@ class WorkersManagerBase(metaclass=abc.ABCMeta):
             configuration = items["config"]
             workers.append(
                 self.WORKERS.get(worker)(
-                    system_params=self.system_params, **configuration
-                )
+                    system_params=self.system_params,
+                    **configuration,
+                ),
             )
 
         for worker in workers:

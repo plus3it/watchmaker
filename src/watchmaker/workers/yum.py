@@ -75,7 +75,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
         except KeyError as exc:
             # Release not supported, exit with error
             msg = "Unsupported OS distribution. OS must be one of: {}".format(
-                ", ".join(self.SUPPORTED_DISTS.keys())
+                ", ".join(self.SUPPORTED_DISTS.keys()),
             )
             self.log.critical(msg)
             raise WatchmakerError(msg) from exc
@@ -108,7 +108,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
 
         # is repo el_version applicable to this system?
         check_el_version = "el_version" in repo and str(repo["el_version"]) == str(
-            el_version
+            el_version,
         )
 
         # return True if all checks pass, otherwise False

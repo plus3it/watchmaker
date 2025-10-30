@@ -142,29 +142,37 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         self.exclude_states = kwargs.pop("exclude_states", None) or ""
 
         self.computer_name = watchmaker.utils.config_none_deprecate(
-            self.computer_name, self.log
+            self.computer_name,
+            self.log,
         )
         self.computer_name_pattern = watchmaker.utils.config_none_deprecate(
-            self.computer_name_pattern, self.log
+            self.computer_name_pattern,
+            self.log,
         )
         self.salt_debug_log = watchmaker.utils.config_none_deprecate(
-            self.salt_debug_log, self.log
+            self.salt_debug_log,
+            self.log,
         )
         self.salt_content = watchmaker.utils.config_none_deprecate(
-            self.salt_content, self.log
+            self.salt_content,
+            self.log,
         )
         self.salt_content_path = watchmaker.utils.config_none_deprecate(
-            self.salt_content_path, self.log
+            self.salt_content_path,
+            self.log,
         )
         self.ou_path = watchmaker.utils.config_none_deprecate(self.ou_path, self.log)
         self.admin_groups = watchmaker.utils.config_none_deprecate(
-            self.admin_groups, self.log
+            self.admin_groups,
+            self.log,
         )
         self.admin_users = watchmaker.utils.config_none_deprecate(
-            self.admin_users, self.log
+            self.admin_users,
+            self.log,
         )
         self.salt_states = watchmaker.utils.config_none_deprecate(
-            self.salt_states, self.log
+            self.salt_states,
+            self.log,
         )
 
         # Init attributes used by SaltBase, overridden by inheriting classes
@@ -198,7 +206,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
         if self.ou_path_required and not self.ou_path:
             raise OuPathRequiredError(
-                "The 'ou_path' option is required, but not provided."
+                "The 'ou_path' option is required, but not provided.",
             )
 
         if (
@@ -208,7 +216,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ):
             raise InvalidComputerNameError(
                 f"Computer name: {self.computer_name} does not match pattern "
-                f"{self.computer_name_pattern}"
+                f"{self.computer_name_pattern}",
             )
 
     def install(self):
@@ -223,14 +231,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
     def _prepare_for_install(self):
         self.working_dir = self.create_working_dir(
-            self.salt_working_dir, self.salt_working_dir_prefix
+            self.salt_working_dir,
+            self.salt_working_dir_prefix,
         )
 
         if self.salt_debug_log:
             self.salt_debug_logfile = self.salt_debug_log
         else:
             self.salt_debug_logfile = os.sep.join(
-                (self.salt_log_dir, "salt_call.debug.log")
+                (self.salt_log_dir, "salt_call.debug.log"),
             )
 
         self.salt_state_args = [
@@ -256,7 +265,9 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                     raise SystemError(msg) from exc
 
         with codecs.open(
-            os.path.join(self.salt_conf_path, "minion"), "w", encoding="utf-8"
+            os.path.join(self.salt_conf_path, "minion"),
+            "w",
+            encoding="utf-8",
         ) as fh_:
             yaml.safe_dump(self.salt_conf, fh_, default_flow_style=False)
 
@@ -274,13 +285,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
     def _get_formulas_conf(self):
         # Append Salt formulas bundled with Watchmaker package.
         with resources.as_file(
-            resources.files(static) / "salt" / "formulas"
+            resources.files(static) / "salt" / "formulas",
         ) as formulas_handle:
             formulas_path = str(formulas_handle)
             for formula in os.listdir(formulas_path):
                 formula_path = os.sep.join((self.salt_formula_root, formula))
                 watchmaker.utils.copytree(
-                    os.sep.join((formulas_path, formula)), formula_path, force=True
+                    os.sep.join((formulas_path, formula)),
+                    formula_path,
+                    force=True,
                 )
 
         # Obtain & extract any Salt formulas specified in user_formulas.
@@ -293,13 +306,15 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
             # Extract the formula
             formula_working_dir = self.create_working_dir(
-                self.working_dir, f"{filename}-"
+                self.working_dir,
+                f"{filename}-",
             )
             self.extract_contents(filepath=file_loc, to_directory=formula_working_dir)
 
             # Get the first directory within the extracted directory
             formula_inner_dir = os.path.join(
-                formula_working_dir, next(os.walk(formula_working_dir))[1][0]
+                formula_working_dir,
+                next(os.walk(formula_working_dir))[1][0],
             )
 
             # Move the formula to the formula root
@@ -322,22 +337,24 @@ class SaltBase(WorkerBase, PlatformManagerBase):
     def _build_salt_formula(self, extract_dir):
         if self.salt_content:
             salt_content_filename = watchmaker.utils.basename_from_uri(
-                self.salt_content
+                self.salt_content,
             )
             salt_content_file = os.sep.join((self.working_dir, salt_content_filename))
             self.retrieve_file(self.salt_content, salt_content_file)
             if not self.salt_content_path:
                 self.extract_contents(
-                    filepath=salt_content_file, to_directory=extract_dir
+                    filepath=salt_content_file,
+                    to_directory=extract_dir,
                 )
             else:
                 self.log.debug("Using salt content path: %s", self.salt_content_path)
                 temp_extract_dir = os.sep.join((self.working_dir, "salt-archive"))
                 self.extract_contents(
-                    filepath=salt_content_file, to_directory=temp_extract_dir
+                    filepath=salt_content_file,
+                    to_directory=temp_extract_dir,
                 )
                 salt_content_src = os.sep.join(
-                    (temp_extract_dir, self.salt_content_path)
+                    (temp_extract_dir, self.salt_content_path),
                 )
                 salt_content_glob = glob.glob(salt_content_src)
                 self.log.debug("salt_content_glob: %s", salt_content_glob)
@@ -359,16 +376,20 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                     raise WatchmakerError(msg) from exc
 
                 watchmaker.utils.copy_subdirectories(
-                    salt_files_dir, extract_dir, self.log
+                    salt_files_dir,
+                    extract_dir,
+                    self.log,
                 )
 
         with resources.as_file(
-            resources.files(static) / "salt" / "content"
+            resources.files(static) / "salt" / "content",
         ) as bundled_content:
             watchmaker.utils.copy_subdirectories(bundled_content, extract_dir, self.log)
 
         with codecs.open(
-            os.path.join(self.salt_conf_path, "minion"), "r+", encoding="utf-8"
+            os.path.join(self.salt_conf_path, "minion"),
+            "r+",
+            encoding="utf-8",
         ) as fh_:
             salt_conf = yaml.safe_load(fh_)
             salt_conf.update(self.salt_file_roots)
@@ -609,7 +630,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
             if ret["retcode"] != 0:
                 failed_states = self._get_failed_states(
-                    ast.literal_eval(ret["stdout"].decode("utf-8"))
+                    ast.literal_eval(ret["stdout"].decode("utf-8")),
                 )
                 if failed_states:
                     raise WatchmakerError(
@@ -617,7 +638,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                             {"Salt state execution failed": failed_states},
                             default_flow_style=False,
                             indent=4,
-                        )
+                        ),
                     )
 
         self.log.info("Salt states all applied successfully!")
@@ -705,12 +726,12 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
             if not self.bootstrap_source:
                 self.log.error(
                     "Detected `git` as the install method, but the required "
-                    "parameter `bootstrap_source` was not provided."
+                    "parameter `bootstrap_source` was not provided.",
                 )
             if not self.git_repo:
                 self.log.error(
                     "Detected `git` as the install method, but the required "
-                    "parameter `git_repo` was not provided."
+                    "parameter `git_repo` was not provided.",
                 )
 
     def _install_package(self):
@@ -725,7 +746,7 @@ class SaltLinux(SaltBase, LinuxPlatformManager):
                 (
                     self.working_dir,
                     watchmaker.utils.basename_from_uri(self.bootstrap_source),
-                )
+                ),
             )
             self.retrieve_file(self.bootstrap_source, salt_bootstrap_filename)
             bootstrap_cmd = ["sh", salt_bootstrap_filename, "-g", self.git_repo]
@@ -867,7 +888,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             return
 
         installer_name = os.sep.join(
-            (self.working_dir, watchmaker.utils.basename_from_uri(self.installer_url))
+            (self.working_dir, watchmaker.utils.basename_from_uri(self.installer_url)),
         )
         self.retrieve_file(self.installer_url, installer_name)
         install_cmd = [installer_name, "/S"]
@@ -877,7 +898,7 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
         if not self.installer_url:
             self.log.error(
                 "Parameter `installer_url` was not provided and is"
-                " needed for installation of Salt in Windows."
+                " needed for installation of Salt in Windows.",
             )
 
         super()._prepare_for_install()

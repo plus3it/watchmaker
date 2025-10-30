@@ -82,11 +82,15 @@ class PlatformManagerBase:
                 shutil.copyfileobj(response, outfile)
         except (ValueError, urllib_utils.error.URLError):
             self.log.critical(
-                "Failed to retrieve the file. url = %s. filename = %s", url, filename
+                "Failed to retrieve the file. url = %s. filename = %s",
+                url,
+                filename,
             )
             raise
         self.log.info(
-            "Retrieved the file successfully. url=%s. filename=%s", url, filename
+            "Retrieved the file successfully. url=%s. filename=%s",
+            url,
+            filename,
         )
 
     def create_working_dir(self, basedir, prefix):
@@ -186,7 +190,7 @@ class PlatformManagerBase:
 
         # fmt: off
         with subprocess.Popen(  # noqa: S603
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs,
         ) as process, concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             # fmt: on
             stdout_future = executor.submit(
@@ -212,7 +216,7 @@ class PlatformManagerBase:
 
         if raise_error and ret["retcode"] != 0:
             msg = "Command failed! Exit code={}, cmd={}".format(
-                ret["retcode"], " ".join(cmd)
+                ret["retcode"], " ".join(cmd),
             )
             self.log.critical(msg)
             raise WatchmakerError(msg)
@@ -274,7 +278,7 @@ class PlatformManagerBase:
 
         if create_dir:
             to_directory = os.sep.join(
-                (to_directory, ".".join(filepath.split(os.sep)[-1].split(".")[:-1]))
+                (to_directory, ".".join(filepath.split(os.sep)[-1].split(".")[:-1])),
             )
 
         try:

@@ -62,7 +62,7 @@ class S3Handler(urllib.request.BaseHandler):
         headers = message_from_string(
             "\n".join(
                 f"{header}: {value}" for header, value in headers if value is not None
-            )
+            ),
         )
 
         return urllib.response.addinfourl(BufferedIOS3Key(key), headers, origurl)

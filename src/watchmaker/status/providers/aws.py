@@ -81,7 +81,9 @@ class AWSStatusProvider(AbstractStatusProvider):
         """Get response for provided metadata_url."""
         headers = self.provider.get_metadata_request_headers()
         request = utils.urllib_utils.request.Request(
-            metadata_url, data=None, headers=headers
+            metadata_url,
+            data=None,
+            headers=headers,
         )
         response = utils.urlopen_retry(
             request,

@@ -171,22 +171,22 @@ class Arguments(dict):
         self.no_reboot = no_reboot
         self.log_level = log_level
         self.admin_groups = watchmaker.utils.clean_none(
-            kwargs.pop("admin_groups", None) or Arguments.DEFAULT_VALUE
+            kwargs.pop("admin_groups", None) or Arguments.DEFAULT_VALUE,
         )
         self.admin_users = watchmaker.utils.clean_none(
-            kwargs.pop("admin_users", None) or Arguments.DEFAULT_VALUE
+            kwargs.pop("admin_users", None) or Arguments.DEFAULT_VALUE,
         )
         self.computer_name = watchmaker.utils.clean_none(
-            kwargs.pop("computer_name", None) or Arguments.DEFAULT_VALUE
+            kwargs.pop("computer_name", None) or Arguments.DEFAULT_VALUE,
         )
         self.environment = watchmaker.utils.clean_none(
-            kwargs.pop("environment", None) or Arguments.DEFAULT_VALUE
+            kwargs.pop("environment", None) or Arguments.DEFAULT_VALUE,
         )
         self.salt_states = watchmaker.utils.clean_none(
-            kwargs.pop("salt_states", None) or Arguments.DEFAULT_VALUE
+            kwargs.pop("salt_states", None) or Arguments.DEFAULT_VALUE,
         )
         self.ou_path = watchmaker.utils.clean_none(
-            kwargs.pop("ou_path", None) or Arguments.DEFAULT_VALUE
+            kwargs.pop("ou_path", None) or Arguments.DEFAULT_VALUE,
         )
 
         # Parse extra_arguments passed as `--argument=value` into separate
@@ -201,9 +201,9 @@ class Arguments(dict):
                     [
                         match.group("arg"),
                         watchmaker.utils.clean_none(
-                            match.group("val") or Arguments.DEFAULT_VALUE
+                            match.group("val") or Arguments.DEFAULT_VALUE,
                         ),
-                    ]
+                    ],
                 )
             elif item.startswith("-"):
                 # item is the argument name
@@ -211,7 +211,7 @@ class Arguments(dict):
             else:
                 # item is the argument value
                 extra_arguments.extend(
-                    [watchmaker.utils.clean_none(item or Arguments.DEFAULT_VALUE)]
+                    [watchmaker.utils.clean_none(item or Arguments.DEFAULT_VALUE)],
                 )
 
         self.extra_arguments = extra_arguments
@@ -265,7 +265,9 @@ class Client:
         self.worker_args = self._get_worker_args(arguments, extra_arguments)
 
         self.config, status_config = get_configs(
-            self.system, self.worker_args, self.config_path
+            self.system,
+            self.worker_args,
+            self.config_path,
         )
 
         self.status = Status(status_config)
@@ -276,14 +278,21 @@ class Client:
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
         params["prepdir"] = os.path.join(
-            f"{self.system_drive}", "usr", "tmp", "watchmaker"
+            f"{self.system_drive}",
+            "usr",
+            "tmp",
+            "watchmaker",
         )
         params["readyfile"] = os.path.join(
-            f"{self.system_drive}", "var", "run", "system-is-ready"
+            f"{self.system_drive}",
+            "var",
+            "run",
+            "system-is-ready",
         )
         params["logdir"] = os.path.join(f"{self.system_drive}", "var", "log")
         params["workingdir"] = os.path.join(
-            "{}".format(params["prepdir"]), "workingfiles"
+            "{}".format(params["prepdir"]),
+            "workingfiles",
         )
         params["restart"] = "shutdown -r +1 &"
         return params
@@ -295,14 +304,18 @@ class Client:
         # ends in colon; so using a join on the sep character.
         params["prepdir"] = os.path.sep.join([self.system_drive, "Watchmaker"])
         params["readyfile"] = os.path.join(
-            "{}".format(params["prepdir"]), "system-is-ready"
+            "{}".format(params["prepdir"]),
+            "system-is-ready",
         )
         params["logdir"] = os.path.join("{}".format(params["prepdir"]), "Logs")
         params["workingdir"] = os.path.join(
-            "{}".format(params["prepdir"]), "WorkingFiles"
+            "{}".format(params["prepdir"]),
+            "WorkingFiles",
         )
         params["shutdown_path"] = os.path.join(
-            "{}".format(os.environ["SYSTEMROOT"]), "system32", "shutdown.exe"
+            "{}".format(os.environ["SYSTEMROOT"]),
+            "system32",
+            "shutdown.exe",
         )
         params["restart"] = (
             params["shutdown_path"]
@@ -339,7 +352,7 @@ class Client:
             {
                 k.lstrip("-").replace("-", "_"): v
                 for k, v in zip(*[iter(extra_arguments)] * 2)
-            }
+            },
         )
 
         try:
@@ -377,14 +390,15 @@ class Client:
         except OSError:
             if not os.path.exists(self.system_params["workingdir"]):
                 msg = "Unable to create directory - {}".format(
-                    self.system_params["workingdir"]
+                    self.system_params["workingdir"],
                 )
                 self.log.critical(msg)
                 self.status.update_status("ERROR")
                 raise
 
         workers_manager = self.workers_manager(
-            system_params=self.system_params, workers=self.config
+            system_params=self.system_params,
+            workers=self.config,
         )
 
         try:
@@ -399,7 +413,7 @@ class Client:
             self.log.info("Detected `no-reboot` switch. System will not be rebooted.")
         else:
             self.log.info(
-                "Reboot scheduled. System will reboot after the script exits."
+                "Reboot scheduled. System will reboot after the script exits.",
             )
             subprocess.call(self.system_params["restart"], shell=True)  # noqa: S602
         self.status.update_status("COMPLETE")

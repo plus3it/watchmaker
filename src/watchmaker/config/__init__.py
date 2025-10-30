@@ -65,7 +65,8 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901
         raise WatchmakerError(msg)
 
     if config_version_specifier and not check_version(
-        watchmaker.__version__, config_version_specifier
+        watchmaker.__version__,
+        config_version_specifier,
     ):
         msg = (
             f"Watchmaker version {watchmaker.__version__} is not compatible "
@@ -137,5 +138,5 @@ def validate_computer_name_pattern(config):
             re.compile(computer_name_pattern)
         except re.error as exc:
             raise WatchmakerError(
-                f"Invalid regex pattern {computer_name_pattern}"
+                f"Invalid regex pattern {computer_name_pattern}",
             ) from exc

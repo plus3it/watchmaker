@@ -37,7 +37,7 @@ def test_supported_cloud_w_prereqs(prereqs):
                 "required": False,
                 "provider_type": "gcp",
             },
-        ]
+        ],
     }
 
     ids = get_supported_cloud_w_prereqs(config_status)
@@ -72,7 +72,7 @@ def test_req_cloud_wo_prereqs(prereqs):
                 "required": False,
                 "provider_type": "gcp",
             },
-        ]
+        ],
     }
 
     ids = get_required_cloud_wo_prereqs(config_status)
@@ -107,7 +107,7 @@ def test_no_req_cloud_wo_prereqs(prereqs):
                 "required": False,
                 "provider_type": "gcp",
             },
-        ]
+        ],
     }
 
     assert not get_required_cloud_wo_prereqs(config_status)
@@ -164,7 +164,7 @@ def test_get_non_cloud_providers():
                 "required": False,
                 "provider_type": "file",
             },
-        ]
+        ],
     }
 
     providers = get_non_cloud_providers(config_status)
@@ -191,7 +191,7 @@ def test_no_non_cloud_providers():
                 "required": False,
                 "provider_type": "file",
             },
-        ]
+        ],
     }
 
     assert not get_non_cloud_providers(config_status)

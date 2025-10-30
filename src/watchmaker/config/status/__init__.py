@@ -84,7 +84,7 @@ def get_supported_cloud_w_prereqs(config_status):
             status.get("provider_type").lower()
             for status in config_status.get("providers", [])
             if status.get("provider_type", "").lower() in supported
-        }
+        },
     )
 
 
@@ -97,7 +97,7 @@ def get_required_cloud_wo_prereqs(config_status):
             for status in config_status.get("providers", [])
             if status.get("provider_type", "").lower() in missing_prereqs
             and status.get("required", False)
-        }
+        },
     )
 
 
@@ -145,5 +145,5 @@ def get_non_cloud_providers(config_status):
             status.get("provider_type").lower()
             for status in config_status.get("providers", [])
             if status.get("provider_type", "").lower() in non_cloud_provider_list
-        }
+        },
     )

@@ -36,7 +36,8 @@ class Status:
 
         for identifier in self.status_providers:
             self.providers[identifier] = status_config.get_providers_by_provider_types(
-                config, identifier
+                config,
+                identifier,
             )
 
     def update_status(self, status):
@@ -62,7 +63,7 @@ class Status:
         status_providers = {}
         for detected_provider in detected_providers:
             status_providers[detected_provider.identifier] = Status._PROVIDERS.get(
-                detected_provider.identifier
+                detected_provider.identifier,
             )(detected_provider)
 
         return status_providers
@@ -97,7 +98,7 @@ class Status:
     def __error_on_required_provider(self, config):
         """Detect required providers in config that do no have prereqs."""
         req_providers_missing_prereqs = status_config.get_required_cloud_wo_prereqs(
-            config
+            config,
         )
         self.logger.debug(
             "For each required provider missing "
@@ -110,5 +111,5 @@ class Status:
         if cloud_provider.identifier != AbstractStatusProvider.identifier:
             raise StatusProviderError(
                 f"Required Provider detected that is missing prereqs: "
-                f"{cloud_provider.identifier}"
+                f"{cloud_provider.identifier}",
             )

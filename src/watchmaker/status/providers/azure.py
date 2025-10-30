@@ -51,7 +51,8 @@ class AzureStatusProvider(AbstractStatusProvider):
         credential = AzureCliCredential()  # noqa: F821
 
         resource_client = ResourceManagementClient(  # noqa: F821
-            credential, self.subscription_id
+            credential,
+            self.subscription_id,
         )
 
         body = {

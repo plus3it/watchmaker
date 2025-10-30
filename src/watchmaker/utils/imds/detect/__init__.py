@@ -24,7 +24,7 @@ def provider(supported_providers=None):
         for cloud_identifier in supported_providers:
             if CLOUD_PROVIDERS.get(cloud_identifier):
                 futures.append(
-                    executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier])
+                    executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier]),
                 )
 
     concurrent.futures.wait(futures)
@@ -53,5 +53,5 @@ def identify(cloud_provider):
 
     log.debug("Environment is not %s", cloud_provider_instance.identifier)
     raise InvalidProviderError(
-        f"Environment is not {cloud_provider_instance.identifier}"
+        f"Environment is not {cloud_provider_instance.identifier}",
     )

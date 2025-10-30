@@ -45,7 +45,9 @@ def test_provider_azure(aws_provider_mock, azure_provider_mock, aws_token_mock):
     return_value=(None),
 )
 def test_provider_not_aws_or_azure(
-    aws_provider_mock, azure_provider_mock, aws_token_mock
+    aws_provider_mock,
+    azure_provider_mock,
+    aws_token_mock,
 ):
     """Test provider is unknown."""
     assert provider(["aws", "azure"]).identifier == "unknown"
