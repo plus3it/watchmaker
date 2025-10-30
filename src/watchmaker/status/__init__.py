@@ -1,18 +1,10 @@
-# -*- coding: utf-8 -*-
 """Status Module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
-
 import logging
+from typing import ClassVar
 
 import watchmaker.config.status as status_config
-from watchmaker.exceptions import StatusProviderError
+from watchmaker.exceptions import CloudProviderDetectionError
 from watchmaker.status.providers.abstract import AbstractStatusProvider
 from watchmaker.status.providers.aws import AWSStatusProvider
 from watchmaker.status.providers.azure import AzureStatusProvider
@@ -22,7 +14,7 @@ from watchmaker.utils.imds.detect import provider
 class Status:
     """Status factory for providers."""
 
-    _PROVIDERS = {
+    _PROVIDERS: ClassVar[dict] = {
         AWSStatusProvider.identifier: AWSStatusProvider,
         AzureStatusProvider.identifier: AzureStatusProvider,
     }
@@ -44,7 +36,8 @@ class Status:
 
         for identifier in self.status_providers:
             self.providers[identifier] = status_config.get_providers_by_provider_types(
-                config, identifier
+                config,
+                identifier,
             )
 
     def update_status(self, status):
@@ -70,7 +63,7 @@ class Status:
         status_providers = {}
         for detected_provider in detected_providers:
             status_providers[detected_provider.identifier] = Status._PROVIDERS.get(
-                detected_provider.identifier
+                detected_provider.identifier,
             )(detected_provider)
 
         return status_providers
@@ -105,7 +98,7 @@ class Status:
     def __error_on_required_provider(self, config):
         """Detect required providers in config that do no have prereqs."""
         req_providers_missing_prereqs = status_config.get_required_cloud_wo_prereqs(
-            config
+            config,
         )
         self.logger.debug(
             "For each required provider missing "
@@ -116,7 +109,4 @@ class Status:
 
         # If a req provider is found raise StatusProviderError
         if cloud_provider.identifier != AbstractStatusProvider.identifier:
-            raise StatusProviderError(
-                "Required Provider detected that is missing prereqs: %s"
-                % cloud_provider.identifier
-            )
+            raise CloudProviderDetectionError(cloud_provider.identifier)

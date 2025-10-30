@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Watchmaker main test module."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import json
 import logging
@@ -67,7 +58,8 @@ def test_making_log_directory():
 
 
 @pytest.mark.skipif(
-    sys.version_info < (2, 7), reason="Not supported in this Python version."
+    sys.version_info < (2, 7),
+    reason="Not supported in this Python version.",
 )
 def test_logger_handler():
     """
@@ -116,10 +108,12 @@ def test_exception_hook(caplog):
 # EC2Config Tests
 ###
 @pytest.mark.skipif(
-    not logger.EC2_CONFIG_DEPS, reason="EC2Config requirements not met."
+    not logger.EC2_CONFIG_DEPS,
+    reason="EC2Config requirements not met.",
 )
 @pytest.mark.skipif(
-    sys.version_info < (3,), reason="Not supported in this Python version."
+    sys.version_info < (3,),
+    reason="Not supported in this Python version.",
 )
 def test_enable_ec2_config_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_CONFIG is missing."""
@@ -130,10 +124,12 @@ def test_enable_ec2_config_event_log_raises_filenotfound(mocker):
 
 
 @pytest.mark.skipif(
-    not logger.EC2_CONFIG_DEPS, reason="EC2Config requirements not met."
+    not logger.EC2_CONFIG_DEPS,
+    reason="EC2Config requirements not met.",
 )
 @pytest.mark.skipif(
-    sys.version_info < (3,), reason="Not supported in this Python version."
+    sys.version_info < (3,),
+    reason="Not supported in this Python version.",
 )
 def test_configure_ec2_config_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_CONFIG_EVENT_LOG is missing."""
@@ -144,7 +140,8 @@ def test_configure_ec2_config_event_log_raises_filenotfound(mocker):
 
 
 @pytest.mark.skipif(
-    not logger.EC2_CONFIG_DEPS, reason="EC2Config requirements not met."
+    not logger.EC2_CONFIG_DEPS,
+    reason="EC2Config requirements not met.",
 )
 def test_enable_ec2_config_event_log(mocker):
     """Enable EC2Config Event Logging."""
@@ -160,7 +157,7 @@ def test_enable_ec2_config_event_log(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._enable_ec2_config_event_log()
 
@@ -174,8 +171,8 @@ def test_enable_ec2_config_event_log(mocker):
     handle = mo_()
     result = xml.etree.ElementTree.ElementTree(
         xml.etree.ElementTree.fromstring(
-            _pytest_stringify_write_calls(handle.write.call_args_list)
-        )
+            _pytest_stringify_write_calls(handle.write.call_args_list),
+        ),
     )
 
     # Assert that the Ec2EventLog plugin is enabled
@@ -192,7 +189,8 @@ def test_enable_ec2_config_event_log(mocker):
 
 
 @pytest.mark.skipif(
-    not logger.EC2_CONFIG_DEPS, reason="EC2Config requirements not met."
+    not logger.EC2_CONFIG_DEPS,
+    reason="EC2Config requirements not met.",
 )
 def test_configure_ec2config_write_all_events(mocker):
     """Configure EC2Config Event Logging with all events."""
@@ -202,7 +200,7 @@ def test_configure_ec2config_write_all_events(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_config_event_log()
 
@@ -216,8 +214,8 @@ def test_configure_ec2config_write_all_events(mocker):
     handle = mo_()
     result = xml.etree.ElementTree.ElementTree(
         xml.etree.ElementTree.fromstring(
-            _pytest_stringify_write_calls(handle.write.call_args_list)
-        )
+            _pytest_stringify_write_calls(handle.write.call_args_list),
+        ),
     )
 
     # Get all the present events
@@ -237,7 +235,8 @@ def test_configure_ec2config_write_all_events(mocker):
 
 
 @pytest.mark.skipif(
-    not logger.EC2_CONFIG_DEPS, reason="EC2Config requirements not met."
+    not logger.EC2_CONFIG_DEPS,
+    reason="EC2Config requirements not met.",
 )
 def test_configure_ec2config_skip_if_events_present(mocker):
     """Check that EC2Config Event Log config skips pre-existing events."""
@@ -268,7 +267,7 @@ def test_configure_ec2config_skip_if_events_present(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_config_event_log()
 
@@ -286,10 +285,12 @@ def test_configure_ec2config_skip_if_events_present(mocker):
 # EC2Launch Tests
 ###
 @pytest.mark.skipif(
-    not logger.EC2_LAUNCH_DEPS, reason="EC2Launch requirements not met."
+    not logger.EC2_LAUNCH_DEPS,
+    reason="EC2Launch requirements not met.",
 )
 @pytest.mark.skipif(
-    sys.version_info < (3,), reason="Not supported in this Python version."
+    sys.version_info < (3,),
+    reason="Not supported in this Python version.",
 )
 def test_configure_ec2_launch_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_LAUNCH_LOG_CONFIG is missing."""
@@ -300,7 +301,8 @@ def test_configure_ec2_launch_event_log_raises_filenotfound(mocker):
 
 
 @pytest.mark.skipif(
-    not logger.EC2_LAUNCH_DEPS, reason="EC2Launch requirements not met."
+    not logger.EC2_LAUNCH_DEPS,
+    reason="EC2Launch requirements not met.",
 )
 def test_schedule_ec2launch_event_logging_raises_calledproccesserror(mocker):
     """Raise FileNotFoundError when EC2_LAUNCH_SEND_EVENTS is missing."""
@@ -316,7 +318,7 @@ def test_configure_ec2launch_write_all_events(mocker):
     data = "{}"
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_launch_event_log()
 
@@ -338,7 +340,7 @@ def test_configure_ec2launch_write_all_events(mocker):
                 "source": "Watchmaker",
                 "level": msg_type,
                 "numEntries": "999",
-            }
+            },
         ]
 
     # Validate that all expected events were written
@@ -358,12 +360,12 @@ def test_configure_ec2launch_skip_if_events_present(mocker):
                 "source": "Watchmaker",
                 "level": msg_type,
                 "numEntries": "999",
-            }
+            },
         ]
     data = json.dumps({"events": events})
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("io.open", mo_, create=True)
+    mocker.patch("builtins.open", mo_, create=True)
 
     logger._configure_ec2_launch_event_log()
 

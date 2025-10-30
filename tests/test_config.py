@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Providers main test module."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import os
 import re
@@ -21,7 +12,7 @@ from watchmaker.exceptions import WatchmakerError
 try:
     from unittest.mock import patch
 except ImportError:
-    from mock import patch
+    from unittest.mock import patch
 
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="aws")
@@ -82,7 +73,9 @@ def test_config_w_name_and_pattern(_mock_provider):
         "linux",
         {},
         os.path.join(
-            "tests", "resources", "config_with_computer_name_and_pattern.yaml"
+            "tests",
+            "resources",
+            "config_with_computer_name_and_pattern.yaml",
         ),
     )
     computer_name = config["salt"]["config"]["computer_name"]
@@ -98,7 +91,9 @@ def test_config_validate_pattern():
         "linux",
         {},
         os.path.join(
-            "tests", "resources", "config_with_computer_name_and_pattern.yaml"
+            "tests",
+            "resources",
+            "config_with_computer_name_and_pattern.yaml",
         ),
     )
 

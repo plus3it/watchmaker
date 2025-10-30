@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Status Config module."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import logging
 
@@ -57,7 +48,7 @@ def get_status(status_key):
     returns string: formatted status message from key provided
                     or status_key as status
     """
-    status = STATUS.get(status_key, None)
+    status = STATUS.get(status_key)
     return status if status else status_key
 
 
@@ -89,11 +80,11 @@ def get_supported_cloud_w_prereqs(config_status):
     """Get supported cloud providers with prereqs and in config."""
     supported = get_cloud_with_prereqs()
     return list(
-        set(
+        {
             status.get("provider_type").lower()
             for status in config_status.get("providers", [])
             if status.get("provider_type", "").lower() in supported
-        )
+        },
     )
 
 
@@ -101,12 +92,12 @@ def get_required_cloud_wo_prereqs(config_status):
     """Get supported cloud providers without prereqs and in config."""
     missing_prereqs = get_cloud_missing_prereqs()
     return list(
-        set(
+        {
             status.get("provider_type").lower()
             for status in config_status.get("providers", [])
             if status.get("provider_type", "").lower() in missing_prereqs
             and status.get("required", False)
-        )
+        },
     )
 
 
@@ -150,9 +141,9 @@ def get_non_cloud_providers(config_status):
     non_cloud_provider_list = list(providers)
 
     return list(
-        set(
+        {
             status.get("provider_type").lower()
             for status in config_status.get("providers", [])
             if status.get("provider_type", "").lower() in non_cloud_provider_list
-        )
+        },
     )

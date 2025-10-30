@@ -1,21 +1,12 @@
-# -*- coding: utf-8 -*-
 """Providers main test module."""
 
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
-
-from watchmaker.exceptions import StatusProviderError
+from watchmaker.exceptions import CloudProviderDetectionError
 
 # Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
 except ImportError:
-    from mock import patch
+    from unittest.mock import patch
 
 from watchmaker.status import Status
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
@@ -49,10 +40,10 @@ def test_status(
                     "required": False,
                     "provider_type": "azure",
                 },
-            ]
-        }
+            ],
+        },
     }
-    config_status = config.get("status", None)
+    config_status = config.get("status")
     status = Status(config_status)
     detected_providers = status.get_detected_status_providers()
     assert len(detected_providers) == 1
@@ -87,12 +78,12 @@ def test_req_status_provider(
             "providers": [
                 {"key": "WatchmakerStatus", "required": False, "provider_type": "aws"},
                 {"key": "WatchmakerStatus", "required": True, "provider_type": "azure"},
-            ]
-        }
+            ],
+        },
     }
-    config_status = config.get("status", None)
+    config_status = config.get("status")
 
     try:
         Status(config_status)
-    except StatusProviderError as spe:
+    except CloudProviderDetectionError as spe:
         assert str(spe) == "Required Provider detected that is missing prereqs: azure"

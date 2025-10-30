@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Watchmaker cli."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import os
 import platform
@@ -23,7 +14,7 @@ click.disable_unicode_literals_warning = True
 LOG_LOCATIONS = {
     "linux": os.path.sep.join(("", "var", "log", "watchmaker")),
     "windows": os.path.sep.join(
-        (os.environ.get("SYSTEMDRIVE", "C:"), "Watchmaker", "Logs")
+        (os.environ.get("SYSTEMDRIVE", "C:"), "Watchmaker", "Logs"),
     ),
 }
 
@@ -158,7 +149,7 @@ def main(extra_arguments=None, **kwargs):
     # It is necessary to use `**dict()` with Python 2.7. Revisit when support
     # for Python 2 (EL7) is dropped.
     watchmaker_arguments = watchmaker.Arguments(
-        **dict(extra_arguments=extra_arguments, **kwargs)
+        **dict(extra_arguments=extra_arguments, **kwargs),
     )
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
     sys.exit(watchmaker_client.install())

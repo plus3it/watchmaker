@@ -1,24 +1,13 @@
-# -*- coding: utf-8 -*-
-"""Watchmaker workers manager."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
+"""Workers Manager module."""
 
 import abc
-
-from six import add_metaclass
+from typing import ClassVar
 
 from watchmaker.workers.salt import SaltLinux, SaltWindows
 from watchmaker.workers.yum import Yum
 
 
-@add_metaclass(abc.ABCMeta)
-class WorkersManagerBase(object):
+class WorkersManagerBase(metaclass=abc.ABCMeta):
     """
     Base class for worker managers.
 
@@ -32,7 +21,7 @@ class WorkersManagerBase(object):
 
     """
 
-    WORKERS = {}
+    WORKERS: ClassVar[dict] = {}
 
     def __init__(self, system_params, workers, *args, **kwargs):
         self.system_params = system_params
@@ -56,8 +45,9 @@ class WorkersManagerBase(object):
             configuration = items["config"]
             workers.append(
                 self.WORKERS.get(worker)(
-                    system_params=self.system_params, **configuration
-                )
+                    system_params=self.system_params,
+                    **configuration,
+                ),
             )
 
         for worker in workers:
@@ -74,7 +64,7 @@ class WorkersManagerBase(object):
 class LinuxWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Linux systems."""
 
-    WORKERS = {"yum": Yum, "salt": SaltLinux}
+    WORKERS: ClassVar[dict] = {"yum": Yum, "salt": SaltLinux}
 
     def _worker_execution(self):
         pass
@@ -84,13 +74,12 @@ class LinuxWorkersManager(WorkersManagerBase):
 
     def cleanup(self):
         """Execute cleanup function."""
-        pass
 
 
 class WindowsWorkersManager(WorkersManagerBase):
     """Manage the worker cadence for Windows systems."""
 
-    WORKERS = {"salt": SaltWindows}
+    WORKERS: ClassVar[dict] = {"salt": SaltWindows}
 
     def _worker_execution(self):
         pass
@@ -100,4 +89,3 @@ class WindowsWorkersManager(WorkersManagerBase):
 
     def cleanup(self):
         """Execute cleanup function."""
-        pass

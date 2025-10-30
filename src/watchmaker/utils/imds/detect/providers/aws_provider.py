@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """AWS Provider."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import json
 import logging
@@ -44,8 +35,8 @@ class AWSProvider(AbstractProvider):
         self.logger.debug("Checking AWS metadata")
         try:
             return self.__is_valid_server()
-        except Exception as ex:
-            self.logger.error(ex)
+        except Exception:
+            self.logger.exception("Unexpected error checking AWS metadata server")
             return False
 
     def get_metadata_request_headers(self):
