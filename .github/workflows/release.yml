@@ -163,6 +163,6 @@ jobs:
     steps:
       - name: Generate scan reports
         id: terrafirm
-        uses: plus3it/terrafirm/.github/actions/test@7d8c8f7955bdeb0ca57e4b12a71cc09367ff24e7
+        uses: plus3it/terrafirm/.github/actions/test@a3917fc65bba19a65d1e15474c35254faaaa1dc6
         with:
           destroy-after-test: true
