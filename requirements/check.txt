@@ -2,4 +2,4 @@
 check-manifest==0.51
 readme-renderer==44.0
 # ruff replaces many of the linters previously used
-ruff==0.14.2
+ruff==0.14.3
