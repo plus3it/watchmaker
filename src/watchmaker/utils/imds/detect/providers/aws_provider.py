@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+from urllib import error as urllib_error
 
 import watchmaker.utils as utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
@@ -73,7 +74,7 @@ class AWSProvider(AbstractProvider):
                 headers={"X-aws-ec2-metadata-token-ttl-seconds": IMDS_TOKEN_TIMEOUT},
                 method="PUT",
             )
-        except Exception as error:
+        except urllib_error.URLError as error:
             self.logger.debug("Failed to set IMDSv2 token: %s", error)
         return None
 
