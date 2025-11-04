@@ -35,7 +35,8 @@ class S3Handler(urllib.request.BaseHandler):
         key_name = selector[1:]
 
         if not bucket_name or not key_name:
-            raise MissingURLParamError("s3://<bucket>/<key>")
+            msg = "s3://<bucket>/<key>"
+            raise MissingURLParamError(msg)
 
         try:
             s3_conn = self.s3_conn
