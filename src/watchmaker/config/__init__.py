@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Config module."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import collections
 import logging
@@ -19,13 +10,17 @@ from importlib_resources import files
 
 import watchmaker.utils.imds.detect
 from watchmaker.config.status import is_valid
-from watchmaker.exceptions import WatchmakerError
+from watchmaker.exceptions import (
+    InvalidRegexPatternError,
+    StatusConfigError,
+    WatchmakerError,
+)
 from watchmaker.utils import urllib_utils
 
 log = logging.getLogger(__name__)
 
 
-def get_configs(system, worker_args, config_path=None):
+def get_configs(system, worker_args, config_path=None):  # noqa: C901
     """
     Read and validate configuration data for installation.
 
@@ -50,8 +45,8 @@ def get_configs(system, worker_args, config_path=None):
             data = watchmaker.utils.urlopen_retry(config_path).read()
         except (ValueError, urllib_utils.error.URLError):
             msg = (
-                'Could not read config file from the provided value "{0}"! '
-                "Check that the config is available.".format(config_path)
+                f'Could not read config file from the provided value "{config_path}"! '
+                "Check that the config is available."
             )
             log.critical(msg)
             raise
@@ -74,12 +69,13 @@ def get_configs(system, worker_args, config_path=None):
         raise WatchmakerError(msg)
 
     if config_version_specifier and not check_version(
-        watchmaker.__version__, config_version_specifier
+        watchmaker.__version__,
+        config_version_specifier,
     ):
         msg = (
-            "Watchmaker version {} is not compatible with the config "
-            "file (watchmaker_version = {})"
-        ).format(watchmaker.__version__, config_version_specifier)
+            f"Watchmaker version {watchmaker.__version__} is not compatible "
+            f"with the config file (watchmaker_version = {config_version_specifier})"
+        )
         log.critical(msg)
         raise WatchmakerError(msg)
 
@@ -101,7 +97,7 @@ def get_configs(system, worker_args, config_path=None):
             # is not hashable so cannot be tested directly with
             # `if worker not in config`. this bit of ugliness extracts the
             # key and its value so we can use them directly.
-            worker_name, worker_config = list(worker.items())[0]
+            worker_name, worker_config = next(iter(worker.items()))
             if worker_name not in config:
                 # Add worker to config
                 config[worker_name] = {"config": worker_config}
@@ -120,7 +116,7 @@ def get_configs(system, worker_args, config_path=None):
                 config[worker_name]["config"].update(worker_args)
                 config[worker_name]["__merged"] = True
         except Exception:
-            msg = "Failed to merge worker config; worker={0}".format(worker)
+            msg = f"Failed to merge worker config; worker={worker}"
             log.critical(msg)
             raise
 
@@ -130,7 +126,7 @@ def get_configs(system, worker_args, config_path=None):
 
     if not is_valid(config_status):
         log.error("Status config is invalid %s", config_status)
-        raise WatchmakerError("Status config is invalid %s" % config_status)
+        raise StatusConfigError(config_status)
 
     return config, config_status
 
@@ -145,6 +141,4 @@ def validate_computer_name_pattern(config):
         try:
             re.compile(computer_name_pattern)
         except re.error as exc:
-            raise WatchmakerError(
-                "Invalid regex pattern %s" % computer_name_pattern
-            ) from exc
+            raise InvalidRegexPatternError(computer_name_pattern) from exc

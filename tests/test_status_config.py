@@ -1,19 +1,10 @@
-# -*- coding: utf-8 -*-
 """Providers main test module."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 # Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
 except ImportError:
-    from mock import patch
+    from unittest.mock import patch
 
 from watchmaker.config.status import (
     get_cloud_with_prereqs,
@@ -46,7 +37,7 @@ def test_supported_cloud_w_prereqs(prereqs):
                 "required": False,
                 "provider_type": "gcp",
             },
-        ]
+        ],
     }
 
     ids = get_supported_cloud_w_prereqs(config_status)
@@ -81,7 +72,7 @@ def test_req_cloud_wo_prereqs(prereqs):
                 "required": False,
                 "provider_type": "gcp",
             },
-        ]
+        ],
     }
 
     ids = get_required_cloud_wo_prereqs(config_status)
@@ -116,7 +107,7 @@ def test_no_req_cloud_wo_prereqs(prereqs):
                 "required": False,
                 "provider_type": "gcp",
             },
-        ]
+        ],
     }
 
     assert not get_required_cloud_wo_prereqs(config_status)
@@ -134,7 +125,7 @@ def test_get_cloud_with_prereqs():
     providers = get_cloud_with_prereqs()
 
     assert len(providers) == 1
-    assert "aws" == providers[0]
+    assert providers[0] == "aws"
 
 
 @patch(
@@ -149,7 +140,7 @@ def test_cloud_ids_missing_prereqs():
     providers = get_cloud_with_prereqs()
 
     assert len(providers) == 1
-    assert "azure" != providers[0]
+    assert providers[0] != "azure"
 
 
 @patch(
@@ -173,13 +164,13 @@ def test_get_non_cloud_providers():
                 "required": False,
                 "provider_type": "file",
             },
-        ]
+        ],
     }
 
     providers = get_non_cloud_providers(config_status)
 
     assert len(providers) == 1
-    assert "file" == providers[0]
+    assert providers[0] == "file"
 
 
 @patch(
@@ -200,7 +191,7 @@ def test_no_non_cloud_providers():
                 "required": False,
                 "provider_type": "file",
             },
-        ]
+        ],
     }
 
     assert not get_non_cloud_providers(config_status)

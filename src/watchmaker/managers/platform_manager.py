@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Watchmaker base manager."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import concurrent.futures
 import logging
@@ -23,7 +14,7 @@ from watchmaker.exceptions import WatchmakerError
 from watchmaker.utils import urllib_utils
 
 
-class PlatformManagerBase(object):
+class PlatformManagerBase:
     """
     Base class for operating system managers.
 
@@ -57,9 +48,7 @@ class PlatformManagerBase(object):
     boto_client = None
 
     def __init__(self, system_params, *args, **kwargs):
-        self.log = logging.getLogger(
-            "{0}.{1}".format(__name__, self.__class__.__name__)
-        )
+        self.log = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
         self.system_params = system_params
         self.working_dir = None
         PlatformManagerBase.args = args
@@ -93,11 +82,15 @@ class PlatformManagerBase(object):
                 shutil.copyfileobj(response, outfile)
         except (ValueError, urllib_utils.error.URLError):
             self.log.critical(
-                "Failed to retrieve the file. url = %s. filename = %s", url, filename
+                "Failed to retrieve the file. url = %s. filename = %s",
+                url,
+                filename,
             )
             raise
         self.log.info(
-            "Retrieved the file successfully. url=%s. filename=%s", url, filename
+            "Retrieved the file successfully. url=%s. filename=%s",
+            url,
+            filename,
         )
 
     def create_working_dir(self, basedir, prefix):
@@ -120,7 +113,7 @@ class PlatformManagerBase(object):
         try:
             working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
         except Exception:
-            msg = "Could not create a working dir in {0}".format(basedir)
+            msg = f"Could not create a working dir in {basedir}"
             self.log.critical(msg)
             raise
         self.log.debug("Created working directory: %s", working_dir)
@@ -167,7 +160,7 @@ class PlatformManagerBase(object):
         ret = {"retcode": 0, "stdout": b"", "stderr": b""}
 
         if not isinstance(cmd, list):
-            msg = "Command is not a list: {0}".format(cmd)
+            msg = f"Command is not a list: {cmd}"
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
@@ -197,7 +190,7 @@ class PlatformManagerBase(object):
 
         # fmt: off
         with subprocess.Popen(  # noqa: S603
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs,
         ) as process, concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
             # fmt: on
             stdout_future = executor.submit(
@@ -222,8 +215,8 @@ class PlatformManagerBase(object):
         self.log.debug("Command retcode: %s", ret["retcode"])
 
         if raise_error and ret["retcode"] != 0:
-            msg = "Command failed! Exit code={0}, cmd={1}".format(
-                ret["retcode"], " ".join(cmd)
+            msg = "Command failed! Exit code={}, cmd={}".format(
+                ret["retcode"], " ".join(cmd),
             )
             self.log.critical(msg)
             raise WatchmakerError(msg)
@@ -270,31 +263,29 @@ class PlatformManagerBase(object):
         if filepath.endswith(".zip"):
             self.log.debug("File Type: zip")
             opener, mode = zipfile.ZipFile, "r"
-        elif filepath.endswith(".tar.gz") or filepath.endswith(".tgz"):
+        elif filepath.endswith((".tar.gz", ".tgz")):
             self.log.debug("File Type: GZip Tar")
             opener, mode = tarfile.open, "r:gz"
-        elif filepath.endswith(".tar.bz2") or filepath.endswith(".tbz"):
+        elif filepath.endswith((".tar.bz2", ".tbz")):
             self.log.debug("File Type: Bzip Tar")
             opener, mode = tarfile.open, "r:bz2"
         else:
             msg = (
-                'Could not extract "{0}" as no appropriate extractor is found.'.format(
-                    filepath
-                )
+                f'Could not extract "{filepath}" as no appropriate extractor is found.'
             )
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
         if create_dir:
             to_directory = os.sep.join(
-                (to_directory, ".".join(filepath.split(os.sep)[-1].split(".")[:-1]))
+                (to_directory, ".".join(filepath.split(os.sep)[-1].split(".")[:-1])),
             )
 
         try:
             os.makedirs(to_directory)
         except OSError:
             if not os.path.isdir(to_directory):
-                msg = "Unable create directory - {0}".format(to_directory)
+                msg = f"Unable create directory - {to_directory}"
                 self.log.critical(msg)
                 raise
 

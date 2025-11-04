@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Detect  module."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import concurrent.futures
 import logging
@@ -31,9 +22,9 @@ def provider(supported_providers=None):
     supported_providers = supported_providers if supported_providers else []
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         for cloud_identifier in supported_providers:
-            if CLOUD_PROVIDERS.get(cloud_identifier, None):
+            if CLOUD_PROVIDERS.get(cloud_identifier):
                 futures.append(
-                    executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier])
+                    executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier]),
                 )
 
     concurrent.futures.wait(futures)
@@ -46,7 +37,7 @@ def provider(supported_providers=None):
             log.exception("Unexpected exception occurred")
 
     if len(results) > 1:
-        raise CloudDetectError("Detected more than one cloud provider")
+        raise CloudDetectError
 
     if len(results) == 0:
         return AbstractProvider
@@ -61,6 +52,4 @@ def identify(cloud_provider):
         return cloud_provider_instance
 
     log.debug("Environment is not %s", cloud_provider_instance.identifier)
-    raise InvalidProviderError(
-        "Environment is not %s" % cloud_provider_instance.identifier
-    )
+    raise InvalidProviderError(cloud_provider_instance.identifier)

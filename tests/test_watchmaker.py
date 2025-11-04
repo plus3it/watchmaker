@@ -1,19 +1,10 @@
-# -*- coding: utf-8 -*-
 """Watchmaker main test module."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 # Supports Python2 and Python3 test mocks
 try:
     from unittest.mock import patch
 except ImportError:
-    from mock import patch
+    from unittest.mock import patch
 
 import watchmaker
 
@@ -84,7 +75,7 @@ def test_extra_arguments_equal_separator(_provider_mock):
     raw_arguments = {
         "extra_arguments": [
             "--foo=bar",
-        ]
+        ],
     }
     check_val = {"foo": "bar"}
 
@@ -137,7 +128,7 @@ def test_extra_arguments_map(_provider_mock):
         "extra_arguments": [
             "--user-formulas",
             '{"foo-formula": "https://url"}',
-        ]
+        ],
     }
     check_val = {"user_formulas": {"foo-formula": "https://url"}}
 

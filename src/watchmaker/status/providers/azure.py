@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Azure Status Provider."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 import json
 import logging
@@ -41,8 +32,8 @@ class AzureStatusProvider(AbstractStatusProvider):
 
         try:
             self.__set_ids_from_server()
-        except Exception as ex:
-            self.logger.error("Error retrieving ids from metadata service %s", ex)
+        except Exception:
+            self.logger.exception("Error retrieving ids from metadata service")
 
     def update_status(self, key, status, required):
         """Tag an Azure instance with the key and status provided."""
@@ -50,17 +41,19 @@ class AzureStatusProvider(AbstractStatusProvider):
         if HAS_AZURE and self.subscription_id and self.resource_id and status:
             try:
                 self.__tag_azure_resouce(key, status)
+            except Exception:
+                logging.exception("Exception while tagging azure resource")
+            else:
                 return
-            except Exception as ex:
-                logging.error("Exception while tagging azure resource %s", ex)
         self.__error_on_required_status(required)
 
     def __tag_azure_resouce(self, key, status):
         self.logger.debug("Tag Resource %s with  %s:%s", self.resource_id, key, status)
-        credential = AzureCliCredential()  # type: ignore # noqa F821
+        credential = AzureCliCredential()  # noqa: F821
 
-        resource_client = ResourceManagementClient(  # type: ignore # noqa F821
-            credential, self.subscription_id
+        resource_client = ResourceManagementClient(  # noqa: F821
+            credential,
+            self.subscription_id,
         )
 
         body = {
@@ -101,6 +94,6 @@ class AzureStatusProvider(AbstractStatusProvider):
             else:
                 err_msg = "watchmaker was unable to update status"
 
-            err_msg = "{0} {1}".format(err_prefix, err_msg)
+            err_msg = f"{err_prefix} {err_msg}"
             logging.error(err_msg)
             raise StatusProviderError(err_msg)

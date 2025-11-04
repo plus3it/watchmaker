@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
 """Pyinstaller hook for watchmaker standalone."""
-
-from __future__ import (
-    absolute_import,
-    division,
-    print_function,
-    unicode_literals,
-    with_statement,
-)
 
 from PyInstaller.utils.hooks import (
     collect_data_files,
