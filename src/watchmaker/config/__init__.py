@@ -115,7 +115,7 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901
                 # Merge worker_args into config params
                 config[worker_name]["config"].update(worker_args)
                 config[worker_name]["__merged"] = True
-        except Exception:
+        except Exception:  # noqa: PERF203
             msg = f"Failed to merge worker config; worker={worker}"
             log.critical(msg)
             raise

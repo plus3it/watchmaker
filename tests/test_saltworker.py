@@ -497,7 +497,7 @@ def test_windows_prep_install(mock_safe, mock_makedirs, mock_codec):
         system_params["workingdir"],
         "Salt-",
     )
-    mock_makedirs.assert_called_with(saltworker_win.salt_conf_path)
+    mock_makedirs.assert_called_with(saltworker_win.salt_conf_path, exist_ok=True)
     mock_codec.assert_called_with(
         os.path.join(saltworker_win.salt_conf_path, "minion"),
         "w",
