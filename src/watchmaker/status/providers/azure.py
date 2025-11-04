@@ -42,7 +42,7 @@ class AzureStatusProvider(AbstractStatusProvider):
             try:
                 self.__tag_azure_resouce(key, status)
             except Exception:
-                logging.exception("Exception while tagging azure resource")
+                self.logger.exception("Exception while tagging azure resource")
             else:
                 return
         self.__error_on_required_status(required)
@@ -95,5 +95,5 @@ class AzureStatusProvider(AbstractStatusProvider):
                 err_msg = "watchmaker was unable to update status"
 
             err_msg = f"{err_prefix} {err_msg}"
-            logging.error(err_msg)
+            self.logger.error(err_msg)
             raise StatusProviderError(err_msg)

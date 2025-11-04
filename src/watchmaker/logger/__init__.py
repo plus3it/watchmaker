@@ -11,6 +11,8 @@ import xml.etree.ElementTree
 
 import oschmod
 
+log = logging.getLogger(__name__)
+
 IS_WINDOWS = platform.system() == "Windows"
 MESSAGE_TYPES = ("Information", "Warning", "Error")
 
@@ -125,7 +127,7 @@ def prepare_logging(log_dir, log_level):
     logging.basicConfig(format=logformat, level=level)
 
     if not log_dir:
-        logging.warning("Watchmaker will not be logging to a file!")
+        log.warning("Watchmaker will not be logging to a file!")
     else:
         make_log_dir(log_dir)
         log_filename = os.sep.join((log_dir, "watchmaker.log"))

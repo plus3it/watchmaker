@@ -4,6 +4,8 @@ import logging
 
 from watchmaker.conditions import HAS_AZURE, HAS_BOTO3
 
+log = logging.getLogger(__name__)
+
 SUPPORTED_CLOUD_PROVIDERS = [
     {"provider": "aws", "has_prereq": HAS_BOTO3},
     {"provider": "azure", "has_prereq": HAS_AZURE},
@@ -30,13 +32,13 @@ def is_valid(config):
     for provider in providers:
         if "key" not in provider or not provider["key"]:
             valid = False
-            logging.error("Status provider is missing key or value")
+            log.error("Status provider is missing key or value")
         if "provider_type" not in provider or not provider["provider_type"]:
             valid = False
-            logging.error("Status provider is missing provider_type or value")
+            log.error("Status provider is missing provider_type or value")
         if not isinstance(provider.get("required"), bool):
             valid = False
-            logging.error("Status provider required value is not a bool")
+            log.error("Status provider required value is not a bool")
 
     return valid
 
@@ -107,13 +109,13 @@ def get_cloud_with_prereqs():
 
     for cloud_provider in SUPPORTED_CLOUD_PROVIDERS:
         if cloud_provider["has_prereq"]:
-            logging.debug(
+            log.debug(
                 "Adding %s to list of providers with prereqs",
                 cloud_provider["provider"],
             )
             providers.add(cloud_provider["provider"])
         else:
-            logging.debug(
+            log.debug(
                 "Skipping provider %s prereqs not found",
                 cloud_provider["provider"],
             )
