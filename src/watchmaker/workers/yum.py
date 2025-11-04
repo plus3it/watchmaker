@@ -3,7 +3,6 @@
 from typing import ClassVar
 
 import distro
-import six
 
 import watchmaker.utils
 from watchmaker.exceptions import WatchmakerError
@@ -99,7 +98,7 @@ class Yum(WorkerBase, LinuxPlatformManager):
         el_version = self.dist_info["el_version"]
 
         repo_dists = repo["dist"]
-        if isinstance(repo_dists, six.string_types):
+        if isinstance(repo_dists, str):
             # ensure repo_dist is a list
             repo_dists = [repo_dists]
 

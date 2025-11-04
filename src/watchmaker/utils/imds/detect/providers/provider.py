@@ -2,11 +2,8 @@
 
 import abc
 
-import six
 
-
-@six.add_metaclass(abc.ABCMeta)
-class AbstractProvider:
+class AbstractProvider(abc.ABC):
     """
     Abstract class representing a cloud provider.
 

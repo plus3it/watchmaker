@@ -3,17 +3,12 @@
 
 import os
 import sys
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 
 from watchmaker.exceptions import InvalidValue, OuPathRequired
 from watchmaker.workers.salt import SaltBase, SaltLinux, SaltWindows
-
-# Supports Python2 and Python3 test mocks
-try:
-    from unittest.mock import MagicMock, call, patch
-except ImportError:
-    from unittest.mock import MagicMock, call, patch
 
 
 @pytest.fixture

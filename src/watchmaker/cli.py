@@ -9,8 +9,6 @@ import click
 import watchmaker
 from watchmaker.logger import LOG_LEVELS, exception_hook, prepare_logging
 
-click.disable_unicode_literals_warning = True
-
 LOG_LOCATIONS = {
     "linux": os.path.sep.join(("", "var", "log", "watchmaker")),
     "windows": os.path.sep.join(
@@ -146,10 +144,9 @@ def main(extra_arguments=None, **kwargs):
 
     sys.excepthook = exception_hook
 
-    # It is necessary to use `**dict()` with Python 2.7. Revisit when support
-    # for Python 2 (EL7) is dropped.
     watchmaker_arguments = watchmaker.Arguments(
-        **dict(extra_arguments=extra_arguments, **kwargs),
+        extra_arguments=extra_arguments,
+        **kwargs,
     )
     watchmaker_client = watchmaker.Client(watchmaker_arguments)
     sys.exit(watchmaker_client.install())

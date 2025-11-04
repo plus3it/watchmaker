@@ -2,17 +2,12 @@
 
 import os
 import re
+from unittest.mock import patch
 
 import pytest
 
 from watchmaker.config import get_configs, validate_computer_name_pattern
 from watchmaker.exceptions import WatchmakerError
-
-# Supports Python2 and Python3 test mocks
-try:
-    from unittest.mock import patch
-except ImportError:
-    from unittest.mock import patch
 
 
 @patch("watchmaker.utils.imds.detect.provider", return_value="aws")

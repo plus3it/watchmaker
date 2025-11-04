@@ -1,13 +1,8 @@
 """Providers main test module."""
 
+from unittest.mock import patch
+
 from watchmaker.exceptions import CloudProviderDetectionError
-
-# Supports Python2 and Python3 test mocks
-try:
-    from unittest.mock import patch
-except ImportError:
-    from unittest.mock import patch
-
 from watchmaker.status import Status
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
 from watchmaker.utils.imds.detect.providers.azure_provider import AzureProvider

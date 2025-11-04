@@ -1,10 +1,12 @@
 """Extends urllib with additional handlers."""
 
 import io
+import urllib.error
+import urllib.request
+import urllib.response
 from email import message_from_string
 
 import boto3  # type: ignore
-from six.moves import urllib  # type: ignore
 
 from watchmaker.exceptions import MissingURLParamError
 
@@ -27,12 +29,7 @@ class S3Handler(urllib.request.BaseHandler):
         # The implementation was inspired mainly by the code behind
         # urllib.request.FileHandler.file_open().
 
-        try:
-            # py3 urllib
-            selector = req.selector
-        except AttributeError:
-            # py2 urllib2
-            selector = req.get_selector()
+        selector = req.selector
 
         bucket_name = req.host
         key_name = selector[1:]

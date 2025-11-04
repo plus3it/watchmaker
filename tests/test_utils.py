@@ -1,13 +1,9 @@
 # pylint: disable=redefined-outer-name,protected-access
 """Salt worker main test module."""
 
-import watchmaker.utils
+from unittest.mock import patch
 
-# Supports Python2 and Python3 test mocks
-try:
-    from unittest.mock import patch
-except ImportError:
-    from unittest.mock import patch
+import watchmaker.utils
 
 
 @patch("os.path.exists", autospec=True)
