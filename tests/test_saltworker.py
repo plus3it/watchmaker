@@ -1,4 +1,3 @@
-# pylint: disable=redefined-outer-name,protected-access
 """Salt worker main test module."""
 
 import os

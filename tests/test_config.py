@@ -39,7 +39,7 @@ def test_config_w_name_pattern():
     valid_computer_name = "xyz654abcdefghe"
     invalid_computer_name = "123xyz654abcdefgheone"
     with patch("watchmaker.utils.imds.detect.provider", return_value="unknown"):
-        config, _status_config = get_configs(  # pylint: disable=unused-variable
+        config, _status_config = get_configs(
             "linux",
             {},
             os.path.join(
@@ -68,7 +68,7 @@ def test_config_w_name_pattern():
 def test_config_w_name_and_pattern():
     """Test config that has a pattern and computer name."""
     with patch("watchmaker.utils.imds.detect.provider", return_value="unknown"):
-        config, _status_config = get_configs(  # pylint: disable=unused-variable
+        config, _status_config = get_configs(
             "linux",
             {},
             os.path.join(
@@ -86,7 +86,7 @@ def test_config_w_name_and_pattern():
 
 def test_config_validate_pattern():
     """Test config validate pattern method."""
-    config, _status_config = get_configs(  # pylint: disable=unused-variable
+    config, _status_config = get_configs(
         "linux",
         {},
         os.path.join(
