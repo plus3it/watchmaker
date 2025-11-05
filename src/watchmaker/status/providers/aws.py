@@ -2,7 +2,7 @@
 
 import logging
 
-import watchmaker.utils as utils
+from watchmaker import utils
 from watchmaker.conditions import HAS_BOTO3
 
 if HAS_BOTO3:

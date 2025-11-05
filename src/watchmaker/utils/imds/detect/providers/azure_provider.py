@@ -3,7 +3,7 @@
 import logging
 from urllib import error as urllib_error
 
-import watchmaker.utils as utils
+from watchmaker import utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 
 
@@ -36,4 +36,5 @@ class AzureProvider(AbstractProvider):
     def __is_valid_server(self):
         """Retrieve Azure metadata."""
         response = utils.urlopen_retry(self.metadata_url, self.DEFAULT_TIMEOUT)
-        return response.status == 200
+        http_ok = 200
+        return response.status == http_ok

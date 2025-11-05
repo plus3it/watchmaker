@@ -3,7 +3,7 @@
 import json
 import logging
 
-import watchmaker.utils as utils
+from watchmaker import utils
 from watchmaker.conditions import HAS_AZURE
 from watchmaker.exceptions import StatusProviderError
 from watchmaker.status.providers.abstract import AbstractStatusProvider
