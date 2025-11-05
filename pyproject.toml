@@ -24,11 +24,24 @@ ignore = [
     "D212",  # Conflicts with D213 (multi-line-summary-first-line). Project uses D213 style.
     "S202",  # tarfile.extractall without filter - requires Python 3.12+ or custom validation
     "EXE001",  # Only occurs in CI when source is restored as artifact (loses executable bit)
-    "ANN", "PTH", "PLR",
+    "ANN",  # 500+ missing type annotations across src/tests; keep ignored for now; see staged plan below
+    "PTH", "PLR",
     # From tests/ and docs/
-    "PT", "INP", "SLF", "ARG", "ERA",
+    "PT", "INP",
 ]
 select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "S314"]
+"tests/**" = ["S101", "S314", "SLF", "ARG"]
+"docs/conf.py" = ["ERA001"]
+
+# Prepare for future gradual enabling of ANN (flake8-annotations) with saner defaults
+[tool.ruff.lint.flake8-annotations]
+# Don't require explicit "-> None" on __init__ (aligns with mypy default)
+mypy-init-return = true
+# Allow using Any for *args/**kwargs without error
+allow-star-arg-any = true
+# Don't flag unused conventional dummy args like _ or unused parameters in callbacks
+suppress-dummy-args = true
+# Don't require explicit -> None on functions that implicitly return None
+suppress-none-returning = true
