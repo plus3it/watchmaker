@@ -380,7 +380,7 @@ class Client:
         Upon successful execution, the system will be properly provisioned,
         according to the defined configuration and workers.
         """
-        self.log.info("Start time: %s", datetime.datetime.now())
+        self.log.info("Start time: %s", datetime.datetime.now(datetime.timezone.utc))
         self.log.info("Workers to execute: %s", self.config.keys())
 
         # Create watchmaker directories
@@ -417,4 +417,4 @@ class Client:
             )
             subprocess.call(self.system_params["restart"], shell=True)  # noqa: S602
         self.status.update_status("COMPLETE")
-        self.log.info("Stop time: %s", datetime.datetime.now())
+        self.log.info("Stop time: %s", datetime.datetime.now(datetime.timezone.utc))
