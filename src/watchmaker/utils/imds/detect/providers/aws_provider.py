@@ -5,7 +5,7 @@ import logging
 import os
 from urllib import error as urllib_error
 
-import watchmaker.utils as utils
+from watchmaker import utils
 from watchmaker.utils.imds.detect.providers.provider import AbstractProvider
 
 IMDS_TOKEN_TIMEOUT = int(os.getenv("IMDS_TOKEN_TIMEOUT", "7200"))
@@ -87,6 +87,7 @@ class AWSProvider(AbstractProvider):
         )
 
         result = utils.urlopen_retry(request_uri, timeout)
-        if result.status == 200:
+        http_ok = 200
+        if result.status == http_ok:
             return result.read().decode("utf-8")
         return None

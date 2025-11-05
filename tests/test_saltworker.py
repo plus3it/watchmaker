@@ -1,4 +1,3 @@
-# pylint: disable=redefined-outer-name,protected-access
 """Salt worker main test module."""
 
 import os
@@ -97,9 +96,9 @@ def test_bogus_environment(saltworker_client):
 
     """
     # ensure InvalidValue is raised when a bogus environment type is selected
+    saltworker_client.ent_env = "bogus"
+    saltworker_client.valid_envs = [None, "dev", "test", "prod"]
     with pytest.raises(InvalidValue):
-        saltworker_client.ent_env = "bogus"
-        saltworker_client.valid_envs = [None, "dev", "test", "prod"]
         saltworker_client.before_install()
 
 

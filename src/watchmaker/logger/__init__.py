@@ -7,7 +7,7 @@ import logging.handlers
 import os
 import platform
 import subprocess
-import xml.etree.ElementTree
+import xml.etree.ElementTree as ET
 
 import oschmod
 
@@ -29,11 +29,9 @@ try:
     import defusedxml.ElementTree
 
     PROGRAM_FILES = os.environ.get("PROGRAMFILES", "C:\\Program Files")
-    EC2_CONFIG = "\\".join(
-        [PROGRAM_FILES, "Amazon\\Ec2ConfigService\\Settings\\Config.xml"],
-    )
-    EC2_CONFIG_EVENT_LOG = "\\".join(
-        [PROGRAM_FILES, "Amazon\\Ec2ConfigService\\Settings\\EventLogConfig.xml"],
+    EC2_CONFIG = f"{PROGRAM_FILES}\\Amazon\\Ec2ConfigService\\Settings\\Config.xml"
+    EC2_CONFIG_EVENT_LOG = (
+        f"{PROGRAM_FILES}\\Amazon\\Ec2ConfigService\\Settings\\EventLogConfig.xml"
     )
     EC2_CONFIG_DEPS = IS_WINDOWS
 except ImportError:
@@ -42,11 +40,11 @@ except ImportError:
 EC2_LAUNCH_DEPS = False
 try:
     PROGRAM_DATA = os.environ.get("PROGRAMDATA", "C:\\ProgramData")
-    EC2_LAUNCH_LOG_CONFIG = "\\".join(
-        [PROGRAM_DATA, "Amazon\\EC2-Windows\\Launch\\Config\\EventLogConfig.json"],
+    EC2_LAUNCH_LOG_CONFIG = (
+        f"{PROGRAM_DATA}\\Amazon\\EC2-Windows\\Launch\\Config\\EventLogConfig.json"
     )
-    EC2_LAUNCH_SEND_EVENTS = "\\".join(
-        [PROGRAM_DATA, "Amazon\\EC2-Windows\\Launch\\Scripts\\SendEventLogs.ps1"],
+    EC2_LAUNCH_SEND_EVENTS = (
+        f"{PROGRAM_DATA}\\Amazon\\EC2-Windows\\Launch\\Scripts\\SendEventLogs.ps1"
     )
     assert IS_WINDOWS  # noqa: S101
     EC2_LAUNCH_DEPS = True
@@ -165,8 +163,8 @@ def prepare_logging(log_dir, log_level):
 
 def _enable_ec2_config_event_log():
     """Enable EC2Config forwarding of Event Logs to EC2 System Log."""
-    ec2_config = xml.etree.ElementTree.ElementTree(
-        xml.etree.ElementTree.Element("Ec2ConfigurationSettings"),
+    ec2_config = ET.ElementTree(
+        ET.Element("Ec2ConfigurationSettings"),
     )
 
     with open(EC2_CONFIG, encoding="utf8") as fh_:
@@ -184,8 +182,8 @@ def _enable_ec2_config_event_log():
 
 def _configure_ec2_config_event_log():
     """Configure EC2Config to forward Event Log entries for Watchmaker."""
-    ec2_log_config = xml.etree.ElementTree.ElementTree(
-        xml.etree.ElementTree.Element("EventLogConfig"),
+    ec2_log_config = ET.ElementTree(
+        ET.Element("EventLogConfig"),
     )
 
     with open(EC2_CONFIG_EVENT_LOG, encoding="utf8") as fh_:
@@ -205,16 +203,16 @@ def _configure_ec2_config_event_log():
     # Add missing events
     events_missing = events_present.symmetric_difference(MESSAGE_TYPES)
     for msg_type in events_missing:
-        event = xml.etree.ElementTree.SubElement(ec2_log_config.getroot(), "Event", {})
-        category = xml.etree.ElementTree.SubElement(event, "Category", {})
-        error_type = xml.etree.ElementTree.SubElement(event, "ErrorType", {})
-        num_entries = xml.etree.ElementTree.SubElement(event, "NumEntries", {})
-        last_message_time = xml.etree.ElementTree.SubElement(
+        event = ET.SubElement(ec2_log_config.getroot(), "Event", {})
+        category = ET.SubElement(event, "Category", {})
+        error_type = ET.SubElement(event, "ErrorType", {})
+        num_entries = ET.SubElement(event, "NumEntries", {})
+        last_message_time = ET.SubElement(
             event,
             "LastMessageTime",
             {},
         )
-        app_name = xml.etree.ElementTree.SubElement(event, "AppName", {})
+        app_name = ET.SubElement(event, "AppName", {})
         category.text = "Application"
         error_type.text = msg_type
         num_entries.text = "999999"

@@ -14,7 +14,6 @@ exclude .bumpversion.cfg
 exclude .coveragerc
 exclude .editorconfig
 exclude .gitmodules
-exclude .pylintrc
 exclude tox.ini
 exclude Dockerfile
 exclude Makefile

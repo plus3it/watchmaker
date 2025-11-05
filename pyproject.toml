@@ -18,15 +18,30 @@ exclude = [
 
 [tool.ruff.lint]
 ignore = [
-    "B905", "D107", "D203", "D212",
+    "B905",  # zip() without strict= - requires Python 3.10+, project supports 3.6+
+    "D107",  # __init__ docstrings are documented at the class level to avoid duplication
+    "D203",  # Conflicts with D211 (no-blank-line-before-class). Project uses D211 style.
+    "D212",  # Conflicts with D213 (multi-line-summary-first-line). Project uses D213 style.
     "S202",  # tarfile.extractall without filter - requires Python 3.12+ or custom validation
     "EXE001",  # Only occurs in CI when source is restored as artifact (loses executable bit)
-    "ANN", "PTH", "PLR",
-    "FBT", "FLY", "DTZ", "ICN", "PGH",
-    # From tests/ and docs/
-    "PT", "INP", "SLF", "ARG", "ERA", "PLC",
+    "ANN",  # 500+ missing type annotations across src/tests; keep ignored for now; see staged plan below
+    "PTH",  # Pathlib migration would refactor many paths and interacts with tests mocking os.path/os.walk; staged rollout planned
 ]
 select = ["ALL"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S101", "S314"]
+"tests/**" = ["S101", "S314", "SLF", "ARG", "PLR2004", "PLR0913", "INP001"]
+"docs/conf.py" = ["ERA001", "INP001"]
+"ci/**" = ["INP001"]
+"src/watchmaker/config/__init__.py" = ["PLR0915"]
+
+# Prepare for future gradual enabling of ANN (flake8-annotations) with saner defaults
+[tool.ruff.lint.flake8-annotations]
+# Don't require explicit "-> None" on __init__ (aligns with mypy default)
+mypy-init-return = true
+# Allow using Any for *args/**kwargs without error
+allow-star-arg-any = true
+# Don't flag unused conventional dummy args like _ or unused parameters in callbacks
+suppress-dummy-args = true
+# Don't require explicit -> None on functions that implicitly return None
+suppress-none-returning = true

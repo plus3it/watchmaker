@@ -7,7 +7,7 @@ import os
 import shutil
 import subprocess
 import sys
-import xml.etree.ElementTree
+import xml.etree.ElementTree as ET
 
 import oschmod
 import pytest
@@ -169,8 +169,8 @@ def test_enable_ec2_config_event_log(mocker):
 
     # Convert write calls to xml tree
     handle = mo_()
-    result = xml.etree.ElementTree.ElementTree(
-        xml.etree.ElementTree.fromstring(
+    result = ET.ElementTree(
+        ET.fromstring(
             _pytest_stringify_write_calls(handle.write.call_args_list),
         ),
     )
@@ -212,8 +212,8 @@ def test_configure_ec2config_write_all_events(mocker):
 
     # Convert write calls to xml tree
     handle = mo_()
-    result = xml.etree.ElementTree.ElementTree(
-        xml.etree.ElementTree.fromstring(
+    result = ET.ElementTree(
+        ET.fromstring(
             _pytest_stringify_write_calls(handle.write.call_args_list),
         ),
     )

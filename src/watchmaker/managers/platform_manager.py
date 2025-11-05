@@ -133,7 +133,7 @@ class PlatformManagerBase:
 
         return ret
 
-    def call_process(self, cmd, log_pipe="all", raise_error=True):
+    def call_process(self, cmd, log_pipe="all", *, raise_error=True):
         """
         Execute a shell command.
 
@@ -237,7 +237,7 @@ class PlatformManagerBase:
 
         self.log.info("Exiting cleanup routine...")
 
-    def extract_contents(self, filepath, to_directory, create_dir=False):
+    def extract_contents(self, filepath, to_directory, *, create_dir=False):
         """
         Extract a compressed archive to the specified directory.
 

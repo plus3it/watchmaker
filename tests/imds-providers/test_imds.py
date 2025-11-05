@@ -61,7 +61,7 @@ def test_none_provider(aws_provider_mock, azure_provider_mock, aws_token_mock):
     assert provider(None).identifier == "unknown"
 
 
-@pytest.mark.skipif(True, reason="Test should be manually run.")
+@pytest.mark.skipif(condition=True, reason="Test should be manually run.")
 def test_provider_detect():
     """Test provider is unknown."""
     assert provider(["aws", "azure"]).identifier == "unknown"

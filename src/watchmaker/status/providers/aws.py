@@ -2,11 +2,11 @@
 
 import logging
 
-import watchmaker.utils as utils
+from watchmaker import utils
 from watchmaker.conditions import HAS_BOTO3
 
 if HAS_BOTO3:
-    import boto3  # type: ignore
+    import boto3
 
 from watchmaker.exceptions import StatusProviderError
 from watchmaker.status.providers.abstract import AbstractStatusProvider

@@ -2,6 +2,8 @@
 
 from unittest.mock import patch
 
+import pytest
+
 from watchmaker.exceptions import CloudProviderDetectionError
 from watchmaker.status import Status
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider
@@ -78,7 +80,8 @@ def test_req_status_provider(
     }
     config_status = config.get("status")
 
-    try:
+    with pytest.raises(
+        CloudProviderDetectionError,
+        match="Required Provider detected that is missing prereqs: azure",
+    ):
         Status(config_status)
-    except CloudProviderDetectionError as spe:
-        assert str(spe) == "Required Provider detected that is missing prereqs: azure"

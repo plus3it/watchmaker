@@ -64,7 +64,7 @@ def urlopen_retry(uri, timeout=None):
     return urllib_utils.request.urlopen(uri, **kwargs)
 
 
-def copytree(src, dst, force=False, **kwargs):
+def copytree(src, dst, *, force=False, **kwargs):
     r"""
     Copy OS directory trees from source to destination.
 
