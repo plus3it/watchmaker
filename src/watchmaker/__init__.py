@@ -160,12 +160,12 @@ class Arguments(dict):
         self,
         config_path=None,
         log_dir=None,
+        *,
         no_reboot=False,
         log_level=None,
-        *args,
         **kwargs,
     ):
-        super().__init__(*args, **kwargs)
+        super().__init__(**kwargs)
         self.config_path = config_path
         self.log_dir = log_dir
         self.no_reboot = no_reboot
