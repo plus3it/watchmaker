@@ -22,7 +22,7 @@ ignore = [
     "S202",  # tarfile.extractall without filter - requires Python 3.12+ or custom validation
     "EXE001",  # Only occurs in CI when source is restored as artifact (loses executable bit)
     "ANN", "PTH", "PLR",
-    "ICN", "PGH",
+    "PGH",
     # From tests/ and docs/
     "PT", "INP", "SLF", "ARG", "ERA", "PLC",
 ]
