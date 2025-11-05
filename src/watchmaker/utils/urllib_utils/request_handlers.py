@@ -6,7 +6,7 @@ import urllib.request
 import urllib.response
 from email import message_from_string
 
-import boto3  # type: ignore
+import boto3
 
 from watchmaker.exceptions import MissingURLParamError
 
