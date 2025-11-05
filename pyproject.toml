@@ -18,12 +18,15 @@ exclude = [
 
 [tool.ruff.lint]
 ignore = [
-    "B905", "D107", "D203", "D212",
+    "B905",  # zip() without strict= - requires Python 3.10+, project supports 3.6+
+    "D107",  # __init__ docstrings are documented at the class level to avoid duplication
+    "D203",  # Conflicts with D211 (no-blank-line-before-class). Project uses D211 style.
+    "D212",  # Conflicts with D213 (multi-line-summary-first-line). Project uses D213 style.
     "S202",  # tarfile.extractall without filter - requires Python 3.12+ or custom validation
     "EXE001",  # Only occurs in CI when source is restored as artifact (loses executable bit)
     "ANN", "PTH", "PLR",
     # From tests/ and docs/
-    "PT", "INP", "SLF", "ARG", "ERA", "PLC",
+    "PT", "INP", "SLF", "ARG", "ERA",
 ]
 select = ["ALL"]
 
