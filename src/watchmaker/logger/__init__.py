@@ -29,11 +29,9 @@ try:
     import defusedxml.ElementTree
 
     PROGRAM_FILES = os.environ.get("PROGRAMFILES", "C:\\Program Files")
-    EC2_CONFIG = "\\".join(
-        [PROGRAM_FILES, "Amazon\\Ec2ConfigService\\Settings\\Config.xml"],
-    )
-    EC2_CONFIG_EVENT_LOG = "\\".join(
-        [PROGRAM_FILES, "Amazon\\Ec2ConfigService\\Settings\\EventLogConfig.xml"],
+    EC2_CONFIG = f"{PROGRAM_FILES}\\Amazon\\Ec2ConfigService\\Settings\\Config.xml"
+    EC2_CONFIG_EVENT_LOG = (
+        f"{PROGRAM_FILES}\\Amazon\\Ec2ConfigService\\Settings\\EventLogConfig.xml"
     )
     EC2_CONFIG_DEPS = IS_WINDOWS
 except ImportError:
@@ -42,11 +40,11 @@ except ImportError:
 EC2_LAUNCH_DEPS = False
 try:
     PROGRAM_DATA = os.environ.get("PROGRAMDATA", "C:\\ProgramData")
-    EC2_LAUNCH_LOG_CONFIG = "\\".join(
-        [PROGRAM_DATA, "Amazon\\EC2-Windows\\Launch\\Config\\EventLogConfig.json"],
+    EC2_LAUNCH_LOG_CONFIG = (
+        f"{PROGRAM_DATA}\\Amazon\\EC2-Windows\\Launch\\Config\\EventLogConfig.json"
     )
-    EC2_LAUNCH_SEND_EVENTS = "\\".join(
-        [PROGRAM_DATA, "Amazon\\EC2-Windows\\Launch\\Scripts\\SendEventLogs.ps1"],
+    EC2_LAUNCH_SEND_EVENTS = (
+        f"{PROGRAM_DATA}\\Amazon\\EC2-Windows\\Launch\\Scripts\\SendEventLogs.ps1"
     )
     assert IS_WINDOWS  # noqa: S101
     EC2_LAUNCH_DEPS = True
