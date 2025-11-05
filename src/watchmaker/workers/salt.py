@@ -256,12 +256,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         ]
 
         for salt_dir in [self.salt_formula_root, self.salt_conf_path]:
-            try:
-                os.makedirs(salt_dir)
-            except OSError:
-                if not os.path.isdir(salt_dir):
-                    self.log.exception("Unable to create directory %s", salt_dir)
-                    raise
+            os.makedirs(salt_dir, exist_ok=True)
 
         with codecs.open(
             os.path.join(self.salt_conf_path, "minion"),

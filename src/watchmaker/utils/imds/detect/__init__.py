@@ -18,20 +18,19 @@ CLOUD_PROVIDERS = {"aws": AWSProvider, "azure": AzureProvider}
 def provider(supported_providers=None):
     """Identify and return identifier."""
     results = []
-    futures = []
     supported_providers = supported_providers if supported_providers else []
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-        for cloud_identifier in supported_providers:
-            if CLOUD_PROVIDERS.get(cloud_identifier):
-                futures.append(
-                    executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier]),
-                )
+        futures = [
+            executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier])
+            for cloud_identifier in supported_providers
+            if CLOUD_PROVIDERS.get(cloud_identifier)
+        ]
 
     concurrent.futures.wait(futures)
     for fut in futures:
         try:
             results.append(fut.result())
-        except InvalidProviderError:
+        except InvalidProviderError:  # noqa: PERF203
             pass
         except Exception:
             log.exception("Unexpected exception occurred")

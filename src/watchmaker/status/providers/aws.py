@@ -53,7 +53,7 @@ class AWSStatusProvider(AbstractStatusProvider):
             try:
                 self.__tag_aws_instance(key, status)
             except Exception:
-                logging.exception("Exception while tagging aws instance")
+                self.logger.exception("Exception while tagging aws instance")
             else:
                 return
         self.__error_on_required_status(required)
@@ -104,5 +104,5 @@ class AWSStatusProvider(AbstractStatusProvider):
                 err_msg = "watchmaker was unable to update status"
 
             err_msg = f"{err_prefix} {err_msg}"
-            logging.error(err_msg)
+            self.logger.error(err_msg)
             raise StatusProviderError(err_msg)

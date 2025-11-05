@@ -2,11 +2,8 @@
 
 import abc
 
-import six
 
-
-@six.add_metaclass(abc.ABCMeta)
-class AbstractStatusProvider:
+class AbstractStatusProvider(abc.ABC):
     """
     Abstract class representing a watchmaker status cloud provider.
 

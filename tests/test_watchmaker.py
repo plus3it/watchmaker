@@ -1,10 +1,6 @@
 """Watchmaker main test module."""
 
-# Supports Python2 and Python3 test mocks
-try:
-    from unittest.mock import patch
-except ImportError:
-    from unittest.mock import patch
+from unittest.mock import patch
 
 import watchmaker
 

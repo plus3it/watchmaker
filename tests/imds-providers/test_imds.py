@@ -1,12 +1,8 @@
 """Providers main test module."""
 
-import pytest
+from unittest.mock import patch
 
-# Supports Python2 and Python3 test mocks
-try:
-    from unittest.mock import patch
-except ImportError:
-    from unittest.mock import patch
+import pytest
 
 from watchmaker.utils.imds.detect import provider
 from watchmaker.utils.imds.detect.providers.aws_provider import AWSProvider

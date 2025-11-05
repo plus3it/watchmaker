@@ -1,7 +1,6 @@
 """Watchmaker logger module."""
 
 import collections
-import errno
 import json
 import logging
 import logging.handlers
@@ -11,6 +10,8 @@ import subprocess
 import xml.etree.ElementTree
 
 import oschmod
+
+log = logging.getLogger(__name__)
 
 IS_WINDOWS = platform.system() == "Windows"
 MESSAGE_TYPES = ("Information", "Warning", "Error")
@@ -126,7 +127,7 @@ def prepare_logging(log_dir, log_level):
     logging.basicConfig(format=logformat, level=level)
 
     if not log_dir:
-        logging.warning("Watchmaker will not be logging to a file!")
+        log.warning("Watchmaker will not be logging to a file!")
     else:
         make_log_dir(log_dir)
         log_filename = os.sep.join((log_dir, "watchmaker.log"))
@@ -146,25 +147,17 @@ def prepare_logging(log_dir, log_level):
         try:
             _enable_ec2_config_event_log()
             _configure_ec2_config_event_log()
-        except OSError as exc:
-            if exc.errno == errno.ENOENT:
-                # PY2/PY3-compatible check for FileNotFoundError
-                # EC2_CONFIG or EC2_LOG_CONFIG do not exist
-                pass
-            else:
-                raise
+        except FileNotFoundError:
+            # EC2_CONFIG or EC2_LOG_CONFIG do not exist
+            pass
 
     if HAS_PYWIN32 and EC2_LAUNCH_DEPS:
         try:
             _configure_ec2_launch_event_log()
             _schedule_ec2_launch_event_log()
-        except OSError as exc:
-            if exc.errno == errno.ENOENT:
-                # PY2/PY3-compatible check for FileNotFoundError
-                # EC2_LAUNCH_LOG_CONFIG or 'powershell.exe' do not exist
-                pass
-            else:
-                raise
+        except FileNotFoundError:
+            # EC2_LAUNCH_LOG_CONFIG or 'powershell.exe' do not exist
+            pass
         except subprocess.CalledProcessError:
             # EC2_LAUNCH_SEND_EVENTS does not exist
             pass

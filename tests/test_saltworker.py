@@ -3,17 +3,12 @@
 
 import os
 import sys
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 
 from watchmaker.exceptions import InvalidValue, OuPathRequired
 from watchmaker.workers.salt import SaltBase, SaltLinux, SaltWindows
-
-# Supports Python2 and Python3 test mocks
-try:
-    from unittest.mock import MagicMock, call, patch
-except ImportError:
-    from unittest.mock import MagicMock, call, patch
 
 
 @pytest.fixture
@@ -502,7 +497,7 @@ def test_windows_prep_install(mock_safe, mock_makedirs, mock_codec):
         system_params["workingdir"],
         "Salt-",
     )
-    mock_makedirs.assert_called_with(saltworker_win.salt_conf_path)
+    mock_makedirs.assert_called_with(saltworker_win.salt_conf_path, exist_ok=True)
     mock_codec.assert_called_with(
         os.path.join(saltworker_win.salt_conf_path, "minion"),
         "w",
