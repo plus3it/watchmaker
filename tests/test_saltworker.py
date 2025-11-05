@@ -2,6 +2,7 @@
 
 import os
 import sys
+from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -366,34 +367,34 @@ def test_windows_defaults():
     # assertions ===================
     assert win_salt.installer_url == salt_config["installer_url"]
     assert win_salt.ash_role == salt_config["ash_role"]
-    assert win_salt.salt_call == os.sep.join(("C:", "Salt", "salt-call.bat"))
-    assert win_salt.salt_wam_root == os.sep.join((system_params["prepdir"], "Salt"))
-    assert win_salt.salt_conf_path == os.sep.join(
-        (system_params["prepdir"], "Salt", "conf"),
+    assert win_salt.salt_call == str(Path("C:") / "Salt" / "salt-call.bat")
+    assert win_salt.salt_wam_root == str(Path(system_params["prepdir"]) / "Salt")
+    assert win_salt.salt_conf_path == str(
+        Path(system_params["prepdir"]) / "Salt" / "conf",
     )
-    assert win_salt.salt_srv == os.sep.join((system_params["prepdir"], "Salt", "srv"))
-    assert win_salt.salt_win_repo == os.sep.join(
-        (system_params["prepdir"], "Salt", "srv", "winrepo"),
+    assert win_salt.salt_srv == str(Path(system_params["prepdir"]) / "Salt" / "srv")
+    assert win_salt.salt_win_repo == str(
+        Path(system_params["prepdir"]) / "Salt" / "srv" / "winrepo",
     )
     assert win_salt.salt_log_dir == system_params["logdir"]
     assert win_salt.salt_working_dir == system_params["workingdir"]
     assert win_salt.salt_working_dir_prefix == "Salt-"
 
-    assert win_salt.salt_base_env == os.sep.join((win_salt.salt_srv, "states"))
-    assert win_salt.salt_formula_root == os.sep.join((win_salt.salt_srv, "formulas"))
-    assert win_salt.salt_pillar_root == os.sep.join((win_salt.salt_srv, "pillar"))
+    assert win_salt.salt_base_env == str(Path(win_salt.salt_srv) / "states")
+    assert win_salt.salt_formula_root == str(Path(win_salt.salt_srv) / "formulas")
+    assert win_salt.salt_pillar_root == str(Path(win_salt.salt_srv) / "pillar")
     assert win_salt.salt_conf["file_client"] == "local"
     assert win_salt.salt_conf["hash_type"] == "sha512"
     assert win_salt.salt_conf["pillar_roots"] == {
-        "base": [str(os.sep.join((win_salt.salt_srv, "pillar")))],
+        "base": [str(str(Path(win_salt.salt_srv) / "pillar"))],
     }
     assert win_salt.salt_conf["pillar_merge_lists"]
-    assert win_salt.salt_conf["conf_dir"] == os.sep.join(
-        (system_params["prepdir"], "Salt", "conf"),
+    assert win_salt.salt_conf["conf_dir"] == str(
+        Path(system_params["prepdir"]) / "Salt" / "conf",
     )
     assert win_salt.salt_conf["winrepo_source_dir"] == "salt://winrepo"
-    assert win_salt.salt_conf["winrepo_dir"] == os.sep.join(
-        (system_params["prepdir"], "Salt", "srv", "winrepo", "winrepo"),
+    assert win_salt.salt_conf["winrepo_dir"] == str(
+        Path(system_params["prepdir"]) / "Salt" / "srv" / "winrepo" / "winrepo",
     )
 
 
@@ -452,28 +453,28 @@ def test_windows_install(saltworker_base_salt_args):
 
 
 @patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
-@patch("os.path.isfile", MagicMock(return_value=False))
+@patch("pathlib.Path.is_file", MagicMock(return_value=False))
 def test_windows_salt_call_old():
     """Ensure old path is tested."""
-    salt_path = os.sep.join(("C:", "Salt", "salt-call.bat"))
+    salt_path = str(Path("C:") / "Salt" / "salt-call.bat")
     assert SaltWindows._get_salt_call() == salt_path
 
 
 @patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
-@patch("os.path.isfile", MagicMock(return_value=True))
+@patch("pathlib.Path.is_file", MagicMock(return_value=True))
 def test_windows_salt_call_new():
     """Ensure new path is tested."""
-    salt_path = os.sep.join(
-        ("C:\\Program Files", "Salt Project", "Salt", "salt-call.exe"),
+    salt_path = str(
+        Path("C:\\Program Files") / "Salt Project" / "Salt" / "salt-call.exe",
     )
     assert SaltWindows._get_salt_call() == salt_path
 
 
 @patch.dict(os.environ, {"SYSTEMDRIVE": "C:", "PROGRAMFILES": "C:\\Program Files"})
 @patch("codecs.open", autospec=True)
-@patch("os.makedirs", autospec=True)
+@patch("pathlib.Path.mkdir", autospec=True)
 @patch("yaml.safe_dump", autospec=True)
-def test_windows_prep_install(mock_safe, mock_makedirs, mock_codec):
+def test_windows_prep_install(mock_safe, mock_mkdir, mock_codec):
     """Ensure that prep portion of install runs as expected."""
     system_params = {}
     salt_config = {}
@@ -496,9 +497,9 @@ def test_windows_prep_install(mock_safe, mock_makedirs, mock_codec):
         system_params["workingdir"],
         "Salt-",
     )
-    mock_makedirs.assert_called_with(saltworker_win.salt_conf_path, exist_ok=True)
+    assert mock_mkdir.call_count == 2
     mock_codec.assert_called_with(
-        os.path.join(saltworker_win.salt_conf_path, "minion"),
+        str(Path(saltworker_win.salt_conf_path) / "minion"),
         "w",
         encoding="utf-8",
     )
@@ -556,9 +557,9 @@ def test_linux_computer_name_none():
 
 
 @patch("codecs.open", autospec=True)
-@patch("os.makedirs", autospec=True)
+@patch("pathlib.Path.mkdir", autospec=True)
 @patch("yaml.safe_dump", autospec=True)
-def test_linux_salt_debug_log_none(mock_safe, mock_makedirs, mock_codec):
+def test_linux_salt_debug_log_none(mock_safe, mock_mkdir, mock_codec):
     """Test that Pythonic None can be used without error rather than 'None'."""
     # setup ========================
     system_params = {}
@@ -587,8 +588,8 @@ def test_linux_salt_debug_log_none(mock_safe, mock_makedirs, mock_codec):
     saltworker_lx._prepare_for_install()
 
     # assertions ===================
-    assert saltworker_lx.salt_debug_logfile == os.sep.join(
-        (system_params["logdir"], "salt_call.debug.log"),
+    assert saltworker_lx.salt_debug_logfile == str(
+        Path(system_params["logdir"]) / "salt_call.debug.log",
     )
 
 
@@ -697,7 +698,7 @@ def test_linux_salt_content_path_none(
 @patch("yaml.safe_dump", autospec=True)
 @patch("yaml.safe_load", autospec=True)
 @patch("watchmaker.utils.copytree", autospec=True)
-@patch("glob.glob", autospec=True)
+@patch("pathlib.Path.glob", autospec=True)
 def test_linux_salt_content_path(
     mock_glob,
     mock_copytree,
@@ -723,7 +724,9 @@ def test_linux_salt_content_path(
     saltworker_lx.retrieve_file = MagicMock(return_value=None)
     saltworker_lx.extract_contents = MagicMock(return_value=None)
     saltworker_lx.working_dir = system_params["workingdir"]
-    mock_glob.return_value = ["05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d"]
+    mock_glob.return_value = iter(
+        [Path("05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d")],
+    )
 
     saltworker_lx._build_salt_formula("8822e968-deea-410f-9b6e-d25a36c512d1")
 

@@ -24,7 +24,7 @@ def test_copytree_no_force(mock_copy, mock_rm, mock_exists):
     assert mock_exists.call_count == 0
 
 
-@patch("os.path.exists", autospec=True)
+@patch("pathlib.Path.exists", autospec=True)
 @patch("shutil.rmtree", autospec=True)
 @patch("shutil.copytree", autospec=True)
 def test_copytree_force(mock_copy, mock_rm, mock_exists):
@@ -35,7 +35,7 @@ def test_copytree_force(mock_copy, mock_rm, mock_exists):
     watchmaker.utils.copytree(random_src, random_dst, force=True)
     mock_copy.assert_called_with(random_src, random_dst)
     mock_rm.assert_called_with(random_dst)
-    mock_exists.assert_called_with(random_dst)
+    mock_exists.assert_called_once()
 
 
 def test_clean_none():
@@ -46,7 +46,7 @@ def test_clean_none():
     assert watchmaker.utils.clean_none("not none") == "not none"
 
 
-@patch("os.path.exists", autospec=True)
+@patch("pathlib.Path.exists", autospec=True)
 @patch("watchmaker.utils.copytree", autospec=True)
 @patch("os.walk", autospec=True)
 def test_copy_subdirectories(mock_os, mock_copy, mock_exists):

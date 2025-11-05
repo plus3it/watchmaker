@@ -25,7 +25,6 @@ ignore = [
     "S202",  # tarfile.extractall without filter - requires Python 3.12+ or custom validation
     "EXE001",  # Only occurs in CI when source is restored as artifact (loses executable bit)
     "ANN",  # 500+ missing type annotations across src/tests; keep ignored for now; see staged plan below
-    "PTH",  # Pathlib migration would refactor many paths and interacts with tests mocking os.path/os.walk; staged rollout planned
 ]
 select = ["ALL"]
 

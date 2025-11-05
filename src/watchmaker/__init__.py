@@ -6,6 +6,7 @@ import os
 import platform
 import re
 import subprocess
+from pathlib import Path
 
 import importlib_metadata
 import oschmod
@@ -277,45 +278,27 @@ class Client:
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
-        params["prepdir"] = os.path.join(
-            f"{self.system_drive}",
-            "usr",
-            "tmp",
-            "watchmaker",
+        params["prepdir"] = str(
+            Path(self.system_drive) / "usr" / "tmp" / "watchmaker",
         )
-        params["readyfile"] = os.path.join(
-            f"{self.system_drive}",
-            "var",
-            "run",
-            "system-is-ready",
+        params["readyfile"] = str(
+            Path(self.system_drive) / "var" / "run" / "system-is-ready",
         )
-        params["logdir"] = os.path.join(f"{self.system_drive}", "var", "log")
-        params["workingdir"] = os.path.join(
-            "{}".format(params["prepdir"]),
-            "workingfiles",
-        )
+        params["logdir"] = str(Path(self.system_drive) / "var" / "log")
+        params["workingdir"] = str(Path(params["prepdir"]) / "workingfiles")
         params["restart"] = "shutdown -r +1 &"
         return params
 
     def _get_windows_system_params(self):
         """Set ``self.system_params`` attribute for Windows systems."""
         params = {}
-        # os.path.join does not produce path as expected when first string
-        # ends in colon; so using a join on the sep character.
-        params["prepdir"] = os.path.sep.join([self.system_drive, "Watchmaker"])
-        params["readyfile"] = os.path.join(
-            "{}".format(params["prepdir"]),
-            "system-is-ready",
-        )
-        params["logdir"] = os.path.join("{}".format(params["prepdir"]), "Logs")
-        params["workingdir"] = os.path.join(
-            "{}".format(params["prepdir"]),
-            "WorkingFiles",
-        )
-        params["shutdown_path"] = os.path.join(
-            "{}".format(os.environ["SYSTEMROOT"]),
-            "system32",
-            "shutdown.exe",
+        # Path handles Windows drive letters correctly
+        params["prepdir"] = str(Path(self.system_drive) / "Watchmaker")
+        params["readyfile"] = str(Path(params["prepdir"]) / "system-is-ready")
+        params["logdir"] = str(Path(params["prepdir"]) / "Logs")
+        params["workingdir"] = str(Path(params["prepdir"]) / "WorkingFiles")
+        params["shutdown_path"] = str(
+            Path(os.environ["SYSTEMROOT"]) / "system32" / "shutdown.exe",
         )
         params["restart"] = (
             params["shutdown_path"]
@@ -385,10 +368,10 @@ class Client:
 
         # Create watchmaker directories
         try:
-            os.makedirs(self.system_params["workingdir"])
+            Path(self.system_params["workingdir"]).mkdir(parents=True)
             oschmod.set_mode(self.system_params["prepdir"], 0o700)
         except OSError:
-            if not os.path.exists(self.system_params["workingdir"]):
+            if not Path(self.system_params["workingdir"]).exists():
                 msg = "Unable to create directory - {}".format(
                     self.system_params["workingdir"],
                 )

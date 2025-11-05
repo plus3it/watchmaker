@@ -8,6 +8,7 @@ import os
 import platform
 import subprocess
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import oschmod
 
@@ -78,8 +79,9 @@ def make_log_dir(log_dir):
         Path to a directory.
 
     """
-    if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+    log_dir_path = Path(log_dir)
+    if not log_dir_path.exists():
+        log_dir_path.mkdir(parents=True)
         oschmod.set_mode(log_dir, 0o700)
 
 
@@ -128,7 +130,7 @@ def prepare_logging(log_dir, log_level):
         log.warning("Watchmaker will not be logging to a file!")
     else:
         make_log_dir(log_dir)
-        log_filename = os.sep.join((log_dir, "watchmaker.log"))
+        log_filename = str(Path(log_dir) / "watchmaker.log")
         hdlr = logging.FileHandler(log_filename)
         oschmod.set_mode(log_filename, 0o600)
         hdlr.setLevel(level)
@@ -167,7 +169,7 @@ def _enable_ec2_config_event_log():
         ET.Element("Ec2ConfigurationSettings"),
     )
 
-    with open(EC2_CONFIG, encoding="utf8") as fh_:
+    with Path(EC2_CONFIG).open(encoding="utf8") as fh_:
         ec2_config = defusedxml.ElementTree.parse(fh_, forbid_dtd=True)
 
     plugins = ec2_config.getroot().find("Plugins").findall("Plugin")
@@ -176,7 +178,7 @@ def _enable_ec2_config_event_log():
             plugin.find("State").text = "Enabled"
             break
 
-    with open(EC2_CONFIG, mode="wb") as fh_:
+    with Path(EC2_CONFIG).open(mode="wb") as fh_:
         ec2_config.write(fh_)
 
 
@@ -186,7 +188,7 @@ def _configure_ec2_config_event_log():
         ET.Element("EventLogConfig"),
     )
 
-    with open(EC2_CONFIG_EVENT_LOG, encoding="utf8") as fh_:
+    with Path(EC2_CONFIG_EVENT_LOG).open(encoding="utf8") as fh_:
         ec2_log_config = defusedxml.ElementTree.parse(fh_, forbid_dtd=True)
 
     events_present = set()
@@ -220,14 +222,14 @@ def _configure_ec2_config_event_log():
         app_name.text = "Watchmaker"
 
     if events_missing:
-        with open(EC2_CONFIG_EVENT_LOG, mode="wb") as fh_:
+        with Path(EC2_CONFIG_EVENT_LOG).open(mode="wb") as fh_:
             ec2_log_config.write(fh_)
 
 
 def _configure_ec2_launch_event_log():
     """Configure EC2Launch to forward Event Log entries for Watchmaker."""
     event_config = {}
-    with open(EC2_LAUNCH_LOG_CONFIG, encoding="utf8") as fh_:
+    with Path(EC2_LAUNCH_LOG_CONFIG).open(encoding="utf8") as fh_:
         event_config = json.load(fh_)
 
     events_present = set()
@@ -254,7 +256,7 @@ def _configure_ec2_launch_event_log():
 
     if events_missing:
         event_config["events"] = events
-        with open(EC2_LAUNCH_LOG_CONFIG, encoding="utf8", mode="w") as fh_:
+        with Path(EC2_LAUNCH_LOG_CONFIG).open(encoding="utf8", mode="w") as fh_:
             json.dump(event_config, fh_, indent=4)
 
 

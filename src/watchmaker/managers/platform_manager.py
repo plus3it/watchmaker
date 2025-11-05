@@ -8,6 +8,7 @@ import subprocess
 import tarfile
 import tempfile
 import zipfile
+from pathlib import Path
 
 import watchmaker.utils
 from watchmaker.exceptions import WatchmakerError
@@ -77,7 +78,7 @@ class PlatformManagerBase:
             self.log.debug("Establishing connection to the host, %s", url)
             response = watchmaker.utils.urlopen_retry(url)
             self.log.debug("Opening the file handle, %s", filename)
-            with open(filename, "wb") as outfile:
+            with Path(filename).open("wb") as outfile:
                 self.log.debug("Saving file to local filesystem...")
                 shutil.copyfileobj(response, outfile)
         except (ValueError, urllib_utils.error.URLError):
@@ -277,19 +278,20 @@ class PlatformManagerBase:
             raise WatchmakerError(msg)
 
         if create_dir:
-            to_directory = os.sep.join(
-                (to_directory, ".".join(filepath.split(os.sep)[-1].split(".")[:-1])),
-            )
+            filepath_path = Path(filepath)
+            # Get base name without extension
+            base_name = filepath_path.stem
+            to_directory = str(Path(to_directory) / base_name)
 
         try:
-            os.makedirs(to_directory)
+            Path(to_directory).mkdir(parents=True)
         except OSError:
-            if not os.path.isdir(to_directory):
+            if not Path(to_directory).is_dir():
                 msg = f"Unable create directory - {to_directory}"
                 self.log.critical(msg)
                 raise
 
-        cwd = os.getcwd()
+        cwd = Path.cwd()
         os.chdir(to_directory)
 
         try:
