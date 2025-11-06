@@ -16,7 +16,7 @@ PYI_SCRIPT="${PYI_SPEC_DIR}/watchmaker-standalone.py"
 WAM_SCRIPT="./src/watchmaker/__main__.py"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 
-virtualenv --python=${PYTHON} $VIRTUAL_ENV_DIR
+$PYTHON -m venv "$VIRTUAL_ENV_DIR"
 # shellcheck disable=SC1091
 source "${VIRTUAL_ENV_DIR}/bin/activate"
 
