@@ -279,8 +279,8 @@ class PlatformManagerBase:
 
         if create_dir:
             filepath_path = Path(filepath)
-            # Get base name without extension
-            base_name = filepath_path.stem
+            # Get base name without extension (handles compound extensions)
+            base_name = filepath_path.name.split(".")[0]
             to_directory = str(Path(to_directory) / base_name)
 
         try:
@@ -301,7 +301,7 @@ class PlatformManagerBase:
             finally:
                 openfile.close()
         finally:
-            os.chdir(cwd)
+            os.chdir(str(cwd))
 
         self.log.info("Extracted file. source=%s, dest=%s", filepath, to_directory)
 

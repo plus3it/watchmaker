@@ -386,7 +386,7 @@ def test_windows_defaults():
     assert win_salt.salt_conf["file_client"] == "local"
     assert win_salt.salt_conf["hash_type"] == "sha512"
     assert win_salt.salt_conf["pillar_roots"] == {
-        "base": [str(str(Path(win_salt.salt_srv) / "pillar"))],
+        "base": [str(Path(win_salt.salt_srv) / "pillar")],
     }
     assert win_salt.salt_conf["pillar_merge_lists"]
     assert win_salt.salt_conf["conf_dir"] == str(
@@ -724,8 +724,8 @@ def test_linux_salt_content_path(
     saltworker_lx.retrieve_file = MagicMock(return_value=None)
     saltworker_lx.extract_contents = MagicMock(return_value=None)
     saltworker_lx.working_dir = system_params["workingdir"]
-    mock_glob.return_value = iter(
-        [Path("05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d")],
+    mock_glob.return_value = (
+        p for p in [Path("05628e08-f1be-474d-8c12-5bb6517fc5f9/87a2324d")]
     )
 
     saltworker_lx._build_salt_formula("8822e968-deea-410f-9b6e-d25a36c512d1")

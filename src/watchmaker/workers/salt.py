@@ -358,7 +358,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                     )
                     raise MultiplePathsMatchError(self.salt_content_path)
                 try:
-                    salt_files_dir = salt_content_glob[0]
+                    salt_files_dir = str(salt_content_glob[0])
                 except IndexError as exc:
                     self.log.critical(
                         "Path '%s' not found in %s",
