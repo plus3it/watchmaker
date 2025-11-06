@@ -5,7 +5,7 @@ export VIRTUAL_ENV_DIR=.pyinstaller/venv
 
 PYTHON=python3.12
 
-VERSION=$(grep "version =" setup.cfg | sed 's/^.*= //')
+VERSION=$(grep -E '^version\s*=' pyproject.toml | sed 's/^version = "\(.*\)"$/\1/')
 
 PYI_DIST_DIR=".pyinstaller/dist/${VERSION}"
 PYI_SPEC_DIR=".pyinstaller/spec"

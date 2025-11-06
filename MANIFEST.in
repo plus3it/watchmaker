@@ -11,10 +11,8 @@ exclude docs/**
 exclude requirements/**
 exclude tests/**
 exclude .bumpversion.cfg
-exclude .coveragerc
 exclude .editorconfig
 exclude .gitmodules
-exclude tox.ini
 exclude Dockerfile
 exclude Makefile
 exclude *.yml

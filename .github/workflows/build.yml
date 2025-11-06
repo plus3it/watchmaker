@@ -44,14 +44,14 @@ jobs:
           RELEASE_VERSION=$(grep -E "current_version\s*=" .bumpversion.cfg | sed 's/^.*= //' )
           if [[ "$PRIOR_VERSION" = "$RELEASE_VERSION" ]]; then
             # If the current version matches the last tag, we are in a dev build.
-            # Update the version in setup.cfg to include a timestamp.
+            # Update the version in pyproject.toml to include a timestamp.
             ver=$(git show -s --format=%cd --date=format:'%Y%m%d%H%M%S')
-            sed -i -E "s/^(version = )([0-9]+\.[0-9]+\.[0-9]+).*$/\1\2.dev$ver/" setup.cfg
+            sed -i -E "s/^(version = \")([0-9]+\.[0-9]+\.[0-9]+)(\".*)?$/\1\2.dev$ver\3/" pyproject.toml
           else
             # If the current version does not match the last tag, we are in a release build.
             RELEASE=true
           fi
-          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
+          VERSION="$(grep -E '^version\s*=' pyproject.toml | sed 's/^version = "\(.*\)"$/\1/')"
           echo "condition=${RELEASE}"
           echo "version=${VERSION}"
           echo "condition=${RELEASE}" >> "$GITHUB_OUTPUT"
@@ -221,7 +221,6 @@ jobs:
       - name: Install package
         run: python -m pip install ./dist/watchmaker-*.whl
 
-      - run: python setup.py check --strict --metadata
       - run: check-manifest
       - run: ruff format --check .
       - run: ruff check .

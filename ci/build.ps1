@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$VERSION = (Select-String -Path setup.cfg -Pattern '^version = ').Line -replace '^(version = )(.*)$', '$2'
+$VERSION = (Select-String -Path pyproject.toml -Pattern '^version = ').Line -replace '^version = "(.+)".*$', '$1'
 
 $PYI_DIST_DIR = ".pyinstaller\dist\${VERSION}"
 $PYI_SPEC_DIR = ".pyinstaller\spec"
