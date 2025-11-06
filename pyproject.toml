@@ -1,6 +1,7 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = ["setuptools>=77.0", "wheel"]
+# Use uv's PEP 517 build backend for fast, reproducible builds
+build-backend = "uv_build"
+requires = ["uv-build<0.10"]
 
 [project]
 name = "watchmaker"
@@ -8,6 +9,7 @@ version = "0.29.4"
 description = "Applied Configuration Management"
 readme = {file = "README.md", content-type = "text/markdown"}
 license = "Apache-2.0"
+license-files = ["LICENSE", "AUTHORS.md"]
 authors = [
     {name = "Plus3IT Maintainers of Watchmaker", email = "projects@plus3it.com"},
 ]
@@ -47,21 +49,34 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/plus3it/watchmaker"
 Repository = "https://github.com/plus3it/watchmaker"
-Documentation = "https://watchmaker.readthedocs.io"
+Documentation = "https://watchmaker.cloudarmor.io"
+Changelog = "https://watchmaker.cloudarmor.io/en/stable/changelog.html"
 
 [project.scripts]
 wam = "watchmaker.cli:main"
 watchmaker = "watchmaker.cli:main"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-include-package-data = true
+[tool.uv.build-backend]
+source-include = [
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-"*" = ["*"]
+source-exclude = [
+    ".bumpversion.cfg",
+    ".editorconfig",
+    ".git",
+    ".gitattributes",
+    ".gitignore",
+    ".gitkeep",
+    ".github",
+    ".travis.yml",
+    ".mergify.yml",
+    ".pydocstyle",
+    ".pylintrc",
+    ".yamllint.yml",
+    "tests",
+]
 
 [tool.ruff]
 # Line length and excludes chosen to match prior flake8 settings
