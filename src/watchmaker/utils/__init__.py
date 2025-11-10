@@ -22,6 +22,9 @@ def scheme_from_uri(uri):
 
 def uri_from_filepath(filepath):
     """Return a URI compatible with urllib, handling URIs and file paths."""
+    # Convert Path to str for urlparse compatibility
+    filepath = str(filepath) if isinstance(filepath, Path) else filepath
+
     parts = urllib_utils.parse.urlparse(filepath)
     scheme = scheme_from_uri(parts)
 
@@ -69,11 +72,11 @@ def copytree(src, dst, *, force=False, **kwargs):
     Copy OS directory trees from source to destination.
 
     Args:
-        src: (:obj:`str`)
+        src: (:obj:`Path`)
             Source directory tree to be copied.
             (*Default*: None)
 
-        dst: (:obj:`str`)
+        dst: (:obj:`Path`)
             Destination where directory tree is to be copied.
             (*Default*: None)
 
@@ -85,7 +88,7 @@ def copytree(src, dst, *, force=False, **kwargs):
             Additional keyword arguments to pass to :func:`shutil.copytree`.
 
     """
-    if force and Path(dst).exists():
+    if force and dst.exists():
         shutil.rmtree(dst)
 
     shutil.copytree(src, dst, **kwargs)
@@ -129,13 +132,10 @@ def clean_none(value):
 
 def copy_subdirectories(src_dir, dest_dir, log=None):
     """Copy subdirectories within given src dir into dest dir."""
-    src_dir = str(src_dir)
-    dest_dir = str(dest_dir)
     for subdir in next(os.walk(src_dir))[1]:
-        dest_subdir_path = Path(dest_dir) / subdir
-        if not subdir.startswith(".") and not dest_subdir_path.exists():
-            src_subdir = str(Path(src_dir) / subdir)
-            dest_subdir = str(dest_subdir_path)
+        dest_subdir = dest_dir / subdir
+        if not subdir.startswith(".") and not dest_subdir.exists():
+            src_subdir = src_dir / subdir
             copytree(src_subdir, dest_subdir)
             if log:
                 log.info(

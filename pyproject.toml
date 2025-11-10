@@ -38,9 +38,32 @@ select = ["ALL"]
 [tool.ruff.lint.flake8-annotations]
 # Don't require explicit "-> None" on __init__ (aligns with mypy default)
 mypy-init-return = true
+
 # Allow using Any for *args/**kwargs without error
 allow-star-arg-any = true
+
 # Don't flag unused conventional dummy args like _ or unused parameters in callbacks
 suppress-dummy-args = true
+
 # Don't require explicit -> None on functions that implicitly return None
 suppress-none-returning = true
+
+[tool.pytest.ini_options]
+# Limit discovery to dedicated test directory
+testpaths = ["tests"]
+
+# Only consider filenames starting with test_
+python_files = ["test_*.py"]
+
+# Exclude large static datasets, build artifacts, generated hook dirs, and non-source roots
+norecursedirs = [
+    "src/watchmaker/static/salt/formulas",
+    "build",
+    "dist",
+    "ci/pyinstaller",
+    ".git",
+    "docs",
+]
+
+# Additional pytest options: -r (show extra summary info for skips) and -a (all except passes)
+addopts = "-ra"

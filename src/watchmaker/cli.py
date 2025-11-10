@@ -3,6 +3,7 @@
 import os
 import platform
 import sys
+from pathlib import Path
 
 import click
 
@@ -10,10 +11,8 @@ import watchmaker
 from watchmaker.logger import LOG_LEVELS, exception_hook, prepare_logging
 
 LOG_LOCATIONS = {
-    "linux": os.path.sep.join(("", "var", "log", "watchmaker")),
-    "windows": os.path.sep.join(
-        (os.environ.get("SYSTEMDRIVE", "C:"), "Watchmaker", "Logs"),
-    ),
+    "linux": str(Path("/var/log/watchmaker")),
+    "windows": str(Path(os.environ.get("SYSTEMDRIVE", "C:")) / "Watchmaker" / "Logs"),
 }
 
 
@@ -140,6 +139,10 @@ def _print_version(ctx, _param, value):
 @click.argument("extra_arguments", nargs=-1, type=click.UNPROCESSED, metavar="")
 def main(extra_arguments=None, **kwargs):
     """Entry point for Watchmaker cli."""
+    # Convert log_dir to Path for the API
+    if kwargs.get("log_dir"):
+        kwargs["log_dir"] = Path(kwargs["log_dir"])
+
     prepare_logging(kwargs["log_dir"], kwargs["log_level"])
 
     sys.excepthook = exception_hook

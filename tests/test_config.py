@@ -16,7 +16,7 @@ def test_config_w_status_provider():
         config, status_config = get_configs(
             "linux",
             {},
-            str(Path("tests") / "resources" / "config_with_status.yaml"),
+            Path("tests") / "resources" / "config_with_status.yaml",
         )
         assert config is not None
         assert status_config is not None
@@ -28,7 +28,7 @@ def test_config_wo_status_config():
         config, status_config = get_configs(
             "linux",
             {},
-            str(Path("tests") / "resources" / "config_without_status.yaml"),
+            Path("tests") / "resources" / "config_without_status.yaml",
         )
         assert config is not None
         assert status_config is None
@@ -42,9 +42,7 @@ def test_config_w_name_pattern():
         config, _status_config = get_configs(
             "linux",
             {},
-            str(
-                Path("tests") / "resources" / "config_with_computer_name_pattern.yaml",
-            ),
+            Path("tests") / "resources" / "config_with_computer_name_pattern.yaml",
         )
 
     pattern = config["salt"]["config"]["computer_name_pattern"]

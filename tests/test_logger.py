@@ -43,18 +43,18 @@ def test_log_level_dict():
 
 def test_making_log_directory():
     """Tests creation of a directory if it does not exist."""
-    log_dir = "./logfiles/"
-    if Path(log_dir).exists():
+    log_dir = Path("./logfiles/")
+    if log_dir.exists():
         shutil.rmtree(log_dir)
 
     # Make sure that directory is created.
     logger.make_log_dir(log_dir)
-    assert Path(log_dir).exists()
+    assert log_dir.exists()
 
     # Checks that path still exists without throwing error.
     # I.e. don't try to create the directory again.
     logger.make_log_dir(log_dir)
-    assert Path(log_dir).exists()
+    assert log_dir.exists()
 
 
 @pytest.mark.skipif(
@@ -68,7 +68,7 @@ def test_logger_handler():
     Tests that prepare_logging() will set logger level appropriately, attach a
     FileHandler if a directory is passed, and set log file to the correct mode.
     """
-    logger.prepare_logging("logfiles", "debug")
+    logger.prepare_logging(Path("logfiles"), "debug")
     this_logger = logging.getLogger()
 
     if logger.HAS_PYWIN32:
@@ -117,7 +117,7 @@ def test_exception_hook(caplog):
 )
 def test_enable_ec2_config_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_CONFIG is missing."""
-    logger.EC2_CONFIG = "notreal.xml"
+    logger.EC2_CONFIG = Path("notreal.xml")
 
     with pytest.raises(FileNotFoundError):
         logger._enable_ec2_config_event_log()
@@ -133,7 +133,7 @@ def test_enable_ec2_config_event_log_raises_filenotfound(mocker):
 )
 def test_configure_ec2_config_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_CONFIG_EVENT_LOG is missing."""
-    logger.EC2_CONFIG_EVENT_LOG = "notreal.xml"
+    logger.EC2_CONFIG_EVENT_LOG = Path("notreal.xml")
 
     with pytest.raises(FileNotFoundError):
         logger._configure_ec2_config_event_log()
@@ -286,7 +286,7 @@ def test_configure_ec2config_skip_if_events_present(mocker):
 )
 def test_configure_ec2_launch_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_LAUNCH_LOG_CONFIG is missing."""
-    logger.EC2_LAUNCH_LOG_CONFIG = "notreal.json"
+    logger.EC2_LAUNCH_LOG_CONFIG = Path("notreal.json")
 
     with pytest.raises(FileNotFoundError):
         logger._configure_ec2_launch_event_log()
@@ -298,7 +298,7 @@ def test_configure_ec2_launch_event_log_raises_filenotfound(mocker):
 )
 def test_schedule_ec2launch_event_logging_raises_calledproccesserror(mocker):
     """Raise FileNotFoundError when EC2_LAUNCH_SEND_EVENTS is missing."""
-    logger.EC2_LAUNCH_SEND_EVENTS = "notreal.ps1"
+    logger.EC2_LAUNCH_SEND_EVENTS = Path("notreal.ps1")
 
     with pytest.raises(subprocess.CalledProcessError):
         logger._schedule_ec2_launch_event_log()

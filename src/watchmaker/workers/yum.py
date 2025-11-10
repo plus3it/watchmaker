@@ -1,5 +1,6 @@
 """Watchmaker yum worker."""
 
+from pathlib import Path
 from typing import ClassVar
 
 import distro
@@ -125,7 +126,9 @@ class Yum(WorkerBase, LinuxPlatformManager):
                 # Download the yum repo definition to /etc/yum.repos.d/
                 self.log.info("Installing repo: %s", repo["url"])
                 url = repo["url"]
-                repofile = f"/etc/yum.repos.d/{watchmaker.utils.basename_from_uri(url)}"
+                repofile = Path(
+                    "/etc/yum.repos.d",
+                ) / watchmaker.utils.basename_from_uri(url)
                 self.retrieve_file(url, repofile)
             else:
                 self.log.debug(

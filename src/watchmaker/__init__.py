@@ -48,7 +48,7 @@ class Arguments(dict):
             file. If ``None``, the default config.yaml file is used.
             (*Default*: ``None``)
 
-        log_dir: (:obj:`str`)
+        log_dir: (:obj:`Path`)
             Path to a directory. If set, Watchmaker logs to a file named
             ``watchmaker.log`` in the specified directory. Both the directory
             and the file will be created if necessary. If the file already
@@ -278,14 +278,12 @@ class Client:
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
-        params["prepdir"] = str(
-            Path(self.system_drive) / "usr" / "tmp" / "watchmaker",
+        params["prepdir"] = Path(self.system_drive) / "usr" / "tmp" / "watchmaker"
+        params["readyfile"] = (
+            Path(self.system_drive) / "var" / "run" / "system-is-ready"
         )
-        params["readyfile"] = str(
-            Path(self.system_drive) / "var" / "run" / "system-is-ready",
-        )
-        params["logdir"] = str(Path(self.system_drive) / "var" / "log")
-        params["workingdir"] = str(Path(params["prepdir"]) / "workingfiles")
+        params["logdir"] = Path(self.system_drive) / "var" / "log"
+        params["workingdir"] = params["prepdir"] / "workingfiles"
         params["restart"] = "shutdown -r +1 &"
         return params
 
@@ -293,15 +291,15 @@ class Client:
         """Set ``self.system_params`` attribute for Windows systems."""
         params = {}
         # Path handles Windows drive letters correctly
-        params["prepdir"] = str(Path(self.system_drive) / "Watchmaker")
-        params["readyfile"] = str(Path(params["prepdir"]) / "system-is-ready")
-        params["logdir"] = str(Path(params["prepdir"]) / "Logs")
-        params["workingdir"] = str(Path(params["prepdir"]) / "WorkingFiles")
-        params["shutdown_path"] = str(
-            Path(os.environ["SYSTEMROOT"]) / "system32" / "shutdown.exe",
+        params["prepdir"] = Path(self.system_drive) / "Watchmaker"
+        params["readyfile"] = params["prepdir"] / "system-is-ready"
+        params["logdir"] = params["prepdir"] / "Logs"
+        params["workingdir"] = params["prepdir"] / "WorkingFiles"
+        params["shutdown_path"] = (
+            Path(os.environ["SYSTEMROOT"]) / "system32" / "shutdown.exe"
         )
         params["restart"] = (
-            params["shutdown_path"]
+            str(params["shutdown_path"])
             + " /r /t 30 /d p:2:4 /c "
             + '"Watchmaker complete. Rebooting computer."'
         )
@@ -368,10 +366,10 @@ class Client:
 
         # Create watchmaker directories
         try:
-            Path(self.system_params["workingdir"]).mkdir(parents=True)
-            oschmod.set_mode(self.system_params["prepdir"], 0o700)
+            self.system_params["workingdir"].mkdir(parents=True)
+            oschmod.set_mode(str(self.system_params["prepdir"]), 0o700)
         except OSError:
-            if not Path(self.system_params["workingdir"]).exists():
+            if not self.system_params["workingdir"].exists():
                 msg = "Unable to create directory - {}".format(
                     self.system_params["workingdir"],
                 )

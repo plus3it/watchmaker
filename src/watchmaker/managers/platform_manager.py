@@ -65,7 +65,7 @@ class PlatformManagerBase:
             url: (:obj:`str`)
                 URL to a file.
 
-            filename: (:obj:`str`)
+            filename: (:obj:`Path`)
                 Path where the file will be saved.
 
         """
@@ -78,7 +78,7 @@ class PlatformManagerBase:
             self.log.debug("Establishing connection to the host, %s", url)
             response = watchmaker.utils.urlopen_retry(url)
             self.log.debug("Opening the file handle, %s", filename)
-            with Path(filename).open("wb") as outfile:
+            with filename.open("wb") as outfile:
                 self.log.debug("Saving file to local filesystem...")
                 shutil.copyfileobj(response, outfile)
         except (ValueError, urllib_utils.error.URLError):
@@ -102,24 +102,25 @@ class PlatformManagerBase:
             prefix: (:obj:`str`)
                 Prefix to prepend to the working directory.
 
-            basedir: (:obj:`str`)
+            basedir: (:obj:`Path`)
                 The directory in which to create the working directory.
 
         Returns:
-            :obj:`str`: Path to the working directory.
+            :obj:`Path`: Path to the working directory.
 
         """
         self.log.info("Creating a working directory.")
         original_umask = os.umask(0)
         try:
-            working_dir = tempfile.mkdtemp(prefix=prefix, dir=basedir)
+            # tempfile expects a string for dir; convert Path to str
+            working_dir = tempfile.mkdtemp(prefix=prefix, dir=str(basedir))
         except Exception:
             msg = f"Could not create a working dir in {basedir}"
             self.log.critical(msg)
             raise
         self.log.debug("Created working directory: %s", working_dir)
         os.umask(original_umask)
-        return working_dir
+        return Path(working_dir)
 
     @staticmethod
     def _pipe_handler(pipe, logger=None, prefix_msg=""):
@@ -243,7 +244,7 @@ class PlatformManagerBase:
         Extract a compressed archive to the specified directory.
 
         Args:
-            filepath: (:obj:`str`)
+            filepath: (:obj:`Path`)
                 Path to the compressed file. Supported file extensions:
 
                 - `.zip`
@@ -252,7 +253,7 @@ class PlatformManagerBase:
                 - `.tar.bz2`
                 - `.tbz`
 
-            to_directory: (:obj:`str`)
+            to_directory: (:obj:`Path`)
                 Path to the target directory
 
             create_dir: (:obj:`bool`)
@@ -261,13 +262,14 @@ class PlatformManagerBase:
                 (*Default*: ``False``)
 
         """
-        if filepath.endswith(".zip"):
+        # Check file extension using Path.suffix and .suffixes
+        if filepath.suffix == ".zip":
             self.log.debug("File Type: zip")
             opener, mode = zipfile.ZipFile, "r"
-        elif filepath.endswith((".tar.gz", ".tgz")):
+        elif filepath.suffixes[-2:] == [".tar", ".gz"] or filepath.suffix == ".tgz":
             self.log.debug("File Type: GZip Tar")
             opener, mode = tarfile.open, "r:gz"
-        elif filepath.endswith((".tar.bz2", ".tbz")):
+        elif filepath.suffixes[-2:] == [".tar", ".bz2"] or filepath.suffix == ".tbz":
             self.log.debug("File Type: Bzip Tar")
             opener, mode = tarfile.open, "r:bz2"
         else:
@@ -277,25 +279,26 @@ class PlatformManagerBase:
             self.log.critical(msg)
             raise WatchmakerError(msg)
 
+        to_dir_path = to_directory
+
         if create_dir:
-            filepath_path = Path(filepath)
             # Get base name without extension (handles compound extensions)
-            base_name = filepath_path.name.split(".")[0]
-            to_directory = str(Path(to_directory) / base_name)
+            base_name = filepath.name.split(".")[0]
+            to_dir_path = to_dir_path / base_name
 
         try:
-            Path(to_directory).mkdir(parents=True)
+            to_dir_path.mkdir(parents=True)
         except OSError:
-            if not Path(to_directory).is_dir():
-                msg = f"Unable create directory - {to_directory}"
+            if not to_dir_path.is_dir():
+                msg = f"Unable create directory - {to_dir_path}"
                 self.log.critical(msg)
                 raise
 
         cwd = Path.cwd()
-        os.chdir(to_directory)
+        os.chdir(str(to_dir_path))
 
         try:
-            openfile = opener(filepath, mode)
+            openfile = opener(str(filepath), mode)
             try:
                 openfile.extractall()
             finally:
