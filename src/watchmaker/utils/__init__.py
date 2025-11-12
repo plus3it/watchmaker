@@ -4,6 +4,7 @@ import os
 import shutil
 import ssl
 import warnings
+from pathlib import Path
 
 import backoff
 
@@ -21,6 +22,9 @@ def scheme_from_uri(uri):
 
 def uri_from_filepath(filepath):
     """Return a URI compatible with urllib, handling URIs and file paths."""
+    # Convert Path to str for urlparse compatibility
+    filepath = str(filepath) if isinstance(filepath, Path) else filepath
+
     parts = urllib_utils.parse.urlparse(filepath)
     scheme = scheme_from_uri(parts)
 
@@ -29,10 +33,9 @@ def uri_from_filepath(filepath):
         return filepath
 
     # Expand relative file paths and convert them to uri-style
+    combined_path = "".join([x for x in [parts.netloc, parts.path] if x])
     path = urllib_utils.request.pathname2url(
-        os.path.abspath(
-            os.path.expanduser("".join([x for x in [parts.netloc, parts.path] if x])),
-        ),
+        str(Path(combined_path).expanduser().resolve()),
     )
 
     return urllib_utils.parse.urlunparse((scheme, "", path, "", "", ""))
@@ -42,7 +45,7 @@ def basename_from_uri(uri):
     """Return the basename/filename/leaf part of a URI."""
     # Do not split on '/' and return the last part because that will also
     # include any query in the uri. Instead, parse the uri.
-    return os.path.basename(urllib_utils.parse.urlparse(uri).path)
+    return Path(urllib_utils.parse.urlparse(uri).path).name
 
 
 @backoff.on_exception(backoff.expo, urllib_utils.error.URLError, max_tries=5)
@@ -69,11 +72,11 @@ def copytree(src, dst, *, force=False, **kwargs):
     Copy OS directory trees from source to destination.
 
     Args:
-        src: (:obj:`str`)
+        src: (:obj:`Path`)
             Source directory tree to be copied.
             (*Default*: None)
 
-        dst: (:obj:`str`)
+        dst: (:obj:`Path`)
             Destination where directory tree is to be copied.
             (*Default*: None)
 
@@ -85,7 +88,7 @@ def copytree(src, dst, *, force=False, **kwargs):
             Additional keyword arguments to pass to :func:`shutil.copytree`.
 
     """
-    if force and os.path.exists(dst):
+    if force and dst.exists():
         shutil.rmtree(dst)
 
     shutil.copytree(src, dst, **kwargs)
@@ -129,16 +132,14 @@ def clean_none(value):
 
 def copy_subdirectories(src_dir, dest_dir, log=None):
     """Copy subdirectories within given src dir into dest dir."""
-    src_dir = str(src_dir)
-    dest_dir = str(dest_dir)
     for subdir in next(os.walk(src_dir))[1]:
-        if not subdir.startswith(".") and not os.path.exists(
-            os.sep.join((dest_dir, subdir)),
-        ):
-            copytree(os.sep.join((src_dir, subdir)), os.sep.join((dest_dir, subdir)))
+        dest_subdir = dest_dir / subdir
+        if not subdir.startswith(".") and not dest_subdir.exists():
+            src_subdir = src_dir / subdir
+            copytree(src_subdir, dest_subdir)
             if log:
                 log.info(
                     "Copied from %s to %s",
-                    os.sep.join((src_dir, subdir)),
-                    os.sep.join((dest_dir, subdir)),
+                    src_subdir,
+                    dest_subdir,
                 )

@@ -1,7 +1,7 @@
 """Providers main test module."""
 
-import os
 import re
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -16,7 +16,7 @@ def test_config_w_status_provider():
         config, status_config = get_configs(
             "linux",
             {},
-            os.path.join("tests", "resources", "config_with_status.yaml"),
+            Path("tests") / "resources" / "config_with_status.yaml",
         )
         assert config is not None
         assert status_config is not None
@@ -28,7 +28,7 @@ def test_config_wo_status_config():
         config, status_config = get_configs(
             "linux",
             {},
-            os.path.join("tests", "resources", "config_without_status.yaml"),
+            Path("tests") / "resources" / "config_without_status.yaml",
         )
         assert config is not None
         assert status_config is None
@@ -42,11 +42,7 @@ def test_config_w_name_pattern():
         config, _status_config = get_configs(
             "linux",
             {},
-            os.path.join(
-                "tests",
-                "resources",
-                "config_with_computer_name_pattern.yaml",
-            ),
+            Path("tests") / "resources" / "config_with_computer_name_pattern.yaml",
         )
 
     pattern = config["salt"]["config"]["computer_name_pattern"]
@@ -71,10 +67,10 @@ def test_config_w_name_and_pattern():
         config, _status_config = get_configs(
             "linux",
             {},
-            os.path.join(
-                "tests",
-                "resources",
-                "config_with_computer_name_and_pattern.yaml",
+            str(
+                Path("tests")
+                / "resources"
+                / "config_with_computer_name_and_pattern.yaml",
             ),
         )
     computer_name = config["salt"]["config"]["computer_name"]
@@ -89,10 +85,8 @@ def test_config_validate_pattern():
     config, _status_config = get_configs(
         "linux",
         {},
-        os.path.join(
-            "tests",
-            "resources",
-            "config_with_computer_name_and_pattern.yaml",
+        str(
+            Path("tests") / "resources" / "config_with_computer_name_and_pattern.yaml",
         ),
     )
 

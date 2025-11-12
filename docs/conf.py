@@ -2,6 +2,7 @@
 
 import os
 import sys
+from pathlib import Path
 
 #
 # Created by sphinx-quickstart on Thu Jun 30 20:11:36 2016.
@@ -20,7 +21,7 @@ import sys
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
-sys.path.insert(0, os.path.abspath("../src/"))
+sys.path.insert(0, str(Path("../src/").resolve()))
 rtd = os.environ.get("READTHEDOCS", None) == "True"
 
 # -- General configuration ------------------------------------------------

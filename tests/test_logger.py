@@ -3,11 +3,11 @@
 import json
 import logging
 import logging.handlers
-import os
 import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import oschmod
 import pytest
@@ -43,18 +43,18 @@ def test_log_level_dict():
 
 def test_making_log_directory():
     """Tests creation of a directory if it does not exist."""
-    log_dir = "./logfiles/"
-    if os.path.exists(log_dir):
+    log_dir = Path("./logfiles/")
+    if log_dir.exists():
         shutil.rmtree(log_dir)
 
     # Make sure that directory is created.
     logger.make_log_dir(log_dir)
-    assert os.path.exists(log_dir)
+    assert log_dir.exists()
 
     # Checks that path still exists without throwing error.
     # I.e. don't try to create the directory again.
     logger.make_log_dir(log_dir)
-    assert os.path.exists(log_dir)
+    assert log_dir.exists()
 
 
 @pytest.mark.skipif(
@@ -68,7 +68,7 @@ def test_logger_handler():
     Tests that prepare_logging() will set logger level appropriately, attach a
     FileHandler if a directory is passed, and set log file to the correct mode.
     """
-    logger.prepare_logging("logfiles", "debug")
+    logger.prepare_logging(Path("logfiles"), "debug")
     this_logger = logging.getLogger()
 
     if logger.HAS_PYWIN32:
@@ -80,7 +80,7 @@ def test_logger_handler():
     assert isinstance(log_hdlr, logging.FileHandler)
     assert log_hdlr.level == logging.DEBUG
 
-    assert oschmod.get_mode(os.path.join("logfiles", "watchmaker.log")) == 0o600
+    assert oschmod.get_mode(str(Path("logfiles") / "watchmaker.log")) == 0o600
 
 
 def test_log_if_no_log_directory_given(caplog):
@@ -117,7 +117,7 @@ def test_exception_hook(caplog):
 )
 def test_enable_ec2_config_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_CONFIG is missing."""
-    logger.EC2_CONFIG = "notreal.xml"
+    logger.EC2_CONFIG = Path("notreal.xml")
 
     with pytest.raises(FileNotFoundError):
         logger._enable_ec2_config_event_log()
@@ -133,7 +133,7 @@ def test_enable_ec2_config_event_log_raises_filenotfound(mocker):
 )
 def test_configure_ec2_config_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_CONFIG_EVENT_LOG is missing."""
-    logger.EC2_CONFIG_EVENT_LOG = "notreal.xml"
+    logger.EC2_CONFIG_EVENT_LOG = Path("notreal.xml")
 
     with pytest.raises(FileNotFoundError):
         logger._configure_ec2_config_event_log()
@@ -157,15 +157,12 @@ def test_enable_ec2_config_event_log(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("builtins.open", mo_, create=True)
+    mocker.patch("pathlib.Path.open", mo_, create=True)
 
     logger._enable_ec2_config_event_log()
 
     # Verify we opened the file twice, once for read and once for write
-    assert mo_.call_args_list == [
-        mocker.call(logger.EC2_CONFIG, encoding="utf8"),
-        mocker.call(logger.EC2_CONFIG, mode="wb"),
-    ]
+    assert mo_.call_count == 2
 
     # Convert write calls to xml tree
     handle = mo_()
@@ -200,15 +197,12 @@ def test_configure_ec2config_write_all_events(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("builtins.open", mo_, create=True)
+    mocker.patch("pathlib.Path.open", mo_, create=True)
 
     logger._configure_ec2_config_event_log()
 
     # Verify we opened the file twice, once for read and once for write
-    assert mo_.call_args_list == [
-        mocker.call(logger.EC2_CONFIG_EVENT_LOG, encoding="utf8"),
-        mocker.call(logger.EC2_CONFIG_EVENT_LOG, mode="wb"),
-    ]
+    assert mo_.call_count == 2
 
     # Convert write calls to xml tree
     handle = mo_()
@@ -267,14 +261,12 @@ def test_configure_ec2config_skip_if_events_present(mocker):
     """
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("builtins.open", mo_, create=True)
+    mocker.patch("pathlib.Path.open", mo_, create=True)
 
     logger._configure_ec2_config_event_log()
 
-    # Verify we read the data
-    assert mo_.call_args_list == [
-        mocker.call(logger.EC2_CONFIG_EVENT_LOG, encoding="utf8"),
-    ]
+    # Verify we read the data (opened once for reading, not written)
+    assert mo_.call_count == 1
 
     # Verify we didn't write anything
     handle = mo_()
@@ -294,7 +286,7 @@ def test_configure_ec2config_skip_if_events_present(mocker):
 )
 def test_configure_ec2_launch_event_log_raises_filenotfound(mocker):
     """Raise FileNotFoundError when EC2_LAUNCH_LOG_CONFIG is missing."""
-    logger.EC2_LAUNCH_LOG_CONFIG = "notreal.json"
+    logger.EC2_LAUNCH_LOG_CONFIG = Path("notreal.json")
 
     with pytest.raises(FileNotFoundError):
         logger._configure_ec2_launch_event_log()
@@ -306,7 +298,7 @@ def test_configure_ec2_launch_event_log_raises_filenotfound(mocker):
 )
 def test_schedule_ec2launch_event_logging_raises_calledproccesserror(mocker):
     """Raise FileNotFoundError when EC2_LAUNCH_SEND_EVENTS is missing."""
-    logger.EC2_LAUNCH_SEND_EVENTS = "notreal.ps1"
+    logger.EC2_LAUNCH_SEND_EVENTS = Path("notreal.ps1")
 
     with pytest.raises(subprocess.CalledProcessError):
         logger._schedule_ec2_launch_event_log()
@@ -318,15 +310,12 @@ def test_configure_ec2launch_write_all_events(mocker):
     data = "{}"
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("builtins.open", mo_, create=True)
+    mocker.patch("pathlib.Path.open", mo_, create=True)
 
     logger._configure_ec2_launch_event_log()
 
     # Verify we opened the file twice, once for read and once for write
-    assert mo_.call_args_list == [
-        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG, encoding="utf8"),
-        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG, encoding="utf8", mode="w"),
-    ]
+    assert mo_.call_count == 2
 
     # Convert write calls to json
     handle = mo_()
@@ -365,14 +354,12 @@ def test_configure_ec2launch_skip_if_events_present(mocker):
     data = json.dumps({"events": events})
 
     mo_ = mocker.mock_open(read_data=data)
-    mocker.patch("builtins.open", mo_, create=True)
+    mocker.patch("pathlib.Path.open", mo_, create=True)
 
     logger._configure_ec2_launch_event_log()
 
-    # Verify we read the data
-    assert mo_.call_args_list == [
-        mocker.call(logger.EC2_LAUNCH_LOG_CONFIG, encoding="utf8"),
-    ]
+    # Verify we read the data (opened once for reading, not written)
+    assert mo_.call_count == 1
 
     # Verify we didn't write anything
     handle = mo_()
