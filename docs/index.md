@@ -60,7 +60,7 @@ CentOS-Stream.md
 
 ## Supported Python Versions
 
-*   Python 3.6 and later
+*   Python 3.8 and later
 
 ## Supported Salt Versions
 

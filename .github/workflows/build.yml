@@ -172,9 +172,6 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
         os: ["ubuntu-latest", "windows-2022"]
-        include:
-          - python-version: "3.7"
-            os: "ubuntu-22.04"
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
