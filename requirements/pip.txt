@@ -1,2 +1,2 @@
-pip==25.0.1;python_version<="3.8" and python_version>"3.7"
-pip==25.3;python_version>="3.9"
+# File is referenced in terrafirm project, so need to keep it around for now.
+pip==25.3
