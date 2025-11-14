@@ -2,6 +2,8 @@ $ErrorActionPreference = "Stop"
 
 $VERSION = (Select-String -Path pyproject.toml -Pattern '^version = ').Line -replace '^version = "(.+)".*$', '$1'
 
+$VIRTUAL_ENV_DIR = ".pyinstaller\venv"
+
 $PYI_DIST_DIR = ".pyinstaller\dist\${VERSION}"
 $PYI_SPEC_DIR = ".pyinstaller\spec"
 $PYI_WORK_DIR = ".pyinstaller\build"
@@ -11,23 +13,24 @@ $PYI_SCRIPT = "${PYI_SPEC_DIR}\watchmaker-standalone.py"
 $WAM_SCRIPT = ".\src\watchmaker\__main__.py"
 $WAM_FILENAME = "watchmaker-${VERSION}-standalone-windows-amd64"
 
-python -m pip install -r requirements/pip.txt
+uv venv "$VIRTUAL_ENV_DIR"
+& "${VIRTUAL_ENV_DIR}\Scripts\Activate.ps1"
 
 Write-Host "-----------------------------------------------------------------------"
 python --version
-python -m pip --version
+uv --version
 Write-Host "-----------------------------------------------------------------------"
 
-python -m pip install -r requirements/build.txt
-python -m pip install --editable .
-python -m pip list
+uv pip install -r requirements\build.txt
+uv pip install --editable .
+uv pip list
 
 Write-Host "Creating standalone for watchmaker v${VERSION}..."
 New-Item -Path "$PYI_SPEC_DIR" -Force -ItemType "directory"
 Copy-Item "$WAM_SCRIPT" -Destination "$PYI_SCRIPT"
 # Add debug argument to pyinstaller command to build standalone with debug flags
 #    --debug all \
-pyinstaller --noconfirm --clean --onefile `
+uv run pyinstaller --noconfirm --clean --onefile `
     --name "$WAM_FILENAME" `
     --runtime-tmpdir . `
     --paths src `
