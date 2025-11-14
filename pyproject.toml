@@ -13,7 +13,7 @@ license-files = ["LICENSE", "AUTHORS.md"]
 authors = [
     {name = "Plus3IT Maintainers of Watchmaker", email = "projects@plus3it.com"},
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -22,8 +22,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -94,7 +92,7 @@ exclude = [
 
 [tool.ruff.lint]
 ignore = [
-    "B905",  # zip() without strict= - requires Python 3.10+, project supports 3.6+
+    "B905",  # zip() without strict= - requires Python 3.10+, project supports 3.8+
     "D107",  # __init__ docstrings are documented at the class level to avoid duplication
     "D203",  # Conflicts with D211 (no-blank-line-before-class). Project uses D211 style.
     "D212",  # Conflicts with D213 (multi-line-summary-first-line). Project uses D213 style.
