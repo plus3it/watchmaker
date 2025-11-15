@@ -8,8 +8,14 @@ import shutil
 from pathlib import Path
 
 import distro
-import importlib_resources as resources
 import yaml
+
+try:
+    from importlib import resources
+    from importlib.resources import as_file
+except ImportError:
+    import importlib_resources as resources
+    from importlib_resources import as_file
 
 import watchmaker.utils
 from watchmaker import static
@@ -271,7 +277,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
 
     def _get_formulas_conf(self):
         # Append Salt formulas bundled with Watchmaker package.
-        with resources.as_file(
+        with as_file(
             resources.files(static) / "salt" / "formulas",
         ) as formulas_path:
             for formula in formulas_path.iterdir():
@@ -367,7 +373,7 @@ class SaltBase(WorkerBase, PlatformManagerBase):
                     self.log,
                 )
 
-        with resources.as_file(
+        with as_file(
             resources.files(static) / "salt" / "content",
         ) as bundled_content:
             watchmaker.utils.copy_subdirectories(bundled_content, extract_dir, self.log)

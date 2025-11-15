@@ -6,9 +6,9 @@ import os
 import platform
 import re
 import subprocess
+from importlib import metadata as importlib_metadata
 from pathlib import Path
 
-import importlib_metadata
 import oschmod
 import yaml
 
