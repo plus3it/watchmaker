@@ -1,6 +1,79 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = ["setuptools", "wheel"]
+# Use uv's PEP 517 build backend for fast, reproducible builds
+build-backend = "uv_build"
+requires = ["uv-build<0.10"]
+
+[project]
+name = "watchmaker"
+version = "0.29.4"
+description = "Applied Configuration Management"
+readme = {file = "README.md", content-type = "text/markdown"}
+license = "Apache-2.0"
+license-files = ["LICENSE", "AUTHORS.md"]
+authors = [
+    {name = "Plus3IT Maintainers of Watchmaker", email = "projects@plus3it.com"},
+]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "backoff",
+    "click",
+    "defusedxml; platform_system=='Windows'",
+    "distro",
+    "importlib_resources; python_version<'3.9'",
+    "pywin32; platform_system=='Windows'",
+    "PyYAML",
+    "compatibleversion>=0.1.2",
+    "oschmod>=0.1.3",
+]
+
+[project.urls]
+Homepage = "https://github.com/plus3it/watchmaker"
+Repository = "https://github.com/plus3it/watchmaker"
+Documentation = "https://watchmaker.cloudarmor.io"
+Changelog = "https://watchmaker.cloudarmor.io/en/stable/changelog.html"
+
+[project.scripts]
+wam = "watchmaker.cli:main"
+watchmaker = "watchmaker.cli:main"
+
+[tool.uv.build-backend]
+source-include = [
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+]
+
+source-exclude = [
+    ".bumpversion.cfg",
+    ".editorconfig",
+    ".git",
+    ".gitattributes",
+    ".gitignore",
+    ".gitkeep",
+    ".github",
+    ".travis.yml",
+    ".mergify.yml",
+    ".pydocstyle",
+    ".pylintrc",
+    ".yamllint.yml",
+    "tests",
+]
 
 [tool.ruff]
 # Line length and excludes chosen to match prior flake8 settings
@@ -18,7 +91,7 @@ exclude = [
 
 [tool.ruff.lint]
 ignore = [
-    "B905",  # zip() without strict= - requires Python 3.10+, project supports 3.6+
+    "B905",  # zip() without strict= - requires Python 3.10+, project supports 3.8+
     "D107",  # __init__ docstrings are documented at the class level to avoid duplication
     "D203",  # Conflicts with D211 (no-blank-line-before-class). Project uses D211 style.
     "D212",  # Conflicts with D213 (multi-line-summary-first-line). Project uses D213 style.
@@ -57,13 +130,23 @@ python_files = ["test_*.py"]
 
 # Exclude large static datasets, build artifacts, generated hook dirs, and non-source roots
 norecursedirs = [
-    "src/watchmaker/static/salt/formulas",
-    "build",
-    "dist",
-    "ci/pyinstaller",
     ".git",
+    ".env",
+    ".venv",
+    "__pycache__",
+    "ci/pyinstaller",
+    "dist",
     "docs",
+    "build",
+    "htmlcov",
+    "src/watchmaker/static/salt/formulas",
 ]
 
 # Additional pytest options: -r (show extra summary info for skips) and -a (all except passes)
-addopts = "-ra"
+addopts = [
+    "-raxEfsw",
+    "--strict-markers",
+    "--doctest-modules",
+    "--doctest-glob=*.md",
+    "--tb=short",
+]

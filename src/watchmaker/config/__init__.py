@@ -6,7 +6,11 @@ import re
 
 import yaml
 from compatibleversion import check_version
-from importlib_resources import files
+
+try:
+    from importlib.resources import files
+except ImportError:
+    from importlib_resources import files
 
 import watchmaker.utils.imds.detect
 from watchmaker.config.status import is_valid

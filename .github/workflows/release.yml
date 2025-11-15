@@ -50,7 +50,7 @@ jobs:
       - name: Get version
         id: version
         run: |
-          VERSION="$(grep -E "version\s*=" setup.cfg | sed 's/^.*= //')"
+          VERSION="$(grep -E '^version\s*=' pyproject.toml | sed 's/^version = "\(.*\)"$/\1/')"
           echo "version=${VERSION}"
           echo "value=${VERSION}" >> "$GITHUB_OUTPUT"
 
