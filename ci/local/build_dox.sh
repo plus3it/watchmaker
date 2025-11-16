@@ -9,17 +9,17 @@ set -eu
 cd /watchmaker || ( echo "Dir-change failed. Aborting..." ; exit 1 )
 
 # Build watchmaker
-python3 -m build
+uv build
 
 # Install the just-built watchmaker python modules
-python3 -m pip install ./dist/watchmaker-*.whl
+uv pip install --system ./dist/watchmaker-*.whl
 
 # Build the HTML files
-sphinx-build -a -E -W --keep-going -b html docs dist/docs
+uv run sphinx-build -a -E -W --keep-going -b html docs dist/docs
 
 # Test the documentation
-sphinx-build -b doctest docs dist/docs
+uv run sphinx-build -b doctest docs dist/docs
 
 # Test documentation's link-refs
-sphinx-build -b linkcheck docs dist/docs
+uv run sphinx-build -b linkcheck docs dist/docs
 

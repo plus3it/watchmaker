@@ -5,10 +5,10 @@ PYPI_URL=https://pypi.org/simple
 python3 -m ensurepip
 
 # Install setup dependencies
-python3 -m pip install --index-url="$PYPI_URL" --upgrade pip setuptools
+python3 -m pip install --index-url="$PYPI_URL" uv
 
 # Install Watchmaker
-python3 -m pip install --index-url="$PYPI_URL" --upgrade watchmaker
+uv pip install --index-url="$PYPI_URL" --upgrade watchmaker
 
 # Run Watchmaker
 watchmaker --log-level debug --log-dir=/var/log/watchmaker
