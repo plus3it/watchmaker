@@ -25,7 +25,8 @@ jobs:
     outputs:
       release-condition: ${{ steps.release.outputs.condition }}
       release-version: ${{ steps.release.outputs.version }}
-      uv-version: ${{ steps.uv.outputs.version }}
+      pyapp-version: ${{ steps.tools.outputs.pyapp-version }}
+      uv-version: ${{ steps.tools.outputs.uv-version }}
     steps:
       - name: Checkout code
         id: checkout
@@ -58,12 +59,15 @@ jobs:
           echo "condition=${RELEASE}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-      - name: Get uv version
-        id: uv
+      - name: Get tool versions
+        id: tools
         run: |
-          UV_VERSION=$(grep '^uv==' requirements/basics.txt | cut -d'=' -f3)
+          PYAPP_VERSION=$(sed -n 's/.*ofek\/pyapp@v//p' .github/workflows/dependabot_hack.yml)
+          UV_VERSION=$(sed -n 's/^uv==//p' requirements/basics.txt)
+          echo "pyapp-version=${PYAPP_VERSION}"
+          echo "pyapp-version=${PYAPP_VERSION}" >> "$GITHUB_OUTPUT"
           echo "uv-version=${UV_VERSION}"
-          echo "version=${UV_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "uv-version=${UV_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Upload source
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
@@ -160,6 +164,87 @@ jobs:
           name: standalone-dists-${{ matrix.platform }}
           path: |
             .pyinstaller/dist/*/*
+          if-no-files-found: error
+          retention-days: 1
+
+  standalone-pyapp:
+    name: standalone-pyapp (${{ matrix.platform }})
+    needs:
+      - build
+      - checkout
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: ["codebuild-watchmaker-build-${{ github.run_id }}-${{ github.run_attempt }}", image:windows-3.0, image-size:medium]
+            platform: windows
+    steps:
+      - name: Retrieve source
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        with:
+          name: source
+          path: .
+
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        with:
+          name: dists
+          path: dist/
+
+      - name: Restore cargo cache
+        id: cache-cargo
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        with:
+          path: |
+            .pyapp/build/.cargo-cache
+            .pyapp/build/target
+          key: cargo-pyapp-${{ matrix.platform }}-${{ hashFiles('.github/workflows/dependabot_hack.yml') }}
+          restore-keys: |
+            cargo-pyapp-${{ matrix.platform }}-
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3
+        with:
+          version: ${{ needs.checkout.outputs.uv-version }}
+          enable-cache: true
+          cache-local-path: .pyapp/build/.local-share/uv
+          cache-dependency-glob: |
+            requirements/build.txt
+            pyproject.toml
+
+      - name: Mark build script as executable (Linux)
+        run: chmod +x ci/prep_docker_pyapp.sh
+        if: matrix.platform == 'linux'
+      - name: Build standalone binary with PyApp (Linux)
+        run: ci/prep_docker_pyapp.sh
+        if: matrix.platform == 'linux'
+
+      - name: Build standalone binary with PyApp (Windows)
+        if: matrix.platform == 'windows'
+        run: ci/build_pyapp.ps1
+        shell: pwsh
+
+      - name: Exclude built pyapp binary from cache
+        run: rm -rf .pyapp/build/target/release/build/pyapp-*
+        shell: bash
+
+      - name: Save cargo cache
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        if: always() && steps.cache-cargo.outputs.cache-hit != 'true'
+        with:
+          path: |
+            .pyapp/build/.cargo-cache
+            .pyapp/build/target
+          key: ${{ steps.cache-cargo.outputs.cache-primary-key }}
+
+      - name: Upload standalone binary
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        with:
+          name: standalone-pyapp-dists-${{ matrix.platform }}
+          path: |
+            .pyapp/dist/*/*
           if-no-files-found: error
           retention-days: 1
 
