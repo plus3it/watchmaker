@@ -140,17 +140,17 @@ specify something like this for EC2 userdata:
     python3 -m ensurepip
 
     # Install git
-    yum -y install git
-
-    # Upgrade pip and setuptools
-    python3 -m pip install --index-url="$PYPI_URL" --upgrade pip setuptools
+    dnf -y install git
 
     # Clone watchmaker
     git clone "$GIT_REPO" --branch "$GIT_BRANCH" --recursive
 
-    # Install watchmaker
+    # Install required backend tools
     cd watchmaker
-    python3 -m pip install --index-url "$PYPI_URL" --editable .
+    python3 -m pip install --index-url="$PYPI_URL" -r requirements/basics.txt
+
+    # Install watchmaker
+    uv pip install --index-url "$PYPI_URL" --editable .
 
     # Run watchmaker
     watchmaker --log-level debug --log-dir=/var/log/watchmaker
@@ -183,15 +183,15 @@ specify something like this for EC2 userdata:
         -GitUrl "$GitUrl" `
         -Verbose -ErrorAction Stop
 
-    # Upgrade pip and setuptools
-    python -m pip install --index-url="$PypiUrl" --upgrade pip setuptools
-
     # Clone watchmaker
     git clone "$GitRepo" --branch "$GitBranch" --recursive
 
-    # Install watchmaker
+    # Install required backend tools
     cd watchmaker
-    python -m pip install --index-url "$PypiUrl" --editable .
+    python3 -m pip install --index-url="$PYPI_URL" -r requirements/basics.txt
+
+    # Install watchmaker
+    uv pip install --index-url "$PypiUrl" --editable .
 
     # Run watchmaker
     watchmaker --log-level debug --log-dir=C:\Watchmaker\Logs

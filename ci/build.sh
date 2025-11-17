@@ -3,9 +3,7 @@ set -eu -o pipefail
 
 export VIRTUAL_ENV_DIR=.pyinstaller/venv
 
-PYTHON=python3.12
-
-VERSION=$(grep "version =" setup.cfg | sed 's/^.*= //')
+VERSION=$(grep -E '^version\s*=' pyproject.toml | sed 's/^version = "\(.*\)"$/\1/')
 
 PYI_DIST_DIR=".pyinstaller/dist/${VERSION}"
 PYI_SPEC_DIR=".pyinstaller/spec"
@@ -16,27 +14,25 @@ PYI_SCRIPT="${PYI_SPEC_DIR}/watchmaker-standalone.py"
 WAM_SCRIPT="./src/watchmaker/__main__.py"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 
-virtualenv --python=${PYTHON} $VIRTUAL_ENV_DIR
+uv venv "$VIRTUAL_ENV_DIR"
 # shellcheck disable=SC1091
 source "${VIRTUAL_ENV_DIR}/bin/activate"
 
-python -m pip install -r requirements/pip.txt
-
 echo "-----------------------------------------------------------------------"
 python --version
-python -m pip --version
+uv --version
 echo "-----------------------------------------------------------------------"
 
-python -m pip install -r requirements/build.txt
-python -m pip install --editable .
-python -m pip list
+uv pip install -r requirements/build.txt
+uv pip install --editable .
+uv pip list
 
 echo "Creating standalone for watchmaker v${VERSION}..."
 mkdir -p "$PYI_SPEC_DIR"
 cp "$WAM_SCRIPT" "$PYI_SCRIPT"
 # Add debug argument to pyinstaller command to build standalone with debug flags
 #    --debug all \
-pyinstaller --noconfirm --clean --onefile \
+uv run pyinstaller --noconfirm --clean --onefile \
     --name "$WAM_FILENAME" \
     --runtime-tmpdir . \
     --paths src \

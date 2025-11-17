@@ -23,3 +23,7 @@ services.
 
 For more information on installing and using Watchmaker, go to
 <https://watchmaker.cloudarmor.io>.
+
+## Changelog
+
+Changelog can be found at <https://watchmaker.cloudarmor.io/en/stable/changelog.html>.
