@@ -60,7 +60,16 @@ def urlopen_retry(uri, timeout=None):
         url = uri if isinstance(uri, str) else uri.full_url
 
         if url.startswith("https://"):
-            kwargs["context"] = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+
+            # Workaround for old OpenSSL bug on Red Hat 8 systems
+            # See: https://github.com/astral-sh/python-build-standalone/issues/858
+            ssl_cert = Path("/etc/ssl/cert.pem")
+            el8_cert = Path("/etc/pki/tls/cert.pem")
+            if not ssl_cert.exists() and el8_cert.exists():
+                context.load_verify_locations(cafile=str(el8_cert))
+
+            kwargs["context"] = context
     except AttributeError:
         pass
 
