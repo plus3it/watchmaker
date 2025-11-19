@@ -912,13 +912,13 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             :obj:`Path`: Path to the salt-call executable.
 
         """
-        system_drive = os.environ["SYSTEMDRIVE"]
-        program_files = os.environ["PROGRAMFILES"]
-        old_salt_path = Path(system_drive) / "Salt" / "salt-call.bat"
+        system_drive = Path(os.environ["SYSTEMDRIVE"] + "\\")
+        program_files = Path(os.environ["PROGRAMFILES"])
+        old_salt_path = system_drive / "Salt" / "salt-call.bat"
 
         new_salt_paths = [
-            Path(program_files) / "Salt Project" / "Salt" / "salt-call.exe",
-            Path(program_files) / "Salt Project" / "Salt" / "salt-call.bat",
+            program_files / "Salt Project" / "Salt" / "salt-call.exe",
+            program_files / "Salt Project" / "Salt" / "salt-call.bat",
         ]
 
         for salt_path in new_salt_paths:

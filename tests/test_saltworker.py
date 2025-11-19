@@ -367,7 +367,7 @@ def test_windows_defaults():
     # assertions ===================
     assert win_salt.installer_url == salt_config["installer_url"]
     assert win_salt.ash_role == salt_config["ash_role"]
-    assert win_salt.salt_call == Path("C:") / "Salt" / "salt-call.bat"
+    assert win_salt.salt_call == Path("C:\\") / "Salt" / "salt-call.bat"
     assert win_salt.salt_wam_root == Path(system_params["prepdir"]) / "Salt"
     assert win_salt.salt_conf_path == (Path(system_params["prepdir"]) / "Salt" / "conf")
     assert win_salt.salt_srv == Path(system_params["prepdir"]) / "Salt" / "srv"
@@ -454,7 +454,7 @@ def test_windows_install(saltworker_base_salt_args):
 @patch("pathlib.Path.is_file", MagicMock(return_value=False))
 def test_windows_salt_call_old():
     """Ensure old path is tested."""
-    salt_path = Path("C:") / "Salt" / "salt-call.bat"
+    salt_path = Path("C:\\") / "Salt" / "salt-call.bat"
     assert SaltWindows._get_salt_call() == salt_path
 
 

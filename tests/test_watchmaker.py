@@ -1,6 +1,10 @@
 """Watchmaker main test module."""
 
+import platform
+from pathlib import Path
 from unittest.mock import patch
+
+import pytest
 
 import watchmaker
 
@@ -129,3 +133,22 @@ def test_extra_arguments_map():
 
     # assertions
     assert watchmaker_client.worker_args == check_val
+
+
+@pytest.mark.skipif(
+    platform.system() != "Windows",
+    reason="Windows prepdir test only applies on Windows",
+)
+def test_windows_prepdir_default():
+    r"""Test that Windows prepdir resolves to C:\Watchmaker."""
+    # setup
+    raw_arguments = {}
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
+
+    # test
+    with patch("watchmaker.status.Status.initialize", return_value=None):
+        watchmaker_client = watchmaker.Client(watchmaker_arguments)
+
+    # assertions
+    expected_prepdir = Path("C:\\Watchmaker")
+    assert watchmaker_client.system_params["prepdir"] == expected_prepdir
