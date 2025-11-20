@@ -34,6 +34,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _OS library files must have mode 755 or less permissive: #os-library-files-must-have-mode-755-or-less-permissive
   .. _The OS must require authentication to access single-user mode: #the-os-must-require-authentication-to-access-single-user-mode
   .. _The OS The OS must elevate the SELinux context when an administrator calls the sudo command: #the-os-the-os-must-elevate-the-selinux-context-when-an-administrator-calls-the-sudo-command
+  .. _Prevent Unrestricted Mail Relaying: #prevent-unrestricted-mail-relaying
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -121,6 +122,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `The OS The OS must elevate the SELinux context when an administrator calls the sudo command`_                              | V-272496                                         |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-431016                                   |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Prevent Unrestricted Mail Relaying`_                                                                                       | V-257951;      V-271763;      V-269252           |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-252050/OL09-00-002425/ALMA-09-019490     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -388,5 +393,14 @@ In either case, the scanner will flag the mappings as being incorrect. However, 
     * Any file listed in Pillar's ``ash-linux:lookup:protected-sudoer-files`` list
 ```
 
+# Prevent Unrestricted Mail Relaying
+
+**Invalid Finding:**
+
+Some scanners may call out this setting as incorrect, even if correctly-set.
+
+Watchmaker _sets_ the correct value, but some scanners use an incorrect validation-method to check the setting.
+
+* It is known that the `oscap` utility's scan-regex &mdash; derived from the Compliance as Code project's content &mdash; is faulty. A [bug](https://github.com/ComplianceAsCode/content/issues/13891) has been submitted against the project. Projects that leverage this project's contents will likely also indicate a spurious non-compliance finding.
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
