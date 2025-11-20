@@ -96,17 +96,21 @@ content (before submitting a PR), the following can be done:
     execute as part of a pull request submission.
 
 1.  Once the build finishes, build the local copy of the documentation by
-    executing, from the project-root:
+    executing:
 
     ```shell
     podman run \
       -v $( pwd ):/watchmaker \
-      localhost/doc-preview \
-      /watchmaker/ci/local/build_dox.sh
+      localhost/doc-preview
     ```
 
-    This will result in the "preview" versions of the HTML files being generated
-    under the project's `dist/docs` directory.
+    From the project-root. This will result in the "preview" versions of the
+    HTML files being generated under the project's `dist/docs` directory.
+
+    Note: If your local repo-copy already has contents under the `dist`
+    directory, that content may cause the document-build to fail. It's
+    recommended to run `git clean -fdx` before attempting to run the container.
+    This should clean out ALL untracked files in your local repository
 
 1.  To view the documents, use a `file://` URI to reference the location of your
     local git repository's `dist/docs` directory. This may be something like:
