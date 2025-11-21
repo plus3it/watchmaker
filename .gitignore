@@ -108,3 +108,6 @@ htmlcov
 # tardigrade-ci
 .tardigrade-ci
 tardigrade-ci/
+
+# PyApp build directories
+.pyapp/

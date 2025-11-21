@@ -278,11 +278,9 @@ class Client:
     def _get_linux_system_params(self):
         """Set ``self.system_params`` attribute for Linux systems."""
         params = {}
-        params["prepdir"] = Path(self.system_drive) / "usr" / "tmp" / "watchmaker"
-        params["readyfile"] = (
-            Path(self.system_drive) / "var" / "run" / "system-is-ready"
-        )
-        params["logdir"] = Path(self.system_drive) / "var" / "log"
+        params["prepdir"] = self.system_drive / "usr" / "tmp" / "watchmaker"
+        params["readyfile"] = self.system_drive / "var" / "run" / "system-is-ready"
+        params["logdir"] = self.system_drive / "var" / "log"
         params["workingdir"] = params["prepdir"] / "workingfiles"
         params["restart"] = "shutdown -r +1 &"
         return params
@@ -290,8 +288,7 @@ class Client:
     def _get_windows_system_params(self):
         """Set ``self.system_params`` attribute for Windows systems."""
         params = {}
-        # Path handles Windows drive letters correctly
-        params["prepdir"] = Path(self.system_drive) / "Watchmaker"
+        params["prepdir"] = self.system_drive / "Watchmaker"
         params["readyfile"] = params["prepdir"] / "system-is-ready"
         params["logdir"] = params["prepdir"] / "Logs"
         params["workingdir"] = params["prepdir"] / "WorkingFiles"
@@ -308,12 +305,13 @@ class Client:
     def _set_system_params(self):
         """Set OS-specific attributes."""
         if "linux" in self.system:
-            self.system_drive = "/"
+            self.system_drive = Path("/")
             self.workers_manager = LinuxWorkersManager
             self.system_params = self._get_linux_system_params()
             os.umask(0o077)
         elif "windows" in self.system:
-            self.system_drive = os.environ["SYSTEMDRIVE"]
+            # Convert to Path with trailing backslash for proper path construction
+            self.system_drive = Path(os.environ["SYSTEMDRIVE"] + "\\")
             self.workers_manager = WindowsWorkersManager
             self.system_params = self._get_windows_system_params()
         else:

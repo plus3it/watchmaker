@@ -1,0 +1,31 @@
+FROM rust:1.91.1-slim AS rust
+
+FROM public.ecr.aws/docker/library/almalinux:8@sha256:2d4abdee2caecd851d2d6591dfb2205ba18549bc080ad5377875c990331e41c4
+
+ARG USER=wam-builder
+ARG USER_UID
+ARG USER_GID
+ARG UV_VERSION
+
+USER root
+
+RUN if [ ${USER_UID} -eq 0 ] ; then adduser ${USER} ; \
+    else if ! getent group "$USER_GID" ; then groupadd --gid ${USER_GID} ${USER} ; \
+    else GROUP_NAME=$(getent group $USER_GID | awk -F':' '{print $1}') ; groupmod -n ${USER} "$GROUP_NAME" ; fi \
+    && adduser --uid ${USER_UID} --gid ${USER_GID} ${USER} ; fi
+
+RUN dnf install -y gcc make curl
+
+USER ${USER}
+
+ENV HOME="/home/${USER}"
+ENV RUSTUP_HOME="${HOME}/.rustup"
+ENV CARGO_HOME="${HOME}/.cargo"
+ENV PATH="${HOME}/.local/bin:${CARGO_HOME}/bin:${PATH}"
+
+# Copy Rust toolchain from rust stage
+COPY --from=rust --chown=${USER}:${USER} /usr/local/cargo ${CARGO_HOME}
+COPY --from=rust --chown=${USER}:${USER} /usr/local/rustup ${RUSTUP_HOME}
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/${UV_VERSION}/install.sh | sh

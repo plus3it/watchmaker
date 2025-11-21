@@ -279,12 +279,12 @@ class SaltBase(WorkerBase, PlatformManagerBase):
         # Append Salt formulas bundled with Watchmaker package.
         with as_file(
             resources.files(static) / "salt" / "formulas",
-        ) as formulas_path:
-            for formula in formulas_path.iterdir():
-                formula_path = self.salt_formula_root / formula.name
+        ) as formulas_distribution_dir:
+            for formula_src in formulas_distribution_dir.iterdir():
+                formula_dest = self.salt_formula_root / formula_src.name
                 watchmaker.utils.copytree(
-                    formula,
-                    formula_path,
+                    formula_src,
+                    formula_dest,
                     force=True,
                 )
 
@@ -912,13 +912,13 @@ class SaltWindows(SaltBase, WindowsPlatformManager):
             :obj:`Path`: Path to the salt-call executable.
 
         """
-        system_drive = os.environ["SYSTEMDRIVE"]
-        program_files = os.environ["PROGRAMFILES"]
-        old_salt_path = Path(system_drive) / "Salt" / "salt-call.bat"
+        system_drive = Path(os.environ["SYSTEMDRIVE"] + "\\")
+        program_files = Path(os.environ["PROGRAMFILES"])
+        old_salt_path = system_drive / "Salt" / "salt-call.bat"
 
         new_salt_paths = [
-            Path(program_files) / "Salt Project" / "Salt" / "salt-call.exe",
-            Path(program_files) / "Salt Project" / "Salt" / "salt-call.bat",
+            program_files / "Salt Project" / "Salt" / "salt-call.exe",
+            program_files / "Salt Project" / "Salt" / "salt-call.bat",
         ]
 
         for salt_path in new_salt_paths:

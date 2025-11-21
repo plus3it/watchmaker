@@ -12,7 +12,9 @@ from watchmaker.logger import LOG_LEVELS, exception_hook, prepare_logging
 
 LOG_LOCATIONS = {
     "linux": str(Path("/var/log/watchmaker")),
-    "windows": str(Path(os.environ.get("SYSTEMDRIVE", "C:")) / "Watchmaker" / "Logs"),
+    "windows": str(
+        Path(os.environ.get("SYSTEMDRIVE", "C:") + "\\") / "Watchmaker" / "Logs",
+    ),
 }
 
 

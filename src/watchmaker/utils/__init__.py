@@ -1,6 +1,7 @@
 """Loads helper utility modules and functions."""
 
 import os
+import platform
 import shutil
 import ssl
 import warnings
@@ -60,16 +61,36 @@ def urlopen_retry(uri, timeout=None):
         url = uri if isinstance(uri, str) else uri.full_url
 
         if url.startswith("https://"):
-            kwargs["context"] = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+            context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
+
+            # Workaround for old OpenSSL bug on Red Hat 8 systems
+            # See: https://github.com/astral-sh/python-build-standalone/issues/858
+            ssl_cert = Path("/etc/ssl/cert.pem")
+            el8_cert = Path("/etc/pki/tls/cert.pem")
+            if not ssl_cert.exists() and el8_cert.exists():
+                context.load_verify_locations(cafile=str(el8_cert))
+
+            kwargs["context"] = context
     except AttributeError:
         pass
 
     return urllib_utils.request.urlopen(uri, **kwargs)
 
 
+def _add_long_path_prefix(path):
+    """Add Windows long path prefix if needed."""
+    path_str = str(path)
+    if not path_str.startswith(r"\\?"):
+        return Path(rf"\\?\{path_str}")
+    return path
+
+
 def copytree(src, dst, *, force=False, **kwargs):
     r"""
     Copy OS directory trees from source to destination.
+
+    On Windows, automatically handles paths exceeding the MAX_PATH limit (260 chars)
+    by converting to extended-length paths with the \\?\ prefix when necessary.
 
     Args:
         src: (:obj:`Path`)
@@ -88,6 +109,31 @@ def copytree(src, dst, *, force=False, **kwargs):
             Additional keyword arguments to pass to :func:`shutil.copytree`.
 
     """
+    # On Windows, handle paths that may exceed MAX_PATH (260 characters)
+    # References:
+    # - https://discuss.python.org/t/request-for-pathlib-path-as-unc/91271/5
+    # - https://github.com/python/cpython/issues/71917
+    if platform.system() == "Windows" and "copy_function" not in kwargs:
+        # Threshold for applying long path prefix (allows ~60 char headroom)
+        long_path_threshold = 200
+
+        def long_path_copy(src_file, dst_file, **copy_kwargs):
+            """Copy with long path support when paths exceed threshold."""
+            src_path = Path(src_file)
+            dst_path = Path(dst_file)
+
+            # Apply \\?\ prefix if paths approach MAX_PATH (260 chars)
+            # Check each path independently and only prefix if needed
+            if len(str(src_path)) > long_path_threshold:
+                src_path = _add_long_path_prefix(src_path)
+
+            if len(str(dst_path)) > long_path_threshold:
+                dst_path = _add_long_path_prefix(dst_path)
+
+            shutil.copy2(src_path, dst_path, **copy_kwargs)
+
+        kwargs["copy_function"] = long_path_copy
+
     if force and dst.exists():
         shutil.rmtree(dst)
 
