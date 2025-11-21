@@ -144,12 +144,12 @@ Write-Host "Installing watchmaker and dependencies into custom Python distributi
 uv pip install --python $PYTHON_BIN $WHEEL_FILE_ABS boto3
 
 Write-Host "Creating custom distribution archive..."
-$CUSTOM_DIST = "cpython-$PYTHON_FULL_VERSION-watchmaker-$VERSION.tar.gz"
+$CUSTOM_DIST = "cpython-$PYTHON_FULL_VERSION-watchmaker-$VERSION.tar.zst"
 if ($UseTar) {
-    tar -czf $CUSTOM_DIST $PYTHON_DIR
+    tar --zstd -cf $CUSTOM_DIST $PYTHON_DIR
 } else {
     & $SevenZipPath a -ttar temp.tar $PYTHON_DIR
-    & $SevenZipPath a -tgzip $CUSTOM_DIST temp.tar
+    & $SevenZipPath a -tzstd $CUSTOM_DIST temp.tar
     Remove-Item temp.tar -Force
 }
 
