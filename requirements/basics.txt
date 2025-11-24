@@ -3,4 +3,4 @@
 # The PEP 517 backend is defined in pyproject.toml [build-system] and will be
 # resolved automatically by the frontend. We also pin it here for reproducibility
 # in environments that choose to invoke the backend directly.
-uv==0.9.9
+uv==0.9.11
