@@ -74,8 +74,8 @@ export UV_CACHE_DIR="${HOME}/.local/share/uv"
 uv pip install --python "$PYTHON_BIN" "$WHEEL_FILE_ABS" boto3
 
 echo "Creating custom distribution archive..."
-CUSTOM_DIST="cpython-${PYTHON_FULL_VERSION}-watchmaker-${VERSION}.tar.gz"
-tar -czf "$CUSTOM_DIST" "$PYTHON_DIR"
+CUSTOM_DIST="cpython-${PYTHON_FULL_VERSION}-watchmaker-${VERSION}.tar.zst"
+tar -I zstd -cf "$CUSTOM_DIST" "$PYTHON_DIR"
 
 echo "Custom distribution created: $CUSTOM_DIST"
 ls -lh "$CUSTOM_DIST"

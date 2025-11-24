@@ -14,7 +14,7 @@ RUN if [ ${USER_UID} -eq 0 ] ; then adduser ${USER} ; \
     else GROUP_NAME=$(getent group $USER_GID | awk -F':' '{print $1}') ; groupmod -n ${USER} "$GROUP_NAME" ; fi \
     && adduser --uid ${USER_UID} --gid ${USER_GID} ${USER} ; fi
 
-RUN dnf install -y gcc make curl
+RUN dnf install -y gcc make curl zstd
 
 USER ${USER}
 
