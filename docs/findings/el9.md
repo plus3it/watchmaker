@@ -115,9 +115,9 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-232020                                   |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
-  | `The OS must require authentication to access single-user mode`_                                                            | V-258129                                         |
+  | `The OS must require authentication to access single-user mode`_                                                            | V-258129;      V-271442;      V-269139           |
   |                                                                                                                             |                                                  |
-  |                                                                                                                             | RHEL-09-611200                                   |
+  |                                                                                                                             | RHEL-09-611200/OL09-00-000030/ALMA-09-006510     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | `The OS The OS must elevate the SELinux context when an administrator calls the sudo command`_                              | V-272496                                         |
   |                                                                                                                             |                                                  |
@@ -370,6 +370,15 @@ grep sulogin /usr/lib/systemd/system/rescue.service
 ```
 
 Returns either of the above, two values that the scan-target is adequately configured for this finding.
+
+```{eval-rst}
+.. note::
+    CSP-hosted Enterprise Linux VMs typically do not have a root password set.
+    With this hardening option in place, single-user mode won't be accessible
+    unless a password has been previously-set for the root user (typically as
+    part of either launch- or lifecycle-automation)
+```
+
 
 # The OS The OS must elevate the SELinux context when an administrator calls the sudo command
 
