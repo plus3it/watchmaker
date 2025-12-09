@@ -35,7 +35,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _The OS must require authentication to access single-user mode: #the-os-must-require-authentication-to-access-single-user-mode
   .. _The OS The OS must elevate the SELinux context when an administrator calls the sudo command: #the-os-the-os-must-elevate-the-selinux-context-when-an-administrator-calls-the-sudo-command
   .. _Prevent Unrestricted Mail Relaying: #prevent-unrestricted-mail-relaying
-  .. _Authorized access must be enforced for access to SSH private-keys used for PKI-based authentication: #authorized-access-must-be-enforced-for-access-to-ssh-private-keys-used-for-pki-based-authentication
+  .. _Authorized Access Must Be Enforced For Access To Private-Keys Used For PKI-Based Authentication: #authorized-access-must-be-enforced-for-access-to-private-keys-used-for-pki-based-authentication
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -128,7 +128,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-252050/OL09-00-002425/ALMA-09-019490     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
-  | `Authorized access must be enforced for access to private-keys used for PKI-based authentication`_                          | V-258127;      V-271605;      V-269410           |
+  | `Authorized Access Must Be Enforced For Access To Private-Keys Used For PKI-Based Authentication`_                          | V-258127;      V-271605;      V-269410           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-611190/OL09-00-000905/ALMA-09-038850     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
@@ -423,7 +423,7 @@ Watchmaker _sets_ the correct value, but some scanners use an incorrect validati
 
 When using the default scan-content from the oscap utility (and possibly other tooling), the scan-findings will report clean _only_ if the `smtpd_client_restrictions` Postfix parameter's value is set to "`permit_mynetworks,reject`". Any deviation from this, even to ones that are _more_ restrictive, can result in a finding that is spurious for the actual intent of the scan.
 
-# Authorized access must be enforced for access to SSH private-keys used for PKI-based authentication
+# Authorized Access Must Be Enforced For Access To Private-Keys Used For PKI-Based Authentication
 
 **Invalid Finding:**
 
