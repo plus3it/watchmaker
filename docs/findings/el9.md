@@ -35,6 +35,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _The OS must require authentication to access single-user mode: #the-os-must-require-authentication-to-access-single-user-mode
   .. _The OS The OS must elevate the SELinux context when an administrator calls the sudo command: #the-os-the-os-must-elevate-the-selinux-context-when-an-administrator-calls-the-sudo-command
   .. _Prevent Unrestricted Mail Relaying: #prevent-unrestricted-mail-relaying
+  .. _Authorized access must be enforced for access to SSH private-keys used for PKI-based authentication: #authorized-access-must-be-enforced-for-access-to-ssh-private-keys-used-for-pki-based-authentication
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -126,6 +127,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `Prevent Unrestricted Mail Relaying`_                                                                                       | V-257951;      V-271763;      V-269252           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-252050/OL09-00-002425/ALMA-09-019490     |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `Authorized access must be enforced for access to private-keys used for PKI-based authentication`_                          | V-258127;      V-271605;      V-269410           |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-611190/OL09-00-000905/ALMA-09-038850     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -417,5 +422,18 @@ Watchmaker _sets_ the correct value, but some scanners use an incorrect validati
 ## Inflexible (Too Strict) Scan
 
 When using the default scan-content from the oscap utility (and possibly other tooling), the scan-findings will report clean _only_ if the `smtpd_client_restrictions` Postfix parameter's value is set to "`permit_mynetworks,reject`". Any deviation from this, even to ones that are _more_ restrictive, can result in a finding that is spurious for the actual intent of the scan.
+
+# Authorized access must be enforced for access to SSH private-keys used for PKI-based authentication
+
+**Invalid Finding:**
+
+Given that users' SSH keys, public and private, do not have and, in current releases of OpenSSH, cannot be *forced* to have standardized naming, a scanner is unlikely to *actually* be able to scan for keys. Any entries in a findings report are, therefore, *very* likely to be spurious. In short, unless a report is able to enumerate *specific* keys, significant doubt should be cast on the veracity of the finding.
+
+Further:
+
+1. It should be rare that users are creating SSH keys on remote, EL9-based hosts. Best practices would have SSH key-users generating keys on local systems and using OpenSSH's key-forwarding capabilities to enable key-based access to further systems.
+2. Actual enforcement would be more of an ongoing ("lifecycle") task than a "run at birth" type of task (i.e., "not within Watchmaker's normal scope").
+3. STIG-guidance indicates that passwordles SSH private keys should be replaced with a new private-key that is password-protected. There are significant user-coordination problems that would be required to create a wholly automated approach. Many such automated approaches would require worfklow systems well beyond the scope of watchmaker. Absent the satisfaction of user-coordination problem, summarily replacing keys would likely cause significant heartburn to the system-user community if their keys are suddenly removed in favor of keys protected by passwords users have no knowledge of. Such heartburn would be cause for ongoing submissions of support requests.
+
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
