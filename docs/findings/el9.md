@@ -36,6 +36,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _The OS The OS must elevate the SELinux context when an administrator calls the sudo command: #the-os-the-os-must-elevate-the-selinux-context-when-an-administrator-calls-the-sudo-command
   .. _Prevent Unrestricted Mail Relaying: #prevent-unrestricted-mail-relaying
   .. _Authorized Access Must Be Enforced For Access To Private-Keys Used For PKI-Based Authentication: #authorized-access-must-be-enforced-for-access-to-private-keys-used-for-pki-based-authentication
+  .. _System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor: #system-must-validate-certificates-by-constructing-a-certification-path-to-an-accepted-trust-anchor
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -131,6 +132,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `Authorized Access Must Be Enforced For Access To Private-Keys Used For PKI-Based Authentication`_                          | V-258127;      V-271605;      V-269410           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-611190/OL09-00-000905/ALMA-09-038850     |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor`_                       | V-258131;      V-271604;      V-269412           |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-631010/OL09-00-000900/ALMA-09-039070     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -435,5 +440,18 @@ Further:
 2. Actual enforcement would be more of an ongoing ("lifecycle") task than a "run at birth" type of task (i.e., "not within Watchmaker's normal scope").
 3. STIG-guidance indicates that passwordless SSH private keys should be replaced with a new private-key that is password-protected. There are significant user-coordination problems that would be required to create a wholly automated approach. Many such automated approaches would require worfklow systems well beyond the scope of watchmaker. Absent the satisfaction of user-coordination problem, summarily replacing keys would likely cause significant heartburn to the system-user community if their keys are suddenly removed in favor of keys protected by passwords users have no knowledge of. Such heartburn would be cause for ongoing submissions of support requests.
 
+# System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor
+
+**Conditionally-valid Finding:**
+
+This finding is almost exclusively focussed on DoD systems &mdash; systems using DoD issued SmartCards to support logins. If the scan's target-system does not:
+
+* Use *direct*[^2], SmartCard-supported logins&hellip;
+* Use SmartCards issued with certificates signed by DoD Certificate authorities&hellip;
+* Use the sssd service to manage logins&hellip;
+
+Scanner-noted compliance-findings will not be valid.
+
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
+[^2]: Users directly authenticate to the EL9-based host and not PIV-authenticate to an external service that then forwards an authentication token on behalf of that user.
