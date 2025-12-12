@@ -452,6 +452,12 @@ This finding is almost exclusively focussed on DoD systems &mdash; systems using
 
 Scanner-noted compliance-findings will not be valid.
 
+# System Must Only Allow the Use of Dod Pki-established Certificate Authorities For Authentication
+
+**Conditionally-valid Finding:**
+
+This finding is almost exclusively focussed on DoD systems. If the scan's target system ever needs to validate certificates for non-DOD PKI resources, this finding is not valid. Further, implementing this finding's recommendations on systems that need to validate certificates for non-DoD PKI resources will breaks those systems' ability to do so.
+
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
 [^2]: Users directly authenticate to the EL9-based host and not PIV-authenticate to an external service that then forwards an authentication token on behalf of that user.
