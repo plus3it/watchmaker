@@ -37,6 +37,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Prevent Unrestricted Mail Relaying: #prevent-unrestricted-mail-relaying
   .. _Authorized Access Must Be Enforced For Access To Private-Keys Used For PKI-Based Authentication: #authorized-access-must-be-enforced-for-access-to-private-keys-used-for-pki-based-authentication
   .. _System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor: #system-must-validate-certificates-by-constructing-a-certification-path-to-an-accepted-trust-anchor
+  .. _System Must Only Allow the Use of Dod Pki-established Certificate Authorities For Authentication: #system-must-only-allow-the-use-of-dod-pki-established-certificate-authorities-for-authentication
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -136,6 +137,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor`_                       | V-258131;      V-271604;      V-269412           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-631010/OL09-00-000900/ALMA-09-039070     |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `System Must Only Allow the Use of Dod Pki-established Certificate Authorities For Authentication`_                         | V-271901;      V-269427;                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | OL09-00-900140/ALMA-09-041270                    |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -451,6 +456,12 @@ This finding is almost exclusively focussed on DoD systems &mdash; systems using
 * Use the sssd service to manage logins&hellip;
 
 Scanner-noted compliance-findings will not be valid.
+
+# System Must Only Allow the Use of Dod Pki-established Certificate Authorities For Authentication
+
+**Conditionally-valid Finding:**
+
+This finding is almost exclusively focussed on DoD systems. If the scan's target system ever needs to validate certificates for non-DOD PKI resources, this finding is not valid. Further, implementing this finding's recommendations on systems that need to validate certificates for non-DoD PKI resources will breaks those systems' ability to do so.
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
