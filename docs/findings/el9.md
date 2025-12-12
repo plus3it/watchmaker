@@ -37,6 +37,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Prevent Unrestricted Mail Relaying: #prevent-unrestricted-mail-relaying
   .. _Authorized Access Must Be Enforced For Access To Private-Keys Used For PKI-Based Authentication: #authorized-access-must-be-enforced-for-access-to-private-keys-used-for-pki-based-authentication
   .. _System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor: #system-must-validate-certificates-by-constructing-a-certification-path-to-an-accepted-trust-anchor
+  .. _System Must Only Allow the Use of Dod Pki-established Certificate Authorities For Authentication: #system-must-only-allow-the-use-of-dod-pki-established-certificate-authorities-for-authentication
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -136,6 +137,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor`_                       | V-258131;      V-271604;      V-269412           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-631010/OL09-00-000900/ALMA-09-039070     |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `System Must Only Allow the Use of Dod Pki-established Certificate Authorities For Authentication`_                         | V-271901;      V-269427;                         |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | OL09-00-900140/ALMA-09-041270                    |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
