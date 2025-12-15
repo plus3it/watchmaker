@@ -70,7 +70,7 @@ jobs:
           echo "uv-version=${UV_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Upload source
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: source
           path: ./**
@@ -89,7 +89,7 @@ jobs:
             name: build
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: source
           path: .
@@ -100,7 +100,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@ed21f2f24f8dd64503750218de024bcf64c7250a
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -110,7 +110,7 @@ jobs:
         run: uv build --verbose
 
       - name: Upload distributions
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: dists
           path: dist/
@@ -132,7 +132,7 @@ jobs:
             python-version: "3.12"
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: source
           path: .
@@ -143,7 +143,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@ed21f2f24f8dd64503750218de024bcf64c7250a
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -159,7 +159,7 @@ jobs:
         shell: pwsh
 
       - name: Upload standalone binary
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: standalone-dists-${{ matrix.platform }}
           path: |
@@ -182,20 +182,20 @@ jobs:
             platform: windows
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: source
           path: .
 
       - name: Retrieve release distributions
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: dists
           path: dist/
 
       - name: Restore cargo cache
         id: cache-cargo
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/cache/restore@9255dc7a253b0ccc959486e2bca901246202afeb
         with:
           path: |
             .pyapp/build/.cargo-cache
@@ -205,7 +205,7 @@ jobs:
             cargo-pyapp-${{ matrix.platform }}-
 
       - name: Install uv
-        uses: astral-sh/setup-uv@ed21f2f24f8dd64503750218de024bcf64c7250a
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           enable-cache: true
@@ -231,7 +231,7 @@ jobs:
         shell: bash
 
       - name: Save cargo cache
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/cache/save@9255dc7a253b0ccc959486e2bca901246202afeb
         if: always() && steps.cache-cargo.outputs.cache-hit != 'true'
         with:
           path: |
@@ -240,7 +240,7 @@ jobs:
           key: ${{ steps.cache-cargo.outputs.cache-primary-key }}
 
       - name: Upload standalone binary
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: standalone-pyapp-dists-${{ matrix.platform }}
           path: |
@@ -259,7 +259,7 @@ jobs:
         os: ["ubuntu-latest", "windows-2022"]
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: source
           path: .
@@ -270,7 +270,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@ed21f2f24f8dd64503750218de024bcf64c7250a
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -284,7 +284,7 @@ jobs:
       - run: uv pip install -r requirements/test.txt
 
       - name: Retrieve release distributions
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: dists
           path: dist/
@@ -309,7 +309,7 @@ jobs:
             name: lint
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: source
           path: .
@@ -320,7 +320,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@ed21f2f24f8dd64503750218de024bcf64c7250a
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -334,7 +334,7 @@ jobs:
       - run: uv pip install -r requirements/check.txt
 
       - name: Retrieve release distributions
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: dists
           path: dist/
@@ -359,7 +359,7 @@ jobs:
             name: docs
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: source
           path: .
@@ -370,7 +370,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@ed21f2f24f8dd64503750218de024bcf64c7250a
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -384,7 +384,7 @@ jobs:
       - run: uv pip install -r requirements/docs.txt
 
       - name: Retrieve release distributions
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: dists
           path: dist/
