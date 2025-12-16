@@ -461,8 +461,30 @@ Scanner-noted compliance-findings will not be valid.
 
 **Conditionally-valid Finding:**
 
-This finding is almost exclusively focussed on DoD systems. If the scan's target system ever needs to validate certificates for non-DOD PKI resources, this finding is not valid. Further, implementing this finding's recommendations on systems that need to validate certificates for non-DoD PKI resources will breaks those systems' ability to do so.
+This finding is exclusively focussed on remediation of DoD systems, especially ones that are on isolated network.
 
+* If the scan's target-system ever needs to validate certificates for non-DOD PKI resources, this finding is not valid.
+* If the scan's target-system is wholly non-DoD, this finding is not valid
+
+```{eval-rst}
+.. warning::
+    Implementing this finding's recommendations on systems that need to validate certificates for non-DoD PKI resources *breaks* those systems' ability to do so. For example, implementing the stated guidance would mean that the ability to perform core OS capabilities, like patching from public or vendor-hosted repositories, will fail (since ``dnf`` is generally done via HTTPs and such repositories' veracity is authenticated usin PKI certificates that are not DoD-signed).
+```
+
+The automation to implement this finding _is_ included in watchmaker. However, because of its potential/likely deleterious impacts across a significan percentage of the systems that `watchmaker` is used against, it is not part of the default findings handler-groups. To activate this finding:
+
+1. Locate the "top" Pillar file. Typically, watchmaker will have installed this to `/srv/watchmaker/salt/pillar/top.sls`
+2. Open the file for editing
+3. Add the handler, `ALMA-09-041270`, as the last entry in the (YAML) list headed `'G@os_family:RedHat'`. This will look something like:
+
+    ```yaml
+      'G@os_family:RedHat':
+        - common.ash-linux
+        - common.scap.elx
+        - [...ELIDED...]
+        - ash-linux.el9.STIGbyID.cat2.ALMA-09-041270
+    ```
+4. Perform a full `watchmaker` run
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
 [^2]: Users directly authenticate to the EL9-based host and not PIV-authenticate to an external service that then forwards an authentication token on behalf of that user.
