@@ -497,7 +497,7 @@ The automation to implement this finding _is_ included in watchmaker. However, b
 
 This finding is only valid on systems where hardware-level data-encryption is not performed.
 
-This finding is not easily remediateable via post-build mechanisms. Attempting to set up post-launch encryption of all volumes and filesystems are often:
+This finding is not easily remediable via post-build mechanisms. Attempting to set up post-launch encryption of all volumes and filesystems are often:
 
 * Complex
 * Significantly prone to causing system-breakage
