@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/almalinux:8@sha256:2d4abdee2caecd851d2d6591dfb2205ba18549bc080ad5377875c990331e41c4
+FROM public.ecr.aws/docker/library/almalinux:8@sha256:6e0bf7e15bf9082c3e5b8f1811618ae2c56c7b9fc1e9f5e5ec6e23d271bc273c
 
 ARG USER=wam-builder
 ARG USER_UID
