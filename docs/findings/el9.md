@@ -39,6 +39,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _System Must Validate Certificates by Constructing a Certification Path to An Accepted Trust Anchor: #system-must-validate-certificates-by-constructing-a-certification-path-to-an-accepted-trust-anchor
   .. _System Must Only Allow the Use of Dod Pki-established Certificate Authorities For Authentication: #system-must-only-allow-the-use-of-dod-pki-established-certificate-authorities-for-authentication
   .. _Local Disk Partitions Must Implement Encryption at Rest Protection: #local-disk-partitions-must-implement-encryption-at-rest-protection
+  .. _OS must audit all uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls: #os-must-audit-all-uses-of-the-setxattr,-fsetxattr,-lsetxattr,-removexattr,-fremovexattr,-and-lremovexattr-system-calls
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -146,6 +147,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `Local Disk Partitions Must Implement Encryption at Rest Protection`_                                                       | V-257879;      V-271756;      V-269429           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-231190/OL09-00-002418/ALMA-09-041600     |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `OS must audit all uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls`_   | V-258179;      V-271536;      V-269505           |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-654025/OL09-00-000545/ALMA-09-051390     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 ```
 
@@ -510,6 +515,52 @@ The typical host-level solution is done via [LUKS](https://access.redhat.com/sol
 The need for LUKS is generally rendered redundant through the use of hardware-level encryption (check your site's policies on allowed alternatives). For physical systems, this is typically done via specialty hardware. For virtual systems (AWS EC2s, VMs for HyperV, Azure, VMware and others, etc.) this is done through the respective hypervisors' capabilities. Some hypervisors may require that VM templates or machine-images have encryption baked in. Others (e.g., AWS's) can be configured to present template-specified, unencrypted drives as encrypted as part of the launch process.
 
 If a scanner's host-level scanning-agent flags a lack of encryption, it will be necessary to perform a secondary review of hardware-level settings. Assuming VM-templates have, by rule, encryption baked in or the virtual environment implements policy-based disk-encryption, scanners should be configured to ignore this setting (to reduce the number of false-alerts generated).
+
+# OS Must Audit All Uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr System Calls
+
+**Invalid Finding:**
+
+Watchmaker implements the STIG guidance by way of individual configuration-entries for each of the `fremovexattr`, `fsetxattr`, `lremovexattr`, `lsetxattr`, `removexattr`, and `setxattr` System Calls (like so):
+
+```bash
+$ sudo auditctl -l | grep xattr
+-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b32 -S fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b32 -S fsetxattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b32 -S lremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b32 -S lsetxattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b32 -S removexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b32 -S setxattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b64 -S fremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b64 -S fsetxattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b64 -S lremovexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b64 -S lsetxattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b64 -S removexattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod
+-a always,exit -F arch=b64 -S setxattr -F auid>=1000 -F auid!=-1 -F key=perm_mod
+```
+
+Scanners that are inflexibly configured such that they require combined-entries (such as follows) or, worse, _exact-match_ combined-entries:
+
+```bash
+$ sudo auditctl -l | grep xattr
+-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod
+-a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid=0 -k perm_mod
+```
+
+Will incorrectly assert that the `auditd` subsystem has not been configured to capture the required system-call activitieis.
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
