@@ -1,6 +1,6 @@
 FROM rust:1.92.0-slim AS rust
 
-FROM public.ecr.aws/docker/library/almalinux:8@sha256:6e0bf7e15bf9082c3e5b8f1811618ae2c56c7b9fc1e9f5e5ec6e23d271bc273c
+FROM public.ecr.aws/docker/library/almalinux:8@sha256:a80aa34a46ed8651ebf5ab3ca014ec6f20b18ede3952a1d88e0be3cb8fe4ebcf
 
 ARG USER=wam-builder
 ARG USER_UID
