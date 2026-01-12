@@ -572,7 +572,7 @@ Will incorrectly assert that the `auditd` subsystem has not been configured to c
 
 **Expected Finding:**
 
-The amount of storage-space required to locally-host a week's worth of system audit activities is typically not a fixed, predetermineable size. Further, storage-allocation tasks are not able to be effected solely from within the configuration-target. As such, run-time automation-tools, like watchmaker, are not suited for automating such tasks. Instead, such tasks need to be part of a host-build/sizing work-flow.
+The amount of storage-space required to locally-host a week's worth of system audit activities is typically not a fixed, predetermineable size. This is labeled as "expected" as most scanner implementations will not be able to reliably determine storage-needs via standard automation methods. As such, the finding is typically prescribed as a manual-check and the recommended-fixes described as a manual task. This is because storage-allocation tasks are generally not able to be effected _solely_ from within the configuration-target. As such, run-time automation-tools, like watchmaker, are not suited for automating these kinds of tasks. Instead, such tasks need to be part of a host-build/sizing work-flow.
 
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
