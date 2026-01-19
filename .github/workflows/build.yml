@@ -195,7 +195,7 @@ jobs:
 
       - name: Restore cargo cache
         id: cache-cargo
-        uses: actions/cache/restore@9255dc7a253b0ccc959486e2bca901246202afeb
+        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7
         with:
           path: |
             .pyapp/build/.cargo-cache
@@ -231,7 +231,7 @@ jobs:
         shell: bash
 
       - name: Save cargo cache
-        uses: actions/cache/save@9255dc7a253b0ccc959486e2bca901246202afeb
+        uses: actions/cache/save@8b402f58fbc84540c8b491a91e594a4576fec3d7
         if: always() && steps.cache-cargo.outputs.cache-hit != 'true'
         with:
           path: |
