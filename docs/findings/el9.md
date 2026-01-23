@@ -41,6 +41,7 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   .. _Local Disk Partitions Must Implement Encryption at Rest Protection: #local-disk-partitions-must-implement-encryption-at-rest-protection
   .. _OS must audit all uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls: #os-must-audit-all-uses-of-the-setxattr,-fsetxattr,-lsetxattr,-removexattr,-fremovexattr,-and-lremovexattr-system-calls
   .. _OS Must Allocate Audit Record Storage Capacity To Store At Least One Week's Worth Of Audit Records: #os-must-allocate-audit-record-storage-capacity-to-store-at-least-one-week's-worth-of-audit-records
+  .. _OS Must Use Cryptographic Mechanisms To Protect The Integrity Of Audit Tools: #os-must-use-cryptographic-mechanisms-to-protect-the-integrity-of-audit-tools
 
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
   | Finding Summary                                                                                                             | Finding Identifiers                              |
@@ -156,6 +157,10 @@ A few scans performed against EL9 systems are version-dependent. Watchmaker is d
   | `OS Must Allocate Audit Record Storage Capacity To Store At Least One Week's Worth Of Audit Records`_                       | V-258155;      V-271596;      V-269508           |
   |                                                                                                                             |                                                  |
   |                                                                                                                             | RHEL-09-653030/OL09-00-000850/ALMA-09-052050     |
+  +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
+  | `OS Must Use Cryptographic Mechanisms To Protect The Integrity Of Audit Tools`_                                             | V-258137;      V-271569;      V-269545           |
+  |                                                                                                                             |                                                  |
+  |                                                                                                                             | RHEL-09-651025/OL09-00-000710/ALMA-09-056890     |
   +-----------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------+
 
 ```
@@ -574,6 +579,23 @@ Will incorrectly assert that the `auditd` subsystem has not been configured to c
 
 The amount of storage-space required to locally-host a week's worth of system audit activities is typically not a fixed, predetermineable size. This is labeled as "expected" as most scanner implementations will not be able to reliably determine storage-needs via standard automation methods. As such, the finding is typically prescribed as a manual-check and the recommended-fixes described as a manual task. This is because storage-allocation tasks are generally not able to be effected _solely_ from within the configuration-target. As such, run-time automation-tools, like watchmaker, are not suited for automating these kinds of tasks. Instead, such tasks need to be part of a host-build/sizing work-flow.
 
+# OS Must Use Cryptographic Mechanisms To Protect The Integrity Of Audit Tools
+
+**Conditionally-valid Finding:**
+
+Watchmaker implments two different AIDE configuration-updates for this finding.
+
+* The `oscap` utility, when using recent Compliance as Code content, implements the `/usr/sbin/au*` monitors as:
+    ```
+    p+i+n+u+g+s+b+acl+selinux+xattrs+sha512
+    ```
+* An additional, pure SaltStack handler will set the value to:
+    ```
+    p+i+n+u+g+s+b+acl+xattrs+sha512
+    ```
+    If and only if the value set by `oscap` doesn't already exist (an eventuality that should only occur if only specific parts of watchmaker are run rather than the expected "run all" mode)
+
+Some scanners' string-matching may not "like" the presence of the extra "`selinux`" token and will emit an error. This error is spurious as it's actually a _more_ secure configuration than when the "`selinux`" token is absent.
 
 [^1]: Do not try to perform an exact-match from the scan-report to this table. The findings table's link-titles are distillations of the scan-findings title-text rather than being verbatim copies.
 [^2]: Users directly authenticate to the EL9-based host and not PIV-authenticate to an external service that then forwards an authentication token on behalf of that user.
