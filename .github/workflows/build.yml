@@ -100,7 +100,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b
+        uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -143,7 +143,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b
+        uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -195,7 +195,7 @@ jobs:
 
       - name: Restore cargo cache
         id: cache-cargo
-        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         with:
           path: |
             .pyapp/build/.cargo-cache
@@ -205,7 +205,7 @@ jobs:
             cargo-pyapp-${{ matrix.platform }}-
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b
+        uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           enable-cache: true
@@ -231,7 +231,7 @@ jobs:
         shell: bash
 
       - name: Save cargo cache
-        uses: actions/cache/save@8b402f58fbc84540c8b491a91e594a4576fec3d7
+        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306
         if: always() && steps.cache-cargo.outputs.cache-hit != 'true'
         with:
           path: |
@@ -270,7 +270,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b
+        uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -320,7 +320,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b
+        uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
@@ -370,7 +370,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b
+        uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41
         with:
           version: ${{ needs.checkout.outputs.uv-version }}
           activate-environment: "true"
