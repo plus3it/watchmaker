@@ -51,7 +51,7 @@ def get_status(status_key):
                     or status_key as status
     """
     status = STATUS.get(status_key)
-    return status if status else status_key
+    return status or status_key
 
 
 def get_provider_key(provider):
