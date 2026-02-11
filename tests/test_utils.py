@@ -73,6 +73,15 @@ def test_clean_none():
     assert watchmaker.utils.clean_none("not none") == "not none"
 
 
+def test_uri_from_filepath_normalizes_file_uri(tmp_path):
+    """Ensure file paths are normalized to canonical file URIs."""
+    config_path = tmp_path / "config.yaml"
+    assert (
+        watchmaker.utils.uri_from_filepath(config_path)
+        == config_path.resolve().as_uri()
+    )
+
+
 @patch("pathlib.Path.exists", autospec=True)
 @patch("watchmaker.utils.copytree", autospec=True)
 @patch("os.walk", autospec=True)

@@ -33,13 +33,12 @@ def uri_from_filepath(filepath):
         # Return non-file paths unchanged
         return filepath
 
-    # Expand relative file paths and convert them to uri-style
-    combined_path = "".join([x for x in [parts.netloc, parts.path] if x])
-    path = urllib_utils.request.pathname2url(
-        str(Path(combined_path).expanduser().resolve()),
-    )
+    if parts.scheme == "file" and "://" in filepath:
+        # Already a file URI, return as-is.
+        return filepath
 
-    return urllib_utils.parse.urlunparse((scheme, "", path, "", "", ""))
+    # Treat as a local filesystem path and normalize to a proper file URI.
+    return str(Path(filepath).expanduser().resolve().as_uri())
 
 
 def basename_from_uri(uri):
