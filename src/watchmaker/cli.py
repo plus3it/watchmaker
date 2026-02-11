@@ -57,7 +57,7 @@ def _print_version(ctx, _param, value):
     "--log-dir",
     show_default=True,
     type=click.Path(exists=False, file_okay=False),
-    default=LOG_LOCATIONS.get(platform.system().lower(), None),
+    default=LOG_LOCATIONS.get(platform.system().lower()),
     help=("Path to the directory where Watchmaker log files will be saved."),
 )
 @click.option(

@@ -18,7 +18,7 @@ CLOUD_PROVIDERS = {"aws": AWSProvider, "azure": AzureProvider}
 def provider(supported_providers=None):
     """Identify and return identifier."""
     results = []
-    supported_providers = supported_providers if supported_providers else []
+    supported_providers = supported_providers or []
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         futures = [
             executor.submit(identify, CLOUD_PROVIDERS[cloud_identifier])
