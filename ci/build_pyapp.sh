@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu -o pipefail
 
-PYTHON=3.12
+PYTHON=3.14
 
 VERSION=$(grep -E '^version\s*=' pyproject.toml | sed 's/^version = "\(.*\)"$/\1/')
 PYAPP_VERSION=$(sed -n 's/.*ofek\/pyapp@v//p' .github/workflows/dependabot_hack.yml)
@@ -11,7 +11,7 @@ PYAPP_DIST_DIR=".pyapp/dist/${VERSION}"
 PYAPP_BUILD_DIR=".pyapp/build"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 
-# Python standalone build info - retrieve the latest patch version for Python 3.12
+# Python standalone build info - retrieve the latest patch version for Python 3.14
 echo "Fetching Python ${PYTHON} version from python-build-standalone release ${PYTHON_BUILD_STANDALONE_VERSION}..."
 PYTHON_RELEASE_URL="https://github.com/astral-sh/python-build-standalone/releases/expanded_assets/${PYTHON_BUILD_STANDALONE_VERSION}"
 PYTHON_FULL_VERSION=$(curl -sSL "$PYTHON_RELEASE_URL" | grep -oP "cpython-\K${PYTHON}\.\d+(?=\+${PYTHON_BUILD_STANDALONE_VERSION}-x86_64-unknown-linux-gnu-install_only_stripped\.tar\.gz)" | head -n 1)

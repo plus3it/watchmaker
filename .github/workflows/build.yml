@@ -85,7 +85,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - python-version: "3.12"
+          - python-version: "3.14"
             name: build
     steps:
       - name: Retrieve source
@@ -126,10 +126,10 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux
-            python-version: "3.12"
+            python-version: "3.14"
           - os: ["codebuild-watchmaker-build-${{ github.run_id }}-${{ github.run_attempt }}", image:windows-3.0, image-size:medium]
             platform: windows
-            python-version: "3.12"
+            python-version: "3.14"
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
@@ -255,7 +255,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         os: ["ubuntu-latest", "windows-2022"]
     steps:
       - name: Retrieve source
@@ -305,7 +305,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - python-version: "3.12"
+          - python-version: "3.14"
             name: lint
     steps:
       - name: Retrieve source
@@ -355,7 +355,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - python-version: "3.12"
+          - python-version: "3.14"
             name: docs
     steps:
       - name: Retrieve source

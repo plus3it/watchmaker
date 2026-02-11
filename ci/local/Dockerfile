@@ -1,4 +1,4 @@
-FROM  public.ecr.aws/docker/library/python:3.12-alpine
+FROM  public.ecr.aws/docker/library/python:3.14-alpine
 
 COPY requirements/basics.txt requirements/basics.txt
 COPY requirements/docs.txt requirements/docs.txt
