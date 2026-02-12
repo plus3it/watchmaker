@@ -73,13 +73,37 @@ def test_clean_none():
     assert watchmaker.utils.clean_none("not none") == "not none"
 
 
-def test_uri_from_filepath_normalizes_file_uri(tmp_path):
+def test_uri_from_filepath_normalizes_filepath_to_file_uri(tmp_path):
     """Ensure file paths are normalized to canonical file URIs."""
     config_path = tmp_path / "config.yaml"
     assert (
         watchmaker.utils.uri_from_filepath(config_path)
         == config_path.resolve().as_uri()
     )
+
+
+@pytest.mark.parametrize(
+    "file_uri",
+    [
+        "file:///tmp/../a",
+        "file://localhost/path",
+    ],
+)
+def test_uri_from_filepath_returns_file_uri_as_is(file_uri):
+    """Ensure file:// URIs are returned without normalization."""
+    assert watchmaker.utils.uri_from_filepath(file_uri) == file_uri
+
+
+@pytest.mark.skipif(
+    platform.system() == "Windows",
+    reason="file:/path normalization test uses POSIX paths",
+)
+def test_uri_from_filepath_normalizes_file_scheme_no_authority(tmp_path):
+    """Ensure file:/path URIs are normalized using the parsed file path."""
+    nested_path = tmp_path / "dir" / ".." / "dir" / "a"
+    file_uri = f"file:{nested_path.as_posix()}"
+    expected = (tmp_path / "dir" / "a").resolve().as_uri()
+    assert watchmaker.utils.uri_from_filepath(file_uri) == expected
 
 
 @patch("pathlib.Path.exists", autospec=True)

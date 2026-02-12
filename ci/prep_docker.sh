@@ -3,7 +3,7 @@
 set -eu -o pipefail
 
 echo "***********************************************************************"
-echo "Prepping for Docker Watchmaker build on $(lsb_release -ds 2>/dev/null || echo "Unknown Linux")"
+echo "Prepping for Docker Watchmaker build on $(lsb_release -ds 2>/dev/null || echo 'Unknown Linux')"
 echo "***********************************************************************"
 
 DOCKER_INSTANCE_NAME=wam-builder
@@ -57,11 +57,6 @@ if [ -n "${WORKDIR}" ]; then
   echo "Building the standalone using ci/build.sh..."
   docker exec "${DOCKER_INSTANCE_NAME}" chmod +x ci/build.sh
   docker exec "${DOCKER_INSTANCE_NAME}" ci/build.sh
-
-  echo "Stopping the docker container ${DOCKER_INSTANCE_NAME}..."
-  docker stop "${DOCKER_INSTANCE_NAME}"
-  echo "Removing the docker image ${DOCKER_INSTANCE_NAME}..."
-  docker rm "${DOCKER_INSTANCE_NAME}"
 
 else
 

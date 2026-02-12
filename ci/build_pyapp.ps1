@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 $ErrorActionPreference = "Stop"
 
-$PYTHON = "3.12"
+$PYTHON = "3.14"
 
 # Extract versions from project files
 $VERSION = (Select-String -Path "pyproject.toml" -Pattern '^version\s*=\s*"([^"]+)"').Matches.Groups[1].Value
@@ -25,13 +25,13 @@ $PYAPP_DIST_DIR = ".pyapp/dist/$VERSION"
 $PYAPP_BUILD_DIR = ".pyapp/build"
 $WAM_FILENAME = "watchmaker-$VERSION-standalone-windows-amd64.exe"
 
-# Python standalone build info - retrieve the latest patch version for Python 3.12
+# Python standalone build info - retrieve the latest patch version for Python 3.14
 Write-Host "Fetching Python $PYTHON version from python-build-standalone release $PYTHON_BUILD_STANDALONE_VERSION..."
 $PYTHON_RELEASE_URL = "https://github.com/astral-sh/python-build-standalone/releases/expanded_assets/$PYTHON_BUILD_STANDALONE_VERSION"
 $releaseHtml = Invoke-WebRequest -Uri $PYTHON_RELEASE_URL -UseBasicParsing
 
-# Match pattern: cpython-3.12.X+20251031-x86_64-pc-windows-msvc-install_only_stripped.tar.gz
-# Extract just the version number (3.12.X) between "cpython-" and "+20251031"
+# Match pattern: cpython-3.14.X+20251031-x86_64-pc-windows-msvc-install_only_stripped.tar.gz
+# Extract just the version number (3.14.X) between "cpython-" and "+20251031"
 $pattern = "cpython-($PYTHON\.\d+)\+$PYTHON_BUILD_STANDALONE_VERSION-x86_64-pc-windows-msvc-install_only_stripped\.tar\.gz"
 $matches = [regex]::Matches($releaseHtml.Content, $pattern)
 
@@ -44,8 +44,8 @@ if ($matches.Count -gt 0) {
 if ([string]::IsNullOrEmpty($PYTHON_FULL_VERSION)) {
     Write-Host "Failed to find Windows Python distribution."
     Write-Host "Looking for pattern: $pattern"
-    Write-Host "Searching for any cpython-3.12 Windows builds:"
-    $allMatches = [regex]::Matches($releaseHtml.Content, "cpython-3\.12\.\d+\+$PYTHON_BUILD_STANDALONE_VERSION-x86_64[^`"]*windows[^`"]*\.tar\.gz")
+    Write-Host "Searching for any cpython-3.14 Windows builds:"
+    $allMatches = [regex]::Matches($releaseHtml.Content, "cpython-3\.14\.\d+\+$PYTHON_BUILD_STANDALONE_VERSION-x86_64[^`"]*windows[^`"]*\.tar\.gz")
     if ($allMatches.Count -gt 0) {
         Write-Host "Found $($allMatches.Count) Windows builds:"
         $allMatches | Select-Object -First 5 | ForEach-Object { Write-Host "  $($_.Value)" }
