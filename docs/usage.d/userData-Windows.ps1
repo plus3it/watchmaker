@@ -1,6 +1,6 @@
 <powershell>
 $BootstrapUrl = "https://watchmaker.cloudarmor.io/releases/latest/watchmaker-bootstrap.ps1"
-$PythonUrl = "https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe"
+$PythonUrl = "https://www.python.org/ftp/python/3.14.3/python-3.14.3-amd64.exe"
 $PypiUrl = "https://pypi.org/simple"
 
 # Use TLS 1.2+
