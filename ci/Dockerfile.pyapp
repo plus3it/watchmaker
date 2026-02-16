@@ -1,4 +1,4 @@
-FROM rust:1.93.0-slim AS rust
+FROM rust:1.93.1-slim AS rust
 
 FROM public.ecr.aws/docker/library/almalinux:8@sha256:9cf50481aca02c0112131e589e9eac358fb43977bcf2350b542a6de1d2484178
 
