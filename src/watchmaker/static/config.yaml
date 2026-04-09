@@ -9,7 +9,7 @@ all:
       ou_path: null
       salt_content: null
       salt_states: Highstate
-      salt_version: "3007.2"
+      salt_version: "3007.13"
       user_formulas:
       # To add extra formulas, specify them as a map of
       #    <formula_name>: <archive_url>
@@ -32,7 +32,7 @@ linux:
             - redhat
             - rocky
           el_version: 8
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.2/salt-reposync-onedir.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.13/salt-reposync-onedir.repo
         # SaltEL9:
         - dist:
             - almalinux
@@ -41,7 +41,7 @@ linux:
             - redhat
             - rocky
           el_version: 9
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.2/salt-reposync-onedir.repo
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.13/salt-reposync-onedir.repo
   - salt:
       pip_install:
         - dnspython
@@ -54,7 +54,7 @@ linux:
 windows:
   - salt:
       salt_debug_log: null
-      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3007.2-Py3-AMD64-Setup.exe
+      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3007.13-Py3-AMD64-Setup.exe
 
 status:
   providers:
