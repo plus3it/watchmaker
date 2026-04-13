@@ -5,28 +5,26 @@ PYTHON=3.14
 
 VERSION=$(grep -E '^version\s*=' pyproject.toml | sed 's/^version = "\(.*\)"$/\1/')
 PYAPP_VERSION=$(sed -n 's/.*ofek\/pyapp@v//p' .github/workflows/dependabot_hack.yml)
-PYTHON_BUILD_STANDALONE_VERSION=$(sed -n 's/.*python-build-standalone@//p' .github/workflows/dependabot_hack.yml)
 
 PYAPP_DIST_DIR=".pyapp/dist/${VERSION}"
 PYAPP_BUILD_DIR=".pyapp/build"
 WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 
-# Python standalone build info - retrieve the latest patch version for Python version
-echo "Fetching Python ${PYTHON} version from python-build-standalone release ${PYTHON_BUILD_STANDALONE_VERSION}..."
-PYTHON_RELEASE_URL="https://github.com/astral-sh/python-build-standalone/releases/expanded_assets/${PYTHON_BUILD_STANDALONE_VERSION}"
-PYTHON_FULL_VERSION=$(curl -sSL "$PYTHON_RELEASE_URL" | grep -oP "cpython-\K${PYTHON}\.\d+(?=\+${PYTHON_BUILD_STANDALONE_VERSION}-x86_64-unknown-linux-gnu-install_only_stripped\.tar\.gz)" | head -n 1)
+# Determine the latest available patch version via uv metadata
+echo "Fetching latest Python ${PYTHON}.x version from uv..."
+PYTHON_FULL_VERSION=$(uv python list "$PYTHON" \
+    | grep -oE "${PYTHON//./\\.}\\.[0-9]+" \
+    | sort -V \
+    | tail -n 1)
 
 if [ -z "$PYTHON_FULL_VERSION" ]; then
-    echo "Error: Could not determine Python ${PYTHON} patch version from release ${PYTHON_BUILD_STANDALONE_VERSION}"
+    echo "Error: Could not determine latest Python ${PYTHON} patch version from uv"
     exit 1
 fi
 
-PYTHON_RELEASE="cpython-${PYTHON_FULL_VERSION}+${PYTHON_BUILD_STANDALONE_VERSION}-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
-PYTHON_URL="https://github.com/astral-sh/python-build-standalone/releases/download/${PYTHON_BUILD_STANDALONE_VERSION}/${PYTHON_RELEASE}"
-
 echo "Building PyApp standalone for watchmaker v${VERSION}..."
 echo "Using PyApp v${PYAPP_VERSION}"
-echo "Using Python ${PYTHON_FULL_VERSION} from python-build-standalone"
+echo "Using Python ${PYTHON_FULL_VERSION} from uv"
 
 echo "-----------------------------------------------------------------------"
 cargo --version
@@ -48,30 +46,30 @@ fi
 WHEEL_FILE_ABS=$(realpath "$WHEEL_FILE")
 echo "Using wheel: $WHEEL_FILE_ABS"
 
-# Download and prepare custom Python distribution
-echo "Downloading Python standalone distribution..."
+# Prepare custom Python distribution from uv-managed Python
+echo "Installing Python ${PYTHON_FULL_VERSION} with uv..."
 mkdir -p "$PYAPP_BUILD_DIR"
 cd "$PYAPP_BUILD_DIR"
-
-if [ ! -f "$PYTHON_RELEASE" ]; then
-    curl -L -o "$PYTHON_RELEASE" "$PYTHON_URL"
-fi
-
-PYTHON_DIR="python"
+PYTHON_INSTALL_DIR="python"
 
 # Remove any existing python directory to avoid overlapping files
-if [ -d "$PYTHON_DIR" ]; then
-    rm -rf "$PYTHON_DIR"
+if [ -d "$PYTHON_INSTALL_DIR" ]; then
+    rm -rf "$PYTHON_INSTALL_DIR"
 fi
 
-echo "Extracting Python distribution..."
-tar -xzf "$PYTHON_RELEASE"
+uv python install "${PYTHON_FULL_VERSION}" --install-dir "$PYTHON_INSTALL_DIR" --no-bin
+
+PYTHON_DIR=$(find "$PYTHON_INSTALL_DIR" -mindepth 1 -maxdepth 1 -type d -name "cpython-${PYTHON_FULL_VERSION}-*" | head -n 1)
+if [ -z "$PYTHON_DIR" ] || [ ! -d "$PYTHON_DIR" ]; then
+    echo "Error: Could not find installed Python directory under ${PYTHON_INSTALL_DIR}"
+    exit 1
+fi
 
 PYTHON_BIN="${PYTHON_DIR}/bin/python${PYTHON}"
 
 echo "Installing watchmaker and dependencies into custom Python distribution..."
 export UV_CACHE_DIR="${HOME}/.local/share/uv"
-uv pip install --python "$PYTHON_BIN" "$WHEEL_FILE_ABS" boto3
+uv pip install --break-system-packages --link-mode copy --python "$PYTHON_BIN" "$WHEEL_FILE_ABS" boto3
 
 echo "Creating custom distribution archive..."
 CUSTOM_DIST="cpython-${PYTHON_FULL_VERSION}-watchmaker-${VERSION}.tar.zst"
@@ -90,7 +88,7 @@ export PYAPP_PROJECT_VERSION="$VERSION"
 export PYAPP_DISTRIBUTION_EMBED=1
 PYAPP_DISTRIBUTION_PATH="$(realpath "${PYAPP_BUILD_DIR}/${CUSTOM_DIST}")"
 export PYAPP_DISTRIBUTION_PATH
-export PYAPP_DISTRIBUTION_PYTHON_PATH="python/bin/python${PYTHON}"
+export PYAPP_DISTRIBUTION_PYTHON_PATH="${PYTHON_DIR}/bin/python${PYTHON}"
 export PYAPP_FULL_ISOLATION=1
 export PYAPP_SKIP_INSTALL=1
 

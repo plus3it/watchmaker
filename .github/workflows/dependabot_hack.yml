@@ -22,6 +22,4 @@ jobs:
     steps:
       # Keep these sorted alphabetically by <user>/<repo>, separated by an empty line
 
-      - uses: astral-sh/python-build-standalone@20260408
-
       - uses: ofek/pyapp@v0.29.0
