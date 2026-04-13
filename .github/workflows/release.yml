@@ -63,7 +63,7 @@ jobs:
 
       - name: Create GitHub release
         id: release
-        uses: plus3it/actions-workflows/.github/actions/release@269d875599c92395f7fa99cab43edc1820798e61
+        uses: plus3it/actions-workflows/.github/actions/release@ce3cef72cf4ac9605a29350d1d4387dfb86cd7a8
         with:
           release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
           release-files: |
@@ -90,7 +90,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b
 
   # Publish package to S3
   publish-s3:
@@ -118,7 +118,7 @@ jobs:
         uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c
 
       - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37
         with:
           role-session-name: "watchmaker-publish-s3-package"
           role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
