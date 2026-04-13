@@ -12,17 +12,17 @@
 
 ## Windows
 
+- Microsoft Windows Server STIG Benchmark (2022)
 - Microsoft Windows Server STIG Benchmark (2019)
 - Microsoft Windows Server STIG Benchmark (2016)
-- Microsoft Windows Server STIG Benchmark (2012-r2)
-- Microsoft Windows STIG Benchmark (10)
+- Microsoft Windows STIG Benchmark (11)
 - Microsoft .NET Framework 4 Benchmark
 - Internet Explorer STIG Benchmark
 
 ## Linux
 
-- Red Hat Enterprise Linux STIG Benchmark (EL7 and EL8)
-- OpenSCAP Security Guide (EL7 and EL8)
+- Red Hat Enterprise Linux STIG Benchmark (EL8 and EL9)
+- OpenSCAP Security Guide (EL8 and EL9)
 
 <br>
 

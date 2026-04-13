@@ -1,12 +1,12 @@
 [CmdLetBinding()]
 Param(
-  [String]$PythonUrl = "https://www.python.org/ftp/python/3.14.3/python-3.14.3-amd64.exe"
+  [String]$PythonUrl = "https://www.python.org/ftp/python/3.14.4/python-3.14.4-amd64.exe"
   ,
   [String]$GitUrl
   ,
   [String]$RootCertUrl
 )
-$__ScriptName = "watchmaker-boostrap.ps1"
+$__ScriptName = "watchmaker-bootstrap.ps1"
 
 # Location to save files.
 $SaveDir = ${Env:Temp}
