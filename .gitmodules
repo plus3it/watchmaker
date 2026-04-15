@@ -49,3 +49,6 @@
 [submodule "src/watchmaker/static/salt/formulas/forescout-secure-connector-formula"]
 	path = src/watchmaker/static/salt/formulas/forescout-secure-connector-formula
 	url = https://github.com/plus3it/forescout-secure-connector-formula.git
+[submodule "src/watchmaker/static/salt/formulas/cortex-xdr-formula"]
+	path = src/watchmaker/static/salt/formulas/cortex-xdr-formula
+	url = https://github.com/plus3it/cortex-xdr-formula.git
