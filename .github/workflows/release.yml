@@ -20,7 +20,9 @@ jobs:
       scan-build-run-id: ${{ steps.scan-build.outputs.run-id }}
     permissions:
       actions: read  # Required to download artifacts from other workflow runs
+      attestations: write  # Required to create attestations
       contents: read
+      id-token: write  # Required to obtain Sigstore signing certificate
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -81,6 +83,18 @@ jobs:
           output-file: sbom/watchmaker-standalone.spdx.json
           upload-artifact: false
           upload-release-assets: false
+
+      - name: Attest SBOM for release distributions
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26
+        with:
+          subject-path: dist/*
+          sbom-path: sbom/watchmaker-dists.spdx.json
+
+      - name: Attest SBOM for standalone distributions
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26
+        with:
+          subject-path: .pyapp/dist/*/*
+          sbom-path: sbom/watchmaker-standalone.spdx.json
 
       - name: Create GitHub release
         id: release
