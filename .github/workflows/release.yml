@@ -42,7 +42,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           pattern: standalone-*
-          path: .pyinstaller/dist
+          path: .pyapp/dist
           merge-multiple: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
@@ -76,7 +76,7 @@ jobs:
       - name: Generate SBOM for standalone distributions
         uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
         with:
-          path: .pyinstaller/dist/
+          path: .pyapp/dist/
           format: spdx-json
           output-file: sbom/watchmaker-standalone.spdx.json
           upload-artifact: false
@@ -89,7 +89,7 @@ jobs:
           release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
           release-files: |
             dist/*
-            .pyinstaller/dist/*/*
+            .pyapp/dist/*/*
             sbom/*.spdx.json
 
   # Publish package to PyPI
@@ -131,7 +131,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           pattern: standalone-*
-          path: .pyinstaller/dist
+          path: .pyapp/dist
           merge-multiple: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
@@ -149,17 +149,17 @@ jobs:
       - name: Validate credential
         run: aws sts get-caller-identity
 
-      - run: ls -alR .pyinstaller/dist/
-      - run: mkdir -p .pyinstaller/dist/latest
-      - run: cp .pyinstaller/dist/*/watchmaker-*-standalone-linux-x86_64 .pyinstaller/dist/latest/watchmaker-latest-standalone-linux-x86_64
-      - run: cp .pyinstaller/dist/*/watchmaker-*-standalone-windows-amd64.exe .pyinstaller/dist/latest/watchmaker-latest-standalone-windows-amd64.exe
-      - run: cp .pyinstaller/dist/*/watchmaker-bootstrap.ps1 .pyinstaller/dist/latest/watchmaker-bootstrap.ps1
-      - run: cd .pyinstaller/dist/latest && sha256sum watchmaker-latest-standalone-linux-x86_64 > watchmaker-latest-standalone-linux-x86_64.sha256
-      - run: cd .pyinstaller/dist/latest && sha256sum watchmaker-latest-standalone-windows-amd64.exe > watchmaker-latest-standalone-windows-amd64.exe.sha256
-      - run: ls -alR .pyinstaller/dist/latest
+      - run: ls -alR .pyapp/dist/
+      - run: mkdir -p .pyapp/dist/latest
+      - run: cp .pyapp/dist/*/watchmaker-*-standalone-linux-x86_64 .pyapp/dist/latest/watchmaker-latest-standalone-linux-x86_64
+      - run: cp .pyapp/dist/*/watchmaker-*-standalone-windows-amd64.exe .pyapp/dist/latest/watchmaker-latest-standalone-windows-amd64.exe
+      - run: cp .pyapp/dist/*/watchmaker-bootstrap.ps1 .pyapp/dist/latest/watchmaker-bootstrap.ps1
+      - run: cd .pyapp/dist/latest && sha256sum watchmaker-latest-standalone-linux-x86_64 > watchmaker-latest-standalone-linux-x86_64.sha256
+      - run: cd .pyapp/dist/latest && sha256sum watchmaker-latest-standalone-windows-amd64.exe > watchmaker-latest-standalone-windows-amd64.exe.sha256
+      - run: ls -alR .pyapp/dist/latest
 
       - name: Publish standalone binaries to S3
-        run: aws s3 cp --recursive .pyinstaller/dist/ s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX }}/
+        run: aws s3 cp --recursive .pyapp/dist/ s3://${{ env.BUCKET_NAME }}/${{ vars.S3_PREFIX }}/
 
   # Publish scans to S3
   publish-scans:
