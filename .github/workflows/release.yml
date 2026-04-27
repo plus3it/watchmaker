@@ -61,6 +61,27 @@ jobs:
           echo "run-id=${RUN_ID}" >> "$GITHUB_OUTPUT"
           echo "RUN_ID=${RUN_ID}"
 
+      - name: Prepare SBOM directory
+        run: mkdir -p sbom
+
+      - name: Generate SBOM for release distributions
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
+        with:
+          path: dist/
+          format: spdx-json
+          output-file: sbom/watchmaker-dists.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: Generate SBOM for standalone distributions
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
+        with:
+          path: .pyinstaller/dist/
+          format: spdx-json
+          output-file: sbom/watchmaker-standalone.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
       - name: Create GitHub release
         id: release
         uses: plus3it/actions-workflows/.github/actions/release@ce3cef72cf4ac9605a29350d1d4387dfb86cd7a8
@@ -69,6 +90,7 @@ jobs:
           release-files: |
             dist/*
             .pyinstaller/dist/*/*
+            sbom/*.spdx.json
 
   # Publish package to PyPI
   publish-pypi:
