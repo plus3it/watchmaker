@@ -158,5 +158,8 @@ if ($VERSION_OUTPUT -notmatch "Python/$PYTHON_FULL_VERSION") {
 
 Write-Host "Version validation successful: Watchmaker $VERSION with Python $PYTHON_FULL_VERSION"
 
+Write-Host "Copying bootstrap script to dist dirs..."
+Copy-Item docs/files/bootstrap/watchmaker-bootstrap.ps1 -Destination "$PYAPP_DIST_DIR"
+
 Write-Host "Listing files in dist dir..."
 Get-ChildItem -Recurse $PYAPP_DIST_DIR | Format-Table -AutoSize

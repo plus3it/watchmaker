@@ -20,7 +20,9 @@ jobs:
       scan-build-run-id: ${{ steps.scan-build.outputs.run-id }}
     permissions:
       actions: read  # Required to download artifacts from other workflow runs
+      attestations: write  # Required to create attestations
       contents: read
+      id-token: write  # Required to obtain Sigstore signing certificate
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -61,6 +63,39 @@ jobs:
           echo "run-id=${RUN_ID}" >> "$GITHUB_OUTPUT"
           echo "RUN_ID=${RUN_ID}"
 
+      - name: Prepare SBOM directory
+        run: mkdir -p sbom
+
+      - name: Generate SBOM for release distributions
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
+        with:
+          path: dist/
+          format: spdx-json
+          output-file: sbom/watchmaker-dists.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: Generate SBOM for standalone distributions
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610
+        with:
+          path: .pyinstaller/dist/
+          format: spdx-json
+          output-file: sbom/watchmaker-standalone.spdx.json
+          upload-artifact: false
+          upload-release-assets: false
+
+      - name: Attest SBOM for release distributions
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26
+        with:
+          subject-path: dist/*
+          sbom-path: sbom/watchmaker-dists.spdx.json
+
+      - name: Attest SBOM for standalone distributions
+        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26
+        with:
+          subject-path: .pyinstaller/dist/*/*
+          sbom-path: sbom/watchmaker-standalone.spdx.json
+
       - name: Create GitHub release
         id: release
         uses: plus3it/actions-workflows/.github/actions/release@ce3cef72cf4ac9605a29350d1d4387dfb86cd7a8
@@ -69,6 +104,7 @@ jobs:
           release-files: |
             dist/*
             .pyinstaller/dist/*/*
+            sbom/*.spdx.json
 
   # Publish package to PyPI
   publish-pypi:
