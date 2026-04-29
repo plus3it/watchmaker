@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       artifact-run-id:
-        description: Build workflow run ID that contains standalone artifacts
+        description: Workflow run ID from build.yml that contains standalone artifacts
         required: false
         type: string
 
@@ -37,22 +37,91 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           INPUT_ARTIFACT_RUN_ID: ${{ github.event.inputs.artifact-run-id || '' }}
+          REVIEW_BODY: ${{ github.event.review.body || '' }}
           TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
 
+          poll_run_until_complete() {
+            local run_id="$1"
+            local wait_seconds=0
+            local max_wait_seconds=3600
+            local poll_interval=10
+            local run_status
+            local run_conclusion
+
+            while true; do
+              run_status="$(gh api "/repos/${{ github.repository }}/actions/runs/$run_id" --jq '.status')"
+              run_conclusion="$(gh api "/repos/${{ github.repository }}/actions/runs/$run_id" --jq '.conclusion')"
+
+              if [[ "$run_status" == "completed" ]]; then
+                if [[ "$run_conclusion" != "success" ]]; then
+                  echo "Run $run_id completed without success (conclusion=$run_conclusion)"
+                  exit 1
+                fi
+                return 0
+              fi
+
+              if (( wait_seconds >= max_wait_seconds )); then
+                echo "Timed out waiting for build run $run_id to complete"
+                exit 1
+              fi
+
+              echo "Build run $run_id is still $run_status. Waiting ${poll_interval}s..."
+              sleep "$poll_interval"
+              wait_seconds=$((wait_seconds + poll_interval))
+            done
+          }
+
+          COMMENT_ARTIFACT_RUN_ID=""
+          if [[ "$REVIEW_BODY" =~ /build[[:space:]]+([0-9]+) ]]; then
+            COMMENT_ARTIFACT_RUN_ID="${BASH_REMATCH[1]}"
+          fi
+
           if [[ -n "$INPUT_ARTIFACT_RUN_ID" ]]; then
             ARTIFACT_RUN_ID="$INPUT_ARTIFACT_RUN_ID"
+          elif [[ -n "$COMMENT_ARTIFACT_RUN_ID" ]]; then
+            ARTIFACT_RUN_ID="$COMMENT_ARTIFACT_RUN_ID"
           else
-            ARTIFACT_RUN_ID="$({
+            ACTIVE_ARTIFACT_RUN_ID="$({
               gh api \
-                "/repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=$TARGET_SHA&status=completed&per_page=30" \
-                --jq '.workflow_runs[] | select(.conclusion == "success") | .id'
+                "/repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=$TARGET_SHA&per_page=30" \
+                --jq '.workflow_runs[] | select(.status != "completed") | .id'
             } | head -n1)"
+
+            if [[ -n "$ACTIVE_ARTIFACT_RUN_ID" ]]; then
+              ARTIFACT_RUN_ID="$ACTIVE_ARTIFACT_RUN_ID"
+              poll_run_until_complete "$ARTIFACT_RUN_ID"
+            else
+              ARTIFACT_RUN_ID="$({
+                gh api \
+                  "/repos/${{ github.repository }}/actions/workflows/build.yml/runs?head_sha=$TARGET_SHA&status=completed&per_page=30" \
+                  --jq '.workflow_runs[] | select(.conclusion == "success") | .id'
+              } | head -n1)"
+            fi
           fi
 
           if [[ -z "$ARTIFACT_RUN_ID" ]]; then
             echo "No successful build.yml run found for sha: $TARGET_SHA"
+            exit 1
+          fi
+
+          RUN_WORKFLOW_PATH="$(gh api "/repos/${{ github.repository }}/actions/runs/$ARTIFACT_RUN_ID" --jq '.path')"
+          RUN_CONCLUSION="$(gh api "/repos/${{ github.repository }}/actions/runs/$ARTIFACT_RUN_ID" --jq '.conclusion')"
+          RUN_HEAD_SHA="$(gh api "/repos/${{ github.repository }}/actions/runs/$ARTIFACT_RUN_ID" --jq '.head_sha')"
+
+          if [[ "$RUN_WORKFLOW_PATH" != ".github/workflows/build.yml" ]]; then
+            echo "Run $ARTIFACT_RUN_ID is not a build.yml run (path=$RUN_WORKFLOW_PATH)"
+            exit 1
+          fi
+
+          if [[ "$RUN_CONCLUSION" != "success" ]]; then
+            echo "Run $ARTIFACT_RUN_ID is not successful (conclusion=$RUN_CONCLUSION)"
+            exit 1
+          fi
+
+          if [[ "$RUN_HEAD_SHA" != "$TARGET_SHA" ]]; then
+            echo "Run $ARTIFACT_RUN_ID head_sha ($RUN_HEAD_SHA) does not match target sha ($TARGET_SHA)"
             exit 1
           fi
 
