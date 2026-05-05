@@ -382,6 +382,7 @@ linkcheck_ignore = [
     r"https://github.com/.*\.md#.*",
     r"https://developer.hashicorp.com/.*",
     r"https://docs\.saltstack\.com/en/latest/ref/modules/all/[a-z\.]*#[a-z\.]*",
+    r"https://access\.redhat\.com/documentation/en-us/red_hat_enterprise_linux/9/html/configuring_and_managing_cloud-init_for_rhel_9/index",
 ]
 
 
