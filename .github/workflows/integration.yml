@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       artifact-run-id:
-        description: Workflow run ID from build.yml that contains standalone artifacts
+        description: Workflow run ID from build.yml that contains build artifacts
         required: false
         type: string
 
@@ -142,18 +142,40 @@ jobs:
       TF_VAR_aws_region: us-east-1
       TF_VAR_codebuild_id: ${{ needs.trigger.outputs.run-id }}
       TF_VAR_common_args: "-n -e dev"
+      TF_VAR_github_artifact_repo_name: ${{ github.event.repository.name }}
+      TF_VAR_github_artifact_repo_owner: ${{ github.repository_owner }}
+      TF_VAR_github_artifact_run_id: ${{ needs.trigger.outputs.artifact-run-id }}
+      TF_VAR_github_artifact_token_ssm_parameter: /watchmaker/integration/github-artifact-token/${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.source-build }}
       TF_VAR_git_ref: ${{ github.ref || github.sha }}
       TF_VAR_git_repo: "${{ github.server_url }}/${{ github.repository }}.git"
       TF_VAR_source_builds: '["${{ matrix.source-build }}"]'
+      TF_VAR_source_source: github_actions_artifact
       TF_VAR_standalone_builds: '[]'
     steps:
+      - name: Store GitHub artifact token in SSM
+        run: |
+          aws ssm put-parameter \
+            --name "$TF_VAR_github_artifact_token_ssm_parameter" \
+            --type SecureString \
+            --value "${{ github.token }}" \
+            --overwrite
+
       - name: Terrafirm integration tests
         id: terrafirm
-        uses: plus3it/terrafirm/.github/actions/test@b6d329c78d79e32a6f0983fa44d6e0ebe567a994
+        uses: plus3it/terrafirm/.github/actions/test@1091935a976104e701d20905ab63da4a8e6d5b8f
         with:
           destroy-after-test: true
           # terrafirm-repository: lorengordon/terrafirm
-          # terrafirm-ref: feat/build-from-github-artifact
+          # terrafirm-ref: feat/source-dist-artifact
+
+      - name: Delete GitHub artifact token from SSM
+        if: always()
+        run: |
+          if aws ssm get-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter" >/dev/null 2>&1; then
+            aws ssm delete-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter"
+          else
+            echo "SSM parameter not found, skipping delete: $TF_VAR_github_artifact_token_ssm_parameter"
+          fi
 
   test-standalone:
     runs-on:
@@ -189,11 +211,11 @@ jobs:
 
       - name: Terrafirm integration tests
         id: terrafirm
-        uses: plus3it/terrafirm/.github/actions/test@b6d329c78d79e32a6f0983fa44d6e0ebe567a994
+        uses: plus3it/terrafirm/.github/actions/test@1091935a976104e701d20905ab63da4a8e6d5b8f
         with:
           destroy-after-test: true
           # terrafirm-repository: lorengordon/terrafirm
-          # terrafirm-ref: feat/build-from-github-artifact
+          # terrafirm-ref: feat/source-dist-artifact
 
       - name: Delete GitHub artifact token from SSM
         if: always()
