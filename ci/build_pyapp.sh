@@ -12,8 +12,8 @@ WAM_FILENAME="watchmaker-${VERSION}-standalone-linux-x86_64"
 
 # Determine the latest available patch version via uv metadata
 echo "Fetching latest Python ${PYTHON}.x version from uv..."
-PYTHON_FULL_VERSION=$(uv python list "$PYTHON" \
-    | grep -oE "${PYTHON//./\\.}\\.[0-9]+" \
+PYTHON_FULL_VERSION=$(uv python list "$PYTHON" --all-versions --only-downloads 2>&1 \
+    | sed -nE "s/^cpython-(${PYTHON//./\\.}\.[0-9]+)-.*/\1/p" \
     | sort -V \
     | tail -n 1)
 
