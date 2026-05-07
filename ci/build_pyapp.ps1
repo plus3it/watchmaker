@@ -23,8 +23,8 @@ $WAM_FILENAME = "watchmaker-$VERSION-standalone-windows-amd64.exe"
 # Determine the latest available patch version via uv metadata
 Write-Host "Fetching latest Python $PYTHON.x version from uv..."
 $PYTHON_ESCAPE = $PYTHON -replace '\.', '\.'
-$PYTHON_FULL_VERSION = uv python list $PYTHON 2>&1 |
-    Select-String -Pattern "($PYTHON_ESCAPE\.\d+)" |
+$PYTHON_FULL_VERSION = uv python list $PYTHON --all-versions --only-downloads 2>&1 |
+    Select-String -Pattern "cpython-($PYTHON_ESCAPE\.\d+)-" |
     ForEach-Object { $_.Matches[0].Groups[1].Value } |
     Sort-Object { [version]$_ } |
     Select-Object -Last 1
