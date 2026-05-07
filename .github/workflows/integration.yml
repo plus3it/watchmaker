@@ -154,11 +154,30 @@ jobs:
     steps:
       - name: Store GitHub artifact token in SSM
         run: |
-          aws ssm put-parameter \
-            --name "$TF_VAR_github_artifact_token_ssm_parameter" \
-            --type SecureString \
-            --value "${{ github.token }}" \
-            --overwrite
+            for attempt in 1 2 3 4 5; do
+              if output=$(aws ssm put-parameter \
+                --name "$TF_VAR_github_artifact_token_ssm_parameter" \
+                --type SecureString \
+                --value "${{ github.token }}" \
+                --overwrite 2>&1); then
+                exit 0
+              fi
+
+              echo "$output" >&2
+
+              if [[ "$output" != *"TooManyUpdates"* ]]; then
+                exit 1
+              fi
+
+              if [[ "$attempt" == "5" ]]; then
+                echo "Failed to store GitHub artifact token in SSM after $attempt attempts"
+                exit 1
+              fi
+
+              sleep_seconds=$((attempt * 5))
+              echo "Retrying SSM put-parameter after ${sleep_seconds}s (attempt ${attempt}/5)"
+              sleep "$sleep_seconds"
+            done
 
       - name: Terrafirm integration tests
         id: terrafirm
@@ -172,7 +191,26 @@ jobs:
         if: always()
         run: |
           if aws ssm get-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter" >/dev/null 2>&1; then
-            aws ssm delete-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter"
+              for attempt in 1 2 3 4 5; do
+                if output=$(aws ssm delete-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter" 2>&1); then
+                  exit 0
+                fi
+
+                echo "$output" >&2
+
+                if [[ "$output" != *"TooManyUpdates"* ]]; then
+                  exit 1
+                fi
+
+                if [[ "$attempt" == "5" ]]; then
+                  echo "Failed to delete GitHub artifact token from SSM after $attempt attempts"
+                  exit 1
+                fi
+
+                sleep_seconds=$((attempt * 5))
+                echo "Retrying SSM delete-parameter after ${sleep_seconds}s (attempt ${attempt}/5)"
+                sleep "$sleep_seconds"
+              done
           else
             echo "SSM parameter not found, skipping delete: $TF_VAR_github_artifact_token_ssm_parameter"
           fi
@@ -203,11 +241,30 @@ jobs:
     steps:
       - name: Store GitHub artifact token in SSM
         run: |
-          aws ssm put-parameter \
-            --name "$TF_VAR_github_artifact_token_ssm_parameter" \
-            --type SecureString \
-            --value "${{ github.token }}" \
-            --overwrite
+            for attempt in 1 2 3 4 5; do
+              if output=$(aws ssm put-parameter \
+                --name "$TF_VAR_github_artifact_token_ssm_parameter" \
+                --type SecureString \
+                --value "${{ github.token }}" \
+                --overwrite 2>&1); then
+                exit 0
+              fi
+
+              echo "$output" >&2
+
+              if [[ "$output" != *"TooManyUpdates"* ]]; then
+                exit 1
+              fi
+
+              if [[ "$attempt" == "5" ]]; then
+                echo "Failed to store GitHub artifact token in SSM after $attempt attempts"
+                exit 1
+              fi
+
+              sleep_seconds=$((attempt * 5))
+              echo "Retrying SSM put-parameter after ${sleep_seconds}s (attempt ${attempt}/5)"
+              sleep "$sleep_seconds"
+            done
 
       - name: Terrafirm integration tests
         id: terrafirm
@@ -221,7 +278,26 @@ jobs:
         if: always()
         run: |
           if aws ssm get-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter" >/dev/null 2>&1; then
-            aws ssm delete-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter"
+              for attempt in 1 2 3 4 5; do
+                if output=$(aws ssm delete-parameter --name "$TF_VAR_github_artifact_token_ssm_parameter" 2>&1); then
+                  exit 0
+                fi
+
+                echo "$output" >&2
+
+                if [[ "$output" != *"TooManyUpdates"* ]]; then
+                  exit 1
+                fi
+
+                if [[ "$attempt" == "5" ]]; then
+                  echo "Failed to delete GitHub artifact token from SSM after $attempt attempts"
+                  exit 1
+                fi
+
+                sleep_seconds=$((attempt * 5))
+                echo "Retrying SSM delete-parameter after ${sleep_seconds}s (attempt ${attempt}/5)"
+                sleep "$sleep_seconds"
+              done
           else
             echo "SSM parameter not found, skipping delete: $TF_VAR_github_artifact_token_ssm_parameter"
           fi
