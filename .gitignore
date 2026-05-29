@@ -91,6 +91,7 @@ tests/logfiles/
 # Environment files
 Pipfile
 Pipfile.lock
+uv.lock
 
 # Unit test / coverage reports
 .pytest_cache
