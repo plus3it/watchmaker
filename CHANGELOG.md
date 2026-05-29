@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.30.0](https://github.com/plus3it/watchmaker/releases/tag/0.30.0)
+
+**Released**: 2026.05.28
+
+**Summary**:
+
+*   Updates Salt version to 3007.13
+*   Expands supported Python versions to 3.14
+*   Project updated to use Ruff for lint and format checks
+*   ash-linux-formula
+    *   Adds new STIG handlers for EL9
+*   ash-windows-formula
+    *   Adds option to set custom login banners
+*   cortex-xdr-formula
+    -   New formula addition to Watchmaker
+*   nessus-agent-formula
+    -   Adds symlink for Nessus’ temp-dir to `/var`
+*   scap-formula
+    -   Updates SCAP content to v0.1.80
+*   watchmaker-salt-content
+    -   Updates default SCC version to 5.14
+    -   Adds content for cortex-xdr-formula
+    -   Adds config to support s3 urls vi pillar options
+*   windows-update-agent-formula
+    -   Adds support for newer versions of Windows Server
+
 ## [0.29.4](https://github.com/plus3it/watchmaker/releases/tag/0.29.4)
 
 **Released**: 2025.08.01
