@@ -154,7 +154,7 @@ jobs:
         uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c
 
       - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b
         with:
           role-session-name: "watchmaker-publish-s3-package"
           role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
