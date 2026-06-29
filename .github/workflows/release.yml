@@ -85,13 +85,13 @@ jobs:
           upload-release-assets: false
 
       - name: Attest SBOM for release distributions
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763
         with:
           subject-path: dist/*
           sbom-path: sbom/watchmaker-dists.spdx.json
 
       - name: Attest SBOM for standalone distributions
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763
         with:
           subject-path: .pyinstaller/dist/*/*
           sbom-path: sbom/watchmaker-standalone.spdx.json
@@ -154,7 +154,7 @@ jobs:
         uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c
 
       - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b
+        uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b
         with:
           role-session-name: "watchmaker-publish-s3-package"
           role-to-assume: "${{ secrets.AWS_ROLE_ARN }}"
