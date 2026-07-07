@@ -42,6 +42,11 @@ linux:
             - rocky
           el_version: 9
           url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.13/salt-reposync-onedir.repo
+        # SaltAL2023:
+        - dist:
+            - al2023
+          el_version: 2023
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.13/salt-reposync-onedir.repo
   - salt:
       pip_install:
         - dnspython
