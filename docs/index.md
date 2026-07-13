@@ -52,6 +52,7 @@ CentOS-Stream.md
 
 *   Enterprise Linux 9 (RHEL/Oracle Linux/CentOS Stream/Alma Linux/Rocky Linux)
 *   Enterprise Linux 8 (RHEL/Oracle Linux/[CentOS Stream](CentOS-Stream.md))
+*   Amazon Linux 2023
 *   Windows Server 2022
 *   Windows Server 2019
 *   Windows Server 2016

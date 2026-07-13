@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.31.0](https://github.com/plus3it/watchmaker/releases/tag/0.31.0)
+
+**Released**: 2026.07.14
+
+**Summary**:
+
+*   Adds support for Amazon Linux 2023
+*   watchmaker-salt-content
+    *   Adds support for Amazon Linux 2023
+        * https://github.com/plus3it/watchmaker-salt-content/pull/84
+*   ash-linux-formula
+    *   Fixes bad fapolicyd rule-specifications for aws cli v2
+        * https://github.com/plus3it/ash-linux-formula/pull/639
+    *   Adds support for Amazon Linux 2023
+        * https://github.com/plus3it/ash-linux-formula/pull/634
+        * https://github.com/plus3it/ash-linux-formula/pull/636
+        * https://github.com/plus3it/ash-linux-formula/pull/644
+*   cortex-xdr-formula
+    *   Fixes missing cortex_xdr.service.name default value on Windows
+        * https://github.com/plus3it/cortex-xdr-formula/pull/30
+*   scap-formula
+    *   Corrects bad os mapping for al2023
+        * https://github.com/plus3it/scap-formula/pull/114
+    *   Updates SCAP content to v0.1.81
+        * https://github.com/plus3it/scap-formula/pull/116
+    *   Retries scc install on error and ensures content refresh waits until tool
+        is installed and available
+        * https://github.com/plus3it/scap-formula/pull/118
+
 ## [0.30.0](https://github.com/plus3it/watchmaker/releases/tag/0.30.0)
 
 **Released**: 2026.05.28

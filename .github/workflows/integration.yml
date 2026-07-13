@@ -136,7 +136,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        source-build: [rhel8, rhel9, win16, win19, win22]
+        source-build:
+          - al2023
+          - alma9
+          - centos9stream
+          # fails due to lack of disk space in rootVol
+          # - ol8
+          - ol9
+          - rhel8
+          - rhel9
+          - rl9
+          - win16
+          - win19
+          - win22
     env:
       AWS_DEFAULT_REGION: us-east-1
       TF_VAR_aws_region: us-east-1
@@ -223,7 +235,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        standalone-build: [rhel8, rhel9, win16, win19, win22]
+        standalone-build:
+          - al2023
+          - ol8
+          - rhel8
+          - rhel9
+          - win16
+          - win19
+          - win22
     env:
       AWS_DEFAULT_REGION: us-east-1
       TF_VAR_aws_region: us-east-1

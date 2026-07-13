@@ -136,11 +136,12 @@ The `yum` map instructs watchmaker about where to fetch `yum`/`dnf` repository-d
 
 ```{eval-rst}
 .. note::
-    Currently, mappings for ``Red Hat 7``, ``CentOS 7``, ``Alma Linux 8``,
-    ``CentOS 8 Stream``, ``Oracle Linux 8``, ``Red Hat 8`` and ``Rocky Linux 8``
-    are defined. Further Enterprise Linux distributions may be supported by
-    appropriate extension of this map, along with further modifcations to a few
-    Saltstack formulae.
+    Currently, mappings are defined for ``Alma Linux 8``, ``CentOS Stream 8``,
+    ``Oracle Linux 8``, ``Red Hat 8``, ``Rocky Linux 8``, ``Alma Linux 9``,
+    ``CentOS Stream 9``, ``Oracle Linux 9``, ``Red Hat 9``, ``Rocky Linux 9``,
+    and ``Amazon Linux 2023``. Further Enterprise Linux distributions may be
+    supported by appropriate extension of this map, along with further
+    modifications to a few Saltstack formulae.
 ```
 
 The `salt` map is generally not modified for customization or other activities.
