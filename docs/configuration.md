@@ -302,7 +302,7 @@ This example can be used to construct your own `config.yaml` file. The
 versions.
 
 ```yaml
-watchmaker_version: ">= 0.27.2.dev"
+watchmaker_version: ">= 0.31.0.dev"
 
 all:
   - salt:
