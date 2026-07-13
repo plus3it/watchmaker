@@ -95,6 +95,11 @@ Oracle Linux 9 with content CI-checks performed using an Alma Linux 9
 container. See the [index](index) page for a list of all supported operating
 systems.
 
+## Does watchmaker support Amazon Linux 2023?
+
+Yes. Watchmaker supports Amazon Linux 2023. See the [index](index) page for a
+list of all supported operating systems.
+
 ## How can I exclude salt states when executing watchmaker?
 
 The Salt worker in Watchmaker supports an `exclude_states` argument. When

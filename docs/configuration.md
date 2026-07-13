@@ -253,9 +253,10 @@ Parameters supported by the Yum Worker:
 
   * `dist` (_list_): Distributions that would install this repo. Some repos
         are supported by multiple distros. (Currently supported distros are
-        redhat, centos, and amazon.)
+      almalinux, centos, oracle, redhat, rocky, and al2023.)
   * `el_version` (`_string_`): The Enterprise Linux version for this repo,
-        as in el6 or el7. Expected values are `'6'` or `'7'`.
+      as in el8, el9, or 2023 for Amazon Linux 2023. Expected values are
+      `'8'`, `'9'`, or `'2023'`.
   * `url` (_string_): URL location of the repo file to be added to the
         system. This file will be copied to `/etc/yum.repos.d/`
 
@@ -301,7 +302,8 @@ This example can be used to construct your own `config.yaml` file. The
 versions.
 
 ```yaml
-watchmaker_version: ">= 0.24.0.dev"
+watchmaker_version: ">= 0.27.2.dev"
+
 all:
   - salt:
       admin_groups: null
@@ -311,36 +313,47 @@ all:
       ou_path: null
       salt_content: null
       salt_states: Highstate
+      salt_version: "3007.13"
       user_formulas:
-        # To add extra formulas, specify them as a map of
-        #    <formula_name>: <archive_url>
-        # The <formula_name> is the name of the directory in the salt file_root
-        # where the formula will be placed. The <archive_url> must be a zip
-        # file, and the zip must contain a top-level directory that, itself,
-        # contains the actual salt formula. To "overwrite" submodule formulas,
-        # make sure <formula_name> matches submodule names. E.g.:
-        #ash-linux-formula: https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
-        #scap-formula: https://s3.amazonaws.com/salt-formulas/scap-formula-master.zip
+      # To add extra formulas, specify them as a map of
+      #    <formula_name>: <archive_url>
+      # The <formula_name> is the name of the directory in the salt file_root
+      # where the formula will be placed. The <archive_url> must be a zip
+      # file, and the zip must contain a top-level directory that, itself,
+      # contains the actual salt formula. To "overwrite" submodule formulas,
+      # make sure <formula_name> matches submodule names. E.g.:
+      #  ash-linux-formula: https://s3.amazonaws.com/salt-formulas/ash-linux-formula-master.zip
+      #  scap-formula: https://s3.amazonaws.com/salt-formulas/scap-formula-master.zip
 
 linux:
   - yum:
       repo_map:
-        #SaltEL6:
+        # SaltEL8:
         - dist:
-            - redhat
+            - almalinux
             - centos
-          el_version: 6
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-el6.repo
-        - dist: amazon
-          el_version: 6
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/2019.2.8/salt-reposync-amzn.repo
-        #SaltEL7:
+            - oracle
+            - redhat
+            - rocky
+          el_version: 8
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.13/salt-reposync-onedir.repo
+        # SaltEL9:
         - dist:
-            - redhat
+            - almalinux
             - centos
-          el_version: 7
-          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3004.2/salt-reposync-el7-python3.repo
+            - oracle
+            - redhat
+            - rocky
+          el_version: 9
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.13/salt-reposync-onedir.repo
+        # SaltAL2023:
+        - dist:
+            - al2023
+          el_version: 2023
+          url: https://watchmaker.cloudarmor.io/yum.defs/saltstack/salt/3007.13/salt-reposync-onedir.repo
   - salt:
+      pip_install:
+        - dnspython
       salt_debug_log: null
       install_method: yum
       bootstrap_source: null
@@ -350,16 +363,16 @@ linux:
 windows:
   - salt:
       salt_debug_log: null
-      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3004.2-1-Py3-AMD64-Setup.exe
+      installer_url: https://watchmaker.cloudarmor.io/repo/saltstack/salt/windows/Salt-Minion-3007.13-Py3-AMD64-Setup.exe
 
 status:
   providers:
-    - key: 'WatchmakerStatus'
-      required: False
-      provider_type: 'aws'
-    - key: 'WatchmakerStatus'
-      required: False
-      provider_type: 'azure'
+    - key: "WatchmakerStatus"
+      required: false
+      provider_type: "aws"
+    - key: "WatchmakerStatus"
+      required: false
+      provider_type: "azure"
 ```
 
 [0]: https://yaml.org/spec/1.2/spec.html
