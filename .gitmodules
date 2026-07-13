@@ -1,54 +1,72 @@
 [submodule "src/watchmaker/static/salt/formulas/ash-linux-formula"]
 	path = src/watchmaker/static/salt/formulas/ash-linux-formula
 	url = https://github.com/plus3it/ash-linux-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/ash-windows-formula"]
 	path = src/watchmaker/static/salt/formulas/ash-windows-formula
 	url = https://github.com/plus3it/ash-windows-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/join-domain-formula"]
 	path = src/watchmaker/static/salt/formulas/join-domain-formula
 	url = https://github.com/plus3it/join-domain-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/splunkforwarder-formula"]
 	path = src/watchmaker/static/salt/formulas/splunkforwarder-formula
 	url = https://github.com/plus3it/splunkforwarder-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/mcafee-agent-formula"]
 	path = src/watchmaker/static/salt/formulas/mcafee-agent-formula
 	url = https://github.com/plus3it/mcafee-agent-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/name-computer-formula"]
 	path = src/watchmaker/static/salt/formulas/name-computer-formula
 	url = https://github.com/plus3it/name-computer-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/windows-update-agent-formula"]
 	path = src/watchmaker/static/salt/formulas/windows-update-agent-formula
 	url = https://github.com/plus3it/windows-update-agent-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/netbanner-formula"]
 	path = src/watchmaker/static/salt/formulas/netbanner-formula
 	url = https://github.com/plus3it/netbanner-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/ntp-client-windows-formula"]
 	path = src/watchmaker/static/salt/formulas/ntp-client-windows-formula
 	url = https://github.com/plus3it/ntp-client-windows-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/scap-formula"]
 	path = src/watchmaker/static/salt/formulas/scap-formula
 	url = https://github.com/plus3it/scap-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/pshelp-formula"]
 	path = src/watchmaker/static/salt/formulas/pshelp-formula
 	url = https://github.com/plus3it/pshelp-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/nessus-agent-formula"]
 	path = src/watchmaker/static/salt/formulas/nessus-agent-formula
 	url = https://github.com/plus3it/nessus-agent-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/amazon-inspector-formula"]
 	path = src/watchmaker/static/salt/formulas/amazon-inspector-formula
 	url = https://github.com/plus3it/amazon-inspector-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/content"]
 	path = src/watchmaker/static/salt/content
 	url = https://github.com/plus3it/watchmaker-salt-content.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/fup-formula"]
 	path = src/watchmaker/static/salt/formulas/fup-formula
 	url = https://github.com/plus3it/fup-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/vault-auth-formula"]
 	path = src/watchmaker/static/salt/formulas/vault-auth-formula
 	url = https://github.com/plus3it/vault-auth-formula
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/forescout-secure-connector-formula"]
 	path = src/watchmaker/static/salt/formulas/forescout-secure-connector-formula
 	url = https://github.com/plus3it/forescout-secure-connector-formula.git
+	shallow = true
 [submodule "src/watchmaker/static/salt/formulas/cortex-xdr-formula"]
 	path = src/watchmaker/static/salt/formulas/cortex-xdr-formula
 	url = https://github.com/plus3it/cortex-xdr-formula.git
+	shallow = true
