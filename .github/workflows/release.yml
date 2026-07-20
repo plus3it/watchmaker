@@ -85,20 +85,20 @@ jobs:
           upload-release-assets: false
 
       - name: Attest SBOM for release distributions
-        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6
         with:
           subject-path: dist/*
           sbom-path: sbom/watchmaker-dists.spdx.json
 
       - name: Attest SBOM for standalone distributions
-        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763
+        uses: actions/attest@f7c74d28b9d84cb8768d0b8ca14a4bac6ef463e6
         with:
           subject-path: .pyinstaller/dist/*/*
           sbom-path: sbom/watchmaker-standalone.spdx.json
 
       - name: Create GitHub release
         id: release
-        uses: plus3it/actions-workflows/.github/actions/release@ddd67e99878a285f728de398c1116151c2d7791a
+        uses: plus3it/actions-workflows/.github/actions/release@0a03f75193a010b3532cc90e8ad0b15a09ed33c1
         with:
           release-token: "${{ secrets.GH_RELEASES_TOKEN }}"
           release-files: |
@@ -126,7 +126,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b
+        uses: pypa/gh-action-pypi-publish@ba38be9e461d3875417946c167d0b5f3d385a247
 
   # Publish package to S3
   publish-s3:
