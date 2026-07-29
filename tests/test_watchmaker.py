@@ -7,6 +7,7 @@ from unittest.mock import patch
 import pytest
 
 import watchmaker
+from watchmaker.exceptions import InvalidValueError
 
 
 def test_main():
@@ -133,6 +134,25 @@ def test_extra_arguments_map():
 
     # assertions
     assert watchmaker_client.worker_args == check_val
+
+
+def test_extra_arguments_map_smart_quotes_raises():
+    """Test smart quotes in extra_arguments raise InvalidValueError."""
+    # setup
+    raw_arguments = {
+        "extra_arguments": [
+            "--user-formulas",
+            '{"scap-formula": “https://url”}',
+        ],
+    }
+    watchmaker_arguments = watchmaker.Arguments(**raw_arguments)
+
+    # test
+    with patch(
+        "watchmaker.status.Status.initialize",
+        return_value=None,
+    ), pytest.raises(InvalidValueError, match="smart quotes were detected"):
+        watchmaker.Client(watchmaker_arguments)
 
 
 @pytest.mark.skipif(
