@@ -323,6 +323,7 @@ class Client:
 
     def _get_worker_args(self, arguments, extra_arguments):
         worker_args = arguments
+        parsed_worker_args = {}
 
         # Convert extra_arguments to a dict and merge it with worker_args.
         # Leading hypens are removed, and other hyphens are converted to
@@ -336,11 +337,25 @@ class Client:
 
         try:
             # Set self.worker_args, removing `None` values from worker_args
-            return {
-                k: yaml.safe_load("null" if v is None else v)
-                for k, v in worker_args.items()
-                if v != Arguments.DEFAULT_VALUE
-            }
+            for k, v in worker_args.items():
+                if v == Arguments.DEFAULT_VALUE:
+                    continue
+
+                raw_value = "null" if v is None else v
+                if isinstance(raw_value, str) and any(
+                    quote in raw_value
+                    for quote in ("\u201c", "\u201d", "\u2018", "\u2019")
+                ):
+                    msg = (
+                        "Failed to parse argument value: smart quotes were detected. "
+                        "Use straight ASCII quotes (\" and ') instead. This can "
+                        "happen when commands are entered in PowerShell ISE."
+                    )
+                    self.log.critical(msg)
+                    raise InvalidValueError(msg)
+
+                parsed_value = yaml.safe_load(raw_value)
+                parsed_worker_args[k] = parsed_value
         except yaml.YAMLError as exc:
             if hasattr(exc, "problem_mark"):
                 msg = (
@@ -351,6 +366,8 @@ class Client:
                 self.log.critical(msg)
                 raise InvalidValueError(msg) from exc
             raise
+
+        return parsed_worker_args
 
     def install(self):
         """
