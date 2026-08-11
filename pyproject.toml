@@ -1,7 +1,7 @@
 [build-system]
 # Use uv's PEP 517 build backend for fast, reproducible builds
 build-backend = "uv_build"
-requires = ["uv-build<0.12"]
+requires = ["uv-build<0.13"]
 
 [project]
 name = "watchmaker"
@@ -94,6 +94,7 @@ exclude = [
 [tool.ruff.lint]
 ignore = [
     "B905",  # zip() without strict= - requires Python 3.10+, project supports 3.8+
+    "CPY001",  # Global ignore for copyright-header enforcement
     "D107",  # __init__ docstrings are documented at the class level to avoid duplication
     "D203",  # Conflicts with D211 (no-blank-line-before-class). Project uses D211 style.
     "D212",  # Conflicts with D213 (multi-line-summary-first-line). Project uses D213 style.
