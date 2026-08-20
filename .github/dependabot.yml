@@ -20,6 +20,9 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
+    cooldown:
+      exclude:
+        - "*"
     groups:
       gitsubmodule:
         patterns:
