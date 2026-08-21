@@ -74,11 +74,6 @@ the watchmaker log directory, you can look for `[ERROR]` messages in there as
 well. However, this log file can be very noisy and a message with the error
 label may not be related to the error you are encountering.
 
-## Does watchmaker support Enterprise Linux 7?
-
-Watchmaker is supported on RedHat 7 and CentOS 7. See the [index](index)
-page for a list of all supported operating systems.
-
 ## Does watchmaker support Enterprise Linux 8?
 
 Watchmaker is supported on RedHat 8, CentOS Stream 8, and Oracle Linux 8. See the
@@ -99,6 +94,14 @@ systems.
 
 Yes. Watchmaker supports Amazon Linux 2023. See the [index](index) page for a
 list of all supported operating systems.
+
+## Does watchmaker support Enterprise Linux 10?
+
+No. Watchmaker does not currently support RHEL 10 or related Linux distros. It
+is anticipated that when efforts to extend wachmaker's capabilities to cover EL
+10, Red Hat Enterprise, Alma and Rocky Linux 10 will be tested for. Oracle
+Enterprise Linux 10 capabilities may also be present but are not planned for
+targeting as of this writing.
 
 ## How can I exclude salt states when executing watchmaker?
 

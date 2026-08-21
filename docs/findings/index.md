@@ -15,14 +15,6 @@ with the actual system state implemented by Watchmaker. The following are freque
 findings and explanations for why a scanner may alert on the Watchmaker-managed
 configuration-state.
 
-## Common Scan Findings for EL7
-
-```{toctree}
-:maxdepth: 1
-
-el7.md
-```
-
 ## Common Scan Findings for EL8
 
 ```{toctree}
