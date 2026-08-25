@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.31.1](https://github.com/plus3it/watchmaker/releases/tag/0.31.1)
+
+**Released**: 2026.08.25
+
+**Summary**:
+
+*   Adds error-checking for smart quotes in command arguments
+*   ash-windows-formula
+    *   Updates Windows Server 2022 STIG GPOs with July 2026 release
+*   scap-formula
+    *   Updates DISA SCAP content with July 2026 release
+
 ## [0.31.0](https://github.com/plus3it/watchmaker/releases/tag/0.31.0)
 
 **Released**: 2026.07.14
