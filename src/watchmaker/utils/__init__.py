@@ -1,5 +1,6 @@
 """Loads helper utility modules and functions."""
 
+import http.client
 import os
 import platform
 import shutil
@@ -53,9 +54,28 @@ def basename_from_uri(uri):
     return Path(urllib_utils.parse.urlparse(uri).path).name
 
 
-@backoff.on_exception(backoff.expo, urllib_utils.error.URLError, max_tries=5)
-def urlopen_retry(uri, timeout=None):
-    """Retry urlopen on exception."""
+RETRYABLE_EXCEPTIONS = (
+    urllib_utils.error.URLError,
+    ConnectionError,
+    TimeoutError,
+    http.client.HTTPException,
+)
+
+# HTTP statuses that are worth retrying even though they are 4xx
+_RETRYABLE_HTTP_4XX = (408, 429)
+
+
+def is_permanent_error(exc):
+    """Return True if the exception will not be fixed by retrying."""
+    return (
+        isinstance(exc, urllib_utils.error.HTTPError)
+        and 400 <= exc.code < 500  # noqa: PLR2004
+        and exc.code not in _RETRYABLE_HTTP_4XX
+    )
+
+
+def _urlopen(uri, timeout=None):
+    """Open a uri with urlopen, using the system CA certificates for https."""
     kwargs = {}
     if timeout:
         kwargs["timeout"] = timeout
@@ -79,6 +99,47 @@ def urlopen_retry(uri, timeout=None):
         pass
 
     return urllib_utils.request.urlopen(uri, **kwargs)
+
+
+@backoff.on_exception(
+    backoff.expo,
+    RETRYABLE_EXCEPTIONS,
+    max_tries=5,
+    giveup=is_permanent_error,
+)
+def urlopen_retry(uri, timeout=None):
+    """Retry urlopen on exception."""
+    return _urlopen(uri, timeout)
+
+
+@backoff.on_exception(
+    backoff.expo,
+    RETRYABLE_EXCEPTIONS,
+    max_tries=5,
+    giveup=is_permanent_error,
+)
+def urldownload_retry(uri, filename, timeout=None):
+    """
+    Download a uri to a file, retrying on exception.
+
+    The connection and the body read are retried together, because a
+    connection reset can occur while the body is being streamed. Each attempt
+    reopens the connection and rewrites the file from the start.
+
+    Args:
+        uri: (:obj:`str`)
+            URI of the file to download.
+
+        filename: (:obj:`Path`)
+            Path where the file will be saved.
+
+        timeout: (:obj:`int`)
+            Socket timeout, in seconds.
+            (*Default*: None)
+
+    """
+    with _urlopen(uri, timeout) as response, filename.open("wb") as outfile:
+        shutil.copyfileobj(response, outfile)
 
 
 def _add_long_path_prefix(path):

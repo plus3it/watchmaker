@@ -1,8 +1,10 @@
 """Salt worker main test module."""
 
+import http.client
 import platform
+import urllib.error
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -212,3 +214,118 @@ def test_copytree_non_windows_no_modification(mock_copy):
 
     # Verify the paths were passed through unchanged
     mock_copy.assert_called_with(long_src, long_dst)
+
+
+@pytest.fixture
+def no_backoff_sleep():
+    """Skip the backoff delay between retries."""
+    with patch("time.sleep"):
+        yield
+
+
+def _http_error(code):
+    """Return an HTTPError with the given status code."""
+    return urllib.error.HTTPError("http://example.com", code, "msg", {}, None)
+
+
+@pytest.mark.parametrize(
+    ("exc", "expected"),
+    [
+        (_http_error(404), True),
+        (_http_error(403), True),
+        (_http_error(408), False),
+        (_http_error(429), False),
+        (_http_error(503), False),
+        (ConnectionResetError(), False),
+        (urllib.error.URLError("boom"), False),
+    ],
+    # Explicit ids: on python 3.8, pytest fails to generate ids from HTTPError
+    ids=["404", "403", "408", "429", "503", "connection-reset", "url-error"],
+)
+def test_is_permanent_error(exc, expected):
+    """Test that only non-retryable 4xx responses are permanent errors."""
+    assert watchmaker.utils.is_permanent_error(exc) is expected
+
+
+@pytest.mark.parametrize(
+    "exc",
+    [
+        ConnectionResetError(),
+        TimeoutError(),
+        http.client.RemoteDisconnected(),
+        urllib.error.URLError("boom"),
+        _http_error(503),
+    ],
+    ids=["connection-reset", "timeout", "remote-disconnected", "url-error", "503"],
+)
+@pytest.mark.usefixtures("no_backoff_sleep")
+@patch("watchmaker.utils.urllib_utils.request.urlopen")
+def test_urlopen_retry_retries_transient_errors(mock_urlopen, exc):
+    """Test that transient errors are retried until urlopen succeeds."""
+    mock_urlopen.side_effect = [exc, "response"]
+
+    assert watchmaker.utils.urlopen_retry("http://example.com") == "response"
+    assert mock_urlopen.call_count == 2
+
+
+@pytest.mark.usefixtures("no_backoff_sleep")
+@patch("watchmaker.utils.urllib_utils.request.urlopen")
+def test_urlopen_retry_does_not_retry_permanent_errors(mock_urlopen):
+    """Test that a 404 is raised immediately, without retrying."""
+    mock_urlopen.side_effect = _http_error(404)
+
+    with pytest.raises(urllib.error.HTTPError):
+        watchmaker.utils.urlopen_retry("http://example.com")
+    assert mock_urlopen.call_count == 1
+
+
+@pytest.mark.usefixtures("no_backoff_sleep")
+@patch("watchmaker.utils.urllib_utils.request.urlopen")
+def test_urlopen_retry_gives_up_after_max_tries(mock_urlopen):
+    """Test that retries are bounded."""
+    mock_urlopen.side_effect = ConnectionResetError()
+
+    with pytest.raises(ConnectionResetError):
+        watchmaker.utils.urlopen_retry("http://example.com")
+    assert mock_urlopen.call_count == 5
+
+
+@pytest.mark.usefixtures("no_backoff_sleep")
+@patch("watchmaker.utils.urllib_utils.request.urlopen")
+def test_urldownload_retry_retries_body_read_and_rewrites_file(
+    mock_urlopen,
+    tmp_path,
+):
+    """Test that a reset mid-body restarts the download from scratch."""
+    broken = MagicMock()
+    broken.__enter__.return_value = broken
+    # Partial data, then a reset, as seen when the connection drops mid-stream
+    broken.read.side_effect = [b"partial", ConnectionResetError()]
+    good = MagicMock()
+    good.__enter__.return_value = good
+    good.read.side_effect = [b"complete", b""]
+    mock_urlopen.side_effect = [broken, good]
+    dest = tmp_path / "installer.exe"
+
+    watchmaker.utils.urldownload_retry("http://example.com/f", dest)
+
+    assert mock_urlopen.call_count == 2
+    assert dest.read_bytes() == b"complete"
+    assert broken.__exit__.called
+
+
+@pytest.mark.usefixtures("no_backoff_sleep")
+@patch("watchmaker.utils.urllib_utils.request.urlopen")
+def test_urldownload_retry_does_not_retry_permanent_errors(
+    mock_urlopen,
+    tmp_path,
+):
+    """Test that a 404 on download is raised immediately."""
+    mock_urlopen.side_effect = _http_error(404)
+
+    with pytest.raises(urllib.error.HTTPError):
+        watchmaker.utils.urldownload_retry(
+            "http://example.com/f",
+            tmp_path / "installer.exe",
+        )
+    assert mock_urlopen.call_count == 1

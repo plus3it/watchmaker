@@ -149,6 +149,27 @@ jobs:
           activate-environment: "true"
           enable-cache: "false"
 
+      - name: Restore base image cache
+        id: cache-base-images
+        if: matrix.platform == 'linux'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ runner.temp }}/base-images
+          key: base-images-standalone-${{ hashFiles('ci/Dockerfile') }}
+
+      - name: Load base images
+        if: matrix.platform == 'linux'
+        run: |
+          chmod +x ci/load_base_images.sh
+          ci/load_base_images.sh "${{ runner.temp }}/base-images" ci/Dockerfile
+
+      - name: Save base image cache
+        if: matrix.platform == 'linux' && github.ref == 'refs/heads/main' && steps.cache-base-images.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ runner.temp }}/base-images
+          key: ${{ steps.cache-base-images.outputs.cache-primary-key }}
+
       - run: chmod +x ci/prep_docker.sh
         if: matrix.platform == 'linux'
       - run: ci/prep_docker.sh
@@ -214,6 +235,27 @@ jobs:
             requirements/build.txt
             pyproject.toml
 
+      - name: Restore base image cache
+        id: cache-base-images
+        if: matrix.platform == 'linux'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ runner.temp }}/base-images
+          key: base-images-pyapp-${{ hashFiles('ci/Dockerfile.pyapp') }}
+
+      - name: Load base images
+        if: matrix.platform == 'linux'
+        run: |
+          chmod +x ci/load_base_images.sh
+          ci/load_base_images.sh "${{ runner.temp }}/base-images" ci/Dockerfile.pyapp
+
+      - name: Save base image cache
+        if: matrix.platform == 'linux' && github.ref == 'refs/heads/main' && steps.cache-base-images.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
+        with:
+          path: ${{ runner.temp }}/base-images
+          key: ${{ steps.cache-base-images.outputs.cache-primary-key }}
+
       - name: Mark build script as executable (Linux)
         run: chmod +x ci/prep_docker_pyapp.sh
         if: matrix.platform == 'linux'
@@ -256,8 +298,6 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.8"
-          - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
@@ -266,6 +306,11 @@ jobs:
         os:
           - ubuntu-latest
           - windows-2022
+        include:
+          - python-version: "3.8"
+            os: ubuntu-24.04
+          - python-version: "3.9"
+            os: ubuntu-24.04
     steps:
       - name: Retrieve source
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
