@@ -1,5 +1,6 @@
 """Loads helper utility modules and functions."""
 
+import http.client
 import os
 import platform
 import shutil
@@ -53,7 +54,32 @@ def basename_from_uri(uri):
     return Path(urllib_utils.parse.urlparse(uri).path).name
 
 
-@backoff.on_exception(backoff.expo, urllib_utils.error.URLError, max_tries=5)
+RETRYABLE_EXCEPTIONS = (
+    urllib_utils.error.URLError,
+    ConnectionError,
+    TimeoutError,
+    http.client.HTTPException,
+)
+
+# HTTP statuses that are worth retrying even though they are 4xx
+_RETRYABLE_HTTP_4XX = (408, 429)
+
+
+def is_permanent_error(exc):
+    """Return True if the exception will not be fixed by retrying."""
+    return (
+        isinstance(exc, urllib_utils.error.HTTPError)
+        and 400 <= exc.code < 500  # noqa: PLR2004
+        and exc.code not in _RETRYABLE_HTTP_4XX
+    )
+
+
+@backoff.on_exception(
+    backoff.expo,
+    RETRYABLE_EXCEPTIONS,
+    max_tries=5,
+    giveup=is_permanent_error,
+)
 def urlopen_retry(uri, timeout=None):
     """Retry urlopen on exception."""
     kwargs = {}
