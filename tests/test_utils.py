@@ -239,6 +239,8 @@ def _http_error(code):
         (ConnectionResetError(), False),
         (urllib.error.URLError("boom"), False),
     ],
+    # Explicit ids: on python 3.8, pytest fails to generate ids from HTTPError
+    ids=["404", "403", "408", "429", "503", "connection-reset", "url-error"],
 )
 def test_is_permanent_error(exc, expected):
     """Test that only non-retryable 4xx responses are permanent errors."""
@@ -254,6 +256,7 @@ def test_is_permanent_error(exc, expected):
         urllib.error.URLError("boom"),
         _http_error(503),
     ],
+    ids=["connection-reset", "timeout", "remote-disconnected", "url-error", "503"],
 )
 @pytest.mark.usefixtures("no_backoff_sleep")
 @patch("watchmaker.utils.urllib_utils.request.urlopen")
