@@ -76,11 +76,7 @@ class PlatformManagerBase:
 
         try:
             self.log.debug("Establishing connection to the host, %s", url)
-            response = watchmaker.utils.urlopen_retry(url)
-            self.log.debug("Opening the file handle, %s", filename)
-            with filename.open("wb") as outfile:
-                self.log.debug("Saving file to local filesystem...")
-                shutil.copyfileobj(response, outfile)
+            watchmaker.utils.urldownload_retry(url, filename)
         except (ValueError, urllib_utils.error.URLError):
             self.log.critical(
                 "Failed to retrieve the file. url = %s. filename = %s",
