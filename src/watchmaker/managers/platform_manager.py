@@ -12,7 +12,6 @@ from pathlib import Path
 
 import watchmaker.utils
 from watchmaker.exceptions import WatchmakerError
-from watchmaker.utils import urllib_utils
 
 
 class PlatformManagerBase:
@@ -77,7 +76,7 @@ class PlatformManagerBase:
         try:
             self.log.debug("Establishing connection to the host, %s", url)
             watchmaker.utils.urldownload_retry(url, filename)
-        except (ValueError, urllib_utils.error.URLError):
+        except (ValueError, *watchmaker.utils.RETRYABLE_EXCEPTIONS):
             self.log.critical(
                 "Failed to retrieve the file. url = %s. filename = %s",
                 url,
