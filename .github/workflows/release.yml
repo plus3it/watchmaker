@@ -25,7 +25,7 @@ jobs:
       id-token: write  # Required to obtain Sigstore signing certificate
     steps:
       - name: Retrieve source
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: source
           path: .
@@ -33,7 +33,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Retrieve release distributions
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: dists
           path: dist/
@@ -41,7 +41,7 @@ jobs:
           run-id: ${{ github.event.workflow_run.id }}
 
       - name: Retrieve standalone binaries
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           pattern: standalone-*
           path: .pyinstaller/dist
@@ -118,7 +118,7 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - name: Retrieve release distributions
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           name: dists
           path: dist/
@@ -142,7 +142,7 @@ jobs:
       BUCKET_NAME: "${{ needs.release.outputs.release-condition != 'true' && vars.DEV_BUCKET || vars.RELEASE_BUCKET }}"
     steps:
       - name: Retrieve standalone binaries
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
           pattern: standalone-*
           path: .pyinstaller/dist
