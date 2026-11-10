@@ -5,7 +5,7 @@ import logging
 import re
 
 import yaml
-from compatibleversion import check_version
+from packaging.specifiers import SpecifierSet
 
 try:
     from importlib.resources import files
@@ -72,10 +72,9 @@ def get_configs(system, worker_args, config_path=None):  # noqa: C901
         log.critical(msg)
         raise WatchmakerError(msg)
 
-    if config_version_specifier and not check_version(
-        watchmaker.__version__,
+    if config_version_specifier and not SpecifierSet(
         config_version_specifier,
-    ):
+    ).contains(watchmaker.__version__, prereleases=True):
         msg = (
             f"Watchmaker version {watchmaker.__version__} is not compatible "
             f"with the config file (watchmaker_version = {config_version_specifier})"
