@@ -94,3 +94,53 @@ def test_config_validate_pattern():
     config["salt"]["config"]["computer_name_pattern"] = r"?i)abc[\d]{3}[a-z]{8}[ex]"
     with pytest.raises(WatchmakerError):
         validate_computer_name_pattern(config)
+
+
+def _write_versioned_config(tmp_path, specifier):
+    """Write a copy of a test config with the given watchmaker_version."""
+    source = Path("tests") / "resources" / "config_without_status.yaml"
+    lines = source.read_text().splitlines(keepends=True)
+    lines[0] = f'watchmaker_version: "{specifier}"\n'
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text("".join(lines))
+    return config_path
+
+
+@pytest.mark.parametrize(
+    ("version", "specifier"),
+    [
+        ("0.31.1", ">= 0.31.0"),
+        ("0.31.1", "~= 0.31.0"),
+        ("0.31.1", ">= 0.17.0, <= 0.32.0, != 0.31.0"),
+        ("0.32.0.dev0", ">= 0.31.0"),
+        ("0.32.0.dev0", ">= 0.32.0.dev"),
+    ],
+)
+def test_config_watchmaker_version_compatible(tmp_path, version, specifier):
+    """Test config loads when watchmaker version satisfies the specifier."""
+    config_path = _write_versioned_config(tmp_path, specifier)
+    with patch("watchmaker.__version__", version), patch(
+        "watchmaker.utils.imds.detect.provider",
+        return_value="unknown",
+    ):
+        config, _status_config = get_configs("linux", {}, config_path)
+    assert config is not None
+
+
+@pytest.mark.parametrize(
+    ("version", "specifier"),
+    [
+        ("0.31.1", "== 0.17.0"),
+        ("0.31.1", "> 0.31.1"),
+        ("0.31.1", ">= 0.17.0, != 0.31.1"),
+        ("0.32.0.dev0", "< 0.32.0.dev0"),
+    ],
+)
+def test_config_watchmaker_version_incompatible(tmp_path, version, specifier):
+    """Test config raises when watchmaker version does not satisfy specifier."""
+    config_path = _write_versioned_config(tmp_path, specifier)
+    with patch("watchmaker.__version__", version), patch(
+        "watchmaker.utils.imds.detect.provider",
+        return_value="unknown",
+    ), pytest.raises(WatchmakerError, match="is not compatible"):
+        get_configs("linux", {}, config_path)
